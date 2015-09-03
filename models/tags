@@ -1,0 +1,115 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Body	types.go	/^type Body string$/;"	d
+Collection	model.go	/^func (m ModelDatabase) Collection(r interface{}) *mgo.Collection {$/;"	d
+Comment	comment.go	/^type Comment struct {$/;"	d
+ConfirmFriendship	friendship.go	/^func ConfirmFriendship(db Database, userID, friendID bson.ObjectId) error {$/;"	d
+Database	db.go	/^type Database interface {$/;"	d
+Destroy	model.go	/^func (m ModelDatabase) Destroy(r Model) error {$/;"	d
+Discussion	discussion.go	/^type Discussion struct {$/;"	d
+Dislike	post.go	/^func (p *Post) Dislike(userID bson.ObjectId) error {$/;"	d
+Dislikes	concerns/like.go	/^type Dislikes map[string]bool$/;"	d
+DownVote	voteable_record.go	/^func (v *voteableRecord) DownVote() {$/;"	d
+Email	types.go	/^type Email string$/;"	d
+FeedAction	feed_item.go	/^type FeedAction uint$/;"	d
+FeedItem	feed_item.go	/^type FeedItem struct {$/;"	d
+Find	model.go	/^func (m ModelDatabase) Find(r Model) error {$/;"	d
+FindFeedItems	feed_item.go	/^func FindFeedItems(db Database, userID bson.ObjectId, fs []FeedItem) error {$/;"	d
+FindFriendIds	friendship.go	/^func FindFriendIds(db Database, userID bson.ObjectId) (ids []bson.ObjectId, err error) {$/;"	d
+FindFriends	user.go	/^func (u User) FindFriends(db Database) ([]User, error) {$/;"	d
+FindFriendship	friendship.go	/^func FindFriendship(db Database, userID, friendID bson.ObjectId, fs *[2]Friendship) error {$/;"	d
+FindFriendshipsByUser	friendship.go	/^func FindFriendshipsByUser(db Database, userID bson.ObjectId, fs *[]Friendship) error {$/;"	d
+FindPostsByUser	post.go	/^func FindPostsByUser(userID bson.ObjectId, ps *[]Post) error {$/;"	d
+FindUserByEmail	user.go	/^func FindUserByEmail(email string, u *User) error {$/;"	d
+Flag	concerns/flag.go	/^type Flag struct {$/;"	d
+Friendship	friendship.go	/^type Friendship struct {$/;"	d
+GetID	comment.go	/^func (c *Comment) GetID() bson.ObjectId {$/;"	d
+GetID	discussion.go	/^func (d *Discussion) GetID() bson.ObjectId {$/;"	d
+GetID	feed_item.go	/^\/\/ func (f *FeedItem) GetID() bson.ObjectId {$/;"	d
+GetID	post.go	/^func (p *Post) GetID() bson.ObjectId {$/;"	d
+GetID	post.go	/^func (p *Posts) GetID() bson.ObjectId {$/;"	d
+GetID	user.go	/^func (u *User) GetID() bson.ObjectId {$/;"	d
+GetID	user_session.go	/^func (us *UserSession) GetID() bson.ObjectId {$/;"	d
+InitModels	db.go	/^func InitModels(appSession *mgo.Session, dbName string) ModelDatabase {$/;"	d
+Insert	model.go	/^func (m ModelDatabase) Insert(r Model) error {$/;"	d
+InsertFriendship	friendship.go	/^func InsertFriendship(db Database, userID, friendID bson.ObjectId) error {$/;"	d
+IsExpired	user_session.go	/^func (us UserSession) IsExpired() bool {$/;"	d
+Length	validators/validators.go	/^func Length(s string, min, max int, tag string) error {$/;"	d
+Like	post.go	/^func (p *Post) Like(userID bson.ObjectId) error {$/;"	d
+Likes	concerns/like.go	/^type Likes map[string]bool$/;"	d
+Match	validators/validators.go	/^func Match(s, pattern, tag string) error {$/;"	d
+Model	model.go	/^type Model interface {$/;"	d
+ModelDatabase	model.go	/^type ModelDatabase struct {$/;"	d
+ModelIO	db.go	/^var ModelIO ModelDatabase$/;"	d
+NewFeedItem	feed_item.go	/^func NewFeedItem(db Database, item Model, userID bson.ObjectId, action FeedAction) error {$/;"	d
+NewUserFromAuth	user.go	/^func NewUserFromAuth(ou omniauth.User) User {$/;"	d
+NonBlank	validators/validators.go	/^func NonBlank(s, tag string) error {$/;"	d
+NonEpoch	validators/validators.go	/^func NonEpoch(t time.Time, tag string) error {$/;"	d
+NonZero	validators/validators.go	/^func NonZero(i int, tag string) error {$/;"	d
+Post	post.go	/^type Post struct {$/;"	d
+Posts	post.go	/^type Posts []Post$/;"	d
+Profile	profile.go	/^type Profile struct {$/;"	d
+RemoveFriendship	friendship.go	/^func RemoveFriendship(db Database, userID, friendID bson.ObjectId) error {$/;"	d
+Scan	comment.go	/^func (c *Comment) Scan(params url.Values) error {$/;"	d
+Scan	discussion.go	/^func (d *Discussion) Scan(params url.Values) error {$/;"	d
+Scan	post.go	/^func (p *Post) Scan(params url.Values) error {$/;"	d
+Scan	post.go	/^func (p *Posts) Scan(params url.Values) error {$/;"	d
+Scan	user.go	/^func (u *User) Scan(params url.Values) error {$/;"	d
+SetAttribute	feed_item.go	/^\/\/ func (f *FeedItem) SetAttribute() error {$/;"	d
+SetAttributes	user_session.go	/^func (us *UserSession) SetAttributes(params url.Values) error {$/;"	d
+SetCreateTime	dated_record.go	/^func (d *datedRecord) SetCreateTime() error {$/;"	d
+SetUpdateTime	dated_record.go	/^func (d *datedRecord) SetUpdateTime() {$/;"	d
+Stars	concerns/like.go	/^type Stars map[string]bool$/;"	d
+TestCollectionName	model_test.go	/^func TestCollectionName(t *testing.T) {$/;"	d
+TestConfirmingFriendship	friendship_test.go	/^func TestConfirmingFriendship(t *testing.T) {$/;"	d
+TestDestroyRecord	model_test.go	/^func TestDestroyRecord(t *testing.T) {$/;"	d
+TestDislikeUnlikes	post_test.go	/^func TestDislikeUnlikes(t *testing.T) {$/;"	d
+TestDislikesIncrement	post_test.go	/^func TestDislikesIncrement(t *testing.T) {$/;"	d
+TestDislikesTwiceNotIncrement	post_test.go	/^func TestDislikesTwiceNotIncrement(t *testing.T) {$/;"	d
+TestFindFriendshipsForFriends	friendship_test.go	/^func TestFindFriendshipsForFriends(t *testing.T) {$/;"	d
+TestFindingFriendIds	friendship_test.go	/^func TestFindingFriendIds(t *testing.T) {$/;"	d
+TestFindingFriendshipsForUser	friendship_test.go	/^func TestFindingFriendshipsForUser(t *testing.T) {$/;"	d
+TestFindingRecord	model_test.go	/^func TestFindingRecord(t *testing.T) {$/;"	d
+TestInsertingFriendship	friendship_test.go	/^func TestInsertingFriendship(t *testing.T) {$/;"	d
+TestInsertingRecord	model_test.go	/^func TestInsertingRecord(t *testing.T) {$/;"	d
+TestLength	validators/validators_test.go	/^func TestLength(t *testing.T) {$/;"	d
+TestLikeUnlikes	post_test.go	/^func TestLikeUnlikes(t *testing.T) {$/;"	d
+TestLikesIncrement	post_test.go	/^func TestLikesIncrement(t *testing.T) {$/;"	d
+TestLikesTwiceNotIncrement	post_test.go	/^func TestLikesTwiceNotIncrement(t *testing.T) {$/;"	d
+TestMatch	validators/validators_test.go	/^func TestMatch(t *testing.T) {$/;"	d
+TestModelName	model_test.go	/^func TestModelName(t *testing.T) {$/;"	d
+TestNewFeedItem	feed_item_test.go	/^func TestNewFeedItem(t *testing.T) {$/;"	d
+TestNonBlank	validators/validators_test.go	/^func TestNonBlank(t *testing.T) {$/;"	d
+TestNonEpoch	validators/validators_test.go	/^func TestNonEpoch(t *testing.T) {$/;"	d
+TestNonZero	validators/validators_test.go	/^func TestNonZero(t *testing.T) {$/;"	d
+TestUpdateRecord	model_test.go	/^func TestUpdateRecord(t *testing.T) {$/;"	d
+URL	types.go	/^type URL string$/;"	d
+UpVote	voteable_record.go	/^func (v *voteableRecord) UpVote() {$/;"	d
+Update	model.go	/^func (m ModelDatabase) Update(r Model) error {$/;"	d
+User	user.go	/^type User struct {$/;"	d
+UserSession	user_session.go	/^type UserSession struct {$/;"	d
+Username	types.go	/^type Username string$/;"	d
+Validate	comment.go	/^func (c *Comment) Validate() (verrs map[string]error) {$/;"	d
+Validate	discussion.go	/^func (d Discussion) Validate() map[string]error {$/;"	d
+Validate	feed_item.go	/^\/\/ func (f *FeedItem) Validate() []*v.ValidationError {$/;"	d
+Validate	post.go	/^func (p *Post) Validate() (verrs map[string]error) {$/;"	d
+Validate	post.go	/^func (p *Posts) Validate() map[string]error {$/;"	d
+Validate	user.go	/^func (u *User) Validate() map[string]error {$/;"	d
+Validate	user_session.go	/^func (us *UserSession) Validate() []*v.ValidationError {$/;"	d
+Where	model.go	/^func (m ModelDatabase) Where(query interface{}, r Model) error {$/;"	d
+calculateConfidence	voteable_record.go	/^func (v *voteableRecord) calculateConfidence() {$/;"	d
+calculateHeat	voteable_record.go	/^func (v *voteableRecord) calculateHeat() {$/;"	d
+collectionName	model.go	/^func collectionName(r interface{}) string {$/;"	d
+datedRecord	dated_record.go	/^type datedRecord struct {$/;"	d
+dbSession	db.go	/^var dbSession *mgo.Session$/;"	d
+for	discussion.go	/^\/\/ Discussion is a sort of minimum viable product content type for some more$/;"	d
+modelName	model.go	/^func modelName(r interface{}) string {$/;"	d
+of	concerns/like.go	/^\/\/ special type of like that you get as a reward$/;"	d
+of	feed_item.go	/^\/\/ FeedAction indicates the type of action that$/;"	d
+sign	voteable_record.go	/^	var sign, score int$/;"	d
+valueName	model.go	/^func valueName(v reflect.Value) string {$/;"	d
+voteableRecord	voteable_record.go	/^type voteableRecord struct {$/;"	d

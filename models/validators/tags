@@ -1,0 +1,17 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Length	validators.go	/^func Length(s string, min, max int, tag string) *ValidationError {$/;"	d
+Match	validators.go	/^func Match(s, pattern, tag string) *ValidationError {$/;"	d
+NonBlank	validators.go	/^func NonBlank(s, tag string) *ValidationError {$/;"	d
+NonEpoch	validators.go	/^func NonEpoch(t time.Time, tag string) *ValidationError {$/;"	d
+NonZero	validators.go	/^func NonZero(i int, tag string) *ValidationError {$/;"	d
+TestLength	validators_test.go	/^func TestLength(t *testing.T) {$/;"	d
+TestMatch	validators_test.go	/^func TestMatch(t *testing.T) {$/;"	d
+TestNonBlank	validators_test.go	/^func TestNonBlank(t *testing.T) {$/;"	d
+TestNonEpoch	validators_test.go	/^func TestNonEpoch(t *testing.T) {$/;"	d
+TestNonZero	validators_test.go	/^func TestNonZero(t *testing.T) {$/;"	d
+ValidationError	validators.go	/^type ValidationError struct {$/;"	d
