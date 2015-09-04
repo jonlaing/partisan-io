@@ -1,29 +1,23 @@
-@import "../../node_modules/material-ui-sass/material-ui";
-@import "../../node_modules/material-ui-sass/material-ui/_html";
-@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,500);
+@import '../../node_modules/foundation-sites/scss/normalize.scss';
+@import '../../node_modules/foundation-sites/scss/foundation.scss';
+@import './foundation-icons.css';
+@import './colors.scss';
+@import './card.scss';
+@import './post-composer.scss';
+@import './post.scss';
 
-//Your custom app styles
-.example-page {
-  margin: auto;
-  padding: 50px;
-  width: 60%;
-  text-align: center;
+body {
+  background: $lighter-grey;
 }
 
-#task-list {
-  width: 25%;
-  margin: 20px auto;
-  text-align: left;
+.button, button {
+  background: $action-color;
 
-  label {
-    display: block;
+  &:hover, &:active {
+    background: darken($action-color, 10%);
   }
 }
 
-.mui-checkbox {
-  display: inline-block;
-}
-
-.checkbox-label {
-  padding: 10px;
+a {
+  font-color: $action-color;
 }

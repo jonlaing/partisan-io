@@ -1,0 +1,14 @@
+/* Card */
+@import './typography.scss';
+@import './colors.scss';
+
+.card {
+  border-radius: 2px;
+  box-shadow: 0 2px 4px $shadow-color;
+  background: white;
+
+  .card-body {
+    padding: $line-height;
+  }
+}
+

@@ -1,0 +1,48 @@
+@import './colors.scss';
+@import './typography.scss';
+
+.post {
+  .post-user {
+    margin-bottom: $line-height;
+  }
+
+  .post-username {
+    color: $action-color;
+  }
+
+  .post-timestamp {
+    color: $grey;
+  }
+
+  .post-body {
+    line-height: $line-height*1.5;
+  }
+
+  .post-actions {
+    margin-top: $line-height;
+    padding: $line-height;
+    border: 1px solid $light-grey;
+    border-width: 1px 0 0;
+
+    button {
+      padding: 0;
+      padding-right: $line-height*2;
+      background: none;
+      color: $action-color;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: darken($action-color, 10%);
+      }
+
+      i {
+        font-size: 150%;
+        margin-right: $line-height/2;
+
+        &.fi-dislike, &.fi-comment {
+          vertical-align: $line-height/-4;
+        }
+      }
+    }
+  }
+}

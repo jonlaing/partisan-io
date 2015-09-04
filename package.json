@@ -1,5 +1,6 @@
 {
   "name": "partisan",
+  "repository": "https://github.com/jonlaing/partisan-io",
   "version": "0.1.0",
   "description": "Partisan: Social networking app for discussion (arguing) regarding politics.",
   "author": "",
@@ -11,6 +12,7 @@
     "gulp-connect": "^2.2.0",
     "gulp-sass": "^2.0.1",
     "gulp-util": "^3.0.4",
+    "jest-cli": "^0.5.1",
     "reactify": "^1.1.1",
     "require-dir": "^0.3.0",
     "vinyl-buffer": "^1.0.0",
@@ -36,6 +38,7 @@
   },
   "dependencies": {
     "flux": "^2.0.3",
+    "foundation-sites": "^5.5.2",
     "glob": "^5.0.14",
     "jquery": "^2.1.4",
     "material-ui": "^0.8.0",

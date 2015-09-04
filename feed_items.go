@@ -47,5 +47,5 @@ func FeedIndex(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, feedItems)
+        c.JSON(http.StatusOK, gin.H{ "feed_items" : feedItems} )
 }
