@@ -28,7 +28,7 @@ func FeedIndex(c *gin.Context) {
 	defer db.Close()
 
 	feedItems := []FeedItem{}
-	if err := db.Find(&feedItems).Error; err != nil {
+	if err := db.Order("created_at desc").Find(&feedItems).Error; err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
@@ -47,5 +47,5 @@ func FeedIndex(c *gin.Context) {
 		}
 	}
 
-        c.JSON(http.StatusOK, gin.H{ "feed_items" : feedItems} )
+	c.JSON(http.StatusOK, gin.H{"feed_items": feedItems})
 }

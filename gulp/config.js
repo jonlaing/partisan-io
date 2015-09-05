@@ -35,7 +35,7 @@ module.exports = {
     dest: dest
   },
   fonts: {
-    src: 'src/fonts/*.ttf',
+    src: 'src/fonts/*.{ttf,woff,eot,svg}',
     dest: dest + '/styles'
   },
   watch: {

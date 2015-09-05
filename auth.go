@@ -1,9 +1,9 @@
 package main
 
 import (
-	"code.google.com/p/go-uuid/uuid"
 	"fmt"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"io/ioutil"
@@ -41,27 +41,42 @@ type LoginJSON struct {
 	Password string `json:"password" binding:"required"`
 }
 
+var store = sessions.NewCookieStore([]byte("aoishoi1293220hdacns92309")) // TODO: get better random string
+
 // Auth is the authentication middleware
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokn, ok := c.Request.Header["X-Auth-Token"]
-		if !ok {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("No X-Auth-Token"))
-			return
-		}
+		sess := sessions.Default(c)
+		tokn, okTok := c.Request.Header["X-Auth-Token"]
 
-		token, err := jwt.Parse(tokn[0], func(token *jwt.Token) (interface{}, error) {
-			// Don't forget to validate the alg is what you expect:
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		var userID uint64
+		// var apiKey string
+
+		if okTok {
+			token, err := jwt.Parse(tokn[0], func(token *jwt.Token) (interface{}, error) {
+				// Don't forget to validate the alg is what you expect:
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+				}
+
+				return hmacKey, nil
+			})
+
+			if err != nil {
+				c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Problems making token"))
+				return
 			}
 
-			return hmacKey, nil
-		})
+			userID, _ = strconv.ParseUint(fmt.Sprintf("%d", token.Claims["user_id"]), 10, 0)
+			// apiKey = fmt.Sprintf("%s", token.Claims["api_key"])
+		} else {
+			if sess.Get("user_id") == nil {
+				c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("No session"))
+				return
+			}
 
-		if err != nil {
-			c.AbortWithError(http.StatusUnauthorized, err)
-			return
+			userID, _ = strconv.ParseUint(fmt.Sprintf("%d", sess.Get("user_id")), 10, 0)
+			// apiKey = fmt.Sprintf("%s", sess.Get("api_key"))
 		}
 
 		// Check this is the right user with correct API key
@@ -72,24 +87,20 @@ func Auth() gin.HandlerFunc {
 		}
 		defer db.Close()
 
-		// try to convert claims to respective types
-		userID, _ := strconv.ParseUint(fmt.Sprintf("%d", token.Claims["user_id"]), 10, 0)
-		apiKey := fmt.Sprintf("%s", token.Claims["api_key"])
-
 		user := User{}
 
 		// look up by user id and api key, if you can't find it, the api key is no good
-		if err := db.Where(User{ID: userID, APIKey: apiKey}).First(&user).Error; err != nil {
-			c.AbortWithError(http.StatusUnauthorized, err)
+		if err := db.Where(User{ID: userID}).First(&user).Error; err != nil {
+			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user"))
 			return
 		}
 
-		if user.APIKeyExp.Before(time.Now()) {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("API key is expired"))
-			return
-		}
+		// if user.APIKeyExp.Before(time.Now()) {
+		// 	c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("API key is expired"))
+		// 	return
+		// }
 
-		c.Set("user_id", user.ID)
+		c.Set("user", user)
 		c.Next() // continue on to next endpoint
 	}
 }
@@ -111,26 +122,40 @@ func LoginHandler(c *gin.Context) {
 	}
 	defer db.Close()
 
-	var login LoginJSON
-	c.BindJSON(&login)
+	email := c.Request.PostFormValue("email")
+	password := c.Request.PostFormValue("password")
 
 	user := User{}
 
-	if err := db.Where(User{Email: login.Email}).First(&user).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+	if err := db.Where(User{Email: email}).First(&user).Error; err != nil {
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user"))
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(login.Password)); err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password)); err != nil {
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Password didn't match"))
 		return
 	}
 
-	user.APIKey = uuid.NewRandom().String()
-	user.APIKeyExp = time.Now().Add(time.Hour * 72)
+	// user.APIKey = uuid.NewRandom().String()
+	// user.APIKeyExp = time.Now().Add(time.Hour * 72)
 
 	db.Save(&user)
 
+	tokenString, _ := login(user, c)
+
+	// User.APIKey is not exported via JSON so we have to manually add it
+	c.JSON(http.StatusOK, gin.H{"token": tokenString, "user": user, "api_key": user.APIKey})
+}
+
+// LogoutHandler logs the user out (duh)
+func LogoutHandler(c *gin.Context) {
+	logout(c)
+
+	c.JSON(http.StatusOK, gin.H{"message": "logged out"})
+}
+
+func login(user User, c *gin.Context) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	// Set some claims
@@ -138,12 +163,16 @@ func LoginHandler(c *gin.Context) {
 	token.Claims["api_key"] = user.APIKey
 	// Sign and get the complete encoded token as a string
 	tokenString, err := token.SignedString(hmacKey)
-	if err != nil {
-		fmt.Println("this is where i fucked up")
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
-	}
 
-	// User.APIKey is not exported via JSON so we have to manually add it
-	c.JSON(http.StatusOK, gin.H{"token": tokenString, "user": user, "api_key": user.APIKey})
+	sess := sessions.Default(c)
+	sess.Set("user_id", user.ID)
+	sess.Save()
+
+	return tokenString, err
+}
+
+func logout(c *gin.Context) {
+	sess := sessions.Default(c)
+	sess.Clear()
+	sess.Save()
 }

@@ -11,6 +11,10 @@ function _addItems(items) {
   _feedItems = _feedItems.concat(items);
 }
 
+function _addItem(item) {
+  _feedItems = [item].concat(_feedItems);
+}
+
 // Facebook style store creation.
 const FeedStore = assign({}, BaseStore, {
   getAll() {
@@ -23,9 +27,14 @@ const FeedStore = assign({}, BaseStore, {
 
     switch(action.type) {
       case Constants.ActionTypes.GET_FEED:
-        let data = action.data;
-        if(data) {
-          _addItems(data);
+        if(action.data) {
+          _addItems(action.data);
+          FeedStore.emitChange();
+        }
+        break;
+      case Constants.ActionTypes.ADD_FEED_ITEM:
+        if(action.data) {
+          _addItem(action.data);
           FeedStore.emitChange();
         }
         break;

@@ -2,6 +2,9 @@
 @import './colors.scss';
 
 .post-composer {
+  box-shadow: 0 2px 4px $shadow-color;
+  margin-bottom: $line-height;
+
   textarea {
     font-size: $line-height;
     min-height: $line-height*3;
@@ -11,6 +14,9 @@
 
     &:focus {
       background: white;
+    }
+
+    &.focus {
       min-height: $line-height*10;
     }
   }
@@ -23,6 +29,4 @@
       margin: 0;
     }
   }
-  
-  padding-bottom: $line-height;
 }

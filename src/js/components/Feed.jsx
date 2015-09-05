@@ -1,11 +1,14 @@
 /*global $ */
-import React from 'react';
+import React from 'react/addons';
+// import ReactAddons from 'react-addons';
 import FeedActionCreator from '../actions/FeedActionCreator.js';
 import FeedStore from '../stores/FeedStore.js';
 
 import Card from './Card.jsx';
 import Post from './Post.jsx';
 import PostComposer from './PostComposer.jsx';
+
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 function getStateFromStore() {
   let state = FeedStore.getAll();
@@ -40,13 +43,14 @@ export default React.createClass({
     return (
       <div className="feed">
         <PostComposer />
-        {cards}
+        <ReactCSSTransitionGroup transitionName="feed">
+          {cards}
+        </ReactCSSTransitionGroup>
       </div>
     );
   },
 
   _onChange() {
-    console.log(typeof getStateFromStore());
     this.setState({feed: getStateFromStore()});
   }
 });

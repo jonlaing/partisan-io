@@ -24,6 +24,19 @@
     "start": "gulp",
     "build": "gulp build"
   },
+  "eslintConfig": {
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    },
+    "env": {
+      "es6": true
+    },
+    "rules": {
+      "no-script-url": false,
+      "quotes": [0, "double"]
+    }
+  },
   "jest": {
     "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
     "testFileExtensions": [
@@ -43,9 +56,11 @@
     "jquery": "^2.1.4",
     "material-ui": "^0.8.0",
     "material-ui-sass": "^0.7.5",
+    "moment": "^2.10.6",
     "node-sass": "^3.3.2",
     "object-assign": "^2.0.0",
     "react": "^0.13.3",
+    "react-addons": "^0.9.0",
     "react-tap-event-plugin": "^0.1.7",
     "sass": "^0.5.0"
   }

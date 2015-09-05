@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 
 import PostActions from './PostActions.jsx'; // TODO: Rename this dumb shit
 
@@ -14,7 +15,7 @@ export default React.createClass({
             </div>
             <div className="post-user">
               <h4 className="post-username">@{this.props.data.user.username}</h4>
-              <span className="post-timestamp">{this.props.data.post.created_at}</span>
+              <span className="post-timestamp">{moment(this.props.data.post.created_at).fromNow()}</span>
             </div>
           </div>
           <div className="post-body">

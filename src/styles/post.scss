@@ -20,7 +20,7 @@
 
   .post-actions {
     margin-top: $line-height;
-    padding: $line-height;
+    padding: $line-height $line-height 0;
     border: 1px solid $light-grey;
     border-width: 1px 0 0;
 
@@ -30,6 +30,10 @@
       background: none;
       color: $action-color;
       transition: color 0.3s ease;
+
+      &:last-child {
+        padding: 0;
+      }
 
       &:hover {
         color: darken($action-color, 10%);

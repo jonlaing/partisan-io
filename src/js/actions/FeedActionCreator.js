@@ -18,8 +18,12 @@ export default {
         });
       })
       .fail(function(res) {
-        console.log('something went wrong');
-        console.log(res);
+        // Logged out
+        if(res.status === 401) {
+          Dispatcher.handleViewAction({
+            type: Constants.ActionTypes.LOGGED_OUT
+          });
+        }
       });
   },
   addItem(data) {

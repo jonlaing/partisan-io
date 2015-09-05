@@ -1,0 +1,12 @@
+.feed {
+  opacity: 1;
+}
+
+.feed-enter {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &.feed-enter-active {
+    opacity: 1;
+  }
+}

@@ -2,24 +2,29 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
+	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
+	r.Use(sessions.Sessions("partisan-io", store))
 
 	// V1
 	{
 		v1Root := "api/v1"
 
 		r.POST(v1Root+"/login", LoginHandler)
+		r.DELETE(v1Root+"/logout", LogoutHandler)
+		r.GET(v1Root+"/logout", LogoutHandler)
 
-                feed := r.Group(v1Root + "/feed")
-                feed.Use()
-                {
-                  feed.GET("/", FeedIndex)
-                }
+		feed := r.Group(v1Root + "/feed")
+		feed.Use(Auth())
+		{
+			feed.GET("/", FeedIndex)
+		}
 
 		users := r.Group(v1Root + "/users")
 		{
@@ -50,7 +55,7 @@ func main() {
 		}
 
 		posts := r.Group(v1Root + "/posts")
-		posts.Use()
+		posts.Use(Auth())
 		{
 			posts.GET("/", PostsIndex)
 			posts.POST("/", PostsCreate)

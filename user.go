@@ -29,7 +29,7 @@ type User struct {
 	APIKeyExp       time.Time    `json:"-"`
 	PasswordHash    []byte       `json:"-"`
 	Password        string       `json:"password" sql:"-" binding:"required"`
-	PasswordConfirm string       `json:"password" sql:"-" binding:"required"`
+	PasswordConfirm string       `json:"password_confirm" sql:"-" binding:"required"`
 }
 
 // UserCreate is the sign up route
@@ -41,11 +41,14 @@ func UserCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user := &User{}
-
-	if err := c.BindJSON(&user); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
+	user := User{
+		Email:           c.Request.PostFormValue("email"),
+		Username:        c.Request.PostFormValue("username"),
+		FullName:        c.Request.PostFormValue("full_name"),
+		Password:        c.Request.PostFormValue("password"),
+		PasswordConfirm: c.Request.PostFormValue("password_confirm"),
+                CreatedAt: time.Now(),
+                UpdatedAt: time.Now(),
 	}
 
 	if user.Password != user.PasswordConfirm {
@@ -65,6 +68,8 @@ func UserCreate(c *gin.Context) {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
+        
+        login(user, c)
 
 	c.JSON(http.StatusCreated, user)
 }

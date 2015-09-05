@@ -14,7 +14,6 @@ type Post struct {
 	Body      string    `json:"body" binding:"required"`    // The text based body
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	FeedItem  FeedItem  `json:"-" gorm:"polymorphic:FeedItem"`
 }
 
 // PostResponse is the response schema
@@ -66,27 +65,45 @@ func PostsCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	userID, ok := c.Get("user_id")
+	u, ok := c.Get("user")
 	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user"))
 		return
 	}
+	user := u.(User)
 
-	post := Post{}
-
-	if err := c.BindJSON(&post); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
+	post := Post{
+		UserID:    user.ID,
+		Body:      c.Request.PostFormValue("body"),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
-
-	post.UserID = userID.(uint64)
-
 	if err := db.Create(&post).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
 
-	c.JSON(http.StatusCreated, post)
+	postRes := PostResponse{
+		Post: post,
+		User: user,
+	}
+
+	// Create feed item
+	feedItem := FeedItem{
+		Action:     "post",
+		RecordType: "post",
+		RecordID:   post.ID,
+		Record:     postRes,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+
+	if err := db.Create(&feedItem).Error; err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, feedItem)
 }
 
 // PostsShow show a post
@@ -99,14 +116,14 @@ func PostsShow(c *gin.Context) {
 	defer db.Close()
 
 	post := Post{
-          ID: 123,
+		ID:        123,
 		Body:      "this is how we do it! (uhuh)",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
 	user := User{
-          Username: "Franny_Frumpernickle",
-        }
+		Username: "Franny_Frumpernickle",
+	}
 	// id := c.Params.ByName("id")
 
 	// if err := db.First(&post, id).Related(&user).Error; err != nil {
