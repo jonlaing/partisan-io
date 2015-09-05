@@ -30,7 +30,11 @@
       "modules": true
     },
     "env": {
-      "es6": true
+      "es6": true,
+      "jquery": true
+    },
+    "globals": {
+      "$": true
     },
     "rules": {
       "no-script-url": false,
