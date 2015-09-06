@@ -1,12 +1,11 @@
-/*global $ */
 import React from 'react/addons';
-// import ReactAddons from 'react-addons';
 import FeedActionCreator from '../actions/FeedActionCreator.js';
 import FeedStore from '../stores/FeedStore.js';
 
 import Card from './Card.jsx';
 import Post from './Post.jsx';
 import PostComposer from './PostComposer.jsx';
+import UserSession from './UserSession.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
@@ -42,6 +41,11 @@ export default React.createClass({
 
     return (
       <div className="feed">
+        <div className="clearfix">
+          <div className="right">
+            <UserSession />
+          </div>
+        </div>
         <PostComposer />
         <ReactCSSTransitionGroup transitionName="feed">
           {cards}

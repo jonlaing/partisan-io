@@ -5,6 +5,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/securecookie"
 	"golang.org/x/crypto/bcrypt"
 	"io/ioutil"
 	"net/http"
@@ -41,7 +42,7 @@ type LoginJSON struct {
 	Password string `json:"password" binding:"required"`
 }
 
-var store = sessions.NewCookieStore([]byte("aoishoi1293220hdacns92309")) // TODO: get better random string
+var store = sessions.NewCookieStore(securecookie.GenerateRandomKey(16))
 
 // Auth is the authentication middleware
 func Auth() gin.HandlerFunc {

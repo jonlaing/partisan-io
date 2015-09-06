@@ -27,9 +27,10 @@ func main() {
 		}
 
 		users := r.Group(v1Root + "/users")
+                users.Use(Auth())
 		{
-			users.POST("/", UserCreate)
-			// users.GET("/:user_id", UserShow)
+                        r.POST(v1Root+"/users", UserCreate)
+                        users.GET("/", UserShow) // Show Current User
 			users.GET("/:user_id/match", UserMatch)
 		}
 

@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"regexp"
 	"time"
 )
 
@@ -41,21 +42,39 @@ func UserCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
+	validationErrs := make(map[string]string)
+
 	user := User{
 		Email:           c.Request.PostFormValue("email"),
 		Username:        c.Request.PostFormValue("username"),
 		FullName:        c.Request.PostFormValue("full_name"),
 		Password:        c.Request.PostFormValue("password"),
 		PasswordConfirm: c.Request.PostFormValue("password_confirm"),
-                CreatedAt: time.Now(),
-                UpdatedAt: time.Now(),
+		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
 	}
 
+	// VALIDATE
 	if user.Password != user.PasswordConfirm {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Password and Confirmation don't match: \"%s\" doesn't match \"%s\"", user.Password, user.PasswordConfirm))
+		validationErrs["password_confirm"] = "Password and Password Confirm don't match. Try retyping."
+	}
+
+	emailRegex := regexp.MustCompile("(?i)[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+	if !emailRegex.MatchString(user.Email) {
+		validationErrs["email"] = "Email looks malformed. Check for typos."
+	}
+
+	usernameRegex := regexp.MustCompile("(?i)^[a-z0-9-_]+$")
+	if !usernameRegex.MatchString(user.Username) {
+		validationErrs["username"] = "Username can only have letters, numbers, dashes and underscores. Ex: my_username123"
+	}
+
+	if len(validationErrs) > 0 {
+		c.JSON(http.StatusNotAcceptable, validationErrs)
 		return
 	}
 
+	// Validation checks out, create the user
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -68,10 +87,28 @@ func UserCreate(c *gin.Context) {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
-        
-        login(user, c)
+
+	login(user, c)
 
 	c.JSON(http.StatusCreated, user)
+}
+
+// UserShow shows shit about the current user
+func UserShow(c *gin.Context) {
+	db, err := initDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	currentUser, err := CurrentUser(c, &db)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, currentUser)
 }
 
 // UserMatch will return the match % of the signed in user, and the user in the path
@@ -129,15 +166,10 @@ func (u User) FriendIDs(db *gorm.DB) []uint64 {
 
 // CurrentUser gets the current user from the session
 func CurrentUser(c *gin.Context, db *gorm.DB) (User, error) {
-	user := User{}
-	id, ok := c.Get("user_id")
+	user, ok := c.Get("user")
 	if !ok {
-		return user, fmt.Errorf("User ID not set")
+		return user.(User), fmt.Errorf("User ID not set")
 	}
 
-	if err := db.First(&user, id).Error; err != nil {
-		return user, err
-	}
-
-	return user, nil
+	return user.(User), nil
 }

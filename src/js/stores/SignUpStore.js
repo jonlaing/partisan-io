@@ -27,7 +27,7 @@ const SignUpStore = assign({}, BaseStore, {
         SignUpStore.emitChange();
         break;
 
-      case Constants.ActionTypes.SIGN_UP_ERROR:
+      case Constants.ActionTypes.SIGN_UP_FAIL:
         _errors = action.errors;
         SignUpStore.emitChange();
         break;

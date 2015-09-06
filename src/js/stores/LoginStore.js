@@ -4,17 +4,22 @@ import BaseStore from './BaseStore';
 import assign from 'object-assign';
 
 // data storage
-let _data = { error: "", success: false };
+let _loginState = { error: "", success: false };
 let _token = "";
+let _user = {username: ""};
 
 // Facebook style store creation.
 const LoginStore = assign({}, BaseStore, {
-  getState() {
-    return _data;
+  getLoginState() {
+    return _loginState;
   },
 
   getToken() {
     return _token;
+  },
+
+  getUser() {
+    return _user;
   },
 
   // register store with dispatcher, allowing actions to flow through
@@ -27,14 +32,14 @@ const LoginStore = assign({}, BaseStore, {
         if(token !== '') {
           _token = token;
         }
-        _data.success = true;
+        _loginState.success = true;
         LoginStore.emitChange();
         break;
 
       case Constants.ActionTypes.LOGIN_FAIL:
         let text = action.text.trim();
         if (text !== '') {
-          _data.error = text;
+          _loginState.error = text;
           LoginStore.emitChange();
         }
         break;
@@ -47,6 +52,14 @@ const LoginStore = assign({}, BaseStore, {
       // this is incase your session expired
       case Constants.ActionTypes.LOGGED_OUT:
         window.location = "/login.html";
+        break;
+
+      case Constants.ActionTypes.FETCHED_USER:
+        let user = action.data;
+        if (user !== {}) {
+          _user = user;
+          LoginStore.emitChange();
+        }
         break;
 
     }

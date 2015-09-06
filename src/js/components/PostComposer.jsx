@@ -24,7 +24,7 @@ export default React.createClass({
 
   render() {
     return (
-      <div className="post-composer" onBlur={this.handleBlur}>
+      <div className="post-composer">
         <div className="post-composer-field">
           <textarea rows="1" placeholder="Write a new post" onFocus={this.handleFocus} ref="body"></textarea>
         </div>

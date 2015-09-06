@@ -15,6 +15,7 @@ export default {
     LOGIN_FAIL: null,
     LOGOUT: null,
     LOGGED_OUT: null,
+    FETCHED_USER: null,
 
     SIGN_UP_SUCCESS: null,
     SIGN_UP_FAIL: null

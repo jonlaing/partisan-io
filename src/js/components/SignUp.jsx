@@ -44,16 +44,18 @@ export default React.createClass({
     return (
       <div className="signup">
         <h4>Sign Up for Partisan.IO</h4>
-        <div className="form-input">
+        <div className={"form-input" + this._hasError("email")}>
           <input type="text" placeholder="you@email.com" ref="email" />
+          {this._error("email")}
         </div>
-        <div className="form-input row collapse">
+        <div className={"form-input row collapse" + this._hasError("username")}>
           <div className="large-1 columns">
             <span className="prefix">@</span>
           </div>
           <div className="large-11 columns">
             <input type="text" placeholder="Username" ref="username" />
           </div>
+          {this._error("username")}
         </div>
         <div className="form-input">
           <input type="text" placeholder="Full Name" ref="full_name" />
@@ -61,8 +63,9 @@ export default React.createClass({
         <div className="form-input">
           <input type="password" placeholder="Password" ref="password" />
         </div>
-        <div className="form-input">
+        <div className={"form-input" + this._hasError("password_confirm")}>
           <input type="password" placeholder="Password Confirm" ref="password_confirm" />
+          {this._error("password_confirm")}
         </div>
         <button onClick={this.handleSubmit}>Sign Up</button>
       </div>
@@ -71,5 +74,21 @@ export default React.createClass({
 
   _onChange() {
     this.setState(SignUpStore.getState());
+  },
+
+  _hasError(field) {
+    if(this.state.errors[field]) {
+      return " error";
+    }
+    return "";
+  },
+
+  _error(field) {
+    let err = this.state.errors[field];
+    if(err) {
+      return (
+        <small className="error">{err}</small>
+      );
+    }
   }
 });

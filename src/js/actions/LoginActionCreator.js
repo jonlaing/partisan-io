@@ -34,5 +34,15 @@ export default {
           type: Constants.ActionTypes.LOGOUT
         });
       });
+  },
+
+  fetchCurrentUser() {
+    $.get(Constants.APIROOT + '/users/')
+      .always(function(res) {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.FETCHED_USER,
+          data: res
+        });
+      });
   }
 };

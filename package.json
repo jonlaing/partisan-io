@@ -8,6 +8,8 @@
   "devDependencies": {
     "babelify": "^6.1.1",
     "browserify": "^10.2.1",
+    "eslint": "^1.3.1",
+    "eslint-plugin-react": "^3.3.1",
     "gulp": "^3.8.7",
     "gulp-connect": "^2.2.0",
     "gulp-sass": "^2.0.1",
@@ -25,6 +27,9 @@
     "build": "gulp build"
   },
   "eslintConfig": {
+    "plugins": [
+      "react"
+    ],
     "ecmaFeatures": {
       "jsx": true,
       "modules": true
@@ -34,11 +39,20 @@
       "jquery": true
     },
     "globals": {
+      "document": true,
+      "console": true,
+      "window": true,
+      "global": true,
       "$": true
     },
     "rules": {
-      "no-script-url": false,
-      "quotes": [0, "double"]
+      "no-script-url": 0,
+      "no-underscore-dangle": 0,
+      "no-console": 0,
+      "quotes": [
+        0,
+        "double"
+      ]
     }
   },
   "jest": {
@@ -54,6 +68,7 @@
     ]
   },
   "dependencies": {
+    "cookies-js": "^1.2.1",
     "flux": "^2.0.3",
     "foundation-sites": "^5.5.2",
     "glob": "^5.0.14",

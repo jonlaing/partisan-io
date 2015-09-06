@@ -1,5 +1,8 @@
 import React from 'react';
 import jQuery from 'jquery';
+import Cookies from 'cookies-js';
+
+console.log(Cookies.get("partisan-io"));
 
 global.$ = jQuery;
 

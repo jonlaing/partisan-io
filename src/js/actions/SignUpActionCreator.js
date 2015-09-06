@@ -23,9 +23,10 @@ export default {
         });
       })
       .fail(function(res) {
+        let errors = JSON.parse(res.responseText);
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.SIGN_UP_FAIL,
-          data: res
+          errors: errors
         });
       });
   }
