@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
@@ -27,10 +26,10 @@ func main() {
 		}
 
 		users := r.Group(v1Root + "/users")
-                users.Use(Auth())
+		users.Use(Auth())
 		{
-                        r.POST(v1Root+"/users", UserCreate)
-                        users.GET("/", UserShow) // Show Current User
+			r.POST(v1Root+"/users", UserCreate)
+			users.GET("/", UserShow) // Show Current User
 			users.GET("/:user_id/match", UserMatch)
 		}
 
@@ -63,6 +62,8 @@ func main() {
 			posts.GET("/:id", PostsShow)
 			posts.PATCH("/:id", PostsUpdate)
 			posts.DELETE("/:id", PostsDestroy)
+			posts.POST("/:post_id/like", LikeCreate)
+			posts.POST("/:post_id/dislike", DislikeCreate)
 		}
 
 	}
@@ -74,35 +75,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&Post{}, &User{}, &Friendship{}, &FeedItem{})
-
-	var count int
-	db.Model(&User{}).Count(&count)
-	if count < 1 {
-		fmt.Println("Seeding users...")
-		seedUsers(&db)
-	} else {
-		fmt.Println("No need to seed users")
-	}
-	count = 0
-
-	db.Model(&Post{}).Count(&count)
-	if count < 1 {
-		fmt.Println("Seeding posts...")
-		seedPosts(&db)
-	} else {
-		fmt.Println("No need to seed posts")
-	}
-	count = 0
-
-	db.Model(&FeedItem{}).Count(&count)
-	if count < 1 {
-		fmt.Println("Seeding feed item...")
-		seedFeed(&db)
-	} else {
-		fmt.Println("No need to seed feed item")
-	}
-	count = 0
+	db.AutoMigrate(&Post{}, &User{}, &Friendship{}, &FeedItem{}, &Like{}, &Dislike{})
 
 	r.Run(":4000")
 }

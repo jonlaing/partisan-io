@@ -1,3 +1,4 @@
+@import '../../node_modules/foundation-sites/scss/foundation.scss';
 @import './typography.scss';
 @import './colors.scss';
 
@@ -5,8 +6,16 @@
   position: relative;
   margin-bottom: $line-height;
 
+  > a:after {
+    @include css-triangle($line-height/4, $action-color, "top");
+    display: inline-block;
+    margin-left: $line-height/2;
+  }
+
   ul.usersession-dropdown {
     position: absolute;
+    right: 0px;
+    z-index: 2;
     margin: 0;
     background: white;
     list-style: none;

@@ -65,12 +65,11 @@ func PostsCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	u, ok := c.Get("user")
-	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user"))
+	user, err := CurrentUser(c, &db)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
-	user := u.(User)
 
 	post := Post{
 		UserID:    user.ID,

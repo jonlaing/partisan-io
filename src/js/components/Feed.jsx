@@ -41,11 +41,6 @@ export default React.createClass({
 
     return (
       <div className="feed">
-        <div className="clearfix">
-          <div className="right">
-            <UserSession />
-          </div>
-        </div>
         <PostComposer />
         <ReactCSSTransitionGroup transitionName="feed">
           {cards}

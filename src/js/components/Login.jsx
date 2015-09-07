@@ -6,7 +6,7 @@ import LoginStore from '../stores/LoginStore';
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 function getStateFromStore() {
-  return LoginStore.getState();
+  return LoginStore.getLoginState();
 }
 
 export default React.createClass({
