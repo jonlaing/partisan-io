@@ -1,7 +1,7 @@
 import keyMirror from 'react/lib/keyMirror';
 
 export default {
-  APIROOT: '/api/v1/',
+  APIROOT: '/api/v1',
 
   // event name triggered from store, listened to by views
   CHANGE_EVENT: 'change',
@@ -18,7 +18,10 @@ export default {
     FETCHED_USER: null,
 
     SIGN_UP_SUCCESS: null,
-    SIGN_UP_FAIL: null
+    SIGN_UP_FAIL: null,
+
+    GET_QUESTION_SUCESS: null,
+    GET_QUESTION_FAIL: null
   }),
 
   ActionSources: keyMirror({

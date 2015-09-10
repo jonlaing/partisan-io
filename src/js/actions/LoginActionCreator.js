@@ -37,7 +37,7 @@ export default {
   },
 
   fetchCurrentUser() {
-    $.get(Constants.APIROOT + '/users/')
+    $.get(Constants.APIROOT + '/users')
       .always(function(res) {
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.FETCHED_USER,

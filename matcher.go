@@ -1,29 +1,27 @@
 package main
 
 import (
+	"database/sql/driver"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
-// Map is a 4x4 map of poltical opinions.
+// PoliticalMap is a 4x4 map of poltical opinions.
 // Everytime a question is answered, a point is added
 // to a sub quadrant.
 //
 //      ---------------------
-//      |  1 |  2 |  3 |  4 |
+//      |  0 |  1 |  2 |  3 |
 //      ---------------------
-//      |  5 |  6 |  7 |  8 |
+//      |  4 |  5 |  6 |  7 |
 //      ---------------------
-//      |  9 | 10 | 11 | 12 |
+//      |  8 |  9 | 10 | 11 |
 //      ---------------------
-//      | 13 | 14 | 15 | 16 |
+//      | 12 | 13 | 14 | 15 |
 //      ---------------------
 //
-type Map [16]int
-
-// PoliticalMap holds the map, because postgresql doesn't like storing slices, but is fine with structs (apparently?)
-type PoliticalMap struct {
-	Map Map
-}
+type PoliticalMap [16]int
 
 // Add records an answer and places it in the map
 func (p *PoliticalMap) Add(a Answer) error {
@@ -40,20 +38,56 @@ func (p *PoliticalMap) Add(a Answer) error {
 			return fmt.Errorf("Answer map coordinate out of range at %d! Must be 16 or less. Was %d", k, v)
 		}
 
-		if sign > 0 || p.Map[v] > 0 {
-			p.Map[v] += sign
+		if sign > 0 || p[v] > 0 {
+			p[v] += sign
 		}
 	}
 
-	for i := 0; i < 16; i++ {
-		if !contains(a.Map, i) {
-			if sign < 0 || p.Map[i] > 0 {
-				p.Map[i] -= sign
-			}
+        // not sure this is what I want so commenting it out
+	// for i := 0; i < 16; i++ {
+	// 	if !contains(a.Map, i) {
+	// 		if sign < 0 || p[i] > 0 {
+	// 			p[i] -= sign
+	// 		}
+	// 	}
+	// }
+
+	return nil
+}
+
+// Scan satisfies sql.Scanner interface
+func (p *PoliticalMap) Scan(src interface{}) error {
+	str, ok := src.([]byte)
+	if !ok {
+		return fmt.Errorf("Cannot scan values for PoliticalMap: %v", src)
+	}
+
+	strs := strings.Split(string(str), ",")
+	for i, val := range strs {
+		var err error
+		p[i], err = strconv.Atoi(val)
+		if err != nil {
+			return err
 		}
 	}
 
 	return nil
+}
+
+// Value satisfies driver.Valuer interface
+func (p PoliticalMap) Value() (driver.Value, error) {
+	str := ""
+
+	for i, val := range p {
+		if i == 0 {
+			str += fmt.Sprintf("%d", val)
+		} else {
+			str += fmt.Sprintf(",%d", val)
+		}
+	}
+
+	fmt.Println(str)
+	return str, nil
 }
 
 // Match returns the % match between two PoliticalMaps
@@ -63,12 +97,12 @@ func Match(p1, p2 PoliticalMap) (float64, error) {
 	matchPoints := 0 // Points among matching coordinates
 	totalPoints := 0 // total points of all subquadrants in both maps
 
-	for i := range p1.Map {
-		totalPoints += p1.Map[i] + p2.Map[i] // increase total points
+	for i := range p1 {
+		totalPoints += p1[i] + p2[i] // increase total points
 
 		// if both maps have points at this subquadrant
-		if p1.Map[i] != 0 && p2.Map[i] != 0 {
-			matchPoints += p1.Map[i] + p2.Map[i] // add points of intersecting subquadrants
+		if p1[i] != 0 && p2[i] != 0 {
+			matchPoints += p1[i] + p2[i] // add points of intersecting subquadrants
 		}
 	}
 
@@ -83,12 +117,12 @@ func Enemy(p1, p2 PoliticalMap) (float64, error) {
 	enemyPoints := 0 // Points among matching coordinates
 	totalPoints := 0 // total points of all subquadrants in both maps
 
-	for i := range p1.Map {
-		totalPoints += p1.Map[i] + p2.Map[i] // increase total points
+	for i := range p1 {
+		totalPoints += p1[i] + p2[i] // increase total points
 
 		// Logical XOR: Only add if only one map has points on the quadrant
-		if (p1.Map[i] != 0) != (p2.Map[i] != 0) {
-			enemyPoints += p1.Map[i] + p2.Map[i] // add points of intersecting subquadrants
+		if (p1[i] != 0) != (p2[i] != 0) {
+			enemyPoints += p1[i] + p2[i] // add points of intersecting subquadrants
 		}
 	}
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jasonmoo/geo"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -18,19 +19,23 @@ type Record interface {
 
 // User the user model
 type User struct {
-	ID              uint64       `json:"id" gorm:"primary_key"`
-	Username        string       `json:"username" sql:"not null,unique" binding:"required"`
-	FullName        string       `json:"full_name" binding:"required"`
-	Email           string       `json:"email" sql:"not null,unique" binding:"required"`
-	AvatarURL       string       `json:"avatar_url"`
-	PoliticalMap    PoliticalMap `json:"political_map"`
-	CreatedAt       time.Time    `json:"created_at"`
-	UpdatedAt       time.Time    `json:"updated_at"`
-	APIKey          string       `json:"-"`
-	APIKeyExp       time.Time    `json:"-"`
-	PasswordHash    []byte       `json:"-"`
-	Password        string       `json:"password" sql:"-" binding:"required"`
-	PasswordConfirm string       `json:"password_confirm" sql:"-" binding:"required"`
+	ID              uint64       `form:"id" json:"id" gorm:"primary_key"`
+	Username        string       `form:"username" json:"username" sql:"not null,unique" binding:"required"`
+	FullName        string       `form:"full_name" json:"full_name" binding:"required"`
+	Email           string       `form:"email" json:"email" sql:"not null,unique" binding:"required"`
+	AvatarURL       string       `form:avatar_url" json:"avatar_url"`
+	PoliticalMap    PoliticalMap `json:"political_map" sql:"type:varchar(255)"`
+	PostalCode      string       `form:"postal_code" json:"postal_code"`
+	Location        string       `json:"location"`
+	Longitude       float64
+	Latitude        float64
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	APIKey          string    `json:"-"`
+	APIKeyExp       time.Time `json:"-"`
+	PasswordHash    []byte    `json:"-"`
+	Password        string    `form:"password" json:"password" sql:"-" binding:"required"`
+	PasswordConfirm string    `form:"password_confirm" json:"password_confirm" sql:"-" binding:"required"`
 }
 
 // UserCreate is the sign up route
@@ -44,15 +49,14 @@ func UserCreate(c *gin.Context) {
 
 	validationErrs := make(map[string]string)
 
-	user := User{
-		Email:           c.Request.PostFormValue("email"),
-		Username:        c.Request.PostFormValue("username"),
-		FullName:        c.Request.PostFormValue("full_name"),
-		Password:        c.Request.PostFormValue("password"),
-		PasswordConfirm: c.Request.PostFormValue("password_confirm"),
-		CreatedAt:       time.Now(),
-		UpdatedAt:       time.Now(),
+	var user User
+	if err := c.Bind(&user); err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
+		return
 	}
+
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 
 	// VALIDATE
 	if user.Password != user.PasswordConfirm {
@@ -67,6 +71,10 @@ func UserCreate(c *gin.Context) {
 	usernameRegex := regexp.MustCompile("(?i)^[a-z0-9-_]+$")
 	if !usernameRegex.MatchString(user.Username) {
 		validationErrs["username"] = "Username can only have letters, numbers, dashes and underscores. Ex: my_username123"
+	}
+
+	if err := user.GetLocation(); err != nil {
+		validationErrs["postal_code"] = fmt.Sprintf("Error validating postal code. %s", err.Error())
 	}
 
 	if len(validationErrs) > 0 {
@@ -84,6 +92,14 @@ func UserCreate(c *gin.Context) {
 	user.PasswordHash = hash
 
 	if err := db.Create(&user).Error; err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
+		return
+	}
+
+	profile := Profile{
+		UserID: user.ID,
+	}
+	if err := db.Create(&profile).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
@@ -162,6 +178,20 @@ func (u User) FriendIDs(db *gorm.DB) []uint64 {
 	var friendIDs []uint64
 	db.Table("friendships").Select("friend_id").Where("confirmed = ?", true).Scan(&friendIDs)
 	return friendIDs
+}
+
+// GetLocation finds the latitude/longitude by postal code
+func (u *User) GetLocation() error {
+	address, err := geo.Geocode(u.PostalCode)
+	if err != nil {
+		return err
+	}
+
+	u.Location = address.Address
+	u.Latitude = address.Lat
+	u.Longitude = address.Lng
+
+	return nil
 }
 
 // CurrentUser gets the current user from the session

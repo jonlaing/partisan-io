@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>@{{ .user.Username }}'s Profile</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <div class="row clearfix">
+    <div class="large-2 columns right text-right">
+      <div id="user-session">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-2 column">
+      Some links here
+    </div>
+    <div class="large-10 columns">
+      <div id="profile-show">
+        <!-- Flux goes here -->
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var profileData = {
+      "profile": {{ .profile }},
+      "user": {{ .user }},
+      "match": {{ .match }},
+      "enemy": {{ .enemy }},
+    };
+  </script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

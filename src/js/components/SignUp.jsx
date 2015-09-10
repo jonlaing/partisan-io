@@ -1,4 +1,3 @@
-/*global $ */
 import React from 'react';
 import SignUpActionCreator from '../actions/SignUpActionCreator';
 import SignUpStore from '../stores/SignUpStore';
@@ -11,16 +10,18 @@ export default React.createClass({
   handleSubmit() {
     let email = $(React.findDOMNode(this.refs.email)).val();
     let username = $(React.findDOMNode(this.refs.username)).val();
-    let fullName = $(React.findDOMNode(this.refs.full_name)).val();
+    let fullName = $(React.findDOMNode(this.refs.fullName)).val();
+    let postalCode = $(React.findDOMNode(this.refs.postalCode)).val();
     let password = $(React.findDOMNode(this.refs.password)).val();
-    let passwordConfirm = $(React.findDOMNode(this.refs.password_confirm)).val();
+    let passwordConfirm = $(React.findDOMNode(this.refs.passwordConfirm)).val();
 
     let user = {
       email: email,
       username: username,
-      full_name: fullName,
+      fullName: fullName,
+      postalCode: postalCode,
       password: password,
-      password_confirm: passwordConfirm
+      passwordConfirm: passwordConfirm
     };
 
     SignUpActionCreator.signUp(user);
@@ -36,7 +37,7 @@ export default React.createClass({
 
   componentDidUpdate() {
     if(this.state.success === true) {
-      window.location.href = "/feed.html";
+      window.location.href = "/questions.html";
     }
   },
 
@@ -58,13 +59,16 @@ export default React.createClass({
           {this._error("username")}
         </div>
         <div className="form-input">
-          <input type="text" placeholder="Full Name" ref="full_name" />
+          <input type="text" placeholder="Full Name" ref="fullName" />
+        </div>
+        <div className="form-input">
+          <input type="text" placeholder="Postal Code ex: 11211" ref="postalCode" />
         </div>
         <div className="form-input">
           <input type="password" placeholder="Password" ref="password" />
         </div>
         <div className={"form-input" + this._hasError("password_confirm")}>
-          <input type="password" placeholder="Password Confirm" ref="password_confirm" />
+          <input type="password" placeholder="Password Confirm" ref="passwordConfirm" />
           {this._error("password_confirm")}
         </div>
         <button onClick={this.handleSubmit}>Sign Up</button>

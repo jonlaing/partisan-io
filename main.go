@@ -33,6 +33,14 @@ func main() {
 			users.GET("/:user_id/match", UserMatch)
 		}
 
+		profiles := r.Group(v1Root + "/profiles")
+		profiles.Use(Auth())
+		{
+			profiles.GET("/", ProfileShow)         // Show Current User's profile
+			profiles.GET("/:user_id", ProfileShow) // Show Other User's profile
+			// profiles.PATCH("/:user_id", ProfileUpdate) // Show Other User's profile
+		}
+
 		friends := r.Group(v1Root + "/friends")
 		friends.Use(Auth())
 		{
@@ -44,8 +52,7 @@ func main() {
 		questions := r.Group(v1Root + "/questions")
 		questions.Use(Auth())
 		{
-			questions.GET("/", QuestionsTest)
-			// questions.GET("/", QuestionsIndex)
+			questions.GET("/", QuestionShow)
 		}
 
 		answers := r.Group(v1Root + "/answers")
@@ -68,6 +75,15 @@ func main() {
 
 	}
 
+	// HTML
+	r.LoadHTMLGlob("templates/*")
+	htmlProfiles := r.Group("/profiles")
+	htmlProfiles.Use(Auth())
+	{
+		// htmlProfiles.GET("/", ProfileHTMLShowCurrent) // Will show editing options
+		htmlProfiles.GET("/:user_id", ProfileHTMLShow)
+	}
+
 	r.Use(static.Serve("/", static.LocalFile("dist", false)))
 
 	// Database Operations
@@ -75,7 +91,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&Post{}, &User{}, &Friendship{}, &FeedItem{}, &Like{}, &Dislike{})
+	db.AutoMigrate(&Post{}, &User{}, &Friendship{}, &FeedItem{}, &Like{}, &Dislike{}, &Profile{})
 
 	r.Run(":4000")
 }

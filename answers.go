@@ -1,66 +1,61 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	// "net/http"
+	"net/http"
 )
-
 
 // Answer is an answer to a question, included are the coordinates
 // of the question, and whether or not the user agreed
 // The Map should be in the form of [1,5,9,13] (which would be the entire far-left).
 // Check Matcher for more details on the map
 type Answer struct {
-	Map   []int  `json:"map"` // defined in matcher.go
-	Agree bool `json:"agree"`
+	Map   []int `json:"map" form:"map"` // defined in matcher.go
+	Agree bool  `json:"agree" form:"agree"`
 }
 
 // AnswersUpdate updates the coordinates of user based on question answers
 func AnswersUpdate(c *gin.Context) {
-	// db, err := initDB()
-	// if err != nil {
-	// 	c.AbortWithError(http.StatusInternalServerError, err)
-	// 	return
-	// }
-	// defer db.Close()
+	db, err := initDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
 
-	// as := []Answer{}
-	// user := User{}
+	user, err := CurrentUser(c, &db)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
 
-	// if err := c.BindJSON(&as); err != nil {
-	// 	c.AbortWithError(http.StatusBadRequest, err)
-	// 	return
-	// }
+	a := Answer{}
 
-	// // Get the User
-	// userID, ok := c.Get("user_id")
-	// if !ok {
-	// 	c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
-	// 	return
-	// }
+	if err := c.BindJSON(&a); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
 
-	// if err := db.First(&user, userID).Error; err != nil {
-	// 	c.AbortWithError(http.StatusNotFound, err)
-	// 	return
-	// }
+        fmt.Println(c.Request)
+	if len(a.Map) == 0 {
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Answer doesn't have map. Probably an error in binding"))
+		return
+	}
 
-	// var mapErrors []map[string]interface{}
-	// for _, a := range as {
-	// 	err := user.PoliticalMap.Add(a)
-	// 	if err != nil {
-	// 		mapErrors = append(mapErrors, map[string]interface{}{"index": a.Index, "error": err.Error()})
-	// 	}
-	// }
+	fmt.Println(a)
 
-	// if err := db.Save(&user).Error; err != nil {
-	// 	c.AbortWithError(http.StatusNotAcceptable, err)
-	// 	return
-	// }
+	err = user.PoliticalMap.Add(a)
+	if err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
+	}
 
-	// if len(mapErrors) > 0 {
-	// 	c.JSON(http.StatusOK, mapErrors)
-	// } else {
-	// 	c.JSON(http.StatusOK, gin.H{"message": "updated"})
-	// }
+	// fmt.Println(user.PoliticalMap)
+
+	if err := db.Save(&user).Error; err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "updated"})
 }

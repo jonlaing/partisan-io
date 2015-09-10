@@ -14,7 +14,9 @@ export default React.createClass({
               <img className="user-avatar" src="" />
             </div>
             <div className="post-user">
-              <h4 className="post-username">@{this.props.data.user.username}</h4>
+              <h4 className="post-username">
+                <a href={"/profiles/" + this.props.data.user.id}>@{this.props.data.user.username}</a>
+              </h4>
               <span className="post-timestamp">{moment(this.props.data.post.created_at).fromNow()}</span>
             </div>
           </div>
