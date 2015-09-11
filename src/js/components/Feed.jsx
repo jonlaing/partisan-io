@@ -29,7 +29,7 @@ export default React.createClass({
   },
 
   render() {
-    var cards;
+    var cards, nothing;
 
     cards = this.state.feed.map(function(item, i) {
       return (
@@ -39,12 +39,17 @@ export default React.createClass({
       );
     });
 
+    if(this.state.feed.length === 0) {
+      nothing = (<strong>Nothing here yet!</strong>);
+    }
+
     return (
       <div className="feed">
         <PostComposer />
         <ReactCSSTransitionGroup transitionName="feed">
           {cards}
         </ReactCSSTransitionGroup>
+        {nothing}
       </div>
     );
   },

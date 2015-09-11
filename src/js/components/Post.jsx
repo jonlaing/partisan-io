@@ -24,7 +24,7 @@ export default React.createClass({
             {this.props.data.post.body}
           </div>
         </div>
-        <PostActions id={this.props.data.post.id} likeCount={this.props.data.like_count} dislikeCount={this.props.data.dislike_count} commentCount={this.props.data.comment_count} />
+        <PostActions id={this.props.data.post.id} />
       </div>
     );
   }

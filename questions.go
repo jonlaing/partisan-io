@@ -61,7 +61,7 @@ func init() {
 			Map:    []int{2, 3, 6, 7, 10, 11},
 		},
 		Question{
-			Prompt: "It is the duty of the enlightened world to spread democracy, by force if necessary.",
+			Prompt: "It is the duty of the enlightened world to spread Democracy, by force if necessary.",
 			Map:    []int{2, 3, 6, 7, 10, 11},
 		},
 		Question{
@@ -73,7 +73,7 @@ func init() {
 
 // QuestionShow shows a random question
 func QuestionShow(c *gin.Context) {
-	index := rand.Intn(len(questions) - 1)
+	index := rand.Intn(len(questions))
 
 	quest := questions[index]
 

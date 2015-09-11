@@ -20,9 +20,6 @@ type Post struct {
 type PostResponse struct {
 	Post         Post `json:"post"`
 	User         User `json:"user"`
-	LikeCount    int  `json:"like_count"`
-	DislikeCount int  `json:"dislike_count"`
-	CommentCount int  `json:"comment_count"`
 }
 
 // PostsIndex display all posts

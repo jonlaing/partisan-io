@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 // Like is polymorphic
@@ -40,11 +41,11 @@ func LikeCreate(c *gin.Context) {
 	var like Like
 	user, _ := CurrentUser(c, &db)
 
-	postID, ok := c.Get("post_id")
-	if ok {
+	postID := c.Param("post_id")
+	if pID, err := strconv.ParseUint(postID, 10, 64); err == nil {
 		like = Like{
 			UserID:     user.ID,
-			RecordID:   postID.(uint64),
+			RecordID:   pID,
 			RecordType: "post",
 		}
 
