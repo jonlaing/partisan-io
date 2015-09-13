@@ -28,8 +28,12 @@
       padding: 0;
       padding-right: $line-height*2;
       background: none;
-      color: $action-color;
+      color: $secondary-color;
       transition: color 0.3s ease;
+
+      &.active {
+        color: $action-color;
+      }
 
       &:last-child {
         padding: 0;

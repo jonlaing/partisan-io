@@ -70,11 +70,11 @@ func main() {
 		{
 			posts.GET("/", api.PostsIndex)
 			posts.POST("/", api.PostsCreate)
-			posts.GET("/:id", api.PostsShow)
+			// posts.GET("/:id", api.PostsShow)
 			posts.PATCH("/:id", api.PostsUpdate)
 			posts.DELETE("/:id", api.PostsDestroy)
-			posts.POST("/:post_id/like", api.LikeCreate)
-			posts.POST("/:post_id/dislike", api.DislikeCreate)
+			posts.GET("/:post_id/likes", api.LikeCount)
+			posts.POST("/:post_id/likes", api.LikeCreate)
 		}
 
 	}
@@ -95,7 +95,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Dislike{}, &m.Profile{})
+	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Profile{})
 
 	r.Run(":4000")
 }

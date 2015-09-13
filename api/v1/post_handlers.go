@@ -96,38 +96,38 @@ func PostsCreate(c *gin.Context) {
 	c.JSON(http.StatusOK, feedItem)
 }
 
-// PostsShow show a post
-func PostsShow(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+// // PostsShow show a post
+// func PostsShow(c *gin.Context) {
+// 	db, err := db.InitDB()
+// 	if err != nil {
+// 		c.AbortWithError(http.StatusInternalServerError, err)
+// 		return
+// 	}
+// 	defer db.Close()
 
-	post := m.Post{
-		ID:        123,
-		Body:      "this is how we do it! (uhuh)",
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-	user := m.User{
-		Username: "Franny_Frumpernickle",
-	}
-	// id := c.Params.ByName("id")
+// 	post := m.Post{
+// 		ID:        123,
+// 		Body:      "this is how we do it! (uhuh)",
+// 		CreatedAt: time.Now(),
+// 		UpdatedAt: time.Now(),
+// 	}
+// 	user := m.User{
+// 		Username: "Franny_Frumpernickle",
+// 	}
+// 	// id := c.Params.ByName("id")
 
-	// if err := db.First(&post, id).Related(&user).Error; err != nil {
-	// 	c.AbortWithError(http.StatusNotFound, err)
-	// 	return
-	// }
+// 	// if err := db.First(&post, id).Related(&user).Error; err != nil {
+// 	// 	c.AbortWithError(http.StatusNotFound, err)
+// 	// 	return
+// 	// }
 
-	resp := PostResponse{
-		Post: post,
-		User: user,
-	}
+// 	resp := PostResponse{
+// 		Post: post,
+// 		User: user,
+// 	}
 
-	c.JSON(http.StatusOK, resp)
-}
+// 	c.JSON(http.StatusOK, resp)
+// }
 
 // PostsUpdate update a post
 func PostsUpdate(c *gin.Context) {

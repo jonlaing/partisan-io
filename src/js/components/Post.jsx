@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import PostActions from './PostActions.jsx'; // TODO: Rename this dumb shit
+import PostLikes from './PostLikes.jsx';
 
 export default React.createClass({
 
@@ -24,7 +24,9 @@ export default React.createClass({
             {this.props.data.post.body}
           </div>
         </div>
-        <PostActions id={this.props.data.post.id} />
+        <div className="post-actions">
+          <PostLikes id={this.props.data.post.id} />
+        </div>
       </div>
     );
   }

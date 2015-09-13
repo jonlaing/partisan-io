@@ -21,7 +21,12 @@ export default {
     SIGN_UP_FAIL: null,
 
     GET_QUESTION_SUCESS: null,
-    GET_QUESTION_FAIL: null
+    GET_QUESTION_FAIL: null,
+
+    LIKE_SUCCESS: null,
+    LIKE_FAIL: null,
+    UNLIKE_SUCCESS: null,
+    UNLIKE_FAIL: null
   }),
 
   ActionSources: keyMirror({

@@ -1,24 +1,40 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
-        m "partisan/models"
-        "partisan/db"
 	"partisan/auth"
+	"partisan/db"
+	m "partisan/models"
+	"strconv"
 )
 
+// LikeCount shows the like count for a particular record
+func LikeCount(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	user, _ := auth.CurrentUser(c, &db)
+	postID := c.Param("post_id")
+	if pID, err := strconv.ParseUint(postID, 10, 64); err == nil {
+		var count int
+		db.Where("record_type = ? AND record_id = ?", "post", pID).Find(&[]m.Like{}).Count(&count)
+
+		var userCount int
+		db.Where("record_type = ? AND record_id = ? AND user_id= ? ", "post", pID, user.ID).Find(&[]m.Like{}).Count(&userCount)
+
+		c.JSON(http.StatusOK, gin.H{"record_type": "post", "record_id": pID, "like_count": count, "liked": userCount > 0})
+		return
+	}
+}
 
 // LikeCreate creates a Like for a particular record
 func LikeCreate(c *gin.Context) {
-	// type conversion from getting user from context can cause panic
-	defer func() {
-		if r := recover(); r != nil {
-			c.AbortWithStatus(http.StatusInternalServerError)
-		}
-	}()
-
 	db, err := db.InitDB()
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -27,6 +43,8 @@ func LikeCreate(c *gin.Context) {
 	defer db.Close()
 
 	var like m.Like
+	var count int
+	var userCount int
 	user, _ := auth.CurrentUser(c, &db)
 
 	postID := c.Param("post_id")
@@ -35,44 +53,34 @@ func LikeCreate(c *gin.Context) {
 			UserID:     user.ID,
 			RecordID:   pID,
 			RecordType: "post",
+			IsDislike:  false,
 		}
 
-		if err := db.Create(&like).Error; err != nil {
-			c.AbortWithError(http.StatusNotAcceptable, err)
-			return
+		// get the current count of likes
+		if err := db.Where("record_type = ? AND record_id = ?", "post", pID).Find(&[]m.Like{}).Count(&count).Error; err != nil {
+			count = 0
 		}
 
-		c.JSON(http.StatusCreated, gin.H{"message": "liked"})
-		return
-	}
-}
-
-// DislikeCreate creates a Dislike for a particular record
-func DislikeCreate(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
-
-	var dislike m.Dislike
-	user, _ := auth.CurrentUser(c, &db)
-
-	postID, ok := c.Get("post_id")
-	if ok {
-		dislike = m.Dislike{
-			UserID:     user.ID,
-			RecordID:   postID.(uint64),
-			RecordType: "post",
+		// get the number of likes associated with a user
+		if err := db.Where("record_type = ? AND record_id = ? AND user_id = ?", "post", pID, user.ID).Find(&[]m.Like{}).Count(&userCount).Error; err != nil {
+			userCount = 0
 		}
 
-		if err := db.Create(&dislike).Error; err != nil {
-			c.AbortWithError(http.StatusNotAcceptable, err)
-			return
+		// if the there is no like record associated with the user
+		if userCount < 1 {
+			// create a like record
+			if err := db.Create(&like).Error; err != nil {
+				c.AbortWithError(http.StatusNotAcceptable, err)
+				return
+			}
+			// return the old count + 1
+			c.JSON(http.StatusCreated, gin.H{"record_type": "post", "record_id": pID, "like_count": count + 1, "liked": true})
+		} else {
+			if err := db.Where("record_type = ? AND record_id = ? AND user_id = ?", "post", pID, user.ID).Delete(m.Like{}).Error; err != nil {
+				fmt.Println("problem deleting like:", err)
+			}
+			c.JSON(http.StatusCreated, gin.H{"record_type": "post", "record_id": pID, "like_count": count - 1, "liked": false})
 		}
-
-		c.JSON(http.StatusCreated, gin.H{"message": "disliked"})
 		return
 	}
 }
