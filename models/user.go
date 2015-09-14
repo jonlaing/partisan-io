@@ -15,6 +15,8 @@ type User struct {
 	Email           string               `form:"email" json:"email" sql:"not null,unique" binding:"required"`
 	AvatarURL       string               `form:avatar_url" json:"avatar_url"`
 	PoliticalMap    matcher.PoliticalMap `json:"political_map" sql:"type:varchar(255)"`
+	CenterX int 	`json:"center_x"`
+	CenterY int 	`json:"center_y"`
 	PostalCode      string               `form:"postal_code" json:"postal_code"`
 	Location        string               `json:"location"`
 	Longitude       float64

@@ -13,6 +13,7 @@ import UserSession from './components/UserSession.jsx';
 import Feed from './components/Feed.jsx';
 import Questions from './components/Questions.jsx';
 import ProfileShow from './components/ProfileShow.jsx';
+import Matches from './components/Matches.jsx';
 
 // optionally attack DOM elements to React
 let login = document.getElementById('login');
@@ -21,6 +22,7 @@ let userSession = document.getElementById('user-session');
 let feed = document.getElementById('feed');
 let questions = document.getElementById('questions');
 let profileShow = document.getElementById('profile-show');
+let matches = document.getElementById('matches');
 
 // for static login page
 if(login !== null) {
@@ -46,4 +48,8 @@ if(questions !== null) {
 
 if(profileShow !== null) {
   React.render(<ProfileShow user={profileData.user} match={profileData.match} enemy={profileData.match} />, profileShow);
+}
+
+if(matches !== null) {
+  React.render(<Matches/>, matches);
 }

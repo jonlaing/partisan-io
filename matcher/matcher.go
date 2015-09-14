@@ -3,6 +3,7 @@ package matcher
 import (
 	"database/sql/driver"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -43,16 +44,41 @@ func (p *PoliticalMap) Add(aMap []int, agree bool) error {
 		}
 	}
 
-        // not sure this is what I want so commenting it out
-	// for i := 0; i < 16; i++ {
-	// 	if !contains(aMap, i) {
-	// 		if sign < 0 || p[i] > 0 {
-	// 			p[i] -= sign
-	// 		}
-	// 	}
-	// }
-
 	return nil
+}
+
+// Center finds the center of gravity of the map for faster lookups in SQL
+// Based on actual center of gravity math for two dimenions.
+// There are some people that will come up with a weird coordinate, but it should
+// be the minority. Most people should have fairly large clusters in one spot,
+// so it'll make the initial SQL look up easier to match them.
+// TODO: Actually test this with real people and real questions
+func (p *PoliticalMap) Center() (int, int) {
+	var x, y, t float64
+
+	// distance from the "origin"
+	// moving up by two places at a time (since there's no 0 on the grid)
+	xCoef := []int{
+		-3, 1, 1, 3,
+		-3, 1, 1, 3,
+		-3, 1, 1, 3,
+		-3, 1, 1, 3,
+	}
+
+	yCoef := []int{
+		3, 3, 3, 3,
+		1, 1, 1, 1,
+		-1, -1, -1, -1,
+		-3, -3, -3, -3,
+	}
+
+	for k, v := range p {
+		x += float64(v * xCoef[k])
+		y += float64(v * yCoef[k])
+		t += float64(v)
+	}
+
+	return int(math.Ceil(x / t * 100)), int(math.Ceil(y / t * 100))
 }
 
 // Scan satisfies sql.Scanner interface
