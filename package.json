@@ -3,7 +3,7 @@
   "repository": "https://github.com/jonlaing/partisan-io",
   "version": "0.1.0",
   "description": "Partisan: Social networking app for discussion (arguing) regarding politics.",
-  "author": "",
+  "author": "Jon Laing",
   "license": "MIT",
   "devDependencies": {
     "babelify": "^6.1.1",

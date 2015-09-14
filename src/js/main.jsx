@@ -2,6 +2,9 @@
 import React from 'react';
 import jQuery from 'jquery';
 
+import Events from 'events';
+Events.EventEmitter.prototype._maxListeners = 100;
+
 global.$ = jQuery;
 
 import Login from './components/Login.jsx';

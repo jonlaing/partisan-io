@@ -5,7 +5,6 @@ import FeedStore from '../stores/FeedStore.js';
 import Card from './Card.jsx';
 import Post from './Post.jsx';
 import PostComposer from './PostComposer.jsx';
-import UserSession from './UserSession.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
@@ -32,11 +31,13 @@ export default React.createClass({
     var cards, nothing;
 
     cards = this.state.feed.map(function(item, i) {
-      return (
-        <Card key={i}>
-          <Post data={item.record} />
-        </Card>
-      );
+      if(item.record_type === "post") {
+        return (
+          <Card key={i}>
+            <Post data={item.record} />
+          </Card>
+        );
+      }
     });
 
     if(this.state.feed.length === 0) {

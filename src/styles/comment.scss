@@ -1,0 +1,16 @@
+@import './typography.scss';
+@import './colors.scss';
+
+.comment {
+  padding: $line-height $line-height*2;
+  background: $light-grey;
+}
+
+.comment-author {
+  font-weight: bold;
+}
+
+.comment-meta {
+  font-size: $line-height*0.75;
+  color: $grey;
+}

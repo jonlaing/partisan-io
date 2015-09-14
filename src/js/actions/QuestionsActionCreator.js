@@ -26,8 +26,6 @@ export default {
   answerQuestion(question, agree) {
     let self = this;
 
-    console.log(question.map);
-
     $.ajax({
       url: Constants.APIROOT + '/answers',
       data: JSON.stringify({

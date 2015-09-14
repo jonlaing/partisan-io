@@ -9,12 +9,12 @@ export default React.createClass({
 
   handleLike() {
     this.setState({liked: !this.state.liked});
-    LikeActionCreator.like("posts", this.props.id);
+    LikeActionCreator.like(this.props.type, this.props.id);
   },
 
   componentDidMount() {
     LikeStore.addChangeListener(this._onChange);
-    LikeActionCreator.getLikes("posts", this.props.id);
+    LikeActionCreator.getLikes(this.props.type, this.props.id);
   },
 
   componentWillUnmount() {
@@ -33,8 +33,7 @@ export default React.createClass({
   },
 
   _onChange() {
-    let state = LikeStore.getLikes("post", this.props.id);
-    console.log(state);
+    let state = LikeStore.getLikes(this.props.type, this.props.id);
     this.setState(state);
   }
 });

@@ -73,8 +73,19 @@ func main() {
 			// posts.GET("/:id", api.PostsShow)
 			posts.PATCH("/:id", api.PostsUpdate)
 			posts.DELETE("/:id", api.PostsDestroy)
-			posts.GET("/:post_id/likes", api.LikeCount)
-			posts.POST("/:post_id/likes", api.LikeCreate)
+			posts.GET("/:record_id/likes", api.LikeCount)
+			posts.POST("/:record_id/likes", api.LikeCreate)
+
+			posts.GET("/:record_id/comments", api.CommentsIndex)
+			posts.GET("/:record_id/comments/count", api.CommentsCount)
+		}
+
+		comments := r.Group(v1Root + "/comments")
+		comments.Use(auth.Auth())
+		{
+			comments.POST("/", api.CommentsCreate)
+			comments.GET("/:record_id/likes", api.LikeCount)
+			comments.POST("/:record_id/likes", api.LikeCreate)
 		}
 
 	}
@@ -95,7 +106,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Profile{})
+	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Profile{}, &m.Comment{})
 
 	r.Run(":4000")
 }

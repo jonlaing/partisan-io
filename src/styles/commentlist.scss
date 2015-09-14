@@ -1,0 +1,18 @@
+.commentlist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.commentlist-item-enter {
+  opacity: 0;
+  max-height: 0px;
+  transition: all .3s ease;
+
+  &.commentlist-item-enter-active {
+    max-height: 1000px;
+    opacity: 1;
+  }
+}
+
+

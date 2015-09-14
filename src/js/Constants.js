@@ -25,8 +25,17 @@ export default {
 
     LIKE_SUCCESS: null,
     LIKE_FAIL: null,
+    GET_LIKES_SUCCESS: null,
+    GET_LIKES_FAIL: null,
     UNLIKE_SUCCESS: null,
-    UNLIKE_FAIL: null
+    UNLIKE_FAIL: null,
+
+    GET_COMMENT_COUNT_SUCCESS: null,
+    GET_COMMENT_COUNT_FAIL: null,
+    GET_COMMENTS_SUCCESS: null,
+    GET_COMMENTS_FAIL: null,
+    CREATE_COMMENT_SUCCESS: null,
+    CREATE_COMMENT_FAIL: null
   }),
 
   ActionSources: keyMirror({

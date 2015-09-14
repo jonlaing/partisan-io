@@ -7,17 +7,20 @@ import assign from 'object-assign';
 
 // data storage
 let _postLikes = [];
+let _commentLikes = [];
 let _liked = [];
 
 // Facebook style store creation.
 const LikeStore = assign({}, BaseStore, {
   // public methods used by Controller-View to operate on data
   getLikes(type, id) {
-    console.log(_postLikes);
     switch(type) {
       case "post":
       case "posts":
         return {likeCount: _postLikes[id], liked: _liked[id]};
+      case "comment":
+      case "comments":
+        return {likeCount: _commentLikes[id], liked: _liked[id]};
       default:
         break;
     }
@@ -30,7 +33,6 @@ const LikeStore = assign({}, BaseStore, {
     switch(action.type) {
       case Constants.ActionTypes.GET_LIKES_SUCCESS:
         _addLike(action.data);
-        console.log(action.data);
         LikeStore.emitChange();
         break;
       case Constants.ActionTypes.LIKE_SUCCESS:
@@ -43,12 +45,15 @@ const LikeStore = assign({}, BaseStore, {
 });
 
 function _addLike(data) {
-      console.log(data.record_type);
-      console.log(data.like_count);
   switch(data.record_type) {
     case "post":
     case "posts":
       _postLikes[data.record_id] = data.like_count;
+      _liked[data.record_id] = data.liked;
+      break;
+    case "comment":
+    case "comments":
+      _commentLikes[data.record_id] = data.like_count;
       _liked[data.record_id] = data.liked;
       break;
     default:

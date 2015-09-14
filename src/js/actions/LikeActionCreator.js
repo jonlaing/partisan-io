@@ -29,14 +29,12 @@ export default {
       dataType: 'json'
     })
       .done(function(res) {
-        console.log(res);
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.LIKE_SUCCESS,
           data: res
         });
       })
       .fail(function(res) {
-        console.log(res);
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.LIKE_FAIL,
           data: res

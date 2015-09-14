@@ -1,0 +1,31 @@
+@import './colors.scss';
+@import './typography.scss';
+
+button.like {
+  padding: 0;
+  padding-right: $line-height*2;
+  background: none;
+  color: $secondary-color;
+  transition: color 0.3s ease;
+
+  &.active {
+    color: $action-color;
+  }
+
+  &:last-child {
+    padding: 0;
+  }
+
+  &:hover {
+    color: darken($action-color, 10%);
+  }
+
+  i {
+    font-size: 150%;
+    margin-right: $line-height/2;
+
+    &.fi-dislike, &.fi-comment {
+      vertical-align: $line-height/-4;
+    }
+  }
+}

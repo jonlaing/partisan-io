@@ -1,9 +1,20 @@
 import React from 'react';
 import moment from 'moment';
 
-import PostLikes from './PostLikes.jsx';
+import Likes from './Likes.jsx';
+import CommentCounter from './CommentCounter.jsx';
+import CommentComposer from './CommentComposer.jsx';
+import CommentList from './CommentList.jsx';
 
 export default React.createClass({
+  getInitialState() {
+    return {showComments: false};
+  },
+
+  handleToggleComments() {
+    let show = !this.state.showComments;
+    this.setState({showComments: show});
+  },
 
   render() {
     return (
@@ -25,7 +36,15 @@ export default React.createClass({
           </div>
         </div>
         <div className="post-actions">
-          <PostLikes id={this.props.data.post.id} />
+          <CommentCounter id={this.props.data.post.id} type="posts" className="right" onClick={this.handleToggleComments} />
+          <Likes id={this.props.data.post.id} type="posts" />
+          <div className="clearfix"></div>
+        </div>
+        <div className="post-comments">
+          <div className={this.state.showComments ? "" : "hide"}>
+            <CommentList id={this.props.data.post.id} type="posts" />
+            <CommentComposer id={this.props.data.post.id} type="posts" />
+          </div>
         </div>
       </div>
     );
