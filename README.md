@@ -1,5 +1,4 @@
-
-# Partisan (partisan)
+# Partisan.IO
 
 > Social networking app for discussion (arguing) regarding politics.
 
