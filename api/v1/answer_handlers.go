@@ -41,6 +41,10 @@ func AnswersUpdate(c *gin.Context) {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 	}
 
+	x, y := user.PoliticalMap.Center()
+	user.CenterX = x
+	user.CenterY = y
+
 	if err := db.Save(&user).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return

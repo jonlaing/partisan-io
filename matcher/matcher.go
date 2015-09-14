@@ -78,7 +78,11 @@ func (p *PoliticalMap) Center() (int, int) {
 		t += float64(v)
 	}
 
-	return int(math.Ceil(x / t * 100)), int(math.Ceil(y / t * 100))
+	if t > 0 {
+		return int(math.Ceil(x * 100 / t / 3)), int(math.Ceil(y * 100 / t / 3))
+	}
+
+	return 0, 0
 }
 
 // Scan satisfies sql.Scanner interface
@@ -133,26 +137,6 @@ func Match(p1, p2 PoliticalMap) (float64, error) {
 	}
 
 	return float64(matchPoints) / float64(totalPoints), nil
-}
-
-// Enemy returns the % enemy between two PoliticalMaps
-// This calculates the heat of quadrants where there
-// is no overlap in the two political maps. If both
-// maps have points on a quadrant, it is ignored.
-func Enemy(p1, p2 PoliticalMap) (float64, error) {
-	enemyPoints := 0 // Points among matching coordinates
-	totalPoints := 0 // total points of all subquadrants in both maps
-
-	for i := range p1 {
-		totalPoints += p1[i] + p2[i] // increase total points
-
-		// Logical XOR: Only add if only one map has points on the quadrant
-		if (p1[i] != 0) != (p2[i] != 0) {
-			enemyPoints += p1[i] + p2[i] // add points of intersecting subquadrants
-		}
-	}
-
-	return float64(enemyPoints) / float64(totalPoints), nil
 }
 
 func contains(a []int, i int) bool {

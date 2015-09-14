@@ -88,6 +88,12 @@ func main() {
 			comments.POST("/:record_id/likes", api.LikeCreate)
 		}
 
+		matches := r.Group(v1Root + "/matches")
+		matches.Use(auth.Auth())
+		{
+			matches.GET("/", api.MatchesIndex)
+		}
+
 	}
 
 	// HTML

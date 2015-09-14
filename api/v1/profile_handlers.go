@@ -4,10 +4,10 @@ import (
 	// "encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"partisan/auth"
 	"partisan/db"
 	"partisan/matcher"
 	m "partisan/models"
-	"partisan/auth"
 )
 
 // ProfileResp is the JSON response for a show
@@ -15,7 +15,6 @@ type ProfileResp struct {
 	Profile m.Profile `json:"profile"`
 	User    m.User    `json:"user"`
 	Match   float64   `json:"match"`
-	Enemy   float64   `json:"enemy"`
 }
 
 const (
@@ -75,12 +74,8 @@ func ProfileShow(c *gin.Context) {
 	// If this is not the current user, do the match
 	if user.ID != currentUser.ID {
 		match, _ := matcher.Match(user.PoliticalMap, currentUser.PoliticalMap)
-		enemy, _ := matcher.Enemy(user.PoliticalMap, currentUser.PoliticalMap)
-
 		resp.Match = match
-		resp.Enemy = enemy
 	}
 
 	c.JSON(http.StatusOK, resp)
 }
-

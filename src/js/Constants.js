@@ -35,7 +35,9 @@ export default {
     GET_COMMENTS_SUCCESS: null,
     GET_COMMENTS_FAIL: null,
     CREATE_COMMENT_SUCCESS: null,
-    CREATE_COMMENT_FAIL: null
+    CREATE_COMMENT_FAIL: null,
+
+    GET_MATCHES: null
   }),
 
   ActionSources: keyMirror({

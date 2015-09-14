@@ -56,6 +56,9 @@ export default React.createClass({
         <div className="form-input">
           <input type="password" placeholder="Password" ref="password" />
         </div>
+        <div className="right">
+          <a href="/sign-up.html">Sign Up</a>
+        </div>
         <button onClick={this.handleLogin}>Login</button>
       </div>
     );

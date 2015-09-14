@@ -45,7 +45,6 @@ func ProfileShow(c *gin.Context) {
 	}
 
 	match, _ := matcher.Match(user.PoliticalMap, currentUser.PoliticalMap)
-	enemy, _ := matcher.Enemy(user.PoliticalMap, currentUser.PoliticalMap)
 
 	fmt.Println("dafuq")
 	c.HTML(http.StatusOK, "profile_show.html",
@@ -53,6 +52,5 @@ func ProfileShow(c *gin.Context) {
 			"profile": profile,
 			"user":    user,
 			"match":   fmt.Sprintf("%.f", match*100),
-			"enemy":   fmt.Sprintf("%.f", enemy*100),
 		})
 }
