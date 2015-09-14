@@ -17,6 +17,16 @@ export default React.createClass({
   },
 
   render() {
+    var comments;
+
+    if(this.state.showComments === true) {
+      comments = (
+        <div>
+          <CommentList id={this.props.data.post.id} type="posts" show={this.state.showComments}/>
+          <CommentComposer id={this.props.data.post.id} type="posts" />
+        </div>
+      );
+    }
     return (
       <div className="post">
         <div className="card-body">
@@ -41,10 +51,7 @@ export default React.createClass({
           <div className="clearfix"></div>
         </div>
         <div className="post-comments">
-          <div className={this.state.showComments ? "" : "hide"}>
-            <CommentList id={this.props.data.post.id} type="posts" />
-            <CommentComposer id={this.props.data.post.id} type="posts" />
-          </div>
+          {comments}
         </div>
       </div>
     );
