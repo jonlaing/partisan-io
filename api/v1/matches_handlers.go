@@ -13,7 +13,8 @@ import (
 
 const (
 	earthRadius  float64 = 3959 // in miles
-	searchBounds float64 = float64(5) / earthRadius * float64(180) / math.Pi
+	geoBounds    float64 = float64(25) / earthRadius * float64(180) / math.Pi
+	centerBounds int     = 15
 )
 
 // MatchResp is the JSON schema we respond with
@@ -49,6 +50,8 @@ func MatchesIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
+	db.LogMode(true)
+
 	user, err := auth.CurrentUser(c, &db)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
@@ -56,8 +59,8 @@ func MatchesIndex(c *gin.Context) {
 	}
 
 	// LATITUDE
-	minLat := user.Latitude - searchBounds
-	maxLat := user.Latitude + searchBounds
+	minLat := user.Latitude - geoBounds
+	maxLat := user.Latitude + geoBounds
 	if minLat > 90 {
 		minLat = 90 - minLat
 	} else if minLat < -90 {
@@ -70,8 +73,8 @@ func MatchesIndex(c *gin.Context) {
 	}
 
 	// LONGITUDE
-	minLong := user.Longitude - searchBounds
-	maxLong := user.Longitude + searchBounds
+	minLong := user.Longitude - geoBounds
+	maxLong := user.Longitude + geoBounds
 	if minLong > 180 {
 		minLong = 180 - minLong
 	} else if minLong < -180 {
@@ -84,26 +87,23 @@ func MatchesIndex(c *gin.Context) {
 	}
 
 	// MATCH BOUNDS
-	// minX := user.CenterX - 10
-	// maxX := user.CenterX + 10
-	// minY := user.CenterY - 10
-	// maxY := user.CenterY + 10
+	minX := user.CenterX - centerBounds
+	maxX := user.CenterX + centerBounds
+	minY := user.CenterY - centerBounds
+	maxY := user.CenterY + centerBounds
 
 	var users []m.User
-	// if err := db.Where("latitude > ? AND latitude < ? AND longitude > ? AND longitude < ? AND center_x > ? AND center_x < ? AND center_y > ? AND center_y < ?",
-	// 	minLat, maxLat, minLong, maxLong, minX, maxX, minY, maxY).Limit(50).Find(&users).Error; err != nil {
-	// 	c.AbortWithError(http.StatusNotAcceptable, err)
-	// 	return
-	// }
-	if err := db.Where("latitude > ? AND latitude < ? AND longitude > ? AND longitude < ? AND id != ?",
-		minLat, maxLat, minLong, maxLong, user.ID).Limit(50).Find(&users).Error; err != nil {
+
+	query := db.Where("id != ?", user.ID)
+	// query = query.Where("latitude > ? AND latitude < ?", minLat, maxLat)
+	// query = query.Where("longitude > ? AND longitude < ?", minLat, maxLat)
+	query = query.Where("center_x > ? AND center_x < ?", minX, maxX)
+	query = query.Where("center_y > ? AND center_y < ?", minY, maxY)
+
+	if err := query.Limit(50).Find(&users).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
-	// if err := db.Limit(50).Find(&users).Error; err != nil {
-	// 	c.AbortWithError(http.StatusNotAcceptable, err)
-	// 	return
-	// }
 
 	var matches MatchCollectionResp
 	for _, u := range users {
