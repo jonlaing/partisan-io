@@ -12,5 +12,5 @@ type Comment struct {
   UserID     uint64 `json:"user_id"`
   Body       string `json:"body"`
   CreatedAt time.Time `json:"created_at"`
-  UpdatedAt time.Time `json:"created_at"`
+  UpdatedAt time.Time `json:"updated_at"`
 }
