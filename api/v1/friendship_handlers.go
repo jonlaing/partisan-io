@@ -3,27 +3,79 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"net/http"
+	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
+	"strconv"
 	"time"
 )
 
-// FriendshipJSON is used for processing incomming JSON data from request
-type FriendshipJSON struct {
-	UserID   uint64 `json:"user_id"`
-	FriendID uint64 `json:"friend_id"`
+// FriendshipIndex returns all friends as a slice of m.User (in JSON)
+func FriendshipIndex(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	user, _ := auth.CurrentUser(c, &db)
+
+	friendIDs, err := FriendIDs(user, c, &db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	var friends []m.User
+	if err := db.Where("user_id IN ?", friendIDs).Find(&friends).Error; err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, friends)
+}
+
+// FriendshipShow shows a friendship
+func FriendshipShow(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	
+	db.LogMode(true)
+
+	user, _ := auth.CurrentUser(c, &db)
+
+	fID := c.Param("friend_id")
+	friendID, err := strconv.ParseUint(fID, 10, 64)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var f1, f2 m.Friendship
+
+	if err := db.Where("user_id = ? AND friend_id = ?", user.ID, friendID).Find(&f1).Error; err == nil {
+		c.JSON(http.StatusOK, f1)
+		return
+	}
+
+	if err := db.Where("user_id = ? AND friend_id = ?", friendID, user.ID).Find(&f2).Error; err == nil {
+		c.JSON(http.StatusOK, f2)
+		return
+	}
+
+	c.AbortWithError(http.StatusNotFound, fmt.Errorf("Couldn't find friendship between User: %d and Friend: %d", user.ID, friendID))
+	return
 }
 
 // FriendshipCreate handles making a new friendship
 func FriendshipCreate(c *gin.Context) {
-	// type conversion from getting user from context can cause panic
-	defer func() {
-		if r := recover(); r != nil {
-			c.AbortWithStatus(http.StatusInternalServerError)
-		}
-	}()
-
 	db, err := db.InitDB()
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -31,61 +83,33 @@ func FriendshipCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	userID, ok := c.Get("user_id")
-	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
+	user, _ := auth.CurrentUser(c, &db)
+
+	fID := c.PostForm("friend_id")
+	friendID, err := strconv.ParseUint(fID, 10, 64)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	var fJSON FriendshipJSON
-	if err := c.BindJSON(&fJSON); err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-	}
-
-	if fJSON.UserID != userID.(uint64) {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Friend request userID must match logged-in user ID"))
-		return
-	}
-
-	f1 := m.Friendship{
-		UserID:    fJSON.UserID,
-		FriendID:  fJSON.FriendID,
+	f := m.Friendship{
+		UserID:    user.ID,
+		FriendID:  friendID,
 		Confirmed: false,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
 
-	// the second gets created for ease of searching db for record
-	f2 := m.Friendship{
-		UserID:    fJSON.FriendID,
-		FriendID:  fJSON.UserID,
-		Confirmed: false,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-
-	if err := db.Create(&f1).Error; err != nil {
+	if err := db.Create(&f).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
 
-	if err := db.Create(&f2).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
-	}
-
-	c.JSON(http.StatusCreated, f1)
+	c.JSON(http.StatusCreated, f)
 }
 
 // FriendshipConfirm allows a user to accept a friend request
 func FriendshipConfirm(c *gin.Context) {
-	// type conversion from getting user from context can cause panic
-	defer func() {
-		if r := recover(); r != nil {
-			c.AbortWithStatus(http.StatusInternalServerError)
-		}
-	}()
-
 	db, err := db.InitDB()
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -93,44 +117,26 @@ func FriendshipConfirm(c *gin.Context) {
 	}
 	defer db.Close()
 
-	userID, ok := c.Get("user_id")
-	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
+	user, _ := auth.CurrentUser(c, &db)
+
+	fID := c.Param("friend_id")
+	friendID, err := strconv.ParseUint(fID, 10, 64)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	var fJSON FriendshipJSON
-	if err := c.BindJSON(&fJSON); err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-	}
+	f := m.Friendship{}
 
-	if fJSON.UserID != userID.(uint64) {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Friend request userID must match logged-in user ID"))
-		return
-	}
-
-	f1 := m.Friendship{}
-	f2 := m.Friendship{}
-
-	if err := db.Where(&m.Friendship{UserID: fJSON.UserID, FriendID: fJSON.FriendID}).First(&f1).Error; err != nil {
+	// only the friend can confirm, so we put friendID in the user slot and userID in the friend slot
+	if err := db.Where("friend_id = ? AND user_id = ?", user.ID, friendID).First(&f).Error; err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
-	if err := db.Where(&m.Friendship{UserID: fJSON.FriendID, FriendID: fJSON.UserID}).First(&f2).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
-	}
+	f.Confirmed = true
 
-	f1.Confirmed = true
-	f2.Confirmed = true
-
-	if err := db.Save(&f1).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
-	}
-
-	if err := db.Save(&f2).Error; err != nil {
+	if err := db.Save(&f).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
@@ -140,13 +146,6 @@ func FriendshipConfirm(c *gin.Context) {
 
 // FriendshipDestroy unfriends
 func FriendshipDestroy(c *gin.Context) {
-	// type conversion from getting user from context can cause panic
-	defer func() {
-		if r := recover(); r != nil {
-			c.AbortWithStatus(http.StatusInternalServerError)
-		}
-	}()
-
 	db, err := db.InitDB()
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -154,44 +153,76 @@ func FriendshipDestroy(c *gin.Context) {
 	}
 	defer db.Close()
 
-	userID, ok := c.Get("user_id")
-	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
+	user, _ := auth.CurrentUser(c, &db)
+
+	fID := c.Param("friend_id")
+	friendID, err := strconv.ParseUint(fID, 10, 64)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	var fJSON FriendshipJSON
-	if err := c.BindJSON(&fJSON); err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-	}
-
-	if fJSON.UserID != userID.(uint64) {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Friend request userID must match logged-in user ID"))
-		return
-	}
-
+	// We have to look for two possible friendships
 	f1 := m.Friendship{}
 	f2 := m.Friendship{}
 
-	if err := db.Find(&f1, fJSON.UserID).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+	if err := db.Find(&f1, user.ID).Error; err == nil {
+		if err := db.Delete(&f1).Error; err != nil {
+			c.AbortWithError(http.StatusNotAcceptable, err)
+			return
+		}
 	}
 
-	if err := db.Find(&f2, fJSON.FriendID).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
-	}
-
-	if err := db.Delete(&f1).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
-	}
-
-	if err := db.Delete(&f2).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+	if err := db.Find(&f2, friendID).Error; err == nil {
+		if err := db.Delete(&f2).Error; err != nil {
+			c.AbortWithError(http.StatusNotFound, err)
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
+}
+
+// FriendIDs returns all userIDs associated with a user's friends
+func FriendIDs(user m.User, c *gin.Context, db *gorm.DB) (friendIDs []uint64, err error) {
+	var friendships []m.Friendship
+	if err = db.Where("user_id = ? OR friend_id = ?", user.ID, user.ID).Find(&friendships).Error; err != nil {
+		return
+	}
+
+	if len(friendships) < 1 {
+		err = fmt.Errorf("Couldn't find any friends associated with User: %d", user.ID)
+		return
+	}
+
+	for _, v := range friendships {
+		if v.UserID != user.ID {
+			friendIDs = append(friendIDs, v.UserID)
+		} else {
+			friendIDs = append(friendIDs, v.FriendID)
+		}
+	}
+	return
+}
+
+// ConfirmedFriendIDs returns all userIDs associated with a user's CONFIRMED friends
+func ConfirmedFriendIDs(user m.User, c *gin.Context, db *gorm.DB) (friendIDs []uint64, err error) {
+	var friendships []m.Friendship
+	if err = db.Where("user_id = ? OR friend_id = ? AND confirmed = ?", user.ID, user.ID, true).Find(&friendships).Error; err != nil {
+		return
+	}
+
+	if len(friendships) < 1 {
+		err = fmt.Errorf("Couldn't find any friends associated with User: %d", user.ID)
+		return
+	}
+
+	for _, v := range friendships {
+		if v.UserID != user.ID {
+			friendIDs = append(friendIDs, v.UserID)
+		} else {
+			friendIDs = append(friendIDs, v.FriendID)
+		}
+	}
+	return
 }

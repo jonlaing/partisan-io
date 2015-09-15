@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
 )
@@ -16,8 +17,20 @@ func FeedIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
+	db.LogMode(true)
+
+	user, _ := auth.CurrentUser(c, &db)
+
+	friendIDs, err := ConfirmedFriendIDs(user, c, &db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+        friendIDs = append(friendIDs, user.ID)
+
 	feedItems := []m.FeedItem{}
-	if err := db.Order("created_at desc").Find(&feedItems).Error; err != nil {
+	if err := db.Where("user_id IN (?)", friendIDs).Order("created_at desc").Find(&feedItems).Error; err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}

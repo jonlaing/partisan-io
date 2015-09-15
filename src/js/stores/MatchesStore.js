@@ -21,7 +21,9 @@ const MatchesStore = assign({}, BaseStore, {
 
     switch(action.type) {
       case Constants.ActionTypes.GET_MATCHES:
-        _matches = action.data;
+        if(action.data) {
+          _matches = action.data;
+        }
         MatchesStore.emitChange();
         break;
 

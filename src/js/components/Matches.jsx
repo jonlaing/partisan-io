@@ -18,7 +18,9 @@ export default React.createClass({
   },
 
   render() {
-    var matches = this.state.matches.map(function(match, i) {
+    var nothing, matches;
+
+    matches = this.state.matches.map(function(match, i) {
       return (
         <li key={i}>
           <div className="row">
@@ -39,17 +41,22 @@ export default React.createClass({
       );
     });
 
+    if(this.state.matches.length < 1) {
+      nothing = <span>You have no matches</span>;
+    }
 
     return (
       <div className="matches">
         <ul>
           {matches}
         </ul>
+        {nothing}
       </div>
     );
   },
 
   _onChange() {
-    this.setState(MatchesStore.getAll());
+    let state = MatchesStore.getAll();
+    this.setState(state);
   }
 });

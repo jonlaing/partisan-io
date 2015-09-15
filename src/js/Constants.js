@@ -37,7 +37,11 @@ export default {
     CREATE_COMMENT_SUCCESS: null,
     CREATE_COMMENT_FAIL: null,
 
-    GET_MATCHES: null
+    GET_MATCHES: null,
+
+    GET_FRIENDSHIP_SUCCESS: null,
+    REQUEST_FRIENDSHIP_SUCCESS: null,
+    CONFIRM_FRIENDSHIP_SUCCESS: null
   }),
 
   ActionSources: keyMirror({

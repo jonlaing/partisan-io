@@ -14,7 +14,7 @@ import (
 const (
 	earthRadius  float64 = 3959 // in miles
 	geoBounds    float64 = float64(25) / earthRadius * float64(180) / math.Pi
-	centerBounds int     = 15
+	centerBounds int     = 50
 )
 
 // MatchResp is the JSON schema we respond with

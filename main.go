@@ -45,11 +45,12 @@ func main() {
 			// profiles.PATCH("/:user_id", ProfileUpdate) // Show Other User's profile
 		}
 
-		friends := r.Group(v1Root + "/friends")
+		friends := r.Group(v1Root + "/friendships")
 		friends.Use(auth.Auth())
 		{
 			friends.POST("/", api.FriendshipCreate)
-			friends.POST("/confirm", api.FriendshipConfirm)
+                        friends.GET("/:friend_id", api.FriendshipShow)
+			friends.PATCH("/", api.FriendshipConfirm)
 			friends.DELETE("/", api.FriendshipDestroy)
 		}
 

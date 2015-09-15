@@ -80,6 +80,7 @@ func PostsCreate(c *gin.Context) {
 
 	// Create feed item
 	feedItem := m.FeedItem{
+          UserID: user.ID,
 		Action:     "post",
 		RecordType: "post",
 		RecordID:   post.ID,
