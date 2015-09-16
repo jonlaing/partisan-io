@@ -1,13 +1,13 @@
 package v1
 
 import (
-	// "encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
 	"partisan/matcher"
 	m "partisan/models"
+	"strconv"
 )
 
 // ProfileResp is the JSON response for a show
@@ -78,4 +78,42 @@ func ProfileShow(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resp)
+}
+
+// ProfileUpdate updates the profile
+func ProfileUpdate(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	user, err := auth.CurrentUser(c, &db)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	var profile m.Profile
+	if err := db.Where("user_id = ?", user.ID).Find(&profile).Error; err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+        // Update looking for
+	lookingForS := c.PostForm("looking_for")
+	lookingFor, err := strconv.Atoi(lookingForS)
+	if err == nil {
+		profile.LookingFor = lookingFor
+	}
+
+        profile.Summary = c.DefaultPostForm("summary", profile.Summary)
+
+	if err := db.Save(&profile).Error; err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, profile)
 }

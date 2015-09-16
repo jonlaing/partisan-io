@@ -34,7 +34,7 @@ func main() {
 		{
 			r.POST(v1Root+"/users", api.UserCreate)
 			users.GET("/", api.UserShow) // Show Current User
-                        users.PATCH("/", api.UserUpdate)
+			users.PATCH("/", api.UserUpdate)
 			users.GET("/:user_id/match", api.UserMatch)
 			users.POST("/avatar_upload", api.UserAvatarUpload)
 		}
@@ -44,7 +44,12 @@ func main() {
 		{
 			profiles.GET("/", api.ProfileShow)         // Show Current User's profile
 			profiles.GET("/:user_id", api.ProfileShow) // Show Other User's profile
-			// profiles.PATCH("/:user_id", ProfileUpdate) // Show Other User's profile
+		}
+
+		profile := r.Group(v1Root + "/profile")
+		profile.Use(auth.Auth())
+		{
+			profile.PATCH("/", api.ProfileUpdate) // Update Current User's profile
 		}
 
 		friends := r.Group(v1Root + "/friendships")

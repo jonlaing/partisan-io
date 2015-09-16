@@ -40,5 +40,25 @@ export default {
       .fail(function(res) {
         console.log(res);
       });
+  },
+
+  updateLookingFor(val) {
+    $.ajax({
+      url: Constants.APIROOT + '/profile',
+      data: {
+        "looking_for": val
+      },
+      method: 'PATCH',
+      dataType: 'json'
+    })
+      .done(function(res) {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.UPDATE_PROFILE_SUCCESS,
+          profile: res
+        });
+      })
+      .fail(function(res) {
+        console.log(res);
+      });
   }
 };

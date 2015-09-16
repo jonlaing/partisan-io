@@ -1,4 +1,5 @@
 import React from 'react';
+import CheckboxGroup from 'react-checkbox-group';
 
 import AvatarUpload from './AvatarUpload.jsx';
 
@@ -51,6 +52,19 @@ export default React.createClass({
       this.setState({editGender: false});
       ProfileActionCreator.updateGender(e.target.value);
     }
+  },
+
+  handleLookingForChange() {
+    var bitMap = 0;
+    let values = this.refs.lookingFor.getCheckedValues();
+
+    values.forEach(function(v) {
+      bitMap += parseInt(v);
+    });
+
+    console.log(bitMap);
+
+    ProfileActionCreator.updateLookingFor(bitMap);
   },
 
   componentDidMount() {
@@ -110,6 +124,25 @@ export default React.createClass({
           </div>
         </div>
         <div className="row">
+          <div className="large-4 columns">
+            <CheckboxGroup
+              name="looking_for"
+              value={this._parseLookingFor(this.state.profile.looking_for)}
+              ref="lookingFor"
+              onChange={this.handleLookingForChange} >
+                <label>
+                  <input type="checkbox" value={1 << 0} /> Friends
+                </label>
+                <label>
+                  <input type="checkbox" value={1 << 1} /> Love
+                </label>
+                <label>
+                  <input type="checkbox" value={1 << 2} /> Enemy
+                </label>
+            </CheckboxGroup>
+          </div>
+        </div>
+        <div className="row">
           <div className="large-6 columns">
             <div className="row">
               <div className="large-2 columns">
@@ -162,5 +195,14 @@ export default React.createClass({
   },
   _cityState(location) {
     return location.replace(/\s\d+.*$/, '');
+  },
+  _parseLookingFor(n) {
+    var vals = [];
+    for(var i = 0; i <= 3; i++) {
+      if((n & 1 << i) !== 0) {
+        vals.push((1 << i).toString());
+      }
+    }
+    return vals;
   }
 });

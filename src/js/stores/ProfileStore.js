@@ -11,10 +11,16 @@ let _profile = {};
 const ProfileStore = assign({}, BaseStore, {
   // public methods used by Controller-View to operate on data
   getProfile() {
-    return {
-      user: _user,
-      profile: _profile
-    };
+    var state = {};
+    if(_user.id !== undefined) {
+      state.user = _user;
+    }
+
+    if(_profile.id !== undefined) {
+      state.profile = _profile;
+    }
+
+    return state;
   },
 
   // register store with dispatcher, allowing actions to flow through
@@ -27,6 +33,15 @@ const ProfileStore = assign({}, BaseStore, {
 
         if (user !== undefined) {
           _user = user;
+          ProfileStore.emitChange();
+        }
+        break;
+
+      case Constants.ActionTypes.UPDATE_PROFILE_SUCCESS:
+        let profile = action.profile;
+
+        if (profile !== undefined) {
+          _profile = profile;
           ProfileStore.emitChange();
         }
         break;
