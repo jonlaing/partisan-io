@@ -92,6 +92,8 @@ func MatchesIndex(c *gin.Context) {
 	minY := user.CenterY - centerBounds
 	maxY := user.CenterY + centerBounds
 
+	friendIDs, _ := ConfirmedFriendIDs(user, c, &db)
+
 	var users []m.User
 
 	query := db.Where("id != ?", user.ID)
@@ -99,6 +101,7 @@ func MatchesIndex(c *gin.Context) {
 	// query = query.Where("longitude > ? AND longitude < ?", minLat, maxLat)
 	query = query.Where("center_x > ? AND center_x < ?", minX, maxX)
 	query = query.Where("center_y > ? AND center_y < ?", minY, maxY)
+	query = query.Where("id NOT IN (?)", friendIDs)
 
 	if err := query.Limit(50).Find(&users).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
