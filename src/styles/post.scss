@@ -6,6 +6,17 @@
     margin-bottom: $line-height;
   }
 
+  .post-avatar {
+    width: 50px;
+    height: 50px;
+    float: left;
+    overflow: hidden;
+    margin-right: $line-height;
+
+    .user-avatar {
+    }
+  }
+
   .post-username {
     color: $action-color;
   }

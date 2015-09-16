@@ -41,7 +41,9 @@ export default {
 
     GET_FRIENDSHIP_SUCCESS: null,
     REQUEST_FRIENDSHIP_SUCCESS: null,
-    CONFIRM_FRIENDSHIP_SUCCESS: null
+    CONFIRM_FRIENDSHIP_SUCCESS: null,
+
+    UPLOAD_AVATAR_SUCCESS: null
   }),
 
   ActionSources: keyMirror({

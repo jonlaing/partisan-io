@@ -32,7 +32,7 @@ export default React.createClass({
         <div className="card-body">
           <div className="post-header">
             <div className="post-avatar">
-              <img className="user-avatar" src="" />
+              <img className="user-avatar" src={this.props.data.user.avatar_url} />
             </div>
             <div className="post-user">
               <h4 className="post-username">

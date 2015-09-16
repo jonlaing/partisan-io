@@ -35,6 +35,7 @@ func main() {
 			r.POST(v1Root+"/users", api.UserCreate)
 			users.GET("/", api.UserShow) // Show Current User
 			users.GET("/:user_id/match", api.UserMatch)
+			users.POST("/avatar_upload", api.UserAvatarUpload)
 		}
 
 		profiles := r.Group(v1Root + "/profiles")
@@ -49,7 +50,7 @@ func main() {
 		friends.Use(auth.Auth())
 		{
 			friends.POST("/", api.FriendshipCreate)
-                        friends.GET("/:friend_id", api.FriendshipShow)
+			friends.GET("/:friend_id", api.FriendshipShow)
 			friends.PATCH("/", api.FriendshipConfirm)
 			friends.DELETE("/", api.FriendshipDestroy)
 		}
@@ -106,7 +107,14 @@ func main() {
 		htmlProfiles.GET("/:user_id", ProfileShow)
 	}
 
+	htmlCurrentProfile := r.Group("/profile")
+	htmlCurrentProfile.Use(auth.Auth())
+	{
+		htmlCurrentProfile.GET("/", ProfileEdit)
+	}
+
 	r.Use(static.Serve("/", static.LocalFile("dist", false)))
+	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))
 
 	// Database Operations
 	db, err := db.InitDB()
