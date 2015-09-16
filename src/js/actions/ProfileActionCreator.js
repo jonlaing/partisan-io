@@ -60,5 +60,25 @@ export default {
       .fail(function(res) {
         console.log(res);
       });
+  },
+
+  updateSummary(summary) {
+    $.ajax({
+      url: Constants.APIROOT + '/profile',
+      data: {
+        "summary": summary
+      },
+      method: 'PATCH',
+      dataType: 'json'
+    })
+      .done(function(res) {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.UPDATE_PROFILE_SUCCESS,
+          profile: res
+        });
+      })
+      .fail(function(res) {
+        console.log(res);
+      });
   }
 };

@@ -14,6 +14,7 @@ export default React.createClass({
       showAvatarUpload: false,
       editLocation: false,
       editGender: false,
+      editSummary: false,
       avatarUrl: this.props.data.user.avatar_thumbnail_url,
       user: this.props.data.user,
       profile: this.props.data.profile
@@ -67,6 +68,17 @@ export default React.createClass({
     ProfileActionCreator.updateLookingFor(bitMap);
   },
 
+  handleSummaryClick() {
+    this.setState({editSummary: true});
+  },
+
+  handleSummarySubmit() {
+    let summary = $(React.findDOMNode(this.refs.summary)).val();
+
+    this.setState({editSummary: false});
+    ProfileActionCreator.updateSummary(summary);
+  },
+
   componentDidMount() {
     ProfileStore.addChangeListener(this._onChange);
   },
@@ -76,7 +88,7 @@ export default React.createClass({
   },
 
   render() {
-    var avatar, location, gender;
+    var avatar, location, gender, summary;
 
     if(this.state.showAvatarUpload === false) {
       avatar = <img src={this.state.avatarUrl} onClick={this.handleAvatarClick} />;
@@ -105,6 +117,17 @@ export default React.createClass({
       );
     } else {
       gender = this._editGenderTemplate();
+    }
+
+    if(this.state.editSummary === false) {
+      summary = (
+        <div>
+          <p>{this.state.profile.summary}</p>
+          <a href="javascript:void(0)" onClick={this.handleSummaryClick}>Edit</a>
+        </div>
+      );
+    } else {
+      summary = this._editSummaryTemplate();
     }
 
     return (
@@ -160,6 +183,12 @@ export default React.createClass({
             </div>
           </div>
         </div>
+        <div className="row">
+          <div className="large-12">
+            <h4>Summary</h4>
+            {summary}
+          </div>
+        </div>
       </div>
     );
   },
@@ -193,6 +222,15 @@ export default React.createClass({
       </div>
     );
   },
+  _editSummaryTemplate() {
+    return (
+      <div>
+        <textarea defaultValue={this.state.profile.summary} placeholder="Tell us a little about yourself!" ref="summary" />
+        <button onClick={this.handleSummarySubmit} >Save</button>
+      </div>
+    );
+  },
+
   _cityState(location) {
     return location.replace(/\s\d+.*$/, '');
   },
