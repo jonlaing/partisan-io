@@ -35,5 +35,23 @@ export default {
       .fail(function(res) {
         console.log(res);
       });
+  },
+
+  confirmFriendship(friendID) {
+    $.ajax({
+      url: Constants.APIROOT + '/friendships',
+      data: { "friend_id": friendID },
+      method: 'PATCH',
+      dataType: 'json'
+    })
+      .done(function(res) {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.CONFIRM_FRIENDSHIP_SUCCESS,
+          data: {id: friendID, friendship: res}
+        });
+      })
+      .fail(function(res) {
+        console.log(res);
+      });
   }
 };

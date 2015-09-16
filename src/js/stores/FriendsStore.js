@@ -40,6 +40,13 @@ const FriendsStore = assign({}, BaseStore, {
           FriendsStore.emitChange();
         }
         break;
+      case Constants.ActionTypes.CONFIRM_FRIENDSHIP_SUCCESS:
+        if (action.data.friendship) {
+          // will replace the old friendship
+          addFriend(action.data.id, action.data.friendship);
+          FriendsStore.emitChange();
+        }
+        break;
 
       // add more cases for other actionTypes...
     }

@@ -11,8 +11,8 @@ export default React.createClass({
   toggleFriend() {
     if(this.state.friendship.id === undefined) {
       FriendsActionCreator.requestFriendship(this.props.id);
-    } else if (this.state.friendship.userID === this.props.id) {
-      // confirm
+    } else if (this.state.friendship.user_id === this.props.id) {
+      FriendsActionCreator.confirmFriendship(this.props.id);
     }
   },
 

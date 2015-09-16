@@ -46,7 +46,7 @@ func FriendshipShow(c *gin.Context) {
 		return
 	}
 	defer db.Close()
-	
+
 	db.LogMode(true)
 
 	user, _ := auth.CurrentUser(c, &db)
@@ -119,7 +119,7 @@ func FriendshipConfirm(c *gin.Context) {
 
 	user, _ := auth.CurrentUser(c, &db)
 
-	fID := c.Param("friend_id")
+	fID := c.PostForm("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -141,7 +141,7 @@ func FriendshipConfirm(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "confirmed"})
+	c.JSON(http.StatusOK, f)
 }
 
 // FriendshipDestroy unfriends
