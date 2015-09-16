@@ -76,5 +76,5 @@ func ProfileEdit(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "profile_edit.html", gin.H{"user": currentUser})
+	c.HTML(http.StatusOK, "profile_edit.html", gin.H{"user": currentUser, "profile": profile})
 }

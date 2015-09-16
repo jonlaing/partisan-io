@@ -10,7 +10,6 @@ export default React.createClass({
   handleSubmit() {
     let email = $(React.findDOMNode(this.refs.email)).val();
     let username = $(React.findDOMNode(this.refs.username)).val();
-    let fullName = $(React.findDOMNode(this.refs.fullName)).val();
     let postalCode = $(React.findDOMNode(this.refs.postalCode)).val();
     let password = $(React.findDOMNode(this.refs.password)).val();
     let passwordConfirm = $(React.findDOMNode(this.refs.passwordConfirm)).val();
@@ -18,7 +17,6 @@ export default React.createClass({
     let user = {
       email: email,
       username: username,
-      fullName: fullName,
       postalCode: postalCode,
       password: password,
       passwordConfirm: passwordConfirm
@@ -57,9 +55,6 @@ export default React.createClass({
             <input type="text" placeholder="Username" ref="username" />
           </div>
           {this._error("username")}
-        </div>
-        <div className="form-input">
-          <input type="text" placeholder="Full Name" ref="fullName" />
         </div>
         <div className="form-input">
           <input type="text" placeholder="Postal Code ex: 11211" ref="postalCode" />

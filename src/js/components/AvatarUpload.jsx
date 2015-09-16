@@ -2,10 +2,11 @@ import React from 'react';
 
 import Dropzone from 'react-dropzone';
 import AvatarActionCreator from '../actions/AvatarActionCreator';
+import AvatarStore from '../stores/AvatarStore';
 
 export default React.createClass({
   getInitialState() {
-    return {files: []};
+    return {files: [], avatar: {}};
   },
 
   handleDrop(files) {
@@ -14,6 +15,17 @@ export default React.createClass({
   },
 
   componentDidMount() {
+    AvatarStore.addChangeListener(this._onChange);
+  },
+
+  componentWillUnmount() {
+    AvatarStore.removeChangeListener(this._onChange);
+  },
+
+  componentDidUpdate() {
+    if(this.state.avatar.full !== undefined) {
+      this.props.onSuccess(this.state.avatar);
+    }
   },
 
   render() {
@@ -35,7 +47,10 @@ export default React.createClass({
   _dropTemplate() {
     return (
       <Dropzone multiple={false} onDrop={this.handleDrop}>
-        Drop your file here
+        <div className="text-center">
+          Drop files here <br/>
+          Or click here to browse
+        </div>
       </Dropzone>
     );
   },
@@ -43,13 +58,13 @@ export default React.createClass({
   _previewTemplate() {
     return (
       <div>
-        <div>
-          <img src={this.state.files[0].preview} width="100"/>
-        </div>
-        <div>
-          Uploading ...
-        </div>
+        Uploading ...
       </div>
     );
+  },
+
+  _onChange() {
+    let state = AvatarStore.getAvatar();
+    this.setState({avatar: state});
   }
 });

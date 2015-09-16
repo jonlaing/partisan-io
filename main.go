@@ -34,6 +34,7 @@ func main() {
 		{
 			r.POST(v1Root+"/users", api.UserCreate)
 			users.GET("/", api.UserShow) // Show Current User
+                        users.PATCH("/", api.UserUpdate)
 			users.GET("/:user_id/match", api.UserMatch)
 			users.POST("/avatar_upload", api.UserAvatarUpload)
 		}

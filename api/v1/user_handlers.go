@@ -108,6 +108,37 @@ func UserShow(c *gin.Context) {
 	c.JSON(http.StatusOK, currentUser)
 }
 
+// UserUpdate will update the user
+func UserUpdate(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	user, err := auth.CurrentUser(c, &db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	user.Gender = c.DefaultPostForm("gender", user.Gender)
+
+	postalCode := c.PostForm("postal_code")
+	if postalCode != "" {
+		user.PostalCode = postalCode
+		user.GetLocation()
+	}
+
+	if err := db.Save(&user).Error; err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
+}
+
 // UserMatch will return the match % of the signed in user, and the user in the path
 func UserMatch(c *gin.Context) {
 	db, err := db.InitDB()
@@ -184,44 +215,76 @@ func UserAvatarUpload(c *gin.Context) {
 		return
 	}
 
-	var avatar image.Image
+	var thumbnail image.Image
+	var fullImg image.Image
 	bounds := tmpImg.Bounds().Max
-	fmt.Println(bounds)
+
 	if bounds.X > bounds.Y {
 		ratio := float64(bounds.X) / float64(bounds.Y)
-		avatar = resize.Resize(uint(ratio*float64(250)), 250, tmpImg, resize.Bicubic)
+		thumbnail = resize.Resize(uint(ratio*float64(250)), 250, tmpImg, resize.Bicubic)
 	} else if bounds.Y > bounds.X {
 		ratio := float64(bounds.Y) / float64(bounds.X)
-		avatar = resize.Resize(250, uint(ratio*float64(250)), tmpImg, resize.Bicubic)
+		thumbnail = resize.Resize(250, uint(ratio*float64(250)), tmpImg, resize.Bicubic)
 	} else {
-		avatar = resize.Thumbnail(250, 250, tmpImg, resize.Bicubic)
+		thumbnail = resize.Resize(250, 250, tmpImg, resize.Bicubic)
 	}
 
-	var file *os.File
-	var filename string
+	fullImg = resize.Resize(1500, 0, tmpImg, resize.Bicubic)
+
+	var fullFile *os.File
+	var thumbFile *os.File
+
+	filename := imgFilename()
+	thumbnailName := filename + "_thumbnail"
+
+	var fullPath, thumbPath string
 
 	switch filetype {
 	case "image/jpeg", "image/jpg":
-		filename = "/localfiles/img/" + imgFilename() + ".jpg"
-		file, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
+		fullPath = "/localfiles/img/" + filename + ".jpg"
+		thumbPath = "/localfiles/img/" + thumbnailName + ".jpg"
+
+		fullFile, err = os.OpenFile("."+fullPath, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		defer file.Close()
-		jpeg.Encode(file, avatar, &jpeg.Options{
+		defer fullFile.Close()
+
+		thumbFile, err = os.OpenFile("."+thumbPath, os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		defer thumbFile.Close()
+
+		jpeg.Encode(fullFile, fullImg, &jpeg.Options{
+			Quality: 100,
+		})
+		jpeg.Encode(thumbFile, thumbnail, &jpeg.Options{
 			Quality: 100,
 		})
 		break
 	case "image/png":
-		filename = "./localfiles/img/" + imgFilename() + ".png"
-		file, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
+		fullPath = "/localfiles/img/" + filename + ".jpg"
+		thumbPath = "/localfiles/img/" + thumbnailName + ".jpg"
+
+		fullFile, err = os.OpenFile("."+fullPath, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		defer file.Close()
-		png.Encode(file, avatar)
+		defer fullFile.Close()
+
+		thumbFile, err = os.OpenFile("."+thumbPath, os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		defer thumbFile.Close()
+
+		png.Encode(fullFile, fullImg)
+		png.Encode(thumbFile, thumbnail)
 		break
 	case "image/gif":
 		// NOT SUPPORTING GIF YET
@@ -232,7 +295,8 @@ func UserAvatarUpload(c *gin.Context) {
 		break
 	}
 
-	currentUser.AvatarURL = filename
+	currentUser.AvatarURL = fullPath
+	currentUser.AvatarThumbnailURL = thumbPath
 
 	if err := db.Save(&currentUser).Error; err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

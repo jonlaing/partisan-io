@@ -14,7 +14,7 @@ import Feed from './components/Feed.jsx';
 import Questions from './components/Questions.jsx';
 import ProfileShow from './components/ProfileShow.jsx';
 import Matches from './components/Matches.jsx';
-import AvatarUpload from './components/AvatarUpload.jsx';
+import ProfileEdit from './components/ProfileEdit.jsx';
 
 // optionally attack DOM elements to React
 let login = document.getElementById('login');
@@ -53,7 +53,7 @@ if(profileShow !== null) {
 }
 
 if(profileEdit !== null) {
-  React.render(<AvatarUpload />, profileEdit);
+  React.render(<ProfileEdit data={profileData} />, profileEdit);
 }
 
 if(matches !== null) {

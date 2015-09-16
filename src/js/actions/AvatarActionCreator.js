@@ -6,9 +6,7 @@ export default {
   uploadAvatar(files) {
     var request = new FormData();
 
-    console.log(files);
     files.forEach(function(value) {
-      console.log(value);
       request.append('avatar', value);
     });
 
@@ -21,7 +19,6 @@ export default {
       contentType: false
     })
       .done(function(res) {
-        console.log(res);
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.UPLOAD_AVATAR_SUCCESS,
           data: res

@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>@{{ .user.Username }}'s Profile</title>
+  <title>Edit Your Profile</title>
   <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
@@ -22,6 +22,12 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript">
+    var profileData = {
+      "profile": {{ .profile }},
+      "user": {{ .user }}
+    };
+  </script>
   <script src="/js/main.js"></script>
 </body>
 </html>

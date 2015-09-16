@@ -9,25 +9,26 @@ import (
 
 // User the user model
 type User struct {
-	ID              uint64               `form:"id" json:"id" gorm:"primary_key"`
-	Username        string               `form:"username" json:"username" sql:"not null,unique" binding:"required"`
-	FullName        string               `form:"full_name" json:"full_name" binding:"required"`
-	Email           string               `form:"email" json:"email" sql:"not null,unique" binding:"required"`
-	AvatarURL       string               `form:"avatar_url" json:"avatar_url"`
-	PoliticalMap    matcher.PoliticalMap `json:"political_map" sql:"type:varchar(255)"`
-	CenterX         int                  `json:"center_x"`
-	CenterY         int                  `json:"center_y"`
-	PostalCode      string               `form:"postal_code" json:"postal_code"`
-	Location        string               `json:"location"`
-	Longitude       float64              `json:"-"`
-	Latitude        float64              `json:"-"`
-	CreatedAt       time.Time            `json:"created_at"`
-	UpdatedAt       time.Time            `json:"updated_at"`
-	APIKey          string               `json:"-"`
-	APIKeyExp       time.Time            `json:"-"`
-	PasswordHash    []byte               `json:"-"`
-	Password        string               `form:"password" json:"password" sql:"-" binding:"required"`
-	PasswordConfirm string               `form:"password_confirm" json:"password_confirm" sql:"-" binding:"required"`
+	ID                 uint64               `form:"id" json:"id" gorm:"primary_key"`
+	Username           string               `form:"username" json:"username" sql:"not null,unique" binding:"required"`
+	Email              string               `form:"email" json:"email" sql:"not null,unique" binding:"required"`
+	Gender             string               `form:"gender" json:"gender"`
+	AvatarURL          string               `form:"avatar_url" json:"avatar_url"`
+	AvatarThumbnailURL string               `form:"avatar_thumbnail_url" json:"avatar_thumbnail_url"`
+	PoliticalMap       matcher.PoliticalMap `json:"political_map" sql:"type:varchar(255)"`
+	CenterX            int                  `json:"center_x"`
+	CenterY            int                  `json:"center_y"`
+	PostalCode         string               `form:"postal_code" json:"postal_code"`
+	Location           string               `json:"location"`
+	Longitude          float64              `json:"-"`
+	Latitude           float64              `json:"-"`
+	CreatedAt          time.Time            `json:"created_at"`
+	UpdatedAt          time.Time            `json:"updated_at"`
+	APIKey             string               `json:"-"`
+	APIKeyExp          time.Time            `json:"-"`
+	PasswordHash       []byte               `json:"-"`
+	Password           string               `form:"password" json:"password" sql:"-" binding:"required"`
+	PasswordConfirm    string               `form:"password_confirm" json:"password_confirm" sql:"-" binding:"required"`
 }
 
 // Friends returns all the User's friends
