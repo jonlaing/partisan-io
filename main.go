@@ -108,19 +108,16 @@ func main() {
 	}
 
 	// HTML
-	r.LoadHTMLGlob("templates/*")
-	htmlProfiles := r.Group("/profiles")
-	htmlProfiles.Use(auth.Auth())
-	{
-		// htmlProfiles.GET("/", ProfileHTMLShowCurrent) // Will show editing options
-		htmlProfiles.GET("/:user_id", ProfileShow)
-	}
+	r.LoadHTMLGlob("templates/*.html")
 
-	htmlCurrentProfile := r.Group("/profile")
-	htmlCurrentProfile.Use(auth.Auth())
-	{
-		htmlCurrentProfile.GET("/", ProfileEdit)
-	}
+	r.GET("/profiles/:user_id", auth.Auth(), ProfileShow)
+	r.GET("/feed", auth.Auth(), FeedIndex)
+	r.GET("/profile", auth.Auth(), ProfileEdit)
+        r.GET("/questions", auth.Auth(), QuestionsIndex)
+        r.GET("/matches", auth.Auth(), MatchesIndex)
+
+	r.GET("/login", Login)
+	r.GET("/signup", SignUp)
 
 	r.Use(static.Serve("/", static.LocalFile("dist", false)))
 	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))

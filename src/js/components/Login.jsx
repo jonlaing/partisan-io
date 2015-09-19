@@ -31,7 +31,7 @@ export default React.createClass({
 
   componentDidUpdate() {
     if(this.state.success === true) {
-      window.location.href = "/feed.html";
+      window.location.href = "/feed";
     }
   },
 

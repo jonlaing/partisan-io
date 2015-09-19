@@ -1,4 +1,4 @@
-{{ define "profile_show" }}
+{{ define "feed" }}
 {{ template "head" . }}
 {{ template "header" . }}
   <div class="row">
@@ -6,18 +6,10 @@
       Some links here
     </div>
     <div class="large-10 columns">
-      <div id="profile-show">
+      <div id="feed">
         <!-- Flux goes here -->
       </div>
     </div>
   </div>
-  <script type="text/javascript">
-    var profileData = {
-      "profile": {{ .profile }},
-      "user": {{ .user }},
-      "match": {{ .match }},
-      "enemy": {{ .enemy }},
-    };
-  </script>
 {{ template "footer" . }}
 {{ end }}

@@ -1,4 +1,4 @@
-/*global profileData */
+/*global user, profileData */
 import React from 'react';
 import jQuery from 'jquery';
 
@@ -36,7 +36,7 @@ if(signUp !== null) {
 }
 
 if(userSession !== null) {
-  React.render(<UserSession />, userSession);
+  React.render(<UserSession user={user}/>, userSession);
 }
 
 if(feed !== null) {

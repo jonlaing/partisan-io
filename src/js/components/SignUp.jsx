@@ -35,7 +35,7 @@ export default React.createClass({
 
   componentDidUpdate() {
     if(this.state.success === true) {
-      window.location.href = "/questions.html";
+      window.location.href = "/questions";
     }
   },
 

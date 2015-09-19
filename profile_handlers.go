@@ -46,9 +46,9 @@ func ProfileShow(c *gin.Context) {
 
 	match, _ := matcher.Match(user.PoliticalMap, currentUser.PoliticalMap)
 
-	fmt.Println("dafuq")
-	c.HTML(http.StatusOK, "profile_show.html",
+	c.HTML(http.StatusOK, "profile_show",
 		gin.H{
+			"title":   "@" + user.Username + "'s Profile",
 			"profile": profile,
 			"user":    user,
 			"match":   fmt.Sprintf("%.f", match*100),
@@ -76,5 +76,9 @@ func ProfileEdit(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "profile_edit.html", gin.H{"user": currentUser, "profile": profile})
+	c.HTML(http.StatusOK, "profile_edit", gin.H{
+		"title":   "Edit My Profile",
+		"user":    currentUser,
+		"profile": profile,
+	})
 }

@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Questions</title>
-  <link rel="stylesheet" href="styles/main.css">
-</head>
-<body>
+{{ define "questions" }}
+{{ template "head" . }}
   <div class="row clearfix">
     <div class="large-2 columns right text-right">
       <div id="user-session">
@@ -19,6 +13,5 @@
       </div>
     </div>
   </div>
-  <script src="js/main.js"></script>
-</body>
-</html>
+{{ template "head" . }}
+{{ end }}
