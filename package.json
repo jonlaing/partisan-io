@@ -73,6 +73,7 @@
     "foundation-sites": "^5.5.2",
     "glob": "^5.0.14",
     "jquery": "^2.1.4",
+    "marked": "^0.3.5",
     "material-ui": "^0.8.0",
     "material-ui-sass": "^0.7.5",
     "moment": "^2.10.6",

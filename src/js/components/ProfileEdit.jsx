@@ -1,4 +1,6 @@
 import React from 'react';
+import marked from 'marked';
+
 import CheckboxGroup from 'react-checkbox-group';
 
 import AvatarUpload from './AvatarUpload.jsx';
@@ -6,7 +8,18 @@ import AvatarUpload from './AvatarUpload.jsx';
 import ProfileActionCreator from '../actions/ProfileActionCreator';
 import ProfileStore from '../stores/ProfileStore';
 
-let _ENTER = 13;
+let _ENTER = 13; // key code for pressing the ENTER/RETURN key
+
+marked.setOptions({
+  sanitize: true,
+  tables: false
+});
+
+var markedRenderer = new marked.Renderer();
+
+markedRenderer.heading = (text) => {
+  return '<p><strong>' + text + '</strong></p>';
+};
 
 export default React.createClass({
   getInitialState() {
@@ -63,8 +76,6 @@ export default React.createClass({
       bitMap += parseInt(v);
     });
 
-    console.log(bitMap);
-
     ProfileActionCreator.updateLookingFor(bitMap);
   },
 
@@ -120,9 +131,13 @@ export default React.createClass({
     }
 
     if(this.state.editSummary === false) {
+      var summaryHTML = function(state) {
+        return { __html: marked(state.profile.summary, {renderer: markedRenderer} ) };
+      };
+
       summary = (
         <div>
-          <p>{this.state.profile.summary}</p>
+          <div dangerouslySetInnerHTML={ summaryHTML(this.state) } />
           <a href="javascript:void(0)" onClick={this.handleSummaryClick}>Edit</a>
         </div>
       );

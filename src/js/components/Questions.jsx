@@ -62,7 +62,7 @@ export default React.createClass({
 
 
     if(this._maxQuestions() > -1 && answered > this._maxQuestions()) {
-      window.location.href = "/feed.html";
+      window.location.href = "/profile";
       return;
     }
 
