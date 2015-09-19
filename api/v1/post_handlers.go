@@ -3,17 +3,20 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"net/http"
+	"partisan/auth"
 	"partisan/db"
+	"partisan/imager"
 	m "partisan/models"
 	"time"
-	"partisan/auth"
 )
 
 // PostResponse is the response schema
 type PostResponse struct {
-	Post m.Post `json:"post"`
-	User m.User `json:"user"`
+	Post       m.Post            `json:"post"`
+	Attachment m.ImageAttachment `json:"image_attachment"`
+	User       m.User            `json:"user"`
 }
 
 // PostsIndex display all posts
@@ -64,7 +67,7 @@ func PostsCreate(c *gin.Context) {
 
 	post := m.Post{
 		UserID:    user.ID,
-		Body:      c.Request.PostFormValue("body"),
+		Body:      c.Request.FormValue("body"),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -78,9 +81,18 @@ func PostsCreate(c *gin.Context) {
 		User: user,
 	}
 
+	// Doing it this way because we don't know if a user will try
+	// to attach an image. This way we can fail elegantly
+	if err := attachImage(c, &db, &postRes); err != nil {
+		// only errs with catostrophic failure,
+		// silently fails if no attachment is present
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
 	// Create feed item
 	feedItem := m.FeedItem{
-          UserID: user.ID,
+		UserID:     user.ID,
 		Action:     "post",
 		RecordType: "post",
 		RecordID:   post.ID,
@@ -219,4 +231,43 @@ func PostsDestroy(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
+}
+
+func attachImage(c *gin.Context, db *gorm.DB, p *PostResponse) error {
+	fmt.Println("trying to get file")
+	tmpFile, _, err := c.Request.FormFile("attachment")
+	if err != nil {
+		return nil // ignore missing file
+	}
+	defer tmpFile.Close()
+
+	processor := imager.ImageProcessor{File: tmpFile}
+
+	// Save the full-size
+	var path string
+	if err := processor.Resize(1500); err != nil {
+		return err
+	}
+	path, err = processor.Save("/localfiles/img")
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("did some processing:", path)
+
+	a := m.ImageAttachment{
+		UserID:     p.Post.UserID,
+		RecordID:   p.Post.ID,
+		RecordType: "post",
+		URL:        path,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+
+	if err = db.Save(&a).Error; err == nil {
+		p.Attachment = a
+		return nil
+	}
+
+	return err
 }

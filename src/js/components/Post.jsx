@@ -17,7 +17,7 @@ export default React.createClass({
   },
 
   render() {
-    var comments;
+    var comments, attachment;
 
     if(this.state.showComments === true) {
       comments = (
@@ -27,6 +27,15 @@ export default React.createClass({
         </div>
       );
     }
+
+    if(this.props.data.image_attachment.id !== undefined) {
+      attachment = (
+        <div className="post-attachment">
+          <img src={this.props.data.image_attachment.image_url} width="100%" />
+        </div>
+      );
+    }
+
     return (
       <div className="post">
         <div className="card-body">
@@ -41,6 +50,7 @@ export default React.createClass({
               <span className="post-timestamp">{moment(this.props.data.post.created_at).fromNow()}</span>
             </div>
           </div>
+          {attachment}
           <div className="post-body">
             {this.props.data.post.body}
           </div>

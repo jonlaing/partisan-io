@@ -22,7 +22,6 @@ var imgExt = map[string]string{
 // ImageProcessor holds info about image for processing
 type ImageProcessor struct {
 	File           multipart.File
-	Path           string
 	origImage      image.Image
 	Image          image.Image
 	fileType       string
@@ -45,27 +44,27 @@ func (i *ImageProcessor) Resize(maxWidth uint) (err error) {
 }
 
 // Thumbnail makes a thumbnail of the image
-func (i *ImageProcessor) Thumbnail(size uint) (err error) {
+func (i *ImageProcessor) Thumbnail(size int) (err error) {
 	err = i.decode()
 	if err != nil {
 		return err
 	}
 
-	err = i.resizeAndCrop(250, 250)
+	err = i.resizeAndCrop(size, size)
 
 	return
 }
 
 // Save saves the new image in the specified path
-func (i *ImageProcessor) Save(path string) (err error) {
+func (i *ImageProcessor) Save(path string) (newPath string, err error) {
 	fileName, err := i.FileName()
 	if err != nil {
 		return
 	}
 
-	i.Path = path + "/" + fileName
+	newPath = path + "/" + fileName
 
-	fullFile, err := os.OpenFile("."+i.Path, os.O_WRONLY|os.O_CREATE, 0666)
+	fullFile, err := os.OpenFile("."+newPath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return
 	}
@@ -79,11 +78,9 @@ func (i *ImageProcessor) Save(path string) (err error) {
 		png.Encode(fullFile, i.Image)
 		break
 	default:
-		return fmt.Errorf("Unsupported image type: %s", i.fileType)
+		return "", fmt.Errorf("Unsupported image type: %s", i.fileType)
 		break
 	}
-
-	fmt.Println(i.Path)
 
 	return
 }

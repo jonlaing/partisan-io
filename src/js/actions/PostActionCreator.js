@@ -1,16 +1,24 @@
-/*global $ */
+/*global $, FormData */
 import Dispatcher from '../Dispatcher';
 import Constants from '../Constants';
 
 export default {
-  createPost(body) {
+  createPost(body, attachments) {
+    var request = new FormData();
+
+    attachments.forEach(function(value) {
+      request.append('attachment', value);
+    });
+
+    request.append('body', body);
+
     $.ajax({
       url: Constants.APIROOT + '/posts',
-      data: {
-        body: body
-      },
+      data: request,
+      cache: false,
       method: 'POST',
-      dataType: 'json'
+      processData: false,
+      contentType: false
     })
       .done(function(res) {
         Dispatcher.handleViewAction({
@@ -19,7 +27,7 @@ export default {
         });
       })
       .fail(function(res) {
-        console.log("fail");
+        console.log(res);
       })
       .always(function(res) {
         console.log(res);

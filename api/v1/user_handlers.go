@@ -190,30 +190,30 @@ func UserAvatarUpload(c *gin.Context) {
 	processor := imager.ImageProcessor{File: tmpFile}
 
 	// Save the full-size
-	err = processor.Resize(1500)
-	if err != nil {
+	var fullPath string
+	if err := processor.Resize(1500); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	err = processor.Save("/localfiles/img")
-	if err != nil {
+	fullPath, err = processor.Save("/localfiles/img") 
+        if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	currentUser.AvatarURL = processor.Path
+	currentUser.AvatarURL = fullPath
 
 	// Save the thumbnail
-	err = processor.Thumbnail(250)
-	if err != nil {
+	var thumbPath string
+	if err := processor.Thumbnail(250); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	err = processor.Save("/localfiles/img/thumb")
-	if err != nil {
+	thumbPath, err = processor.Save("/localfiles/img/thumb")
+        if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	currentUser.AvatarThumbnailURL = processor.Path
+	currentUser.AvatarThumbnailURL = thumbPath
 
 	if err := db.Save(&currentUser).Error; err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

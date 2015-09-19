@@ -86,6 +86,9 @@ func main() {
 
 			posts.GET("/:record_id/comments", api.CommentsIndex)
 			posts.GET("/:record_id/comments/count", api.CommentsCount)
+
+			posts.GET("/:record_id/attachments", api.ImageAttachmentIndex)
+			// posts.POST("/:record_id/attachments", api.ImageAttachmentCreate)
 		}
 
 		comments := r.Group(v1Root + "/comments")
@@ -127,7 +130,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Profile{}, &m.Comment{})
+	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Profile{}, &m.Comment{}, &m.ImageAttachment{})
 
 	r.Run(":4000")
 }

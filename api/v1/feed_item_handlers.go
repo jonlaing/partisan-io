@@ -27,7 +27,7 @@ func FeedIndex(c *gin.Context) {
 		return
 	}
 
-        friendIDs = append(friendIDs, user.ID)
+	friendIDs = append(friendIDs, user.ID)
 
 	feedItems := []m.FeedItem{}
 	if err := db.Where("user_id IN (?)", friendIDs).Order("created_at desc").Find(&feedItems).Error; err != nil {
@@ -40,11 +40,15 @@ func FeedIndex(c *gin.Context) {
 		if item.RecordType == "post" {
 			post := m.Post{}
 			user := m.User{}
+			attachment := m.ImageAttachment{}
+
 			db.First(&post, item.RecordID).Related(&user) // right here
+                        db.Where("record_type = ? AND record_id = ?", "post", post.ID).First(&attachment)
 
 			feedItems[k].Record = PostResponse{
 				Post: post,
 				User: user,
+                                Attachment: attachment,
 			}
 		}
 	}
