@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"partisan/auth"
@@ -117,6 +118,15 @@ func CommentsCreate(c *gin.Context) {
 	if err := db.Create(&comment).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
+	}
+
+	var notifUserIDs []uint64 // Pluck only works with slices, which kinda sucks; we only need one ID
+	if err := db.Table(comment.RecordType).Where("id = ?", comment.RecordID).Pluck("user_id", &notifUserIDs).Error; err != nil {
+		fmt.Println("Can't find target ID for notification:", err)
+	} else {
+		if notifUserIDs[0] != 0 && notifUserIDs[0] != user.ID {
+			m.NewNotification(&comment, notifUserIDs[0], &db)
+		}
 	}
 
 	commentResp := CommentResp{

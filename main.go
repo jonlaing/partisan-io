@@ -105,6 +105,14 @@ func main() {
 			matches.GET("/", api.MatchesIndex)
 		}
 
+		notifications := r.Group(v1Root + "/notifications")
+		notifications.Use(auth.Auth())
+		{
+			notifications.GET("/", api.NotificationsIndex)
+			notifications.GET("/count", api.NotificationsCount)
+			notifications.PATCH("/:record_id", api.NotificationsRead)
+		}
+
 	}
 
 	// HTML
@@ -127,7 +135,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Profile{}, &m.Comment{}, &m.ImageAttachment{})
+	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Profile{}, &m.Comment{}, &m.ImageAttachment{}, &m.Notification{})
 
 	r.Run(":4000")
 }

@@ -27,6 +27,7 @@ func LikeCount(c *gin.Context) {
 	var count int
 	db.Model(m.Like{}).Where("record_type = ? AND record_id = ?", rType, rID).Count(&count)
 
+	// check if this user like this record
 	var userCount int
 	db.Model(m.Like{}).Where("record_type = ? AND record_id = ? AND user_id= ? ", rType, rID, user.ID).Count(&userCount)
 
