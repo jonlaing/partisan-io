@@ -9,7 +9,7 @@ import PostComposer from './PostComposer.jsx';
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 function getStateFromStore() {
-  let state = FeedStore.getAll();
+  let state = FeedStore.getFeedItems();
   return state;
 }
 

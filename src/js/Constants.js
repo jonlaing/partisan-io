@@ -46,7 +46,10 @@ export default {
     UPLOAD_AVATAR_SUCCESS: null,
 
     UPDATE_USER_SUCCESS: null,
-    UPDATE_PROFILE_SUCCESS: null
+    UPDATE_PROFILE_SUCCESS: null,
+
+    GET_NOTIFICATIONS_SUCCESS: null,
+    GET_NOTIFICATION_COUNT: null
   }),
 
   ActionSources: keyMirror({

@@ -50,9 +50,19 @@ export default {
       dataMethod: 'json'
     })
       .done(function(res) {
+        let data = {
+          record_type: res.comment.record_type,
+          record_id: res.comment.record_id,
+          comment_count: res.count
+        };
+
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.CREATE_COMMENT_SUCCESS,
           data: res
+        });
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.GET_COMMENT_COUNT_SUCCESS,
+          data: data
         });
       })
       .fail(function(res) {

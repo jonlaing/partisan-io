@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 
+import LikeActionCreator from '../actions/LikeActionCreator';
+
 import Likes from './Likes.jsx';
 import CommentCounter from './CommentCounter.jsx';
 import CommentComposer from './CommentComposer.jsx';
@@ -16,6 +18,10 @@ export default React.createClass({
     this.setState({showComments: show});
   },
 
+  handleLike() {
+    LikeActionCreator.like("posts", this.props.data.post.id);
+  },
+
   render() {
     var comments, attachment;
 
@@ -28,7 +34,7 @@ export default React.createClass({
       );
     }
 
-    if(this.props.data.image_attachment.id !== undefined) {
+    if(this.props.data.image_attachment.id > 0) {
       attachment = (
         <div className="post-attachment">
           <img src={this.props.data.image_attachment.image_url} width="100%" />
@@ -56,8 +62,8 @@ export default React.createClass({
           </div>
         </div>
         <div className="post-actions">
-          <CommentCounter id={this.props.data.post.id} type="posts" className="right" onClick={this.handleToggleComments} />
-          <Likes id={this.props.data.post.id} type="posts" />
+          <CommentCounter count={this.props.data.comment_count} className="right" onClick={this.handleToggleComments} />
+          <Likes onClick={this.handleLike} count={this.props.data.like_count} liked={this.props.data.liked} />
           <div className="clearfix"></div>
         </div>
         <div className="post-comments">

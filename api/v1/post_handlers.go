@@ -17,6 +17,9 @@ type PostResponse struct {
 	Post       m.Post            `json:"post"`
 	Attachment m.ImageAttachment `json:"image_attachment"`
 	User       m.User            `json:"user"`
+        LikeCount int `json:"like_count"`
+        Liked bool `json:"liked"`
+        CommentCount int `json:"comment_count"`
 }
 
 // PostsIndex display all posts

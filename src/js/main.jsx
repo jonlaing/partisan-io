@@ -15,6 +15,7 @@ import Questions from './components/Questions.jsx';
 import ProfileShow from './components/ProfileShow.jsx';
 import Matches from './components/Matches.jsx';
 import ProfileEdit from './components/ProfileEdit.jsx';
+import Notifications from './components/Notifications.jsx';
 
 // optionally attack DOM elements to React
 let login = document.getElementById('login');
@@ -25,6 +26,7 @@ let questions = document.getElementById('questions');
 let profileShow = document.getElementById('profile-show');
 let profileEdit = document.getElementById('profile-edit');
 let matches = document.getElementById('matches');
+let notifications = document.getElementById('notifications');
 
 // for static login page
 if(login !== null) {
@@ -58,4 +60,8 @@ if(profileEdit !== null) {
 
 if(matches !== null) {
   React.render(<Matches/>, matches);
+}
+
+if(notifications !== null) {
+  React.render(<Notifications/>, notifications);
 }

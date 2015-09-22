@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/jinzhu/gorm"
 	"time"
 )
 
@@ -23,4 +24,16 @@ func (c *Comment) GetID() uint64 {
 // Type satisfies the Notifier interrace
 func (c *Comment) Type() string {
 	return "comment"
+}
+
+// GetRecordUserID returns the user ID of the record being commented upon. Satisfies Notifier interface.
+func (c *Comment) GetRecordUserID(db *gorm.DB) (uint64, error) {
+	var notifUserIDs []uint64
+	err := db.Table(c.RecordType).Where("id = ?", c.RecordID).Pluck("user_id", &notifUserIDs).Error
+
+	if len(notifUserIDs) < 1 {
+		return 0, err
+	}
+
+	return notifUserIDs[0], err
 }

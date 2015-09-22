@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"partisan/auth"
@@ -14,6 +13,7 @@ import (
 type CommentResp struct {
 	Comment m.Comment `json:"comment"`
 	User    m.User    `json:"user"`
+	Count   int       `json:"count"`
 }
 
 // CommentsIndex shows a list of comments based on a record_id
@@ -58,7 +58,7 @@ func CommentsIndex(c *gin.Context) {
 	for _, comment := range comments {
 		for _, user := range users {
 			if comment.UserID == user.ID {
-				resp = append(resp, CommentResp{comment, user})
+				resp = append(resp, CommentResp{comment, user, 0})
 			}
 		}
 	}
@@ -120,18 +120,15 @@ func CommentsCreate(c *gin.Context) {
 		return
 	}
 
-	var notifUserIDs []uint64 // Pluck only works with slices, which kinda sucks; we only need one ID
-	if err := db.Table(comment.RecordType).Where("id = ?", comment.RecordID).Pluck("user_id", &notifUserIDs).Error; err != nil {
-		fmt.Println("Can't find target ID for notification:", err)
-	} else {
-		if notifUserIDs[0] != 0 && notifUserIDs[0] != user.ID {
-			m.NewNotification(&comment, notifUserIDs[0], &db)
-		}
-	}
+	m.NewNotification(&comment, user.ID, &db)
+
+        var count int
+        db.Model(m.Comment{}).Where("record_id = ? AND record_type = ?", comment.RecordID, comment.RecordType).Count(&count)
 
 	commentResp := CommentResp{
 		Comment: comment,
 		User:    user,
+                Count: count,
 	}
 
 	// Create feed item

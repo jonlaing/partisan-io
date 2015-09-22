@@ -15,9 +15,10 @@ func main() {
 	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
 	r.Use(sessions.Sessions("partisan-io", store))
 
+	v1Root := "api/v1"
+
 	// V1
 	{
-		v1Root := "api/v1"
 
 		r.POST(v1Root+"/login", api.LoginHandler)
 		r.DELETE(v1Root+"/logout", api.LogoutHandler)
@@ -121,8 +122,8 @@ func main() {
 	r.GET("/profiles/:user_id", auth.Auth(), ProfileShow)
 	r.GET("/feed", auth.Auth(), FeedIndex)
 	r.GET("/profile", auth.Auth(), ProfileEdit)
-        r.GET("/questions", auth.Auth(), QuestionsIndex)
-        r.GET("/matches", auth.Auth(), MatchesIndex)
+	r.GET("/questions", auth.Auth(), QuestionsIndex)
+	r.GET("/matches", auth.Auth(), MatchesIndex)
 
 	r.GET("/login", Login)
 	r.GET("/signup", SignUp)

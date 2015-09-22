@@ -78,11 +78,15 @@ func LikeCreate(c *gin.Context) {
 			c.AbortWithError(http.StatusNotAcceptable, err)
 			return
 		}
+                m.NewNotification(&like, user.ID, &db)
 		// return the old count + 1
 		c.JSON(http.StatusCreated, gin.H{"record_type": rType, "record_id": rID, "like_count": count + 1, "liked": true})
 	} else {
 		if err := db.Where("record_type = ? AND record_id = ? AND user_id = ?", rType, rID, user.ID).Delete(m.Like{}).Error; err != nil {
 			fmt.Println("problem deleting like:", err)
+		}
+		if err := db.Where("record_type = ? AND record_id = ? AND user_id = ?", rType, rID, user.ID).Delete(m.Notification{}).Error; err != nil {
+			fmt.Println("problem deleting notificatino:", err)
 		}
 		c.JSON(http.StatusCreated, gin.H{"record_type": rType, "record_id": rID, "like_count": count - 1, "liked": false})
 	}
