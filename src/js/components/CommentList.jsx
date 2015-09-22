@@ -6,6 +6,9 @@ import Comment from './Comment.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+// when we go to a page with a comment hash, scroll to it, but only once
+var _scrolled = false;
+
 export default React.createClass({
   getInitialState() {
     return {comments: []};
@@ -20,11 +23,26 @@ export default React.createClass({
     FeedStore.removeChangeListener(this._onChange);
   },
 
+  componentDidUpdate() {
+    if(window.location.hash && _scrolled === false) {
+      $('html, body').animate({
+        scrollTop: $(window.location.hash).offset().top
+      });
+      _scrolled = true;
+    }
+  },
+
   render() {
     var comments;
 
-    comments = this.state.comments.map(function(comment, i) {
-      return (<li key={i}><Comment data={comment} /></li>);
+    comments = this.state.comments.map(function(comment) {
+      let hash = "comment-" + comment.comment.id;
+      return (
+        <li key={comment.comment.id}>
+          <a id={hash} name={hash}></a>
+          <Comment data={comment} />
+        </li>
+      );
     });
 
     return (

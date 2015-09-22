@@ -68,6 +68,8 @@ func NotificationsIndex(c *gin.Context) {
 			}
 		}
 
+		db.Model(m.Notification{}).Where("target_user_id = ?", user.ID).Update("seen", true)
+
 		c.JSON(http.StatusOK, resp)
 		return
 	}
@@ -97,9 +99,13 @@ func NotificationsRead(c *gin.Context) {
 	}
 	defer db.Close()
 
-	id := c.Param("record_id")
+	user, err := auth.CurrentUser(c, &db)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
 
-	db.Where("id = ?", id).Update("seen", true)
+	db.Where("target_user_id = ?", user.ID).Update("seen", true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "marked read"})
 }

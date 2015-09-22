@@ -1,0 +1,36 @@
+package main
+
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"partisan/db"
+	m "partisan/models"
+)
+
+// CommentShow redirects to the post of the comment and the inline anchor
+func CommentShow(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	commentID := c.Param("record_id")
+
+	var comment m.Comment
+	if err := db.Find(&comment, commentID).Error; err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	if comment.RecordType == "post" || comment.RecordType == "posts" {
+		route := fmt.Sprintf("/posts/%d#comment-%d", comment.RecordID, comment.ID)
+		c.Redirect(http.StatusMovedPermanently, route)
+		return
+	}
+
+	c.AbortWithStatus(http.StatusNotAcceptable)
+	return
+}

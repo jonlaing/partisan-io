@@ -10,8 +10,9 @@ import CommentList from './CommentList.jsx';
 
 export default React.createClass({
   getInitialState() {
-    return {showComments: false};
+    return {showComments: this.props.defaultShowComments || false};
   },
+
 
   handleToggleComments() {
     let show = !this.state.showComments;

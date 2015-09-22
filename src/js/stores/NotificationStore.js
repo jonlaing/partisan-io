@@ -3,8 +3,6 @@ import Constants from '../Constants';
 import BaseStore from './BaseStore';
 import assign from 'object-assign';
 
-import FeedStore from './FeedStore';
-
 // data storage
 let _notifications = [];
 let _notificationCount = 0;
@@ -16,7 +14,7 @@ const NotificationStore = assign({}, BaseStore, {
   },
 
   getAll() {
-    return { count: this.getCount(), notifications: _notifications };
+    return { count: _notificationCount, notifications: _notifications };
   },
 
   // register store with dispatcher, allowing actions to flow through
@@ -36,7 +34,12 @@ const NotificationStore = assign({}, BaseStore, {
         let count = action.data;
 
         if (count !== _notificationCount) {
-          $('title').text('My Feed (' + count + ')');
+          // TODO: Make this better!
+          if(count > 0) {
+            $('title').text('My Feed (' + count + ')');
+          } else {
+            $('title').text('My Feed');
+          }
           _notificationCount = count;
           NotificationStore.emitChange();
         }

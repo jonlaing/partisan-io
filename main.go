@@ -110,8 +110,8 @@ func main() {
 		notifications.Use(auth.Auth())
 		{
 			notifications.GET("/", api.NotificationsIndex)
+			notifications.PATCH("/", api.NotificationsRead)
 			notifications.GET("/count", api.NotificationsCount)
-			notifications.PATCH("/:record_id", api.NotificationsRead)
 		}
 
 	}
@@ -124,6 +124,9 @@ func main() {
 	r.GET("/profile", auth.Auth(), ProfileEdit)
 	r.GET("/questions", auth.Auth(), QuestionsIndex)
 	r.GET("/matches", auth.Auth(), MatchesIndex)
+	r.GET("/comments/:record_id", auth.Auth(), CommentShow)
+	r.GET("/likes/:record_id", auth.Auth(), LikeShow)
+	r.GET("/posts/:record_id", auth.Auth(), PostShow)
 
 	r.GET("/login", Login)
 	r.GET("/signup", SignUp)

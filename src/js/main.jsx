@@ -1,4 +1,4 @@
-/*global user, profileData */
+/*global user, profileData, postData */
 import React from 'react';
 import jQuery from 'jquery';
 
@@ -16,6 +16,8 @@ import ProfileShow from './components/ProfileShow.jsx';
 import Matches from './components/Matches.jsx';
 import ProfileEdit from './components/ProfileEdit.jsx';
 import Notifications from './components/Notifications.jsx';
+import Post from './components/Post.jsx';
+import Card from './components/Card.jsx';
 
 // optionally attack DOM elements to React
 let login = document.getElementById('login');
@@ -27,6 +29,7 @@ let profileShow = document.getElementById('profile-show');
 let profileEdit = document.getElementById('profile-edit');
 let matches = document.getElementById('matches');
 let notifications = document.getElementById('notifications');
+let post = document.getElementById('post');
 
 // for static login page
 if(login !== null) {
@@ -64,4 +67,8 @@ if(matches !== null) {
 
 if(notifications !== null) {
   React.render(<Notifications/>, notifications);
+}
+
+if(post !== null) {
+  React.render(<Card><Post data={postData} defaultShowComments={true}/></Card>, post);
 }

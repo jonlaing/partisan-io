@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
+        "fmt"
 	"time"
 )
 
@@ -30,6 +31,10 @@ func NewNotification(n Notifier, initiatedUserID uint64, db *gorm.DB) error {
 	if err != nil {
 		return err
 	}
+
+        if initiatedUserID == targetUserID {
+          return fmt.Errorf("Can't send notification to the same user: %d", targetUserID)
+        }
 
 	notif := Notification{
 		UserID:       initiatedUserID,
