@@ -15,14 +15,19 @@ type Comment struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-// GetID satisfies Notifier interface
+// GetID satisfies Notifier and Hashtagger interface
 func (c *Comment) GetID() uint64 {
 	return c.ID
 }
 
-// Type satisfies the Notifier interrace
-func (c *Comment) Type() string {
+// GetType satisfies the Notifier and Hashtagger interface
+func (c *Comment) GetType() string {
 	return "comment"
+}
+
+// GetContent satisfies the Hashtagger interface
+func (c *Comment) GetContent() string {
+	return c.Body
 }
 
 // GetRecordUserID returns the user ID of the record being commented upon. Satisfies Notifier interface.

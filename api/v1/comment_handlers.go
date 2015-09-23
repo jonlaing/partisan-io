@@ -6,15 +6,17 @@ import (
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
+	"strconv"
 	"time"
 )
 
 // CommentResp is the format for JSON responses
 type CommentResp struct {
-	Comment   m.Comment `json:"comment"`
-	User      m.User    `json:"user"`
-	LikeCount int       `json:"like_count"`
-	Liked     bool      `json:"liked"`
+	Comment    m.Comment         `json:"comment"`
+	Attachment m.ImageAttachment `json:"image_attachment"`
+	User       m.User            `json:"user"`
+	LikeCount  int               `json:"like_count"`
+	Liked      bool              `json:"liked"`
 }
 
 // CommentsIndex shows a list of comments based on a record_id
@@ -30,6 +32,7 @@ func CommentsIndex(c *gin.Context) {
 	var commentIDs []uint64
 	var userIDs []uint64
 	var users []m.User
+	var attachments []m.ImageAttachment
 
 	resp := []CommentResp{}
 
@@ -54,19 +57,24 @@ func CommentsIndex(c *gin.Context) {
 	likes, err := m.GetLikes(user.ID, "comment", commentIDs, &db)
 
 	// Batch find all users
-	db.Where("id IN (?)", userIDs).Find(&users).Debug()
+	db.Where("id IN (?)", userIDs).Find(&users)
+
+	// Batch find all attachments
+	db.Where("record_type = ? AND record_id IN (?)", "comment", commentIDs).Find(&attachments)
 
 	// compile all users and comments
 	// in this order because there will be more comments than users most likely
 	for _, comment := range comments {
 		cUser, _ := findMatchingCommentUser(comment, users)
 		like, _ := findMatchingCommentLikes(comment, likes)
+		attachment, _ := m.GetAttachment(comment.ID, attachments)
 
 		resp = append(resp, CommentResp{
-			Comment:   comment,
-			User:      cUser,
-			LikeCount: like.Count,
-			Liked:     like.UserCount == 1,
+			Comment:    comment,
+			User:       cUser,
+			LikeCount:  like.Count,
+			Liked:      like.UserCount == 1,
+			Attachment: attachment,
 		})
 	}
 
@@ -109,21 +117,27 @@ func CommentsCreate(c *gin.Context) {
 		return
 	}
 
-	var comment m.Comment
-	if err := c.BindJSON(&comment); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+	postIDString := c.Request.FormValue("post_id")
+	postID, err := strconv.ParseUint(postIDString, 10, 64)
+	if err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
 
-	comment.UserID = user.ID
-	comment.CreatedAt = time.Now()
-	comment.UpdatedAt = time.Now()
+	comment := m.Comment{
+		UserID:    user.ID,
+		PostID:    postID,
+		Body:      c.Request.FormValue("body"),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
 
 	if err := db.Create(&comment).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
 
+        m.FindAndCreateHashtags(&comment, &db)
 	m.NewNotification(&comment, user.ID, &db)
 
 	var count int
@@ -134,6 +148,15 @@ func CommentsCreate(c *gin.Context) {
 		User:      user,
 		LikeCount: 0,
 		Liked:     false,
+	}
+
+	// Doing it this way because we don't know if a user will try
+	// to attach an image. This way we can fail elegantly
+	if err = m.AttachImage(c, &db, &commentResp); err != nil {
+		// only errs with catostrophic failure,
+		// silently fails if no attachment is present
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 
 	// Create feed item
@@ -167,4 +190,25 @@ func findMatchingCommentLikes(comment m.Comment, likes []m.RecordLikes) (m.Recor
 		}
 	}
 	return m.RecordLikes{}, false
+}
+
+// GetID satisfies m.ImageAttacher interface
+func (cr *CommentResp) GetID() uint64 {
+	return cr.Comment.ID
+}
+
+// GetUserID satisfies m.ImageAttacher interface
+func (cr *CommentResp) GetUserID() uint64 {
+	return cr.User.ID
+}
+
+// GetType satisfies m.ImageAttacher interface
+func (cr *CommentResp) GetType() string {
+	return "comment"
+}
+
+// AttachImage satisfies m.ImageAttacher interface
+func (cr *CommentResp) AttachImage(i m.ImageAttachment) error {
+	cr.Attachment = i
+	return nil
 }

@@ -9,7 +9,7 @@ import (
 // Notifier is an interface for records that can produce notifications
 type Notifier interface {
 	GetID() uint64
-	Type() string
+	GetType() string
 	GetRecordUserID(*gorm.DB) (uint64, error) // kinda sucks this require an extra DB call, but c'est la vie
 }
 
@@ -40,7 +40,7 @@ func NewNotification(n Notifier, initiatedUserID uint64, db *gorm.DB) error {
 		UserID:       initiatedUserID,
 		TargetUserID: targetUserID,
 		RecordID:     n.GetID(),
-		RecordType:   n.Type(),
+		RecordType:   n.GetType(),
 		Seen:         false,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),

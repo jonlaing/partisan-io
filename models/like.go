@@ -26,8 +26,8 @@ func (l *Like) GetID() uint64 {
 	return l.ID
 }
 
-// Type satisifies Notifier interface
-func (l *Like) Type() string {
+// GetType satisifies Notifier interface
+func (l *Like) GetType() string {
 	return "like"
 }
 

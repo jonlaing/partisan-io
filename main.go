@@ -139,7 +139,19 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&m.Post{}, &m.User{}, &m.Friendship{}, &m.FeedItem{}, &m.Like{}, &m.Profile{}, &m.Comment{}, &m.ImageAttachment{}, &m.Notification{})
+	db.AutoMigrate(
+		&m.Post{},
+		&m.User{},
+		&m.Friendship{},
+		&m.FeedItem{},
+		&m.Like{},
+		&m.Profile{},
+		&m.Comment{},
+		&m.ImageAttachment{},
+		&m.Notification{},
+		&m.Hashtag{},
+		&m.Taxonomy{},
+	)
 
 	r.Run(":4000")
 }

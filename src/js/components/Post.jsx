@@ -29,8 +29,8 @@ export default React.createClass({
     if(this.state.showComments === true) {
       comments = (
         <div>
-          <CommentList id={this.props.data.post.id} type="post" show={this.state.showComments}/>
-          <CommentComposer id={this.props.data.post.id} type="post" />
+          <CommentList id={this.props.data.post.id} show={this.state.showComments}/>
+          <CommentComposer id={this.props.data.post.id} />
         </div>
       );
     }

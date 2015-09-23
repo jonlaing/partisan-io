@@ -1,3 +1,4 @@
+/*global FormData */
 import Dispatcher from '../Dispatcher';
 import Constants from '../Constants';
 
@@ -42,12 +43,23 @@ export default {
       });
   },
 
-  create(comment) {
+  create(postID, body, attachments) {
+    var request = new FormData();
+
+    attachments.forEach(function(value) {
+      request.append('attachment', value);
+    });
+
+    request.append('post_id', postID);
+    request.append('body', body);
+
     $.ajax({
       url: Constants.APIROOT + '/comments',
-      data: JSON.stringify(comment),
+      data: request,
+      cache: false,
       method: 'POST',
-      dataMethod: 'json'
+      processData: false,
+      contentType: false
     })
       .done(function(res) {
         let data = {

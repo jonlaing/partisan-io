@@ -37,7 +37,7 @@ func FeedIndex(c *gin.Context) {
 
 	friendIDs = append(friendIDs, user.ID)
 
-        // TODO: limit feed so a particular record only comes up once
+	// TODO: limit feed so a particular record only comes up once
 	feedItems := []m.FeedItem{}
 	if err := db.Where("user_id IN (?) AND action = ?", friendIDs, "post").Order("created_at desc").Limit(50).Find(&feedItems).Error; err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
@@ -85,7 +85,7 @@ func collectPosts(f *m.FeedItem, posts []m.Post, users []m.User, attachments []m
 	for _, post := range posts {
 		if f.RecordID == post.ID {
 			user, _ := findMatchingUser(post, users)
-			attachment, _ := findMatchingAttachment(post, attachments)
+			attachment, _ := m.GetAttachment(post.ID, attachments)
 			likeCount, liked, _ := findMatchingLikes(post, likes)
 			commentCount, _ := findMatchingCommentCount(post, comments)
 
@@ -107,15 +107,6 @@ func findMatchingUser(post m.Post, users []m.User) (m.User, bool) {
 		}
 	}
 	return m.User{}, false
-}
-
-func findMatchingAttachment(post m.Post, attachments []m.ImageAttachment) (m.ImageAttachment, bool) {
-	for _, attachment := range attachments {
-		if attachment.RecordID == post.ID {
-			return attachment, true
-		}
-	}
-	return m.ImageAttachment{}, false
 }
 
 func findMatchingLikes(post m.Post, likes []m.RecordLikes) (int, bool, bool) {

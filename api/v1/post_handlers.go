@@ -3,23 +3,21 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
-	"partisan/imager"
 	m "partisan/models"
 	"time"
 )
 
 // PostResponse is the response schema
 type PostResponse struct {
-	Post       m.Post            `json:"post"`
-	Attachment m.ImageAttachment `json:"image_attachment"`
-	User       m.User            `json:"user"`
-        LikeCount int `json:"like_count"`
-        Liked bool `json:"liked"`
-        CommentCount int `json:"comment_count"`
+	Post         m.Post            `json:"post"`
+	Attachment   m.ImageAttachment `json:"image_attachment"`
+	User         m.User            `json:"user"`
+	LikeCount    int               `json:"like_count"`
+	Liked        bool              `json:"liked"`
+	CommentCount int               `json:"comment_count"`
 }
 
 // PostsIndex display all posts
@@ -68,9 +66,11 @@ func PostsCreate(c *gin.Context) {
 		return
 	}
 
+	postBody := c.Request.FormValue("body")
+
 	post := m.Post{
 		UserID:    user.ID,
-		Body:      c.Request.FormValue("body"),
+		Body:      postBody,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -79,6 +79,8 @@ func PostsCreate(c *gin.Context) {
 		return
 	}
 
+	m.FindAndCreateHashtags(&post, &db)
+
 	postRes := PostResponse{
 		Post: post,
 		User: user,
@@ -86,7 +88,7 @@ func PostsCreate(c *gin.Context) {
 
 	// Doing it this way because we don't know if a user will try
 	// to attach an image. This way we can fail elegantly
-	if err := attachImage(c, &db, &postRes); err != nil {
+	if err := m.AttachImage(c, &db, &postRes); err != nil {
 		// only errs with catostrophic failure,
 		// silently fails if no attachment is present
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -236,41 +238,23 @@ func PostsDestroy(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
 }
 
-func attachImage(c *gin.Context, db *gorm.DB, p *PostResponse) error {
-	fmt.Println("trying to get file")
-	tmpFile, _, err := c.Request.FormFile("attachment")
-	if err != nil {
-		return nil // ignore missing file
-	}
-	defer tmpFile.Close()
+// GetID satisfies m.ImageAttacher interface
+func (pr *PostResponse) GetID() uint64 {
+	return pr.Post.ID
+}
 
-	processor := imager.ImageProcessor{File: tmpFile}
+// GetUserID satisfies m.ImageAttacher interface
+func (pr *PostResponse) GetUserID() uint64 {
+	return pr.User.ID
+}
 
-	// Save the full-size
-	var path string
-	if err := processor.Resize(1500); err != nil {
-		return err
-	}
-	path, err = processor.Save("/localfiles/img")
-	if err != nil {
-		return err
-	}
+// GetType satisfies m.ImageAttacher interface
+func (pr *PostResponse) GetType() string {
+	return "post"
+}
 
-	fmt.Println("did some processing:", path)
-
-	a := m.ImageAttachment{
-		UserID:     p.Post.UserID,
-		RecordID:   p.Post.ID,
-		RecordType: "post",
-		URL:        path,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
-	}
-
-	if err = db.Save(&a).Error; err == nil {
-		p.Attachment = a
-		return nil
-	}
-
-	return err
+// AttachImage satisfies m.ImageAttacher interface
+func (pr *PostResponse) AttachImage(i m.ImageAttachment) error {
+	pr.Attachment = i
+	return nil
 }

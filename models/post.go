@@ -1,7 +1,7 @@
 package models
 
 import (
-  "time"
+	"time"
 )
 
 // Post is the primary user created content. It can be just about anything.
@@ -11,4 +11,19 @@ type Post struct {
 	Body      string    `json:"body" binding:"required"`    // The text based body
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+// GetID satisfies Hashtagger interface
+func (p *Post) GetID() uint64 {
+	return p.ID
+}
+
+// GetType satisfies Hashtagger interface
+func (p *Post) GetType() string {
+	return "post"
+}
+
+// GetContent satisfies Hashtagger interface
+func (p *Post) GetContent() string {
+  return p.Body
 }

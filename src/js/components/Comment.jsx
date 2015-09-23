@@ -14,10 +14,24 @@ export default React.createClass({
   },
 
   render() {
+    var image;
+
+    console.log(this.props.data);
+    if(this.props.data.image_attachment !== undefined) {
+      image = (
+        <img src={this.props.data.image_attachment.image_url} width="30%" />
+      );
+    } else {
+      image = "";
+    }
+
     return (
       <div className="comment">
         <div className="comment-author">
           <a href={"/profiles/" + this.props.data.user.id}>@{this.props.data.user.username}</a>
+        </div>
+        <div className="comment-attachment">
+          {image}
         </div>
         <div className="comment-body">
           {this.props.data.comment.body}
