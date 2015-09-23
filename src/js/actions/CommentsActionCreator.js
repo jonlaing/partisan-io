@@ -4,7 +4,7 @@ import Constants from '../Constants';
 export default {
   getList(type, id) {
     $.ajax({
-      url: _commentRoute(type, id),
+      url: _commentRoute(id),
       method: 'GET',
       dataMethod: 'json'
     })
@@ -24,7 +24,7 @@ export default {
 
   getCount(type, id) {
     $.ajax({
-      url: _commentRoute(type, id) + '/count',
+      url: _commentRoute(id) + '/count',
       method: 'GET',
       dataMethod: 'json'
     })
@@ -51,8 +51,7 @@ export default {
     })
       .done(function(res) {
         let data = {
-          record_type: res.comment.record_type,
-          record_id: res.comment.record_id,
+          post_id: res.comment.post_id,
           comment_count: res.count
         };
 
@@ -75,6 +74,6 @@ export default {
 
 };
 
-function _commentRoute(type, id) {
-  return Constants.APIROOT + '/' + type + '/' + id + '/comments';
+function _commentRoute(id) {
+  return Constants.APIROOT + '/posts/' + id + '/comments';
 }

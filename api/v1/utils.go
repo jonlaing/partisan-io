@@ -9,7 +9,7 @@ import (
 
 func getRecord(c *gin.Context) (rID uint64, rType string, err error) {
 	url := c.Request.RequestURI
-	re := regexp.MustCompile("(posts|comments)")
+	re := regexp.MustCompile("(post|comment)")
 	rType = re.FindString(url)
 
 	recordID, ok := c.Params.Get("record_id")

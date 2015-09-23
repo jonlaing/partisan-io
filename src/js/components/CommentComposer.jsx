@@ -6,8 +6,7 @@ export default React.createClass({
   handleSubmit() {
     let body = $(React.findDOMNode(this.refs.comment));
     CommentsActionCreator.create({
-      "record_type": this.props.type,
-      "record_id": this.props.id,
+      "post_id": this.props.id,
       "body": body.val()
     });
     body.val('');

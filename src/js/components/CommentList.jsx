@@ -55,6 +55,7 @@ export default React.createClass({
   },
 
   _onChange() {
-    this.setState({comments: FeedStore.listComments(this.props.type, this.props.id)});
+    let state = FeedStore.listComments(this.props.id);
+    this.setState({comments: state});
   }
 });

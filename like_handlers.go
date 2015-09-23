@@ -25,7 +25,7 @@ func LikeShow(c *gin.Context) {
 		return
 	}
 
-	if like.RecordType == "post" || like.RecordType == "posts" {
+	if like.RecordType == "post" {
 		route := fmt.Sprintf("/posts/%d", like.RecordID)
 		c.Redirect(http.StatusMovedPermanently, route)
 		return

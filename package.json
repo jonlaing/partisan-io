@@ -50,6 +50,7 @@
       "no-script-url": 0,
       "no-underscore-dangle": 0,
       "no-console": 0,
+      "camelcase": [2, {"properties": "never"}],
       "quotes": [
         0,
         "double"

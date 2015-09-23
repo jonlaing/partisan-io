@@ -11,9 +11,10 @@ import (
 
 // CommentResp is the format for JSON responses
 type CommentResp struct {
-	Comment m.Comment `json:"comment"`
-	User    m.User    `json:"user"`
-	Count   int       `json:"count"`
+	Comment   m.Comment `json:"comment"`
+	User      m.User    `json:"user"`
+	LikeCount int       `json:"like_count"`
+	Liked     bool      `json:"liked"`
 }
 
 // CommentsIndex shows a list of comments based on a record_id
@@ -26,17 +27,16 @@ func CommentsIndex(c *gin.Context) {
 	defer db.Close()
 
 	var comments []m.Comment
+	var commentIDs []uint64
 	var userIDs []uint64
 	var users []m.User
 
 	resp := []CommentResp{}
 
-	rID, rType, err := getRecord(c)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-	}
+	pID := c.Param("record_id")
+	user, _ := auth.CurrentUser(c, &db)
 
-	if err := db.Where("record_type = ? AND record_id = ?", rType, rID).Find(&comments).Error; err != nil {
+	if err := db.Where("post_id = ?", pID).Find(&comments).Error; err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
@@ -47,8 +47,11 @@ func CommentsIndex(c *gin.Context) {
 
 	// get all User IDs
 	for _, comment := range comments {
+		commentIDs = append(commentIDs, comment.ID)
 		userIDs = append(userIDs, comment.UserID)
 	}
+
+	likes, err := m.GetLikes(user.ID, "comment", commentIDs, &db)
 
 	// Batch find all users
 	db.Where("id IN (?)", userIDs).Find(&users).Debug()
@@ -56,11 +59,15 @@ func CommentsIndex(c *gin.Context) {
 	// compile all users and comments
 	// in this order because there will be more comments than users most likely
 	for _, comment := range comments {
-		for _, user := range users {
-			if comment.UserID == user.ID {
-				resp = append(resp, CommentResp{comment, user, 0})
-			}
-		}
+		cUser, _ := findMatchingCommentUser(comment, users)
+		like, _ := findMatchingCommentLikes(comment, likes)
+
+		resp = append(resp, CommentResp{
+			Comment:   comment,
+			User:      cUser,
+			LikeCount: like.Count,
+			Liked:     like.UserCount == 1,
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{"comments": resp})
@@ -76,17 +83,14 @@ func CommentsCount(c *gin.Context) {
 	}
 	defer db.Close()
 
-	rID, rType, err := getRecord(c)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-	}
+	pID := c.Param("record_id")
 
 	var count int
-	if err := db.Model(m.Comment{}).Where("record_type = ? AND record_id = ?", rType, rID).Count(&count).Error; err != nil {
+	if err := db.Model(m.Comment{}).Where("post_id = ?", pID).Count(&count).Error; err != nil {
 		count = 0
 	}
 
-	c.JSON(http.StatusOK, gin.H{"record_type": rType, "record_id": rID, "comment_count": count})
+	c.JSON(http.StatusOK, gin.H{"post_id": pID, "comment_count": count})
 	return
 }
 
@@ -122,25 +126,45 @@ func CommentsCreate(c *gin.Context) {
 
 	m.NewNotification(&comment, user.ID, &db)
 
-        var count int
-        db.Model(m.Comment{}).Where("record_id = ? AND record_type = ?", comment.RecordID, comment.RecordType).Count(&count)
+	var count int
+	db.Model(m.Comment{}).Where("post_id = ?", comment.PostID).Count(&count)
 
 	commentResp := CommentResp{
-		Comment: comment,
-		User:    user,
-                Count: count,
+		Comment:   comment,
+		User:      user,
+		LikeCount: 0,
+		Liked:     false,
 	}
 
 	// Create feed item
 	feedItem := m.FeedItem{
 		Action:     "comment",
 		UserID:     user.ID,
-		RecordType: comment.RecordType,
-		RecordID:   comment.RecordID,
+		RecordType: "post",
+		RecordID:   comment.PostID,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	}
 	db.Create(&feedItem) // Don't need to error check
 
 	c.JSON(http.StatusCreated, commentResp)
+}
+
+func findMatchingCommentUser(comment m.Comment, users []m.User) (m.User, bool) {
+	for _, user := range users {
+		if comment.UserID == user.ID {
+			return user, true
+		}
+	}
+
+	return m.User{}, false
+}
+
+func findMatchingCommentLikes(comment m.Comment, likes []m.RecordLikes) (m.RecordLikes, bool) {
+	for _, like := range likes {
+		if like.RecordID == comment.ID {
+			return like, true
+		}
+	}
+	return m.RecordLikes{}, false
 }

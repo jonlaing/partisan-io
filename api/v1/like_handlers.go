@@ -44,6 +44,8 @@ func LikeCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
+        db.LogMode(true)
+
 	var like m.Like
 	var count int
 	var userCount int

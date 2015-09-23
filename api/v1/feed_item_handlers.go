@@ -10,13 +10,6 @@ import (
 	m "partisan/models"
 )
 
-// PostLikes stores like data for ease
-type PostLikes struct {
-	RecordID  uint64
-	Count     int
-	UserCount int
-}
-
 // PostComments stores like data for ease
 type PostComments struct {
 	RecordID uint64
@@ -44,8 +37,9 @@ func FeedIndex(c *gin.Context) {
 
 	friendIDs = append(friendIDs, user.ID)
 
+        // TODO: limit feed so a particular record only comes up once
 	feedItems := []m.FeedItem{}
-	if err := db.Where("user_id IN (?)", friendIDs).Order("created_at desc").Limit(50).Find(&feedItems).Error; err != nil {
+	if err := db.Where("user_id IN (?) AND action = ?", friendIDs, "post").Order("created_at desc").Limit(50).Find(&feedItems).Error; err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
@@ -70,7 +64,7 @@ func FeedIndex(c *gin.Context) {
 	var attachments []m.ImageAttachment
 	db.Where("record_type = ? AND record_id IN (?)", "post", postIDs).Find(&attachments)
 
-	postLikes, err := getLikes(user.ID, postIDs, &db)
+	postLikes, err := m.GetLikes(user.ID, "post", postIDs, &db)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -87,7 +81,7 @@ func FeedIndex(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"feed_items": feedItems})
 }
 
-func collectPosts(f *m.FeedItem, posts []m.Post, users []m.User, attachments []m.ImageAttachment, likes []PostLikes, comments []PostComments) {
+func collectPosts(f *m.FeedItem, posts []m.Post, users []m.User, attachments []m.ImageAttachment, likes []m.RecordLikes, comments []PostComments) {
 	for _, post := range posts {
 		if f.RecordID == post.ID {
 			user, _ := findMatchingUser(post, users)
@@ -124,7 +118,7 @@ func findMatchingAttachment(post m.Post, attachments []m.ImageAttachment) (m.Ima
 	return m.ImageAttachment{}, false
 }
 
-func findMatchingLikes(post m.Post, likes []PostLikes) (int, bool, bool) {
+func findMatchingLikes(post m.Post, likes []m.RecordLikes) (int, bool, bool) {
 	for _, like := range likes {
 		if like.RecordID == post.ID {
 			return like.Count, like.UserCount == 1, true
@@ -142,29 +136,10 @@ func findMatchingCommentCount(post m.Post, comments []PostComments) (int, bool) 
 	return 0, false
 }
 
-func getLikes(uID uint64, postIDs []uint64, db *gorm.DB) ([]PostLikes, error) {
-	var likes []PostLikes
-
-	rows, err := db.Raw("SELECT count(*), sum(case when user_id = ? then 1 else 0 end), record_id FROM \"likes\"  WHERE (record_type = 'posts' AND record_id IN (?)) GROUP BY record_id", uID, postIDs).Rows()
-	defer rows.Close()
-	if err != nil {
-		return []PostLikes{}, err
-	}
-
-	for rows.Next() {
-		var count, userCount int
-		var rID uint64
-		rows.Scan(&count, &userCount, &rID)
-		likes = append(likes, PostLikes{Count: count, UserCount: userCount, RecordID: rID})
-	}
-
-	return likes, nil
-}
-
 func getComments(postIDs []uint64, db *gorm.DB) ([]PostComments, error) {
 	var comments []PostComments
 
-	rows, err := db.Raw("SELECT count(*), record_id FROM \"comments\"  WHERE (record_type = 'posts' AND record_id IN (?)) group by record_id", postIDs).Rows()
+	rows, err := db.Raw("SELECT count(*), post_id FROM \"comments\"  WHERE (post_id IN (?)) group by post_id", postIDs).Rows()
 	defer rows.Close()
 	if err != nil {
 		return []PostComments{}, err

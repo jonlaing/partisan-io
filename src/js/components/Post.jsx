@@ -20,7 +20,7 @@ export default React.createClass({
   },
 
   handleLike() {
-    LikeActionCreator.like("posts", this.props.data.post.id);
+    LikeActionCreator.like("post", this.props.data.post.id);
   },
 
   render() {
@@ -29,8 +29,8 @@ export default React.createClass({
     if(this.state.showComments === true) {
       comments = (
         <div>
-          <CommentList id={this.props.data.post.id} type="posts" show={this.state.showComments}/>
-          <CommentComposer id={this.props.data.post.id} type="posts" />
+          <CommentList id={this.props.data.post.id} type="post" show={this.state.showComments}/>
+          <CommentComposer id={this.props.data.post.id} type="post" />
         </div>
       );
     }

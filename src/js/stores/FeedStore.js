@@ -26,34 +26,20 @@ function _addItem(item) {
 
 // add private functions to modify data
 function _addCommentCount(data) {
-  switch(data.record_type) {
-    case "post":
-    case "posts":
-      for(let i = 0; i < _feedItems.length; i++) {
-        if((_feedItems[i].record_type === "post" || _feedItems[i].record_type === "post")
-          && data.record_id === _feedItems[i].record_id) {
-            _feedItems[i].record.comment_count = data.comment_count;
-          }
-      }
-      break;
-    default:
-      break;
+  for(let i = 0; i < _feedItems.length; i++) {
+    if(data.post_id === _feedItems[i].record_id) {
+      _feedItems[i].record.comment_count = data.comment_count;
+    }
   }
 }
 
 function _addComment(data) {
-  let id = data.comment.record_id;
-  switch(data.comment.record_type) {
-    case "post":
-    case "posts":
-      if(_comments.postComments[id] === undefined) {
-        _comments.postComments[id] = [data];
-      } else {
-        _comments.postComments[id].push(data);
-      }
-      break;
-    default:
-      break;
+  let id = data.comment.post_id;
+
+  if(_comments.postComments[id] === undefined) {
+    _comments.postComments[id] = [data];
+  } else {
+    _comments.postComments[id].push(data);
   }
 }
 
@@ -62,37 +48,40 @@ function _addComments(data) {
     return;
   }
 
-  switch(data[0].comment.record_type) {
-    case "post":
-    case "posts":
-      _comments.postComments[data[0].comment.record_id] = data;
-      break;
-    default:
-      break;
-  }
+  _comments.postComments[data[0].comment.post_id] = data;
 }
 
 function _addLike(data) {
   switch(data.record_type) {
     case "post":
-    case "posts":
       for(let i = 0; i < _feedItems.length; i++) {
-        if((_feedItems[i].record_type === "post" || _feedItems[i].record_type === "post")
-          && data.record_id === _feedItems[i].record_id) {
+        if(data.record_id === _feedItems[i].record_id) {
             _feedItems[i].record.like_count = data.like_count;
             _feedItems[i].record.liked = data.liked;
           }
       }
       break;
     case "comment":
-    case "comments":
-      for(let i = 0; i < _feedItems.length; i++) {
-        if((_feedItems[i].record_type === "comment" || _feedItems[i].record_type === "comments")
-          && data.record_id === _feedItems[i].record_id) {
-            _feedItems[i].record.like_count = data.like_count;
-            _feedItems[i].record.liked = data.liked;
+      let id = data.record_id;
+
+      _comments.postComments = _comments.postComments.map((comments) => {
+        for(let j = 0; j < comments.length; j++) {
+          if(comments[j].comment.id === id) {
+            comments[j].like_count = data.like_count;
+            comments[j].liked = data.liked;
           }
-      }
+        }
+        return comments;
+      });
+
+      // for(comment in _comments.postComments) {
+      //   for(let i = 0; i < comment[i].length; i++) {
+      //     if(comment[i].comment.id === id) {
+      //       _comments.postComments[i][j].comment.like_count = data.like_count;
+      //       _comments.postComments[i][j].comment.liked = data.liked;
+      //     }
+      //   }
+      // }
       break;
     default:
       break;
@@ -107,38 +96,24 @@ const FeedStore = assign({}, BaseStore, {
     return _feedItems;
   },
 
-  listComments(type, id) {
-    switch(type) {
-      case "post":
-      case "posts":
-        let comments = _comments.postComments[id];
-        if(comments === undefined) {
-          return [];
-        }
-        return comments;
-      default:
-        break;
+  listComments(id) {
+    let comments = _comments.postComments[id];
+    if(comments === undefined) {
+      return [];
     }
+    return comments;
   },
 
-  countComments(type, id) {
-    switch(type) {
-      case "post":
-      case "posts":
-        return _comments.postCommentCounts[id];
-      default:
-        break;
-    }
+  countComments(id) {
+      return _comments.postCommentCounts[id];
   },
   //
   // public methods used by Controller-View to operate on data
   getLikes(type, id) {
     switch(type) {
       case "post":
-      case "posts":
         return {likeCount: _likes.postLikes[id], liked: _likes.liked[id]};
       case "comment":
-      case "comments":
         return {likeCount: _likes.commentLikes[id], liked: _likes.liked[id]};
       default:
         break;

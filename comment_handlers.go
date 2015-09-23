@@ -25,11 +25,9 @@ func CommentShow(c *gin.Context) {
 		return
 	}
 
-	if comment.RecordType == "post" || comment.RecordType == "posts" {
-		route := fmt.Sprintf("/posts/%d#comment-%d", comment.RecordID, comment.ID)
-		c.Redirect(http.StatusMovedPermanently, route)
-		return
-	}
+	route := fmt.Sprintf("/posts/%d#comment-%d", comment.ID)
+	c.Redirect(http.StatusMovedPermanently, route)
+	return
 
 	c.AbortWithStatus(http.StatusNotAcceptable)
 	return

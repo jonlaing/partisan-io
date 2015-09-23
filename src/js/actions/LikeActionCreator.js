@@ -25,5 +25,5 @@ export default {
 };
 
 function _likeRoute(type, id) {
-  return Constants.APIROOT + '/' + type + '/' + id + '/likes';
+  return Constants.APIROOT + '/' + type + 's/' + id + '/likes';
 }
