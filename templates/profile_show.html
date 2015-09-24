@@ -1,6 +1,4 @@
-{{ define "profile_show" }}
-{{ template "head" . }}
-{{ template "header" . }}
+{{ define "content" }}
   <div class="row">
     <div class="large-2 column">
       Some links here
@@ -19,5 +17,8 @@
       "enemy": {{ .enemy }},
     };
   </script>
-{{ template "footer" . }}
+{{ end }}
+
+{{ define "profile_show" }}
+  {{ template "layout" . }}
 {{ end }}

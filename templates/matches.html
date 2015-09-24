@@ -1,6 +1,4 @@
-{{ define "matches" }}
-{{ template "head" . }}
-{{ template "header" . }}
+{{ define "content" }}
   <div class="row">
     <div class="large-2 column">
       Some links here
@@ -11,5 +9,8 @@
       </div>
     </div>
   </div>
-{{ template "footer" . }}
+{{ end }}
+
+{{ define "matches" }}
+  {{ template "layout" . }}
 {{ end }}

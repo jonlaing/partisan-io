@@ -1,0 +1,25 @@
+{{ define "layout" }}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{ .title }}</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <div class="row clearfix">
+    <div class="large-2 columns right text-right">
+      <div id="user-session">
+      </div>
+    </div>
+  </div>
+
+  {{ template "content" . }}
+
+  <script type="text/javascript">
+    var user = {{ .user }};
+  </script>
+  <script src="/js/main.js"></script>
+</body>
+</html>
+{{ end }}

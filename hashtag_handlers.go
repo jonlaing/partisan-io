@@ -1,0 +1,24 @@
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"partisan/db"
+	"partisan/auth"
+)
+
+// HashtagShow renders the HTML for the hashtag search
+func HashtagShow(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	user, _ := auth.CurrentUser(c, &db)
+
+	search := c.Query("q")
+
+	c.HTML(http.StatusOK, "hashtags", gin.H{"user": user, "search": search})
+}

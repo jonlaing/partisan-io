@@ -1,7 +1,7 @@
 package models
 
 import (
-  "fmt"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"regexp"
 	"strings"
@@ -60,11 +60,24 @@ func CreateHashtag(r Hashtagger, tag string, db *gorm.DB) error {
 
 // FindAndCreateHashtags searches the content of the Hashtagger for hashtags and saves them
 func FindAndCreateHashtags(r Hashtagger, db *gorm.DB) {
-	hashtagSearch := regexp.MustCompile("#([a-zA-Z]+)")
-	hashtags := hashtagSearch.FindAllStringSubmatch(r.GetContent(), -1) // -1 means find all instances
+	hashtags := ExtractTags(r.GetContent())
 	for _, hashtag := range hashtags {
-		if err := CreateHashtag(r, hashtag[1], db); err != nil {
+		if err := CreateHashtag(r, hashtag, db); err != nil {
 			fmt.Println(err)
 		}
 	}
+}
+
+// ExtractTags finds hashtags in a string
+func ExtractTags(text string) []string {
+	hashtagSearch := regexp.MustCompile("#([a-zA-Z]+)")
+	hashtagSlices := hashtagSearch.FindAllStringSubmatch(text, -1) // -1 means find all instances
+
+	var hashtags []string
+
+	for _, hashtag := range hashtagSlices {
+		hashtags = append(hashtags, hashtag[1])
+	}
+
+	return hashtags
 }

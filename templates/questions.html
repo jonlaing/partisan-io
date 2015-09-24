@@ -1,11 +1,4 @@
-{{ define "questions" }}
-{{ template "head" . }}
-  <div class="row clearfix">
-    <div class="large-2 columns right text-right">
-      <div id="user-session">
-      </div>
-    </div>
-  </div>
+{{ define "content" }}
   <div class="row">
     <div class="large-10 large-offset-1 columns">
       <div id="questions">
@@ -13,5 +6,8 @@
       </div>
     </div>
   </div>
-{{ template "head" . }}
+{{ end }}
+
+{{ define "questions" }}
+  {{ template "layout" . }}
 {{ end }}

@@ -1,6 +1,4 @@
-{{ define "profile_edit" }}
-{{ template "head" . }}
-{{ template "header" . }}
+{{ define "content" }}
   <div class="row">
     <div class="large-2 column">
       Some links here
@@ -17,5 +15,8 @@
       "user": {{ .user }}
     };
   </script>
-{{ template "footer" . }}
+{{ end }}
+
+{{ define "profile_edit" }}
+  {{ template "layout" . }}
 {{ end }}

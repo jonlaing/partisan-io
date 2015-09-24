@@ -114,6 +114,8 @@ func main() {
 			notifications.GET("/count", api.NotificationsCount)
 		}
 
+		r.GET(v1Root + "/hashtags", api.HashtagShow)
+
 	}
 
 	// HTML
@@ -127,6 +129,8 @@ func main() {
 	r.GET("/comments/:record_id", auth.Auth(), CommentShow)
 	r.GET("/likes/:record_id", auth.Auth(), LikeShow)
 	r.GET("/posts/:record_id", auth.Auth(), PostShow)
+
+	r.GET("/hashtags", auth.Auth(), HashtagShow)
 
 	r.GET("/login", Login)
 	r.GET("/signup", SignUp)

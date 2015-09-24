@@ -1,6 +1,4 @@
-{{ define "post" }}
-{{ template "head" . }}
-{{ template "header" . }}
+{{ define "content" }}
   <div class="row">
     <div class="large-2 column">
       <div id="notifications"></div>
@@ -19,5 +17,8 @@
         like_count: {{.like_count}},
     };
   </script>
-{{ template "footer" . }}
+{{ end }}
+
+{{ define "post" }}
+  {{ template "layout" }}
 {{ end }}
