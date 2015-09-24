@@ -1,12 +1,15 @@
 {{ define "content" }}
   <div class="row">
     <div class="large-2 column">
-      Some links here
+      <div id="notifications"></div>
     </div>
     <div class="large-10 columns">
-      <div id="matches">
+      <div id="hashtags">
         <!-- Flux goes here -->
       </div>
     </div>
   </div>
+  <script type="text/javascript">
+    var search = {{.search}};
+  </script>
 {{ end }}

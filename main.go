@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-gonic/contrib/renders/multitemplate"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
@@ -114,12 +115,12 @@ func main() {
 			notifications.GET("/count", api.NotificationsCount)
 		}
 
-		r.GET(v1Root + "/hashtags", api.HashtagShow)
+		r.GET(v1Root+"/hashtags", api.HashtagShow)
 
 	}
 
 	// HTML
-	r.LoadHTMLGlob("templates/*.html")
+	r.HTMLRender = createMyRender()
 
 	r.GET("/profiles/:user_id", auth.Auth(), ProfileShow)
 	r.GET("/feed", auth.Auth(), FeedIndex)
@@ -143,6 +144,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 	db.AutoMigrate(
 		&m.Post{},
 		&m.User{},
@@ -158,4 +160,22 @@ func main() {
 	)
 
 	r.Run(":4000")
+}
+
+func createMyRender() multitemplate.Render {
+	root := "templates"
+	base := root + "/layout.html"
+
+	r := multitemplate.New()
+	r.AddFromFiles("feed", base, root+"/feed.html")
+	r.AddFromFiles("hashtags", base, root+"/hashtags.html")
+	r.AddFromFiles("login", base, root+"/login.html")
+	r.AddFromFiles("matches", base, root+"/matches.html")
+	r.AddFromFiles("post", base, root+"/post.html")
+	r.AddFromFiles("profile_edit", base, root+"/profile_edit.html")
+	r.AddFromFiles("profile_show", base, root+"/profile_show.html")
+	r.AddFromFiles("questions", base, root+"/questions.html")
+	r.AddFromFiles("signup", base, root+"/sign-up.html")
+
+	return r
 }
