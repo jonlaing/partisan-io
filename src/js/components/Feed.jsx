@@ -5,17 +5,18 @@ import FeedStore from '../stores/FeedStore.js';
 import Card from './Card.jsx';
 import Post from './Post.jsx';
 import PostComposer from './PostComposer.jsx';
+import FlagForm from './FlagForm.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 function getStateFromStore() {
-  let state = FeedStore.getFeedItems();
+  let state = FeedStore.getState();
   return state;
 }
 
 export default React.createClass({
   getInitialState() {
-    return { feed: [] };
+    return { feed: [], showFlagForm: false, flagID: 0 };
   },
 
   componentDidMount() {
@@ -51,11 +52,12 @@ export default React.createClass({
           {cards}
         </ReactCSSTransitionGroup>
         {nothing}
+        <FlagForm show={this.state.showFlagForm} id={this.state.flagID} type={this.state.flagType}/>
       </div>
     );
   },
 
   _onChange() {
-    this.setState({feed: getStateFromStore()});
+    this.setState(getStateFromStore());
   }
 });

@@ -3,6 +3,7 @@ import moment from 'moment';
 import marked from 'marked';
 
 import LikeActionCreator from '../actions/LikeActionCreator';
+import FlagActionCreator from '../actions/FlagActionCreator';
 
 import Likes from './Likes.jsx';
 import CommentCounter from './CommentCounter.jsx';
@@ -33,6 +34,10 @@ export default React.createClass({
 
   handleLike() {
     LikeActionCreator.like("post", this.props.data.post.id);
+  },
+
+  handleFlag() {
+    FlagActionCreator.beginReport(this.props.data.post.id, "post");
   },
 
   render() {
@@ -79,6 +84,7 @@ export default React.createClass({
         <div className="post-actions">
           <CommentCounter count={this.props.data.comment_count} className="right" onClick={this.handleToggleComments} />
           <Likes onClick={this.handleLike} count={this.props.data.like_count} liked={this.props.data.liked} />
+          <a href="javascript:void(0)" onClick={this.handleFlag}><i className="fi-flag"></i></a>
           <div className="clearfix"></div>
         </div>
         <div className="post-comments">

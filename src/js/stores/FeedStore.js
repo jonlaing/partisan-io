@@ -15,6 +15,10 @@ let _likes = {
   liked: []
 };
 
+let _showFlag = false;
+let _flagID = 0;
+let _flagType = "";
+
 // add private functions to modify data
 function _addItems(items) {
   _feedItems = _feedItems.concat(items);
@@ -82,8 +86,8 @@ export default FeedStore;
 
 // Facebook style store creation.
 const FeedStore = assign({}, BaseStore, {
-  getFeedItems() {
-    return _feedItems;
+  getState() {
+    return { feed: _feedItems, showFlagForm: _showFlag, flagID: _flagID, flagType: _flagType };
   },
 
   listComments(id) {
@@ -128,7 +132,7 @@ const FeedStore = assign({}, BaseStore, {
           FeedStore.emitChange();
         }
         break;
-      // COMMENT ACTIONS
+      // COMMENT ACTIONS || TODO: Break out into its own store
       case Constants.ActionTypes.GET_COMMENT_COUNT_SUCCESS:
         _addCommentCount(action.data);
         FeedStore.emitChange();
@@ -148,6 +152,19 @@ const FeedStore = assign({}, BaseStore, {
         break;
       case Constants.ActionTypes.LIKE_SUCCESS:
         _addLike(action.data);
+        FeedStore.emitChange();
+        break;
+      // FLAG ACTIONS
+      case Constants.ActionTypes.BEGIN_FLAG:
+        _showFlag = true;
+        _flagID = action.id;
+        _flagType = action.recordType;
+        FeedStore.emitChange();
+        break;
+      case Constants.ActionTypes.CANCEL_FLAG:
+        _showFlag = false;
+        _flagID = 0;
+        _flagType = "";
         FeedStore.emitChange();
         break;
 

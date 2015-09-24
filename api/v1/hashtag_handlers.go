@@ -19,8 +19,6 @@ func HashtagShow(c *gin.Context) {
 	}
 	defer db.Close()
 
-	db.LogMode(true)
-
 	user, _ := auth.CurrentUser(c, &db)
 
 	q := c.Query("q")
@@ -32,6 +30,7 @@ func HashtagShow(c *gin.Context) {
 	if err := db.Model(m.Taxonomy{}).
 		Joins("inner join hashtags on taxonomies.hashtag_id = hashtags.id").
 		Where("tag IN (?) AND record_type = ?", hashtagSearches, "post").
+		Order("created_at DESC").
 		Pluck("record_id", &postIDs).Error; err != nil {
 
 		c.AbortWithError(http.StatusNotFound, err)

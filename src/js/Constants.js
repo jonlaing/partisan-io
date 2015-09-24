@@ -49,7 +49,10 @@ export default {
     UPDATE_PROFILE_SUCCESS: null,
 
     GET_NOTIFICATIONS_SUCCESS: null,
-    GET_NOTIFICATION_COUNT: null
+    GET_NOTIFICATION_COUNT: null,
+
+    BEGIN_FLAG: null,
+    CANCEL_FLAG: null
   }),
 
   ActionSources: keyMirror({
