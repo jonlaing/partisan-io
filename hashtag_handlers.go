@@ -20,5 +20,5 @@ func HashtagShow(c *gin.Context) {
 
 	search := c.Query("q")
 
-	c.HTML(http.StatusOK, "hashtags", gin.H{"user": user, "search": search})
+        c.HTML(http.StatusOK, "hashtags", gin.H{"title": "Search Hashtags:" + search, "user": user, "search": search})
 }

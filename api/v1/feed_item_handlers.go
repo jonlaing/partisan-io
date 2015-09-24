@@ -3,7 +3,6 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
@@ -69,7 +68,7 @@ func FeedIndex(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	postComments, err := getComments(postIDs, &db)
+	postComments, err := getPostComments(postIDs, &db)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -84,9 +83,9 @@ func FeedIndex(c *gin.Context) {
 func collectPosts(f *m.FeedItem, posts []m.Post, users []m.User, attachments []m.ImageAttachment, likes []m.RecordLikes, comments []PostComments) {
 	for _, post := range posts {
 		if f.RecordID == post.ID {
-			user, _ := findMatchingUser(post, users)
+			user, _ := findMatchingPostUser(post, users)
 			attachment, _ := m.GetAttachment(post.ID, attachments)
-			likeCount, liked, _ := findMatchingLikes(post, likes)
+			likeCount, liked, _ := fineMatchingPostLikes(post, likes)
 			commentCount, _ := findMatchingCommentCount(post, comments)
 
 			f.Record = PostResponse{
@@ -99,50 +98,4 @@ func collectPosts(f *m.FeedItem, posts []m.Post, users []m.User, attachments []m
 			}
 		}
 	}
-}
-func findMatchingUser(post m.Post, users []m.User) (m.User, bool) {
-	for _, user := range users {
-		if user.ID == post.UserID {
-			return user, true
-		}
-	}
-	return m.User{}, false
-}
-
-func findMatchingLikes(post m.Post, likes []m.RecordLikes) (int, bool, bool) {
-	for _, like := range likes {
-		if like.RecordID == post.ID {
-			return like.Count, like.UserCount == 1, true
-		}
-	}
-	return 0, false, false
-}
-
-func findMatchingCommentCount(post m.Post, comments []PostComments) (int, bool) {
-	for _, comment := range comments {
-		if comment.RecordID == post.ID {
-			return comment.Count, true
-		}
-	}
-	return 0, false
-}
-
-func getComments(postIDs []uint64, db *gorm.DB) ([]PostComments, error) {
-	var comments []PostComments
-
-	rows, err := db.Raw("SELECT count(*), post_id FROM \"comments\"  WHERE (post_id IN (?)) group by post_id", postIDs).Rows()
-	defer rows.Close()
-	if err != nil {
-		return []PostComments{}, err
-	}
-
-	for rows.Next() {
-		var count int
-		var rID uint64
-
-		rows.Scan(&count, &rID)
-		comments = append(comments, PostComments{Count: count, RecordID: rID})
-	}
-
-	return comments, nil
 }

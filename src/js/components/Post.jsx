@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import marked from 'marked';
 
 import LikeActionCreator from '../actions/LikeActionCreator';
 
@@ -7,6 +8,17 @@ import Likes from './Likes.jsx';
 import CommentCounter from './CommentCounter.jsx';
 import CommentComposer from './CommentComposer.jsx';
 import CommentList from './CommentList.jsx';
+
+marked.setOptions({
+  sanitize: true,
+  tables: false
+});
+
+var markedRenderer = new marked.Renderer();
+
+markedRenderer.heading = (text) => {
+  return '<p><strong>' + text + '</strong></p>';
+};
 
 export default React.createClass({
   getInitialState() {
@@ -25,6 +37,10 @@ export default React.createClass({
 
   render() {
     var comments, attachment;
+
+    var bodyHTML = function(body) {
+      return { __html: _hashtagify(marked(body, {renderer: markedRenderer} )) };
+    };
 
     if(this.state.showComments === true) {
       comments = (
@@ -58,9 +74,7 @@ export default React.createClass({
             </div>
           </div>
           {attachment}
-          <div className="post-body">
-            {this.props.data.post.body}
-          </div>
+          <div className="post-body" dangerouslySetInnerHTML={bodyHTML(this.props.data.post.body)} />
         </div>
         <div className="post-actions">
           <CommentCounter count={this.props.data.comment_count} className="right" onClick={this.handleToggleComments} />
@@ -74,3 +88,17 @@ export default React.createClass({
     );
   }
 });
+
+function _hashtagify(content) {
+  let tags = content.match(/#[a-zA-Z]+/g);
+  var newContent = content;
+
+  if(tags !== null) {
+    tags.forEach((tag) => {
+      let encoded = encodeURIComponent(tag);
+      newContent = newContent.replace(tag, '<a href="/hashtags?q=' + encoded + '">' + tag + '</a>');
+    });
+  }
+
+  return newContent;
+}

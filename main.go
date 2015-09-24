@@ -115,7 +115,7 @@ func main() {
 			notifications.GET("/count", api.NotificationsCount)
 		}
 
-		r.GET(v1Root+"/hashtags", api.HashtagShow)
+		r.GET(v1Root+"/hashtags", auth.Auth(), api.HashtagShow)
 
 	}
 

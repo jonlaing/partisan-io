@@ -52,6 +52,7 @@ function _addComments(data) {
 }
 
 function _addLike(data) {
+  let id = data.record_id;
   switch(data.record_type) {
     case "post":
       for(let i = 0; i < _feedItems.length; i++) {
@@ -62,8 +63,6 @@ function _addLike(data) {
       }
       break;
     case "comment":
-      let id = data.record_id;
-
       _comments.postComments = _comments.postComments.map((comments) => {
         for(let j = 0; j < comments.length; j++) {
           if(comments[j].comment.id === id) {
@@ -73,15 +72,6 @@ function _addLike(data) {
         }
         return comments;
       });
-
-      // for(comment in _comments.postComments) {
-      //   for(let i = 0; i < comment[i].length; i++) {
-      //     if(comment[i].comment.id === id) {
-      //       _comments.postComments[i][j].comment.like_count = data.like_count;
-      //       _comments.postComments[i][j].comment.liked = data.liked;
-      //     }
-      //   }
-      // }
       break;
     default:
       break;
