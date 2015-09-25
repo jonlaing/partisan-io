@@ -5,10 +5,7 @@ import assign from 'object-assign';
 
 // data storage
 let _feedItems = [];
-let _comments = {
-  postComments: [],
-  postCommentCounts: []
-};
+
 let _likes = {
   postLikes: [],
   commentLikes: [],
@@ -41,48 +38,12 @@ function _addCommentCount(data) {
   }
 }
 
-function _addComment(data) {
-  let id = data.comment.post_id;
-
-  if(_comments.postComments[id] === undefined) {
-    _comments.postComments[id] = [data];
-  } else {
-    _comments.postComments[id].push(data);
-  }
-}
-
-function _addComments(data) {
-  if(data.length < 1) {
-    return;
-  }
-
-  _comments.postComments[data[0].comment.post_id] = data;
-}
-
-function _addLike(data) {
-  let id = data.record_id;
-  switch(data.record_type) {
-    case "post":
-      for(let i = 0; i < _feedItems.length; i++) {
-        if(data.record_id === _feedItems[i].record_id) {
-            _feedItems[i].record.like_count = data.like_count;
-            _feedItems[i].record.liked = data.liked;
-          }
+function _addPostLike(data) {
+  for(let i = 0; i < _feedItems.length; i++) {
+    if(data.record_id === _feedItems[i].record_id) {
+        _feedItems[i].record.like_count = data.like_count;
+        _feedItems[i].record.liked = data.liked;
       }
-      break;
-    case "comment":
-      _comments.postComments = _comments.postComments.map((comments) => {
-        for(let j = 0; j < comments.length; j++) {
-          if(comments[j].comment.id === id) {
-            comments[j].like_count = data.like_count;
-            comments[j].liked = data.liked;
-          }
-        }
-        return comments;
-      });
-      break;
-    default:
-      break;
   }
 }
 
@@ -94,17 +55,9 @@ const FeedStore = assign({}, BaseStore, {
     return { feed: _feedItems, modals: _modals };
   },
 
-  listComments(id) {
-    let comments = _comments.postComments[id];
-    if(comments === undefined) {
-      return [];
-    }
-    return comments;
-  },
-
-  countComments(id) {
-      return _comments.postCommentCounts[id];
-  },
+  // countComments(id) {
+  //     return _comments.postCommentCounts[id];
+  // },
   //
   // public methods used by Controller-View to operate on data
   getLikes(type, id) {
@@ -136,27 +89,24 @@ const FeedStore = assign({}, BaseStore, {
           FeedStore.emitChange();
         }
         break;
-      // COMMENT ACTIONS || TODO: Break out into its own store
       case Constants.ActionTypes.GET_COMMENT_COUNT_SUCCESS:
         _addCommentCount(action.data);
         FeedStore.emitChange();
         break;
-      case Constants.ActionTypes.CREATE_COMMENT_SUCCESS:
-        _addComment(action.data);
-        FeedStore.emitChange();
-        break;
-      case Constants.ActionTypes.GET_COMMENTS_SUCCESS:
-        _addComments(action.data.comments);
-        FeedStore.emitChange();
-        break;
       // LIKE ACTIONS
       case Constants.ActionTypes.GET_LIKES_SUCCESS:
-        _addLike(action.data);
-        FeedStore.emitChange();
+        // we only like for posts on the feed
+        // comment posts are taken care of in CommentStore
+        if(action.data.record_type === "post") {
+          _addPostLike(action.data);
+          FeedStore.emitChange();
+        }
         break;
       case Constants.ActionTypes.LIKE_SUCCESS:
-        _addLike(action.data);
-        FeedStore.emitChange();
+        if(action.data.record_type === "post") {
+          _addPostLike(action.data);
+          FeedStore.emitChange();
+        }
         break;
       // FLAG ACTIONS
       case Constants.ActionTypes.BEGIN_FLAG:

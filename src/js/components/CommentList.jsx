@@ -1,7 +1,7 @@
 import React from 'react/addons';
 
 import CommentsActionCreator from '../actions/CommentsActionCreator';
-import FeedStore from '../stores/FeedStore';
+import CommentStore from '../stores/CommentStore';
 import Comment from './Comment.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
@@ -15,12 +15,12 @@ export default React.createClass({
   },
 
   componentDidMount() {
-    FeedStore.addChangeListener(this._onChange);
+    CommentStore.addChangeListener(this._onChange);
     CommentsActionCreator.getList(this.props.type, this.props.id);
   },
 
   componentWillUnmount() {
-    FeedStore.removeChangeListener(this._onChange);
+    CommentStore.removeChangeListener(this._onChange);
   },
 
   componentDidUpdate() {
@@ -55,7 +55,7 @@ export default React.createClass({
   },
 
   _onChange() {
-    let state = FeedStore.listComments(this.props.id);
+    let state = CommentStore.listComments(this.props.id);
     this.setState({comments: state});
   }
 });

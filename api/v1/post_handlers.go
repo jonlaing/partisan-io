@@ -80,6 +80,7 @@ func PostsCreate(c *gin.Context) {
 	}
 
 	m.FindAndCreateHashtags(&post, &db)
+        m.FindAndCreateUserTags(&post, &db)
 
 	postRes := PostResponse{
 		Post: post,

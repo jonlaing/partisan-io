@@ -25,15 +25,15 @@ func ProfileShow(c *gin.Context) {
 		return
 	}
 
-	userID := c.Param("user_id")
+	username := c.Param("username")
 	// no param in route
-	if len(userID) == 0 {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("Couldn't find User ID"))
+	if len(username) == 0 {
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("Couldn't find Username"))
 		return
 	}
 
 	user := m.User{}
-	if err := db.First(&user, userID).Error; err != nil {
+	if err := db.Where("username = ?", username).First(&user).Error; err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
@@ -79,7 +79,7 @@ func ProfileEdit(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "profile_edit", gin.H{
-		"title":   "Edit My Profile",
+		"title": "Edit My Profile",
 		"data": gin.H{
 			"user":    currentUser,
 			"profile": profile,

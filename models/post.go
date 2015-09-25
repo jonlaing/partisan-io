@@ -18,6 +18,11 @@ func (p *Post) GetID() uint64 {
 	return p.ID
 }
 
+// GetUserID satisfies UserTagger interface
+func (p *Post) GetUserID() uint64 {
+	return p.UserID
+}
+
 // GetType satisfies Hashtagger interface
 func (p *Post) GetType() string {
 	return "post"

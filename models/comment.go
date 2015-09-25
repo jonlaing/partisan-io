@@ -20,6 +20,11 @@ func (c *Comment) GetID() uint64 {
 	return c.ID
 }
 
+// GetUserID satisfies Notifier and Hashtagger interface
+func (c *Comment) GetUserID() uint64 {
+	return c.UserID
+}
+
 // GetType satisfies the Notifier and Hashtagger interface
 func (c *Comment) GetType() string {
 	return "comment"

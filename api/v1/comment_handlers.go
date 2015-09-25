@@ -138,6 +138,7 @@ func CommentsCreate(c *gin.Context) {
 	}
 
         m.FindAndCreateHashtags(&comment, &db)
+        m.FindAndCreateUserTags(&comment, &db)
 	m.NewNotification(&comment, user.ID, &db)
 
 	var count int

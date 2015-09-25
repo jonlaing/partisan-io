@@ -124,7 +124,7 @@ func main() {
 	// HTML
 	r.HTMLRender = createMyRender()
 
-	r.GET("/profiles/:user_id", auth.Auth(), ProfileShow)
+	r.GET("/profiles/:username", auth.Auth(), ProfileShow)
 	r.GET("/feed", auth.Auth(), FeedIndex)
 	r.GET("/profile", auth.Auth(), ProfileEdit)
 	r.GET("/questions", auth.Auth(), QuestionsIndex)
@@ -160,6 +160,7 @@ func main() {
 		&m.Hashtag{},
 		&m.Taxonomy{},
                 &m.Flag{},
+                &m.UserTag{},
 	)
 
 	r.Run(":4000")

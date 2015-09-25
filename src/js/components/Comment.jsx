@@ -1,6 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 
+import formatter from '../utils/formatter';
+
 import LikeActionCreator from '../actions/LikeActionCreator';
 import Likes from './Likes.jsx';
 
@@ -16,7 +18,6 @@ export default React.createClass({
   render() {
     var image;
 
-    console.log(this.props.data);
     if(this.props.data.image_attachment !== undefined) {
       image = (
         <img src={this.props.data.image_attachment.image_url} width="30%" />
@@ -34,7 +35,7 @@ export default React.createClass({
           {image}
         </div>
         <div className="comment-body">
-          {this.props.data.comment.body}
+          {formatter.comment(this.props.data.comment.body)}
         </div>
         <div>
           <div className="right comment-meta">{moment(this.props.data.comment.created_at).fromNow()}</div>

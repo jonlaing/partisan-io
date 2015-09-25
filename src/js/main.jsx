@@ -48,7 +48,7 @@ if(questions !== null) {
 }
 
 if(profileShow !== null) {
-  React.render(<ProfileShow user={data.user} match={data.match} enemy={data.match} />, profileShow);
+  React.render(<ProfileShow user={data.user} match={data.match} profile={data.profile} />, profileShow);
 }
 
 if(profileEdit !== null) {
