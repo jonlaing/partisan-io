@@ -162,6 +162,7 @@ const FeedStore = assign({}, BaseStore, {
         FeedStore.emitChange();
         break;
       case Constants.ActionTypes.CANCEL_FLAG:
+      case Constants.ActionTypes.SUBMIT_FLAG:
         _showFlag = false;
         _flagID = 0;
         _flagType = "";

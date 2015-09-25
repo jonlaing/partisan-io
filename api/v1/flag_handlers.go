@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
 	"time"
@@ -17,12 +18,15 @@ func FlagCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
+	user, _ := auth.CurrentUser(c, &db)
+
 	var flag m.Flag
 	if err := c.BindJSON(&flag); err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
 
+	flag.UserID = user.ID
 	flag.CreatedAt = time.Now()
 	flag.UpdatedAt = time.Now()
 

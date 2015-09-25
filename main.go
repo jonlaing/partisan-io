@@ -117,6 +117,8 @@ func main() {
 
 		r.GET(v1Root+"/hashtags", auth.Auth(), api.HashtagShow)
 
+		r.POST(v1Root+"/flag", auth.Auth(), api.FlagCreate)
+
 	}
 
 	// HTML
@@ -157,6 +159,7 @@ func main() {
 		&m.Notification{},
 		&m.Hashtag{},
 		&m.Taxonomy{},
+                &m.Flag{},
 	)
 
 	r.Run(":4000")

@@ -52,7 +52,8 @@ export default {
     GET_NOTIFICATION_COUNT: null,
 
     BEGIN_FLAG: null,
-    CANCEL_FLAG: null
+    CANCEL_FLAG: null,
+    SUBMIT_FLAG: null
   }),
 
   ActionSources: keyMirror({
