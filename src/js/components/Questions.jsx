@@ -2,6 +2,7 @@ import React from 'react';
 import QuestionsActionCreator from '../actions/QuestionsActionCreator';
 import QuestionsStore from '../stores/QuestionsStore';
 import Card from './Card.jsx';
+import UserSession from './UserSession.jsx';
 
 export default React.createClass({
   getInitialState() {
@@ -28,15 +29,14 @@ export default React.createClass({
   render() {
     return (
       <div className="question">
-        <div className="row">
-          <div className="large-12 columns">
-            <div className="right">
-              {this.state.questionsAnswered} of {this._maxQuestions()}
-            </div>
+        <header>
+          <UserSession username={this.props.data.user.username} />
+        </header>
+        <div className="question-container">
+          <div className="question-number">
+            {this.state.questionsAnswered} of {this._maxQuestions()}
           </div>
-        </div>
-        <div className="row">
-          <div className="large-12 columns">
+          <div className="question-body">
             <Card>
               <div className="card-body">
                 {this.state.question.prompt}
@@ -44,13 +44,9 @@ export default React.createClass({
             </Card>
           </div>
         </div>
-        <div className="row">
-          <div className="large-4 columns">
-            <button className="button alert expand" onClick={this.handleDisagree}>Disagree</button>
-          </div>
-          <div className="large-4 large-offset-4 columns">
-            <button className="button success expand" onClick={this.handleAgree}>Agree</button>
-          </div>
+        <div className="question-actions">
+          <button className="button alert expand" onClick={this.handleDisagree}>Disagree</button>
+          <button className="button success expand" onClick={this.handleAgree}>Agree</button>
         </div>
       </div>
     );
@@ -66,7 +62,6 @@ export default React.createClass({
       return;
     }
 
-    console.log(question);
     this.setState({question: question, questionsAnswered: answered});
   },
 

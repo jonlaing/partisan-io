@@ -15,7 +15,6 @@ export default React.createClass({
   },
 
   handleLogin() {
-    console.log("begin login");
     let email = $(React.findDOMNode(this.refs.email)).val();
     let password = $(React.findDOMNode(this.refs.password)).val();
     LoginActionCreator.login(email, password);

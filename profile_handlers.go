@@ -48,10 +48,12 @@ func ProfileShow(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "profile_show",
 		gin.H{
-			"title":   "@" + user.Username + "'s Profile",
-			"profile": profile,
-			"user":    user,
-			"match":   fmt.Sprintf("%.f", match*100),
+			"title": "@" + user.Username + "'s Profile",
+			"data": gin.H{
+				"profile": profile,
+				"user":    user,
+				"match":   fmt.Sprintf("%.f", match*100),
+			},
 		})
 }
 
@@ -78,7 +80,9 @@ func ProfileEdit(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "profile_edit", gin.H{
 		"title":   "Edit My Profile",
-		"user":    currentUser,
-		"profile": profile,
+		"data": gin.H{
+			"user":    currentUser,
+			"profile": profile,
+		},
 	})
 }

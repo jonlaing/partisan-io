@@ -6,17 +6,11 @@
   <link rel="stylesheet" href="/styles/main.css">
 </head>
 <body>
-  <div class="row clearfix">
-    <div class="large-2 columns right text-right">
-      <div id="user-session">
-      </div>
-    </div>
-  </div>
 
   {{ template "content" . }}
 
   <script type="text/javascript">
-    var user = {{ .user }};
+    var data = {{.data}};
   </script>
   <script src="/js/main.js"></script>
 </body>

@@ -4,6 +4,8 @@ import marked from 'marked';
 import CheckboxGroup from 'react-checkbox-group';
 
 import AvatarUpload from './AvatarUpload.jsx';
+import UserSession from './UserSession.jsx';
+import Notifications from './Notifications.jsx';
 
 import ProfileActionCreator from '../actions/ProfileActionCreator';
 import ProfileStore from '../stores/ProfileStore';
@@ -147,22 +149,21 @@ export default React.createClass({
 
     return (
       <div className="profile-edit">
-        <div className="row">
-          <div className="large-3 columns">
-            <div className="profile-avatar">
-              <div className="user-avatar">
-                {avatar}
-              </div>
+        <header>
+          <UserSession username={this.props.data.user.username} />
+          <Notifications />
+        </header>
+
+        <div className="profile-edit-container">
+          <div className="profile-avatar">
+            <div className="user-avatar">
+              {avatar}
             </div>
           </div>
-          <div className="large-9 columns">
-            <h1 className="profile-username">
-              @{this.props.data.user.username}
-            </h1>
-          </div>
-        </div>
-        <div className="row">
-          <div className="large-4 columns">
+          <h1 className="profile-username">
+            @{this.props.data.user.username}
+          </h1>
+          <div className="profile-edit-lookingfor">
             <CheckboxGroup
               name="looking_for"
               value={this._parseLookingFor(this.state.profile.looking_for)}
@@ -179,27 +180,21 @@ export default React.createClass({
                 </label>
             </CheckboxGroup>
           </div>
-        </div>
-        <div className="row">
-          <div className="large-6 columns">
-            <div className="row">
-              <div className="large-2 columns">
+          <div className="profile-edit-info">
+            <div className="profile-edit-location">
+              <label>
                 Location
-              </div>
+              </label>
               {location}
             </div>
-          </div>
-          <div className="large-6 columns">
-            <div className="row">
-              <div className="large-2 columns">
+            <div className="profile-edit-gener">
+              <label>
                 Gender
-              </div>
+              </label>
               {gender}
             </div>
           </div>
-        </div>
-        <div className="row">
-          <div className="large-12">
+          <div className="profile-edit-summary">
             <h4>Summary</h4>
             {summary}
           </div>

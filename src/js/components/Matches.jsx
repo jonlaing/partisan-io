@@ -3,6 +3,9 @@ import React from 'react';
 import MatchesActionCreator from '../actions/MatchesActionCreator';
 import MatchesStore from '../stores/MatchesStore';
 
+import UserSession from './UserSession.jsx';
+import Notifications from './Notifications.jsx';
+
 export default React.createClass({
   getInitialState() {
     return {matches: []};
@@ -47,10 +50,17 @@ export default React.createClass({
 
     return (
       <div className="matches">
-        <ul>
-          {matches}
-        </ul>
-        {nothing}
+        <header>
+          <UserSession username={this.props.data.user.username} />
+          <Notifications />
+        </header>
+
+        <div className="matches-container">
+          <ul>
+            {matches}
+          </ul>
+          {nothing}
+        </div>
       </div>
     );
   },

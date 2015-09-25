@@ -22,5 +22,10 @@ func QuestionsIndex(c *gin.Context) {
 		return
 	}
 
-        c.HTML(http.StatusOK, "login", gin.H{"title": "Answer Questions", "user": user})
+        c.HTML(http.StatusOK, "questions", gin.H{
+		"title": "Answer Questions", 
+		"data": gin.H{
+			"user": user,
+		},
+	})
 }

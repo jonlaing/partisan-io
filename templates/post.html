@@ -1,20 +1,5 @@
 {{ define "content" }}
-  <div class="row">
-    <div class="large-2 column">
-      <div id="notifications"></div>
-    </div>
-    <div class="large-10 columns">
-      <div id="post">
-        <!-- Flux goes here -->
-      </div>
-    </div>
+  <div id="post">
+    <!-- Flux goes here -->
   </div>
-  <script type="text/javascript">
-    var postData = {
-        post: {{.post}},
-        image_attachment: {{.attachment}},
-        user: {{.user}},
-        like_count: {{.like_count}},
-    };
-  </script>
 {{ end }}

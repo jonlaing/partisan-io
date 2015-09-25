@@ -1,6 +1,8 @@
 import React from 'react';
 
 import Friend from './Friend.jsx';
+import UserSession from './UserSession.jsx';
+import Notifications from './Notifications.jsx';
 
 export default React.createClass({
   getInitialState() {
@@ -13,19 +15,25 @@ export default React.createClass({
   render() {
     return (
       <div className="profile">
-        <div className="row">
-          <h1>@{this.props.user.username}</h1>
-          <div className="right">
-            <Friend id={this.props.user.id} />
+        <header>
+          <UserSession username={this.props.user.username} />
+          <Notifications />
+        </header>
+
+        <div className="profile-container">
+          <div className="profile-user">
+            <h1>@{this.props.user.username}</h1>
+            <div className="right">
+              <Friend id={this.props.user.id} />
+            </div>
           </div>
-        </div>
-        <div className="row profile-match">
-          <div className="large-6 columns profile-match-match">{this.props.match}%<span>Match</span></div>
-          <div className="large-6 columns text-right profile-match-enemy">{this.props.enemy}%<span>Enemy</span></div>
-        </div>
-        <div className="row">
-          <div className="large-6 columns">{this.props.user.location}</div>
-          <div className="large-6 columns">{this.props.user.gender}</div>
+          <div className="profile-match">
+            {this.props.match}%<span>Match</span>
+          </div>
+          <div className="profile-info">
+            <div className="profile-info-location">{this.props.user.location}</div>
+            <div className="profile-info-gender">{this.props.user.gender}</div>
+          </div>
         </div>
       </div>
     );

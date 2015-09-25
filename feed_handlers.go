@@ -22,5 +22,10 @@ func FeedIndex(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "feed", gin.H{"title": "My Feed", "user": user})
+	c.HTML(http.StatusOK, "feed", gin.H{
+          "title": "My Feed",
+          "data": gin.H{
+            "user": user,
+          },
+        })
 }

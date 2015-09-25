@@ -39,5 +39,13 @@ func PostShow(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	c.HTML(http.StatusOK, "post", gin.H{"post": post, "post_user": pUser, "user": user, "attachment": attachment, "like_count": likeCount})
+	c.HTML(http.StatusOK, "post", gin.H{
+		"data": gin.H{
+			"post": post,
+			"post_user": pUser,
+			"user": user,
+			"attachment": attachment,
+			"like_count": likeCount,
+		},
+	})
 }

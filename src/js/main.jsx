@@ -1,4 +1,4 @@
-/*global user, profileData, postData, search */
+/*global data */
 import React from 'react';
 import jQuery from 'jquery';
 
@@ -9,13 +9,11 @@ global.$ = jQuery;
 
 import Login from './components/Login.jsx';
 import SignUp from './components/SignUp.jsx';
-import UserSession from './components/UserSession.jsx';
 import Feed from './components/Feed.jsx';
 import Questions from './components/Questions.jsx';
 import ProfileShow from './components/ProfileShow.jsx';
 import Matches from './components/Matches.jsx';
 import ProfileEdit from './components/ProfileEdit.jsx';
-import Notifications from './components/Notifications.jsx';
 import Post from './components/Post.jsx';
 import Card from './components/Card.jsx';
 import HashtagSearch from './components/HashtagSearch.jsx';
@@ -23,13 +21,11 @@ import HashtagSearch from './components/HashtagSearch.jsx';
 // optionally attack DOM elements to React
 let login = document.getElementById('login');
 let signUp = document.getElementById('sign-up');
-let userSession = document.getElementById('user-session');
 let feed = document.getElementById('feed');
 let questions = document.getElementById('questions');
 let profileShow = document.getElementById('profile-show');
 let profileEdit = document.getElementById('profile-edit');
 let matches = document.getElementById('matches');
-let notifications = document.getElementById('notifications');
 let post = document.getElementById('post');
 let hashtags = document.getElementById('hashtags');
 
@@ -42,39 +38,31 @@ if(signUp !== null) {
   React.render(<SignUp />, signUp);
 }
 
-if(userSession !== null) {
-  React.render(<UserSession user={user}/>, userSession);
-}
-
 if(feed !== null) {
-  React.render(<Feed />, feed);
+  React.render(<Feed data={data} />, feed);
 }
 
 
 if(questions !== null) {
-  React.render(<Questions />, questions);
+  React.render(<Questions data={data}/>, questions);
 }
 
 if(profileShow !== null) {
-  React.render(<ProfileShow user={profileData.user} match={profileData.match} enemy={profileData.match} />, profileShow);
+  React.render(<ProfileShow user={data.user} match={data.match} enemy={data.match} />, profileShow);
 }
 
 if(profileEdit !== null) {
-  React.render(<ProfileEdit data={profileData} />, profileEdit);
+  React.render(<ProfileEdit data={data} />, profileEdit);
 }
 
 if(matches !== null) {
-  React.render(<Matches/>, matches);
-}
-
-if(notifications !== null) {
-  React.render(<Notifications/>, notifications);
+  React.render(<Matches data={data} />, matches);
 }
 
 if(post !== null) {
-  React.render(<Card><Post data={postData} defaultShowComments={true}/></Card>, post);
+  React.render(<Card><Post data={data} defaultShowComments={true}/></Card>, post);
 }
 
 if(hashtags !== null) {
-  React.render(<HashtagSearch defaultSearch={search} />, hashtags);
+  React.render(<HashtagSearch defaultSearch={data.search} />, hashtags);
 }

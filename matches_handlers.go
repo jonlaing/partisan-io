@@ -24,6 +24,8 @@ func MatchesIndex(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "profile_edit", gin.H{
 		"title": "Matches",
-		"user":  currentUser,
+		"data": gin.H{
+			"user":  currentUser,
+		},
 	})
 }

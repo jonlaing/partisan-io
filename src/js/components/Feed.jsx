@@ -6,17 +6,20 @@ import Card from './Card.jsx';
 import Post from './Post.jsx';
 import PostComposer from './PostComposer.jsx';
 import FlagForm from './FlagForm.jsx';
+import UserSession from './UserSession.jsx';
+import Notifications from './Notifications.jsx';
+import ModalController from './ModalController.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
-function getStateFromStore() {
-  let state = FeedStore.getState();
-  return state;
-}
-
 export default React.createClass({
   getInitialState() {
-    return { feed: [], showFlagForm: false, flagID: 0 };
+    return {
+      feed: [],
+      modals: {
+        flag: { show: false, flagID: 0 }
+      }
+    };
   },
 
   componentDidMount() {
@@ -47,17 +50,25 @@ export default React.createClass({
 
     return (
       <div className="feed">
-        <PostComposer />
-        <ReactCSSTransitionGroup transitionName="feed">
-          {cards}
-        </ReactCSSTransitionGroup>
-        {nothing}
-        <FlagForm show={this.state.showFlagForm} id={this.state.flagID} type={this.state.flagType}/>
+        <header>
+          <UserSession username={this.props.data.user.username} />
+          <Notifications />
+        </header>
+
+        <div className="feed-container">
+          <PostComposer />
+          <ReactCSSTransitionGroup transitionName="feed">
+            {cards}
+          </ReactCSSTransitionGroup>
+          {nothing}
+        </div>
+
+        <FlagForm show={this.state.modals.flag.show} id={this.state.modals.flag.id} type={this.state.modals.flag.type} ref="flag"/>
       </div>
     );
   },
 
   _onChange() {
-    this.setState(getStateFromStore());
+    this.setState(FeedStore.getState());
   }
 });

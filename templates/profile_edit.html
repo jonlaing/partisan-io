@@ -1,18 +1,5 @@
 {{ define "content" }}
-  <div class="row">
-    <div class="large-2 column">
-      Some links here
-    </div>
-    <div class="large-10 columns">
-      <div id="profile-edit">
-        <!-- Flux goes here -->
-      </div>
-    </div>
+  <div id="profile-edit">
+    <!-- Flux goes here -->
   </div>
-  <script type="text/javascript">
-    var profileData = {
-      "profile": {{ .profile }},
-      "user": {{ .user }}
-    };
-  </script>
 {{ end }}
