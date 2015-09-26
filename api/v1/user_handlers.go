@@ -195,8 +195,8 @@ func UserAvatarUpload(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	fullPath, err = processor.Save("/localfiles/img") 
-        if err != nil {
+	fullPath, err = processor.Save("/localfiles/img")
+	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -209,7 +209,7 @@ func UserAvatarUpload(c *gin.Context) {
 		return
 	}
 	thumbPath, err = processor.Save("/localfiles/img/thumb")
-        if err != nil {
+	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -221,4 +221,26 @@ func UserAvatarUpload(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, currentUser)
+}
+
+// UserCheckUnique checks a username for uniqueness
+func UserCheckUnique(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	username := c.Query("username")
+
+	var count int
+	if err := db.Model(m.User{}).Where("username = ?", username).Count(&count).Error; err == nil {
+		if count > 0 {
+			c.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{})
 }

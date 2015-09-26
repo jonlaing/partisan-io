@@ -30,5 +30,24 @@ export default {
           errors: errors
         });
       });
+  },
+
+  checkUnique(username) {
+    $.ajax({
+      url: Constants.APIROOT + '/user/check_unique',
+      data: { username: username },
+      method: 'GET',
+      dataType: 'json'
+    })
+      .done(function() {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.USERNAME_UNIQUE
+        });
+      })
+      .fail(function() {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.USERNAME_NOT_UNIQUE
+        });
+      });
   }
 };

@@ -6,6 +6,7 @@ import assign from 'object-assign';
 // data storage
 let _errors = [];
 let _success = false;
+let _userUnique = 0; // 0 - haven't checked, 1 - unique, 2 - not unique
 
 // Facebook style store creation.
 const SignUpStore = assign({}, BaseStore, {
@@ -13,7 +14,8 @@ const SignUpStore = assign({}, BaseStore, {
   getState() {
     return {
       errors: _errors,
-      success: _success
+      success: _success,
+      userUnique: _userUnique
     };
   },
 
@@ -29,6 +31,16 @@ const SignUpStore = assign({}, BaseStore, {
 
       case Constants.ActionTypes.SIGN_UP_FAIL:
         _errors = action.errors;
+        SignUpStore.emitChange();
+        break;
+
+      case Constants.ActionTypes.USERNAME_UNIQUE:
+        _userUnique = 1;
+        SignUpStore.emitChange();
+        break;
+
+      case Constants.ActionTypes.USERNAME_NOT_UNIQUE:
+        _userUnique = 2;
         SignUpStore.emitChange();
         break;
     }

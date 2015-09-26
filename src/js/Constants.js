@@ -19,6 +19,8 @@ export default {
 
     SIGN_UP_SUCCESS: null,
     SIGN_UP_FAIL: null,
+    USERNAME_UNIQUE: null,
+    USERNAME_NOT_UNIQUE: null,
 
     GET_QUESTION_SUCESS: null,
     GET_QUESTION_FAIL: null,

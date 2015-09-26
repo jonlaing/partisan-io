@@ -4,7 +4,7 @@ import SignUpStore from '../stores/SignUpStore';
 
 export default React.createClass({
   getInitialState() {
-    return { errors: [], success: false };
+    return { errors: [], success: false, userUnique: 0 };
   },
 
   handleSubmit() {
@@ -25,6 +25,11 @@ export default React.createClass({
     SignUpActionCreator.signUp(user);
   },
 
+  handleUsernameChange(e) {
+    console.log(e.target.value);
+    SignUpActionCreator.checkUnique(e.target.value);
+  },
+
   componentDidMount() {
     SignUpStore.addChangeListener(this._onChange);
   },
@@ -40,6 +45,14 @@ export default React.createClass({
   },
 
   render() {
+    var uniquenessMarker;
+
+    if(this.state.userUnique === 1) {
+      uniquenessMarker = <span className="label success"><i className="fi-check"></i></span>;
+    } else if (this.state.userUnique === 2) {
+      uniquenessMarker = <span className="label alert"><i className="fi-x"></i></span>;
+    }
+
     return (
       <div className="signup">
         <h4>Sign Up for Partisan.IO</h4>
@@ -52,7 +65,8 @@ export default React.createClass({
             <span className="prefix">@</span>
           </div>
           <div className="large-11 columns">
-            <input type="text" placeholder="Username" ref="username" />
+            <input type="text" placeholder="Username" ref="username" onChange={this.handleUsernameChange} />
+            {uniquenessMarker}
           </div>
           {this._error("username")}
         </div>

@@ -35,6 +35,7 @@ func main() {
 		users.Use(auth.Auth())
 		{
 			r.POST(v1Root+"/users", api.UserCreate)
+                        r.GET(v1Root+"/user/check_unique", api.UserCheckUnique)
 			users.GET("/", api.UserShow) // Show Current User
 			users.PATCH("/", api.UserUpdate)
 			users.GET("/:user_id/match", api.UserMatch)
