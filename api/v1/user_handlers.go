@@ -2,6 +2,7 @@ package v1
 
 import (
 	"fmt"
+	"partisan/emailer"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -78,6 +79,10 @@ func UserCreate(c *gin.Context) {
 	if err := db.Create(&profile).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
+	}
+
+	if err := emailer.SendWelcomeEmail(user.Username, user.Email); err != nil {
+		fmt.Println(err)
 	}
 
 	auth.Login(user, c)

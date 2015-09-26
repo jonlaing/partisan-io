@@ -11,6 +11,11 @@ import (
 	m "partisan/models"
 )
 
+func init() {
+	api.ConfigureEmailer(emailConfig)
+}
+
+
 func main() {
 	r := gin.Default()
 	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
