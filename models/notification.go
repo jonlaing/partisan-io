@@ -1,8 +1,9 @@
 package models
 
 import (
+	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
-        "fmt"
 	"time"
 )
 
@@ -32,9 +33,9 @@ func NewNotification(n Notifier, initiatedUserID uint64, db *gorm.DB) error {
 		return err
 	}
 
-        if initiatedUserID == targetUserID {
-          return fmt.Errorf("Can't send notification to the same user: %d", targetUserID)
-        }
+	if initiatedUserID == targetUserID {
+		return fmt.Errorf("Can't send notification to the same user: %d", targetUserID)
+	}
 
 	notif := Notification{
 		UserID:       initiatedUserID,
@@ -47,4 +48,25 @@ func NewNotification(n Notifier, initiatedUserID uint64, db *gorm.DB) error {
 	}
 
 	return db.Save(&notif).Error
+}
+
+// GetRecord returns the related record of the Notification
+func (n *Notification) GetRecord(db *gorm.DB) (Notifier, error) {
+	switch n.RecordType {
+	case "like":
+		var l Like
+		err := db.Find(&l, n.RecordID).Error
+		return &l, err
+	case "comment":
+		var c Comment
+		err := db.Find(&c, n.RecordID).Error
+		return &c, err
+	case "friendships":
+		var f Friendship
+		err := db.Find(&f, n.RecordID).Error
+		return &f, err
+	}
+
+	var r Notifier
+	return r, errors.New("Couldn't find record, possibly unsupported record type")
 }

@@ -105,6 +105,8 @@ func FriendshipCreate(c *gin.Context) {
 		return
 	}
 
+	m.NewNotification(&f, user.ID, &db)
+
 	c.JSON(http.StatusCreated, f)
 }
 
@@ -140,6 +142,8 @@ func FriendshipConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
+
+	m.NewNotification(&f, user.ID, &db)
 
 	c.JSON(http.StatusOK, f)
 }
@@ -202,6 +206,7 @@ func FriendIDs(user m.User, c *gin.Context, db *gorm.DB) (friendIDs []uint64, er
 			friendIDs = append(friendIDs, v.FriendID)
 		}
 	}
+
 	return
 }
 
@@ -224,5 +229,6 @@ func ConfirmedFriendIDs(user m.User, c *gin.Context, db *gorm.DB) (friendIDs []u
 			friendIDs = append(friendIDs, v.FriendID)
 		}
 	}
+
 	return
 }

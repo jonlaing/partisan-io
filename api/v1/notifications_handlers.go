@@ -15,6 +15,7 @@ import (
 type NotifResp struct {
 	Notification m.Notification `json:"notification"`
 	User         m.User         `json:"user"`
+	Record       interface{}    `json:"record"`
 }
 
 var wsupgrader = websocket.Upgrader{
@@ -63,7 +64,12 @@ func NotificationsIndex(c *gin.Context) {
 		for _, n := range notifs {
 			for _, u := range users {
 				if u.ID == n.UserID {
-					resp = append(resp, NotifResp{Notification: n, User: u})
+					var r interface{}
+					r, err := n.GetRecord(&db)
+					if err != nil {
+						fmt.Println(err)
+					}
+					resp = append(resp, NotifResp{Notification: n, User: u, Record: r})
 				}
 			}
 		}

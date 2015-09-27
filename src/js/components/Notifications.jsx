@@ -63,11 +63,11 @@ export default React.createClass({
   _notifTemplate(notif) {
     switch(notif.notification.record_type) {
       case "comment":
-      case "comments":
         return this._commentTemplate(notif);
       case "like":
-      case "likes":
         return this._likeTemplate(notif);
+      case "friendship":
+        return this._friendTemplate(notif);
       default:
         break;
     }
@@ -99,6 +99,31 @@ export default React.createClass({
         <small>{notif.notification.created_at}</small>
       </span>
     );
+  },
+
+  _friendTemplate(notif) {
+    let username = notif.user.username;
+    let route = "/profiles/" + username;
+
+    if (notif.record.confirmed === false) {
+      return (
+        <span className={notif.notification.seen ? "seen" : "unseen" }>
+          <a href={route}>
+            @{username} sent you a friend request.
+          </a>
+          <small>{notif.notification.created_at}</small>
+        </span>
+      );
+    } else {
+      return (
+        <span className={notif.notification.seen ? "seen" : "unseen" }>
+          <a href={route}>
+            @{username} confirmed your friendship.
+          </a>
+          <small>{notif.notification.created_at}</small>
+        </span>
+      );
+    }
   },
 
   _onChange() {

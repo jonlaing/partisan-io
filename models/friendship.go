@@ -1,7 +1,8 @@
 package models
 
-import(
-  "time"
+import (
+	"github.com/jinzhu/gorm"
+	"time"
 )
 
 // Friendship is a joining table between two users who are friends. For each
@@ -13,4 +14,20 @@ type Friendship struct {
 	Confirmed bool      `json:"confirmed"`                // Whether the second user has confirmed
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (f *Friendship) GetID() uint64 {
+	return f.ID
+}
+
+func (f *Friendship) GetRecordUserID(db *gorm.DB) (uint64, error) {
+	if !f.Confirmed {
+		return f.FriendID, nil
+	} else {
+		return f.UserID, nil
+	}
+}
+
+func (f *Friendship) GetType() string {
+	return "friendship"
 }
