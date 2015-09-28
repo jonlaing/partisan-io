@@ -16,14 +16,14 @@ func QuestionsIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := auth.CurrentUser(c, &db)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 
-        c.HTML(http.StatusOK, "questions", gin.H{
-		"title": "Answer Questions", 
+	c.HTML(http.StatusOK, "questions", gin.H{
+		"title": "Answer Questions",
 		"data": gin.H{
 			"user": user,
 		},

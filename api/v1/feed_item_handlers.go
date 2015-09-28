@@ -24,7 +24,7 @@ func FeedIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	friendIDs, err := ConfirmedFriendIDs(user, c, &db)
 	if err != nil {
@@ -71,29 +71,33 @@ func FeedIndex(c *gin.Context) {
 		fmt.Println(err)
 	}
 
+	records := collectPosts(posts, users, attachments, postLikes, postComments)
 	for i := 0; i < len(feedItems); i++ {
-		collectPosts(&feedItems[i], posts, users, attachments, postLikes, postComments)
+		feedItems[i].Record = records[feedItems[i].RecordID]
 	}
 
 	c.JSON(http.StatusOK, gin.H{"feed_items": feedItems})
 }
 
-func collectPosts(f *m.FeedItem, posts []m.Post, users []m.User, attachments []m.ImageAttachment, likes []m.RecordLikes, comments []PostComments) {
-	for _, post := range posts {
-		if f.RecordID == post.ID {
-			user, _ := findMatchingPostUser(post, users)
-			attachment, _ := m.GetAttachment(post.ID, attachments)
-			likeCount, liked, _ := fineMatchingPostLikes(post, likes)
-			commentCount, _ := findMatchingCommentCount(post, comments)
+// TODO: benchmark this jawn
+func collectPosts(posts []m.Post, users []m.User, attachments []m.ImageAttachment, likes []m.RecordLikes, comments []PostComments) (pr map[uint64]PostResponse) {
+	pr = make(map[uint64]PostResponse, len(posts))
 
-			f.Record = PostResponse{
-				Post:         post,
-				User:         user,
-				Attachment:   attachment,
-				LikeCount:    likeCount,
-				Liked:        liked,
-				CommentCount: commentCount,
-			}
+	for _, post := range posts {
+		user, _ := findMatchingPostUser(post, users)
+		attachment, _ := m.GetAttachment(post.ID, attachments)
+		likeCount, liked, _ := fineMatchingPostLikes(post, likes)
+		commentCount, _ := findMatchingCommentCount(post, comments)
+
+		pr[post.ID] = PostResponse{
+			Post:         post,
+			User:         user,
+			Attachment:   attachment,
+			LikeCount:    likeCount,
+			Liked:        liked,
+			CommentCount: commentCount,
 		}
 	}
+
+	return
 }

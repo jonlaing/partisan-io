@@ -18,7 +18,7 @@ func FlagCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	var flag m.Flag
 	if err := c.BindJSON(&flag); err != nil {

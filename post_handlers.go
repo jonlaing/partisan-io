@@ -18,7 +18,7 @@ func PostShow(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	postID := c.Param("record_id")
 

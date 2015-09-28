@@ -99,7 +99,7 @@ func UserShow(c *gin.Context) {
 	}
 	defer db.Close()
 
-	currentUser, err := auth.CurrentUser(c, &db)
+	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -117,7 +117,7 @@ func UserUpdate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := auth.CurrentUser(c, &db)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -148,7 +148,7 @@ func UserMatch(c *gin.Context) {
 	}
 	defer db.Close()
 
-	currentUser, err := auth.CurrentUser(c, &db)
+	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -179,7 +179,7 @@ func UserAvatarUpload(c *gin.Context) {
 	}
 	defer db.Close()
 
-	currentUser, err := auth.CurrentUser(c, &db)
+	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

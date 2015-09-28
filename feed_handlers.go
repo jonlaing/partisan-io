@@ -16,16 +16,16 @@ func FeedIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := auth.CurrentUser(c, &db)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 
 	c.HTML(http.StatusOK, "feed", gin.H{
-          "title": "My Feed",
-          "data": gin.H{
-            "user": user,
-          },
-        })
+		"title": "My Feed",
+		"data": gin.H{
+			"user": user,
+		},
+	})
 }

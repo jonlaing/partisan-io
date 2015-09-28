@@ -21,7 +21,7 @@ func FriendshipIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	friendIDs, err := FriendIDs(user, c, &db)
 	if err != nil {
@@ -47,7 +47,7 @@ func FriendshipShow(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	fID := c.Param("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)
@@ -81,7 +81,7 @@ func FriendshipCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	fID := c.PostForm("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)
@@ -117,7 +117,7 @@ func FriendshipConfirm(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	fID := c.PostForm("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)
@@ -155,7 +155,7 @@ func FriendshipDestroy(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	fID := c.Param("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)

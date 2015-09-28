@@ -2,7 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -133,7 +132,7 @@ func Logout(c *gin.Context) {
 }
 
 // CurrentUser gets the current user from the session
-func CurrentUser(c *gin.Context, db *gorm.DB) (m.User, error) {
+func CurrentUser(c *gin.Context) (m.User, error) {
 	user, ok := c.Get("user")
 	if !ok {
 		return user.(m.User), fmt.Errorf("User ID not set")

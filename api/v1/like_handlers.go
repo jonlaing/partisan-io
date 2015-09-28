@@ -18,7 +18,7 @@ func LikeCount(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 	rID, rType, err := getRecord(c)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -47,7 +47,7 @@ func LikeCreate(c *gin.Context) {
 	var like m.Like
 	var count int
 	var userCount int
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	rID, rType, err := getRecord(c)
 	if err != nil {

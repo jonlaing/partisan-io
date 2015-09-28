@@ -19,7 +19,7 @@ func HashtagShow(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	q := c.Query("q")
 	search, _ := url.QueryUnescape(q)

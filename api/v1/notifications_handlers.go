@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/jinzhu/gorm"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
@@ -32,7 +31,7 @@ func NotificationsIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := auth.CurrentUser(c, &db)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -85,15 +84,7 @@ func NotificationsIndex(c *gin.Context) {
 
 // NotificationsCount returns the number of unread notifications
 func NotificationsCount(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
-
-	NotificationWebsocket(c, &db)
-
+	NotificationWebsocket(c)
 }
 
 // NotificationsRead sets a notification as "seen"
@@ -105,7 +96,7 @@ func NotificationsRead(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := auth.CurrentUser(c, &db)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -117,22 +108,29 @@ func NotificationsRead(c *gin.Context) {
 }
 
 // NotificationWebsocket gets called in NotificationCount and returns a socket to allow us to continually poll notifications
-func NotificationWebsocket(c *gin.Context, db *gorm.DB) {
+func NotificationWebsocket(c *gin.Context) {
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		fmt.Printf("Failed to set websocket upgrade: %+v", err)
 		return
 	}
 
+	user, err := auth.CurrentUser(c)
+	if err != nil {
+		conn.WriteJSON(gin.H{"error": "unauthorized"})
+		return
+	}
+
 	for {
-		user, err := auth.CurrentUser(c, db)
+		db, err := db.InitDB()
 		if err != nil {
-			conn.WriteJSON(gin.H{"error": "unauthorized"})
+			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
 
 		var count int
 		db.Model(m.Notification{}).Where("target_user_id = ? AND seen = ?", user.ID, false).Count(&count)
+		db.Close()
 
 		conn.WriteJSON(gin.H{"count": count})
 	}

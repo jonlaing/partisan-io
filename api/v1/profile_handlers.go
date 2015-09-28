@@ -42,7 +42,7 @@ func ProfileShow(c *gin.Context) {
 	userID := c.Param("user_id")
 	// no param in route
 	if len(userID) == 0 {
-		user, err = auth.CurrentUser(c, &db)
+		user, err = auth.CurrentUser(c)
 		if err != nil {
 			c.AbortWithError(http.StatusUnauthorized, err)
 			return
@@ -53,7 +53,7 @@ func ProfileShow(c *gin.Context) {
 			return
 		}
 
-		currentUser, err = auth.CurrentUser(c, &db)
+		currentUser, err = auth.CurrentUser(c)
 		if err != nil {
 			c.AbortWithError(http.StatusUnauthorized, err)
 			return
@@ -89,7 +89,7 @@ func ProfileUpdate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := auth.CurrentUser(c, &db)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -101,14 +101,14 @@ func ProfileUpdate(c *gin.Context) {
 		return
 	}
 
-        // Update looking for
+	// Update looking for
 	lookingForS := c.PostForm("looking_for")
 	lookingFor, err := strconv.Atoi(lookingForS)
 	if err == nil {
 		profile.LookingFor = lookingFor
 	}
 
-        profile.Summary = c.DefaultPostForm("summary", profile.Summary)
+	profile.Summary = c.DefaultPostForm("summary", profile.Summary)
 
 	if err := db.Save(&profile).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)

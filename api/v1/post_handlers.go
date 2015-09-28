@@ -60,7 +60,7 @@ func PostsCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := auth.CurrentUser(c, &db)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -80,7 +80,7 @@ func PostsCreate(c *gin.Context) {
 	}
 
 	m.FindAndCreateHashtags(&post, &db)
-        m.FindAndCreateUserTags(&post, &db)
+	m.FindAndCreateUserTags(&post, &db)
 
 	postRes := PostResponse{
 		Post: post,

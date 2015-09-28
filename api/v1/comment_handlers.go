@@ -37,7 +37,7 @@ func CommentsIndex(c *gin.Context) {
 	resp := []CommentResp{}
 
 	pID := c.Param("record_id")
-	user, _ := auth.CurrentUser(c, &db)
+	user, _ := auth.CurrentUser(c)
 
 	if err := db.Where("post_id = ?", pID).Find(&comments).Error; err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
@@ -111,7 +111,7 @@ func CommentsCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := auth.CurrentUser(c, &db)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -137,8 +137,8 @@ func CommentsCreate(c *gin.Context) {
 		return
 	}
 
-        m.FindAndCreateHashtags(&comment, &db)
-        m.FindAndCreateUserTags(&comment, &db)
+	m.FindAndCreateHashtags(&comment, &db)
+	m.FindAndCreateUserTags(&comment, &db)
 	m.NewNotification(&comment, user.ID, &db)
 
 	var count int

@@ -16,7 +16,7 @@ func MatchesIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
-	currentUser, err := auth.CurrentUser(c, &db)
+	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -25,7 +25,7 @@ func MatchesIndex(c *gin.Context) {
 	c.HTML(http.StatusOK, "profile_edit", gin.H{
 		"title": "Matches",
 		"data": gin.H{
-			"user":  currentUser,
+			"user": currentUser,
 		},
 	})
 }

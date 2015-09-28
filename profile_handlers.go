@@ -19,7 +19,7 @@ func ProfileShow(c *gin.Context) {
 	}
 	defer db.Close()
 
-	currentUser, err := auth.CurrentUser(c, &db)
+	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -66,7 +66,7 @@ func ProfileEdit(c *gin.Context) {
 	}
 	defer db.Close()
 
-	currentUser, err := auth.CurrentUser(c, &db)
+	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
