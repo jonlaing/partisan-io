@@ -24,8 +24,6 @@ func FeedIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
-	db.LogMode(true)
-
 	user, _ := auth.CurrentUser(c, &db)
 
 	friendIDs, err := ConfirmedFriendIDs(user, c, &db)
@@ -37,8 +35,8 @@ func FeedIndex(c *gin.Context) {
 	friendIDs = append(friendIDs, user.ID)
 
 	// TODO: limit feed so a particular record only comes up once
-	feedItems := []m.FeedItem{}
-	if err := db.Where("user_id IN (?) AND action = ?", friendIDs, "post").Order("created_at desc").Limit(50).Find(&feedItems).Error; err != nil {
+	var feedItems []m.FeedItem
+	if err := db.Where("user_id IN (?) AND action = ?", friendIDs, "post").Order("created_at desc").Limit(25).Find(&feedItems).Error; err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}

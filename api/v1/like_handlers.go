@@ -44,8 +44,6 @@ func LikeCreate(c *gin.Context) {
 	}
 	defer db.Close()
 
-        db.LogMode(true)
-
 	var like m.Like
 	var count int
 	var userCount int
@@ -80,7 +78,7 @@ func LikeCreate(c *gin.Context) {
 			c.AbortWithError(http.StatusNotAcceptable, err)
 			return
 		}
-                m.NewNotification(&like, user.ID, &db)
+		m.NewNotification(&like, user.ID, &db)
 		// return the old count + 1
 		c.JSON(http.StatusCreated, gin.H{"record_type": rType, "record_id": rID, "like_count": count + 1, "liked": true})
 	} else {

@@ -55,7 +55,9 @@ export default {
 
     BEGIN_FLAG: null,
     CANCEL_FLAG: null,
-    SUBMIT_FLAG: null
+    SUBMIT_FLAG: null,
+
+    GET_USERNAME_SUGGESTIONS: null
   }),
 
   ActionSources: keyMirror({

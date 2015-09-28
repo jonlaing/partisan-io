@@ -32,5 +32,21 @@ export default {
       .always(function(res) {
         console.log(res);
       });
+  },
+
+  suggestUsers(tag) {
+    $.ajax({
+      url: Constants.APIROOT + '/username_suggest',
+      data: { tag: tag },
+      method: 'GET',
+      dataType: 'json'
+    })
+      .always(function(res) {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.GET_USERNAME_SUGGESTIONS,
+          suggestions: res.suggestions
+        });
+      });
   }
+
 };

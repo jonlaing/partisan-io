@@ -2,12 +2,12 @@ package v1
 
 import (
 	"fmt"
-	"partisan/emailer"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/emailer"
 	"partisan/imager"
 	"partisan/matcher"
 	m "partisan/models"
@@ -248,4 +248,21 @@ func UserCheckUnique(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{})
+}
+
+// UsernameSuggest returns a short list of possible friends based on a tag
+func UsernameSuggest(c *gin.Context) {
+	db, err := db.InitDB()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	username := c.Query("tag")
+
+	var suggestions []string
+	db.Model(m.User{}).Where("username LIKE ?", "%"+username+"%").Pluck("username", &suggestions)
+
+	c.JSON(http.StatusOK, gin.H{"suggestions": suggestions})
 }

@@ -15,7 +15,6 @@ func init() {
 	api.ConfigureEmailer(emailConfig)
 }
 
-
 func main() {
 	r := gin.Default()
 	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
@@ -40,7 +39,8 @@ func main() {
 		users.Use(auth.Auth())
 		{
 			r.POST(v1Root+"/users", api.UserCreate)
-                        r.GET(v1Root+"/user/check_unique", api.UserCheckUnique)
+			r.GET(v1Root+"/user/check_unique", api.UserCheckUnique)
+			r.GET(v1Root+"/username_suggest", auth.Auth(), api.UsernameSuggest)
 			users.GET("/", api.UserShow) // Show Current User
 			users.PATCH("/", api.UserUpdate)
 			users.GET("/:user_id/match", api.UserMatch)
@@ -165,8 +165,8 @@ func main() {
 		&m.Notification{},
 		&m.Hashtag{},
 		&m.Taxonomy{},
-                &m.Flag{},
-                &m.UserTag{},
+		&m.Flag{},
+		&m.UserTag{},
 	)
 
 	r.Run(":4000")

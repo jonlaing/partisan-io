@@ -50,8 +50,6 @@ func MatchesIndex(c *gin.Context) {
 	}
 	defer db.Close()
 
-	db.LogMode(true)
-
 	user, err := auth.CurrentUser(c, &db)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)

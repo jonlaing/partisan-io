@@ -25,10 +25,7 @@ func CommentShow(c *gin.Context) {
 		return
 	}
 
-	route := fmt.Sprintf("/posts/%d#comment-%d", comment.ID)
+	route := fmt.Sprintf("/posts/%d#comment-%d", comment.PostID, comment.ID)
 	c.Redirect(http.StatusMovedPermanently, route)
-	return
-
-	c.AbortWithStatus(http.StatusNotAcceptable)
 	return
 }

@@ -120,7 +120,7 @@ func NotificationsRead(c *gin.Context) {
 func NotificationWebsocket(c *gin.Context, db *gorm.DB) {
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		fmt.Println("Failed to set websocket upgrade: %+v", err)
+		fmt.Printf("Failed to set websocket upgrade: %+v", err)
 		return
 	}
 

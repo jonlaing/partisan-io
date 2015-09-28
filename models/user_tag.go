@@ -28,7 +28,6 @@ type UserTagger interface {
 // FindUserTags searches a UserTagger for instances of a user tag
 // in the form of `@username`.
 func FindUserTags(r UserTagger, db *gorm.DB) (tags []UserTag) {
-	db.LogMode(true)
 	// This regex will match emails too (ex: @gmail.com). That is intentional, and we'll
 	// filter those out later
 	re := regexp.MustCompile("@([a-zA-Z0-9_.]+)")

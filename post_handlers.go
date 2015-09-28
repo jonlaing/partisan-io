@@ -18,8 +18,6 @@ func PostShow(c *gin.Context) {
 	}
 	defer db.Close()
 
-	db.LogMode(true)
-
 	user, _ := auth.CurrentUser(c, &db)
 
 	postID := c.Param("record_id")
@@ -34,16 +32,16 @@ func PostShow(c *gin.Context) {
 	var attachment m.ImageAttachment
 	db.Where("record_type = ? AND record_id = ?", "post", post.ID).Find(&attachment)
 
-        likeCount := 0
+	likeCount := 0
 	if err := db.Model(m.Like{}).Where("record_type = ? AND record_id = ?", "posts", post.ID).Count(&likeCount).Error; err != nil {
 		fmt.Println(err)
 	}
 
 	c.HTML(http.StatusOK, "post", gin.H{
 		"data": gin.H{
-			"post": post,
-			"post_user": pUser,
-			"user": user,
+			"post":       post,
+			"post_user":  pUser,
+			"user":       user,
 			"attachment": attachment,
 			"like_count": likeCount,
 		},

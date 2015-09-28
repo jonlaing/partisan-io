@@ -79,7 +79,6 @@ func (i *ImageProcessor) Save(path string) (newPath string, err error) {
 		break
 	default:
 		return "", fmt.Errorf("Unsupported image type: %s", i.fileType)
-		break
 	}
 
 	return

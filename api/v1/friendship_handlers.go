@@ -47,8 +47,6 @@ func FriendshipShow(c *gin.Context) {
 	}
 	defer db.Close()
 
-	db.LogMode(true)
-
 	user, _ := auth.CurrentUser(c, &db)
 
 	fID := c.Param("friend_id")
