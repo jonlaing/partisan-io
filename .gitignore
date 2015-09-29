@@ -6,3 +6,4 @@ partisan
 **/*.log
 localfiles
 **/config.go
+*.heap

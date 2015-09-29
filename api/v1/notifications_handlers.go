@@ -84,7 +84,13 @@ func NotificationsIndex(c *gin.Context) {
 
 // NotificationsCount returns the number of unread notifications
 func NotificationsCount(c *gin.Context) {
-	NotificationWebsocket(c)
+	user, err := auth.CurrentUser(c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	NotificationWebsocket(c, user)
 }
 
 // NotificationsRead sets a notification as "seen"
@@ -108,28 +114,24 @@ func NotificationsRead(c *gin.Context) {
 }
 
 // NotificationWebsocket gets called in NotificationCount and returns a socket to allow us to continually poll notifications
-func NotificationWebsocket(c *gin.Context) {
+func NotificationWebsocket(c *gin.Context, user m.User) {
+	var count int
+
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		fmt.Printf("Failed to set websocket upgrade: %+v", err)
 		return
 	}
 
-	user, err := auth.CurrentUser(c)
-	if err != nil {
-		conn.WriteJSON(gin.H{"error": "unauthorized"})
-		return
-	}
-
 	for {
+		// NOTE: We are in a loop, thus WE CANNOT USE DEFER HERE! Must close the db manually!
 		db, err := db.InitDB()
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
-			return
+			continue
 		}
 
-		var count int
-		db.Model(m.Notification{}).Where("target_user_id = ? AND seen = ?", user.ID, false).Count(&count)
+		db.Model("notifications").Where("target_user_id = ? AND seen = ?", user.ID, false).Count(&count)
 		db.Close()
 
 		conn.WriteJSON(gin.H{"count": count})

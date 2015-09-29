@@ -87,20 +87,12 @@ func Auth() gin.HandlerFunc {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		defer db.Close()
-
 		user := m.User{}
-
-		// look up by user id and api key, if you can't find it, the api key is no good
-		if err := db.Where(m.User{ID: userID}).First(&user).Error; err != nil {
+		if err := db.First(&user, userID).Error; err != nil {
 			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user"))
 			return
 		}
-
-		// if user.APIKeyExp.Before(time.Now()) {
-		// 	c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("API key is expired"))
-		// 	return
-		// }
+		db.Close() // manually closing db
 
 		c.Set("user", user)
 		c.Next() // continue on to next endpoint

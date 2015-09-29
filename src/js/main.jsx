@@ -1,11 +1,14 @@
 /*global data */
-import React from 'react';
+import React from 'react/addons';
 import jQuery from 'jquery';
 
 import Events from 'events';
 Events.EventEmitter.prototype._maxListeners = 100;
 
 global.$ = jQuery;
+var Perf = React.addons.Perf;
+
+Perf.start();
 
 import Login from './components/Login.jsx';
 import SignUp from './components/SignUp.jsx';
@@ -66,3 +69,6 @@ if(post !== null) {
 if(hashtags !== null) {
   React.render(<HashtagSearch defaultSearch={data.search} />, hashtags);
 }
+
+Perf.stop();
+Perf.printWasted(Perf.getLastMeasurements());

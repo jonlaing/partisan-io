@@ -31,19 +31,26 @@ export default React.createClass({
   },
 
   render() {
-    return (
-      <Modal show={this.props.show} onCloseClick={this.handleClose}>
-        <h4>Flag a {this.props.type}</h4>
-        <hr/>
-        <RadioGroup name="reason" items={_reasons} onChange={this.handleReasonChange} />
-        <div>
-          <label>Comment:</label>
-          <textarea name="message" ref="message" placeholder="Type any additional comments..."/>
-        </div>
-        <div>
-          <button className="button" onClick={this.handleSubmit}>Submit</button>
-        </div>
-      </Modal>
-    );
+    if(this.props.show === true) {
+      return (
+        <Modal show={this.props.show} onCloseClick={this.handleClose}>
+          <h4>Flag a {this.props.type}</h4>
+          <hr/>
+          <RadioGroup name="reason" items={_reasons} onChange={this.handleReasonChange} />
+          <div>
+            <label>Comment:</label>
+            <textarea name="message" ref="message" placeholder="Type any additional comments..."/>
+          </div>
+          <div>
+            <button className="button" onClick={this.handleSubmit}>Submit</button>
+          </div>
+        </Modal>
+      );
+    } else {
+      return (
+        <Modal show={this.props.show} onCloseClick={this.handleClose}>
+        </Modal>
+      );
+    }
   }
 });

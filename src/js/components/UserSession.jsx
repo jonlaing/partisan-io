@@ -12,6 +12,10 @@ export default React.createClass({
     dropdown.toggleClass('show');
   },
 
+  shouldComponentUpdate() {
+    return false;
+  },
+
   render() {
     return (
       <div className="usersession">

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/DeanThompson/ginpprof"
 	"github.com/gin-gonic/contrib/renders/multitemplate"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/contrib/static"
@@ -152,8 +153,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
-	db.AutoMigrate(
+	// DON'T DO THIS IN PROD!!!
+	s := db.AutoMigrate(
 		&m.Post{},
 		&m.User{},
 		&m.Friendship{},
@@ -168,6 +169,10 @@ func main() {
 		&m.Flag{},
 		&m.UserTag{},
 	)
+	db.Close()
+	s.Close()
+
+	ginpprof.Wrapper(r)
 
 	r.Run(":4000")
 }

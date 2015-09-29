@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-        "partisan/db"
+	"partisan/db"
 )
 
 // UserTagShow is for notifications. It will find the tag, then redirect to the related record
@@ -14,4 +14,6 @@ func UserTagShow(c *gin.Context) {
 		return
 	}
 	defer db.Close()
+
+	c.JSON(http.StatusOK, gin.H{})
 }
