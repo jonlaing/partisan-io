@@ -35,12 +35,12 @@ module.exports = {
     dest: dest
   },
   fonts: {
-    src: 'src/fonts/*.{ttf,woff,eot,svg}',
-    dest: dest + '/styles/fonts'
+    src: 'src/fonts/*.{ttf,woff,woff2,eot,svg}',
+    dest: dest + '/fonts'
   },
   icons: {
-    src: 'node_modules/fontawesome/fonts/**.*',
-    dest: dest + '/styles/fonts'
+    src: './node_modules/font-awesome/fonts/**.*',
+    dest: dest + '/fonts'
   },
   images: {
     src: src + '/images/**.*',

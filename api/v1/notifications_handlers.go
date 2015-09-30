@@ -90,7 +90,18 @@ func NotificationsCount(c *gin.Context) {
 		return
 	}
 
-	NotificationWebsocket(c, user)
+	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		fmt.Printf("Failed to set websocket upgrade: %+v", err)
+		return
+	}
+
+	msg := make(chan bool)
+	quit := make(chan bool)
+
+	go readLoop(conn, msg, quit)
+	go writeLoop(user.ID, conn, msg, quit)
+
 }
 
 // NotificationsRead sets a notification as "seen"
@@ -113,27 +124,39 @@ func NotificationsRead(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "marked read"})
 }
 
-// NotificationWebsocket gets called in NotificationCount and returns a socket to allow us to continually poll notifications
-func NotificationWebsocket(c *gin.Context, user m.User) {
-	var count int
+func readLoop(c *websocket.Conn, send chan bool, quit chan bool) {
+	for {
+		if _, _, err := c.NextReader(); err != nil {
+			c.Close()
+			quit <- true
+			return
+		} else {
+			send <- true
+		}
+	}
+}
 
-	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
+func writeLoop(userID uint64, c *websocket.Conn, received chan bool, quit chan bool) {
+	db, err := db.InitDB()
 	if err != nil {
-		fmt.Printf("Failed to set websocket upgrade: %+v", err)
 		return
 	}
+	defer db.Close()
+
+	var count int
 
 	for {
-		// NOTE: We are in a loop, thus WE CANNOT USE DEFER HERE! Must close the db manually!
-		db, err := db.InitDB()
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			continue
+		select {
+		case <-received:
+			if err := db.Table("notifications").Where("target_user_id = ? AND seen = ?", userID, false).Count(&count).Error; err != nil {
+				return
+			}
+
+			if err := c.WriteJSON(gin.H{"count": count}); err != nil {
+				return
+			}
+		case <-quit:
+			return // kill the loop
 		}
-
-		db.Model("notifications").Where("target_user_id = ? AND seen = ?", user.ID, false).Count(&count)
-		db.Close()
-
-		conn.WriteJSON(gin.H{"count": count})
 	}
 }

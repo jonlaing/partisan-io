@@ -4,14 +4,14 @@ html, body {
 }
 
 header {
-  display: block;
   background: white;
   @include box-shadow();
   position: relative;
-  z-index: 1;
+  padding: $line-height $line-height*2 $line-height*2;
 
-  > div {
-    padding: $line-height $line-height*2;
+  .logo {
+    margin-bottom: -1%; // not sure why, but this puts everything in vertical alignment
+    margin-right: $line-height*4;
   }
 }
 
@@ -45,6 +45,6 @@ header {
     width: 50vw;
     height: 100vh;
     overflow-y: scroll;
-    padding: $line-height*2 $line-height;
+    padding: $line-height*2 $line-height $line-height*6;
   }
 }

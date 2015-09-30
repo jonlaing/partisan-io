@@ -23,21 +23,20 @@ export default {
   },
 
   getNotificationCount() {
-    // TODO: uncomment for prod
-    // var _socket = new WebSocket("ws://localhost:4000" + Constants.APIROOT + "/notifications/count");
+    var _socket = new WebSocket("ws://localhost:4000" + Constants.APIROOT + "/notifications/count");
 
-    // _socket.onmessage = (res) => {
-    //   let data = JSON.parse(res.data);
-    //   Dispatcher.handleViewAction({
-    //     type: Constants.ActionTypes.GET_NOTIFICATION_COUNT,
-    //     data: data.count
-    //   });
-    // };
+    _socket.onmessage = (res) => {
+      let data = JSON.parse(res.data);
+      Dispatcher.handleViewAction({
+        type: Constants.ActionTypes.GET_NOTIFICATION_COUNT,
+        data: data.count
+      });
+    };
 
-    // _socket.onopen = () => {
-    //   window.setInterval(() => {
-    //     _socket.send(0);
-    //   }, 5000);
-    // };
+    _socket.onopen = () => {
+      window.setInterval(() => {
+        _socket.send(0);
+      }, 5000);
+    };
   }
 };

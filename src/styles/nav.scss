@@ -1,8 +1,5 @@
 .nav {
-  border: 1px solid $light-grey;
-  border-width: 1px 0 0 0;
-  clear: both;
-  padding: $line-height 0;
+  display: inline-block;
 }
 
 .nav > ul {
@@ -12,12 +9,19 @@
 
   > li {
     display: inline-block;
-    margin: 0 $line-height * 2;
-    padding: $line-height 0;
+    margin: 0 $line-height*1.5;
 
     > a, .notification-counter > a {
-      font-size: 18px;
       color: $grey;
+      padding: 0 $line-height/2 $line-height/2;
+      border: 4px solid white;
+      border-width: 0 0 4px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: $action-color;
+        border-color: $action-color;
+      }
     }
   }
 }

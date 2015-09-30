@@ -5,6 +5,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var Database gorm.DB
+
 // InitDB establishes a connnection to the db
 func InitDB() (db gorm.DB, err error) {
 	db, err = gorm.Open("postgres", "user=partisan dbname=partisan password=bakunin1234 sslmode=disable")
