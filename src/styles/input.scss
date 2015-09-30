@@ -1,0 +1,13 @@
+button, .button {
+  border: none;
+  color: white;
+  background-color: $action-color;
+  @include rounded-corners();
+  font-size: 18px;
+  padding: $line-height/3 $line-height*2;
+}
+
+input[type="text"], textarea {
+  display: block;
+  width: 100%;
+}

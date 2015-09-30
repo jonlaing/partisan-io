@@ -2,6 +2,8 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 
+import Icon from 'react-fontawesome';
+
 import PostActionCreator from '../actions/PostActionCreator';
 import PostComposerStore from '../stores/PostComposerStore';
 
@@ -116,11 +118,8 @@ export default React.createClass({
 
     if(this.state.showImageUploader === true) {
       imageUploader = (
-        <Dropzone multiple={false} onDrop={this.handleDrop}>
-          <div className="text-center">
-            Drop files here <br/>
-            Or click here to browse
-          </div>
+        <Dropzone multiple={false} onDrop={this.handleDrop} className="post-dropzone" activeClassName="post-dropzone-active">
+          <Icon name="download" />
         </Dropzone>
       );
     } else if (this.state.attachments.length > 0) {
@@ -136,8 +135,8 @@ export default React.createClass({
       });
     } else {
       imageUploader = (
-        <a href="javascript:void(0)" onClick={this.handleImageClick}>
-          <i className="fi-camera"></i>
+        <a href="javascript:void(0)" onClick={this.handleImageClick} className="post-type">
+          <Icon name="camera-retro" />
         </a>
       );
     }
@@ -149,11 +148,11 @@ export default React.createClass({
         <div className="post-composer-field">
           <textarea rows="1" placeholder="Write a new post" onFocus={this.handleFocus} onKeyDown={this.handleKeyDown} onChange={this.handleChange} ref="body"></textarea>
         </div>
-        <div className="post-composer-actions clearfix">
-          <div className="left">
+        <div className="post-composer-actions">
+          <div>
             {imageUploader}
           </div>
-          <button className="button right" onClick={this.handleCreate}>Post</button>
+          <button className="button" onClick={this.handleCreate}>Post</button>
         </div>
         <div className="post-composer-usernames">
           <ul>

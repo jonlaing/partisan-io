@@ -1,14 +1,18 @@
-@import './typography.scss';
-@import './colors.scss';
-
 .post-composer {
-  box-shadow: 0 2px 4px $shadow-color;
+  @include box-shadow();
+  position: relative;
   margin-bottom: $line-height;
+  padding: $line-height;
+  background: white;
+  transition: all 0.3s ease;
 
   textarea {
-    font-size: $line-height;
-    min-height: $line-height*3;
-    border: 0;
+    font-size: 1.71em;
+    font-family: 'Proxima Nova', sans-serif;
+    font-weight: lighter;
+    min-height: 1.71em;
+    border: 2px solid $action-color;
+    border-width: 0 0 2px;
     margin: 0;
     transition: min-height 0.3s ease;
 
@@ -22,11 +26,54 @@
   }
   
   .post-composer-actions {
-    padding: $line-height;
-    background: $light-grey;
+    @include clearfix();
+    margin-top: $line-height;
+    display: flex;
+    display: -webkit-flex;
+    align-items: flex-start;
+    -webkit-align-items: top;
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+
+    > div {
+      width: 100%;
+    }
 
     button {
       margin: 0;
     }
+
+    a.post-type {
+      font-size: 24px;
+      color: $grey;
+    }
   }
+}
+
+.post-dropzone {
+  display: flex;
+  display: -webkit-flex;
+  width: $line-height*4;
+  height: $line-height*4;
+  align-items: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+
+  background: $light-grey;
+  color: white;
+  font-size: $line-height*2;
+  cursor: pointer;
+  @include rounded-corners();
+  transition: all 0.3s ease;
+
+  &.post-dropzone-active {
+    background: $grey;
+  }
+}
+
+.post-composer-usernames {
+  position: absolute;
+  background: white;
+  @include box-shadow();
 }

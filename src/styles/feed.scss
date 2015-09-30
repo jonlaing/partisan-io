@@ -10,3 +10,12 @@
     opacity: 1;
   }
 }
+
+.feed-leave {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+
+  &.feed-leave-active {
+    opacity: 0;
+  }
+}

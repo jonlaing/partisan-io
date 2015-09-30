@@ -1,15 +1,19 @@
-@import './colors.scss';
-@import './typography.scss';
-
 button.like {
   padding: 0;
   padding-right: $line-height*2;
   background: none;
-  color: $secondary-color;
+  color: $grey;
   transition: color 0.3s ease;
+  cursor: pointer;
 
-  &.active {
-    color: $action-color;
+  .fa-star {
+    font-size: 1.28em;
+    color: $grey;
+    transition: color 0.3s ease;
+  }
+
+  &.active .fa-star {
+    color: $orange;
   }
 
   &:last-child {
@@ -17,15 +21,6 @@ button.like {
   }
 
   &:hover {
-    color: darken($action-color, 10%);
-  }
-
-  i {
-    font-size: 150%;
-    margin-right: $line-height/2;
-
-    &.fi-dislike, &.fi-comment {
-      vertical-align: $line-height/-4;
-    }
+    color: darken($grey, 10%);
   }
 }

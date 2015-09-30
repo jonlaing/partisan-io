@@ -1,0 +1,18 @@
+@mixin rounded-corners() {
+  border-radius: 2px;
+}
+
+@mixin box-shadow() {
+  box-shadow: 0 2px 4px $shadow-color;
+}
+
+@mixin clearfix() {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}

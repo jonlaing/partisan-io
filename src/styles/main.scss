@@ -1,7 +1,13 @@
-@import '../../node_modules/foundation-sites/scss/normalize.scss';
-@import '../../node_modules/foundation-sites/scss/foundation.scss';
 @import './foundation-icons.css';
+@import '../../node_modules/font-awesome/scss/font-awesome.scss';
+@import './typography.scss';
 @import './colors.scss';
+@import './mixins.scss';
+@import './input.scss';
+
+@import './layout.scss';
+
+@import './nav.scss';
 @import './feed.scss';
 @import './card.scss';
 @import './post-composer.scss';
@@ -14,18 +20,3 @@
 @import './likes.scss';
 @import './modal.scss';
 
-body {
-  background: $lighter-grey;
-}
-
-.button, button {
-  background: $action-color;
-
-  &:hover, &:active {
-    background: darken($action-color, 10%);
-  }
-}
-
-a {
-  font-color: $action-color;
-}

@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from 'react-fontawesome';
 
 export default React.createClass({
   handleLike() {
@@ -7,10 +8,11 @@ export default React.createClass({
 
   render() {
     return (
-      <div>
+      <div style={{display: 'inline-block'}}>
         <button className={"like" + (this.props.liked ? " active" : "")} onClick={this.handleLike}>
-          <i className="fi-like"></i>
-          {this.props.count}
+          <Icon name="star" />
+          Favorite&nbsp;
+          <strong>({this.props.count})</strong>
         </button>
       </div>
     );

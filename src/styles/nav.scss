@@ -1,0 +1,23 @@
+.nav {
+  border: 1px solid $light-grey;
+  border-width: 1px 0 0 0;
+  clear: both;
+  padding: $line-height 0;
+}
+
+.nav > ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  > li {
+    display: inline-block;
+    margin: 0 $line-height * 2;
+    padding: $line-height 0;
+
+    > a, .notification-counter > a {
+      font-size: 18px;
+      color: $grey;
+    }
+  }
+}

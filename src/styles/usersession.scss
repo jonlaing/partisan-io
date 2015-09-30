@@ -1,15 +1,16 @@
-@import '../../node_modules/foundation-sites/scss/foundation.scss';
-@import './typography.scss';
-@import './colors.scss';
-
 .usersession {
+  display: inline-block;
   position: relative;
   margin-bottom: $line-height;
 
-  > a:after {
-    @include css-triangle($line-height/4, $action-color, "top");
+  img {
+    background: url('/images/avatar.jpg');
+    background-size: 100% 100%;
     display: inline-block;
-    margin-left: $line-height/2;
+    margin-bottom: -50%;
+    position: absolute;
+    left: -43px;
+    top: -7px;
   }
 
   ul.usersession-dropdown {
@@ -17,7 +18,8 @@
     right: 0px;
     z-index: 2;
     margin: 0;
-    background: white;
+    padding: 0;
+    background: $darker-grey;
     list-style: none;
     border-radius: 2px;
     max-height: 0px;

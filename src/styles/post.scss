@@ -4,22 +4,27 @@
 .post {
   .post-user {
     margin-bottom: $line-height;
+    padding: $line-height/2 0;
   }
 
   .post-avatar {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     margin-right: $line-height;
     float: left;
+    background: url('/images/avatar.jpg');
+    background-size: 100% 100%;
 
     .user-avatar {
-      height: 50px;
+      height: 60px;
       object-fit: cover;
     }
   }
 
   .post-username {
     color: $action-color;
+    font-size: 1.28em;
+    margin: $line-height/2 0;
   }
 
   .post-timestamp {
@@ -27,42 +32,40 @@
   }
 
   .post-body {
-    line-height: $line-height*1.5;
+    font-size: 1.28em;
+    line-height: $line-height*2;
   }
 
   .post-actions {
-    margin-top: $line-height;
-    padding: $line-height $line-height 0;
-    border: 1px solid $light-grey;
-    border-width: 1px 0 0;
+    padding: 0 $line-height $line-height;
 
-    button {
+    button, .button {
+      display: inline-block;
+      margin-right: $line-height*4;
       padding: 0;
-      padding-right: $line-height*2;
       background: none;
-      color: $secondary-color;
+      color: $darker-grey;
       transition: color 0.3s ease;
+      font-size: 14px;
 
-      &.active {
-        color: $action-color;
-      }
-
-      &:last-child {
-        padding: 0;
-      }
 
       &:hover {
-        color: darken($action-color, 10%);
+        color: darken($grey, 10%);
       }
 
-      i {
-        font-size: 150%;
-        margin-right: $line-height/2;
-
-        &.fi-dislike, &.fi-comment {
-          vertical-align: $line-height/-4;
-        }
+      .fa {
+        color: $grey;
+        margin-right: $line-height;
       }
+
+      .fa-comments-o {
+        font-size: 1.28em;
+      }
+    }
+
+    .right button {
+      padding: 0;
+      margin-right: 0;
     }
   }
 }

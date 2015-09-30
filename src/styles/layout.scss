@@ -1,0 +1,50 @@
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+header {
+  display: block;
+  background: white;
+  @include box-shadow();
+  position: relative;
+  z-index: 1;
+
+  > div {
+    padding: $line-height $line-height*2;
+  }
+}
+
+.right {
+  float: right;
+}
+
+.container {
+  display: flex;
+  display: -webkit-flex;
+  z-index: 0;
+
+  > aside {
+    flex-grow: 1;
+    width: 25vw;
+    height: 100vh;
+
+    &:first-child {
+      margin-right: $line-height;
+      background: $darker-grey;
+    }
+
+    &:last-child {
+      margin-left: $line-height;
+      background: $light-grey;
+    }
+  }
+
+  > article {
+    flex-grow: 2;
+    width: 50vw;
+    height: 100vh;
+    overflow-y: scroll;
+    padding: $line-height*2 $line-height;
+  }
+}

@@ -1,8 +1,20 @@
 $action-color: rgb(210,21,179);
-$secondary-color: rgb(123,219,212);
+$secondary-color: rgb(0,210,195);
+
+$orange: rgb(255, 184, 96);
 
 $lighter-grey: rgb(242,242,242);
-$light-grey: rgb(230,230,230);
+$light-grey: rgb(217,217,217);
 $grey: rgb(151,151,151);
+$darker-grey: rgb(74,74,74);
 
 $shadow-color: rgba(0,0,0,0.25);
+
+body {
+  background: $lighter-grey;
+}
+
+a {
+  color: $action-color;
+  text-decoration: none;
+}

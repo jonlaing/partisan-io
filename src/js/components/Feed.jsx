@@ -2,13 +2,13 @@ import React from 'react/addons';
 import FeedActionCreator from '../actions/FeedActionCreator.js';
 import FeedStore from '../stores/FeedStore.js';
 
+// import ProfileEdit from './ProfileEdit.jsx';
 import Card from './Card.jsx';
 import Post from './Post.jsx';
 import PostComposer from './PostComposer.jsx';
 import FlagForm from './FlagForm.jsx';
 import UserSession from './UserSession.jsx';
-import Notifications from './Notifications.jsx';
-import ModalController from './ModalController.jsx';
+import Nav from './Nav.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
@@ -51,16 +51,24 @@ export default React.createClass({
     return (
       <div className="feed">
         <header>
-          <UserSession username={this.props.data.user.username} />
-          <Notifications />
+          <div>
+            <UserSession className="right" username={this.props.data.user.username} avatar={this.props.data.user.avatar_thumbnail_url} />
+            <img src="images/logo.svg" />
+          </div>
+          <Nav currentPage="feed" />
         </header>
 
-        <div className="feed-container">
-          <PostComposer />
-          <ReactCSSTransitionGroup transitionName="feed">
-            {cards}
-          </ReactCSSTransitionGroup>
-          {nothing}
+        <div className="container">
+          <aside>
+          </aside>
+          <article>
+            <PostComposer />
+            <ReactCSSTransitionGroup transitionName="feed">
+              {cards}
+            </ReactCSSTransitionGroup>
+            {nothing}
+          </article>
+          <aside>&nbsp;</aside>
         </div>
 
         <FlagForm show={this.state.modals.flag.show} id={this.state.modals.flag.id} type={this.state.modals.flag.type} ref="flag"/>

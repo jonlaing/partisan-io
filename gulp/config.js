@@ -14,7 +14,7 @@ module.exports = {
     }
   },
   sass: {
-    src: src + '/styles/**/*.{sass,scss,css}',
+    src: src + '/styles/main.scss',
     dest: dest + '/styles',
     settings: {
       indentedSyntax: false, // Enable .sass syntax?
@@ -36,7 +36,15 @@ module.exports = {
   },
   fonts: {
     src: 'src/fonts/*.{ttf,woff,eot,svg}',
-    dest: dest + '/styles'
+    dest: dest + '/styles/fonts'
+  },
+  icons: {
+    src: 'node_modules/fontawesome/fonts/**.*',
+    dest: dest + '/styles/fonts'
+  },
+  images: {
+    src: src + '/images/**.*',
+    dest: dest + '/images'
   },
   watch: {
     src: 'src/**/*.*',

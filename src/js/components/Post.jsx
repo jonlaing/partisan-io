@@ -3,6 +3,8 @@ import moment from 'moment';
 
 import formatter from '../utils/formatter';
 
+import Icon from 'react-fontawesome';
+
 import LikeActionCreator from '../actions/LikeActionCreator';
 import FlagActionCreator from '../actions/FlagActionCreator';
 
@@ -70,7 +72,10 @@ export default React.createClass({
         <div className="post-actions">
           <CommentCounter count={this.props.data.comment_count} className="right" onClick={this.handleToggleComments} />
           <Likes onClick={this.handleLike} count={this.props.data.like_count} liked={this.props.data.liked} />
-          <a href="javascript:void(0)" onClick={this.handleFlag}><i className="fi-flag"></i></a>
+          <a href="javascript:void(0)" onClick={this.handleFlag} className="button">
+            <Icon name="flag" />
+            Report
+          </a>
           <div className="clearfix"></div>
         </div>
         <div className="post-comments">
