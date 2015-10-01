@@ -1,4 +1,7 @@
 import React from 'react';
+import moment from 'moment';
+
+import Icon from 'react-fontawesome';
 
 import NotificationActionCreator from '../actions/NotificationActionCreator';
 import NotificationStore from '../stores/NotificationStore';
@@ -18,10 +21,7 @@ export default React.createClass({
   },
 
   handleClick() {
-    if(this.state.notifications.length === 0 && this.state.count > 0) {
-      NotificationActionCreator.getNotificationList();
-    }
-
+    NotificationActionCreator.getNotificationList();
     this.setState({showList: !this.state.showList});
   },
 
@@ -29,7 +29,7 @@ export default React.createClass({
     var notifCount, fullList;
     if (this.state.count > 0) {
       notifCount = (
-        <span className="notification-number">({this.state.count})</span>
+        <span className="notification-number">{this.state.count}</span>
       );
     } else {
       notifCount = "";
@@ -38,6 +38,9 @@ export default React.createClass({
     var list = this.state.notifications.map((notif) => {
       return (
         <li key={notif.notification.id}>
+          <div className="notification-unseen">
+            {this._unseenMarker(notif.notification)}
+          </div>
           {this._notifTemplate(notif)}
         </li>
       );
@@ -45,16 +48,23 @@ export default React.createClass({
 
     if(this.state.showList === true) {
       fullList = (
-        <ul className="notification-list">
-          {list}
-        </ul>
+        <div className="notification-list">
+          <div className="notification-arrow">
+            <div className="notification-arrow-inner">
+              &nbsp;
+            </div>
+          </div>
+          <ul>
+            {list}
+          </ul>
+        </div>
       );
     }
 
 
     return (
       <div className="notification-counter">
-        <a href="javascript:void(0)" onClick={this.handleClick}>Notifications&nbsp;{notifCount}</a>
+        <a href="javascript:void(0)" onClick={this.handleClick}>Notifications{notifCount}</a>
         {fullList}
       </div>
     );
@@ -79,10 +89,13 @@ export default React.createClass({
 
     return (
       <span className={notif.notification.seen ? "seen" : "unseen" }>
-        <a href={route}>
-          @{username} commented on your post.
-        </a>
-        <small>{notif.notification.created_at}</small>
+        {this._avatarTemplate(notif)}
+        <div>
+          <a href={route}>
+            @{username} commented on your post.
+          </a>
+          <small>{moment(notif.notification.created_at).fromNow()}</small>
+        </div>
       </span>
     );
   },
@@ -93,10 +106,13 @@ export default React.createClass({
 
     return (
       <span className={notif.notification.seen ? "seen" : "unseen" }>
-        <a href={route}>
-          @{username} liked your thing.
-        </a>
-        <small>{notif.notification.created_at}</small>
+        {this._avatarTemplate(notif)}
+        <div>
+          <a href={route}>
+            @{username} liked your thing.
+          </a>
+          <small>{moment(notif.notification.created_at).fromNow()}</small>
+        </div>
       </span>
     );
   },
@@ -108,22 +124,44 @@ export default React.createClass({
     if (notif.record.confirmed === false) {
       return (
         <span className={notif.notification.seen ? "seen" : "unseen" }>
-          <a href={route}>
-            @{username} sent you a friend request.
-          </a>
-          <small>{notif.notification.created_at}</small>
+          {this._avatarTemplate(notif)}
+          <div>
+            <a href={route}>
+              @{username} sent you a friend request.
+            </a>
+            <small>{moment(notif.notification.created_at).fromNow()}</small>
+          </div>
         </span>
       );
     } else {
       return (
         <span className={notif.notification.seen ? "seen" : "unseen" }>
-          <a href={route}>
-            @{username} confirmed your friendship.
-          </a>
-          <small>{notif.notification.created_at}</small>
+          {this._avatarTemplate(notif)}
+          <div>
+            <a href={route}>
+              @{username} confirmed your friendship.
+            </a>
+            <small>{moment(notif.notification.created_at).fromNow()}</small>
+          </div>
         </span>
       );
     }
+  },
+
+  _avatarTemplate(notif) {
+    return (
+      <div className="notification-avatar">
+        <img className="user-avatar" src={notif.user.avatar_thumbnail_url} />
+      </div>
+    );
+  },
+
+  _unseenMarker(notif) {
+    if(notif.seen === false) {
+      return <Icon name="circle" />;
+    }
+
+    return (<span>&nbsp;</span>);
   },
 
   _onChange() {

@@ -1,0 +1,95 @@
+.notification-counter {
+  position: relative;
+}
+
+.notification-number {
+  display: inline-block;
+  position: absolute;
+  top: -$line-height/4;
+  padding: $line-height/4;
+  background: $orange;
+  border-radius: $line-height;
+  color: white;
+  font-weight: bolder;
+  min-width: $line-height;
+  margin-left: $line-height/2;
+  text-align: center;
+}
+
+.notification-list {
+  position: absolute;
+  background: white;
+  padding: $line-height;
+  padding-left: $line-height/2;
+  @include box-shadow();
+  z-index: 2;
+  min-width: 300px;
+  border: 1px solid $light-grey;
+  top: $line-height*2;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .notification-arrow {
+    $hypot: round(sqrt(2 * pow(16, 2)));
+    position: absolute;
+    top: -#{$hypot/2}px;
+    overflow: hidden;
+    height: #{$hypot/2}px;
+    width: #{$hypot}px;
+
+    div {
+      width: $line-height;
+      height: $line-height;
+      transform: rotate(45deg) translateX($line-height/4) translateY(1px);
+      -webkit-transform: rotate(45deg) translateX($line-height/4) translateY(1px);
+      background: white;
+      border: 1px solid $light-grey;
+    }
+  }
+
+  li {
+    @include clearfix();
+    padding: $line-height/3 0;
+
+    .notification-unseen {
+      width: $line-height;
+      height: 25px;
+      float: left;
+      font-size: 0.65em;
+      display: flex;
+      -webkit-display: flex;
+      align-items: center;
+      -webkit-align-items: center;
+
+      .fa {
+        color: $orange;
+      }
+    }
+
+    .unseen a {
+      font-weight: bold;
+    }
+    
+    small {
+      display: block;
+    }
+
+    .notification-avatar {
+      width: 25px;
+      height: 25px;
+      margin-right: $line-height;
+      float: left;
+      background: url('/images/avatar.jpg');
+      background-size: 100% 100%;
+
+      .user-avatar {
+        height: 60px;
+        object-fit: cover;
+      }
+    }
+  }
+}

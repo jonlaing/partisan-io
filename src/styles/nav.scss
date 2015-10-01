@@ -22,6 +22,10 @@
         color: $action-color;
         border-color: $action-color;
       }
+
+      &.active {
+        border-color: $secondary-color;
+      }
     }
   }
 }

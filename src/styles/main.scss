@@ -1,5 +1,6 @@
 @import './foundation-icons.css';
 @import '../../node_modules/font-awesome/scss/font-awesome.scss';
+@import './functions.scss';
 @import './typography.scss';
 @import './colors.scss';
 @import './mixins.scss';
@@ -19,4 +20,4 @@
 @import './comment.scss';
 @import './likes.scss';
 @import './modal.scss';
-
+@import './notifications.scss';

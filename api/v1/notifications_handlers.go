@@ -40,7 +40,7 @@ func NotificationsIndex(c *gin.Context) {
 		return
 	}
 
-	if unreadCount > 0 && unreadCount < 10 {
+	if unreadCount < 10 {
 		db.Where("target_user_id = ? AND seen = ?", user.ID, true).Order("created_at desc").Limit(10 - unreadCount).Find(&readNotifs)
 		notifs = append(notifs, readNotifs...)
 	}

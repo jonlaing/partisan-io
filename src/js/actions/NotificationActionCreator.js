@@ -34,9 +34,11 @@ export default {
     };
 
     _socket.onopen = () => {
+      _socket.send(0); // grab it once off the bat
       window.setInterval(() => {
         _socket.send(0);
       }, 5000);
     };
+
   }
 };
