@@ -10,12 +10,7 @@ import (
 
 // CommentShow redirects to the post of the comment and the inline anchor
 func CommentShow(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	commentID := c.Param("record_id")
 

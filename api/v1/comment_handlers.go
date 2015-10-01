@@ -21,12 +21,7 @@ type CommentResp struct {
 
 // CommentsIndex shows a list of comments based on a record_id
 func CommentsIndex(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	var comments []m.Comment
 	var commentIDs []uint64
@@ -54,7 +49,7 @@ func CommentsIndex(c *gin.Context) {
 		userIDs = append(userIDs, comment.UserID)
 	}
 
-	likes, err := m.GetLikes(user.ID, "comment", commentIDs, &db)
+	likes, _ := m.GetLikes(user.ID, "comment", commentIDs, db)
 
 	// Batch find all users
 	db.Where("id IN (?)", userIDs).Find(&users)
@@ -84,12 +79,7 @@ func CommentsIndex(c *gin.Context) {
 
 // CommentsCount returns a count of all comments for a particular record
 func CommentsCount(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	pID := c.Param("record_id")
 
@@ -104,12 +94,7 @@ func CommentsCount(c *gin.Context) {
 
 // CommentsCreate creates a comment
 func CommentsCreate(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
@@ -137,9 +122,9 @@ func CommentsCreate(c *gin.Context) {
 		return
 	}
 
-	m.FindAndCreateHashtags(&comment, &db)
-	m.FindAndCreateUserTags(&comment, &db)
-	m.NewNotification(&comment, user.ID, &db)
+	m.FindAndCreateHashtags(&comment, db)
+	m.FindAndCreateUserTags(&comment, db)
+	m.NewNotification(&comment, user.ID, db)
 
 	var count int
 	db.Model(m.Comment{}).Where("post_id = ?", comment.PostID).Count(&count)
@@ -153,7 +138,7 @@ func CommentsCreate(c *gin.Context) {
 
 	// Doing it this way because we don't know if a user will try
 	// to attach an image. This way we can fail elegantly
-	if err = m.AttachImage(c, &db, &commentResp); err != nil {
+	if err = m.AttachImage(c, &commentResp); err != nil {
 		// only errs with catostrophic failure,
 		// silently fails if no attachment is present
 		c.AbortWithError(http.StatusInternalServerError, err)

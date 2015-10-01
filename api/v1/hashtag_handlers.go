@@ -12,12 +12,7 @@ import (
 
 // HashtagShow shows a list of Posts (and Comments) that contain a particular hashtag
 func HashtagShow(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 
@@ -54,12 +49,12 @@ func HashtagShow(c *gin.Context) {
 	var attachments []m.ImageAttachment
 	db.Where("record_type = ? AND record_id IN (?)", "post", postIDs).Find(&attachments)
 
-	postLikes, err := m.GetLikes(user.ID, "post", postIDs, &db)
+	postLikes, err := m.GetLikes(user.ID, "post", postIDs, db)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	postComments, err := getPostComments(postIDs, &db)
+	postComments, err := getPostComments(postIDs, db)
 	if err != nil {
 		fmt.Println(err)
 	}

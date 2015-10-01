@@ -17,12 +17,7 @@ import (
 
 // UserCreate is the sign up route
 func UserCreate(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	validationErrs := make(map[string]string)
 
@@ -92,13 +87,6 @@ func UserCreate(c *gin.Context) {
 
 // UserShow shows shit about the current user
 func UserShow(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
-
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
@@ -110,12 +98,7 @@ func UserShow(c *gin.Context) {
 
 // UserUpdate will update the user
 func UserUpdate(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
@@ -141,12 +124,7 @@ func UserUpdate(c *gin.Context) {
 
 // UserMatch will return the match % of the signed in user, and the user in the path
 func UserMatch(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
@@ -172,12 +150,7 @@ func UserMatch(c *gin.Context) {
 
 // UserAvatarUpload handles uploading a user's avatar
 func UserAvatarUpload(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
@@ -230,12 +203,7 @@ func UserAvatarUpload(c *gin.Context) {
 
 // UserCheckUnique checks a username for uniqueness
 func UserCheckUnique(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	username := c.Query("username")
 
@@ -252,12 +220,7 @@ func UserCheckUnique(c *gin.Context) {
 
 // UsernameSuggest returns a short list of possible friends based on a tag
 func UsernameSuggest(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	username := c.Query("tag")
 

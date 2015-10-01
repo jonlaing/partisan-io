@@ -30,14 +30,10 @@ const (
 
 // ProfileShow is API for showing profile info
 func ProfileShow(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	var user, currentUser m.User
+	var err error
 
 	userID := c.Param("user_id")
 	// no param in route
@@ -53,6 +49,7 @@ func ProfileShow(c *gin.Context) {
 			return
 		}
 
+		var err error
 		currentUser, err = auth.CurrentUser(c)
 		if err != nil {
 			c.AbortWithError(http.StatusUnauthorized, err)
@@ -82,12 +79,7 @@ func ProfileShow(c *gin.Context) {
 
 // ProfileUpdate updates the profile
 func ProfileUpdate(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {

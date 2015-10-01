@@ -43,12 +43,7 @@ func (ms MatchCollectionResp) Swap(a, b int) {
 
 // MatchesIndex returns a list of matches orderd by location and match percentage
 func MatchesIndex(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
@@ -90,7 +85,7 @@ func MatchesIndex(c *gin.Context) {
 	minY := user.CenterY - centerBounds
 	maxY := user.CenterY + centerBounds
 
-	friendIDs, _ := ConfirmedFriendIDs(user, c, &db)
+	friendIDs, _ := ConfirmedFriendIDs(user, c)
 
 	var users []m.User
 

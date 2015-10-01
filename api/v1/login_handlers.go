@@ -5,9 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
-	"partisan/auth"
 )
 
 // LoginHandler Handle logging in
@@ -19,13 +19,7 @@ func LoginHandler(c *gin.Context) {
 		}
 	}()
 
-	// init db
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	email := c.Request.PostFormValue("email")
 	password := c.Request.PostFormValue("password")

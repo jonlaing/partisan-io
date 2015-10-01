@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"partisan/db"
 	"partisan/imager"
 	"time"
 )
@@ -27,7 +27,9 @@ type ImageAttacher interface {
 }
 
 // AttachImage attaches an image to an ImageAttacher
-func AttachImage(c *gin.Context, db *gorm.DB, r ImageAttacher) error {
+func AttachImage(c *gin.Context, r ImageAttacher) error {
+	db := db.GetDB(c)
+
 	tmpFile, _, err := c.Request.FormFile("attachment")
 	if err != nil {
 		return nil // ignore missing file

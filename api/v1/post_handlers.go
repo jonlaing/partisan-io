@@ -22,12 +22,7 @@ type PostResponse struct {
 
 // PostsIndex display all posts
 func PostsIndex(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	userID, ok := c.Get("user_id")
 	if !ok {
@@ -53,12 +48,7 @@ func PostsCreate(c *gin.Context) {
 		}
 	}()
 
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
@@ -79,8 +69,8 @@ func PostsCreate(c *gin.Context) {
 		return
 	}
 
-	m.FindAndCreateHashtags(&post, &db)
-	m.FindAndCreateUserTags(&post, &db)
+	m.FindAndCreateHashtags(&post, db)
+	m.FindAndCreateUserTags(&post, db)
 
 	postRes := PostResponse{
 		Post: post,
@@ -89,7 +79,7 @@ func PostsCreate(c *gin.Context) {
 
 	// Doing it this way because we don't know if a user will try
 	// to attach an image. This way we can fail elegantly
-	if err := m.AttachImage(c, &db, &postRes); err != nil {
+	if err := m.AttachImage(c, &postRes); err != nil {
 		// only errs with catostrophic failure,
 		// silently fails if no attachment is present
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -157,12 +147,7 @@ func PostsUpdate(c *gin.Context) {
 		}
 	}()
 
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	userID, ok := c.Get("user_id")
 	if !ok {
@@ -205,12 +190,7 @@ func PostsDestroy(c *gin.Context) {
 		}
 	}()
 
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	userID, ok := c.Get("user_id")
 	if !ok {

@@ -3,7 +3,6 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
@@ -14,16 +13,11 @@ import (
 
 // FriendshipIndex returns all friends as a slice of m.User (in JSON)
 func FriendshipIndex(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 
-	friendIDs, err := FriendIDs(user, c, &db)
+	friendIDs, err := FriendIDs(user, c)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -40,12 +34,7 @@ func FriendshipIndex(c *gin.Context) {
 
 // FriendshipShow shows a friendship
 func FriendshipShow(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 
@@ -74,12 +63,7 @@ func FriendshipShow(c *gin.Context) {
 
 // FriendshipCreate handles making a new friendship
 func FriendshipCreate(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 
@@ -103,19 +87,14 @@ func FriendshipCreate(c *gin.Context) {
 		return
 	}
 
-	m.NewNotification(&f, user.ID, &db)
+	m.NewNotification(&f, user.ID, db)
 
 	c.JSON(http.StatusCreated, f)
 }
 
 // FriendshipConfirm allows a user to accept a friend request
 func FriendshipConfirm(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 
@@ -141,19 +120,14 @@ func FriendshipConfirm(c *gin.Context) {
 		return
 	}
 
-	m.NewNotification(&f, user.ID, &db)
+	m.NewNotification(&f, user.ID, db)
 
 	c.JSON(http.StatusOK, f)
 }
 
 // FriendshipDestroy unfriends
 func FriendshipDestroy(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 
@@ -186,7 +160,9 @@ func FriendshipDestroy(c *gin.Context) {
 }
 
 // FriendIDs returns all userIDs associated with a user's friends
-func FriendIDs(user m.User, c *gin.Context, db *gorm.DB) (friendIDs []uint64, err error) {
+func FriendIDs(user m.User, c *gin.Context) (friendIDs []uint64, err error) {
+	db := db.GetDB(c)
+
 	var friendships []m.Friendship
 	if err = db.Where("user_id = ? OR friend_id = ?", user.ID, user.ID).Find(&friendships).Error; err != nil {
 		return
@@ -209,7 +185,9 @@ func FriendIDs(user m.User, c *gin.Context, db *gorm.DB) (friendIDs []uint64, er
 }
 
 // ConfirmedFriendIDs returns all userIDs associated with a user's CONFIRMED friends
-func ConfirmedFriendIDs(user m.User, c *gin.Context, db *gorm.DB) (friendIDs []uint64, err error) {
+func ConfirmedFriendIDs(user m.User, c *gin.Context) (friendIDs []uint64, err error) {
+	db := db.GetDB(c)
+
 	var friendships []m.Friendship
 	if err = db.Where("user_id = ? OR friend_id = ? AND confirmed = ?", user.ID, user.ID, true).Find(&friendships).Error; err != nil {
 		return

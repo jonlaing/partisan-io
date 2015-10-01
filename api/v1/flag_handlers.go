@@ -11,12 +11,7 @@ import (
 
 // FlagCreate flags a record
 func FlagCreate(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 

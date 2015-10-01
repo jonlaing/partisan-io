@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/jinzhu/gorm"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
@@ -24,12 +25,7 @@ var wsupgrader = websocket.Upgrader{
 
 // NotificationsIndex shows most recent unread notifications, or the most recent 10, whichever is bigger
 func NotificationsIndex(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
@@ -64,7 +60,7 @@ func NotificationsIndex(c *gin.Context) {
 			for _, u := range users {
 				if u.ID == n.UserID {
 					var r interface{}
-					r, err := n.GetRecord(&db)
+					r, err := n.GetRecord(db)
 					if err != nil {
 						fmt.Println(err)
 					}
@@ -84,6 +80,7 @@ func NotificationsIndex(c *gin.Context) {
 
 // NotificationsCount returns the number of unread notifications
 func NotificationsCount(c *gin.Context) {
+	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
@@ -100,18 +97,13 @@ func NotificationsCount(c *gin.Context) {
 	quit := make(chan bool)
 
 	go readLoop(conn, msg, quit)
-	go writeLoop(user.ID, conn, msg, quit)
+	go writeLoop(user.ID, db, conn, msg, quit)
 
 }
 
 // NotificationsRead sets a notification as "seen"
 func NotificationsRead(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
@@ -136,13 +128,7 @@ func readLoop(c *websocket.Conn, send chan bool, quit chan bool) {
 	}
 }
 
-func writeLoop(userID uint64, c *websocket.Conn, received chan bool, quit chan bool) {
-	db, err := db.InitDB()
-	if err != nil {
-		return
-	}
-	defer db.Close()
-
+func writeLoop(userID uint64, db *gorm.DB, c *websocket.Conn, received chan bool, quit chan bool) {
 	var count int
 
 	for {

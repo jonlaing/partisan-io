@@ -17,16 +17,11 @@ type PostComments struct {
 
 // FeedIndex shows all Feed Items for a particular user
 func FeedIndex(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 
-	friendIDs, err := ConfirmedFriendIDs(user, c, &db)
+	friendIDs, err := ConfirmedFriendIDs(user, c)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -61,12 +56,12 @@ func FeedIndex(c *gin.Context) {
 	var attachments []m.ImageAttachment
 	db.Where("record_type = ? AND record_id IN (?)", "post", postIDs).Find(&attachments)
 
-	postLikes, err := m.GetLikes(user.ID, "post", postIDs, &db)
+	postLikes, err := m.GetLikes(user.ID, "post", postIDs, db)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	postComments, err := getPostComments(postIDs, &db)
+	postComments, err := getPostComments(postIDs, db)
 	if err != nil {
 		fmt.Println(err)
 	}

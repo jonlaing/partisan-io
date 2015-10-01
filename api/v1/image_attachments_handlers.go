@@ -9,12 +9,7 @@ import (
 
 // ImageAttachmentIndex gets all the attachments associated with a record
 func ImageAttachmentIndex(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	var attachments []m.ImageAttachment
 

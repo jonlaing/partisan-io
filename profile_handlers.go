@@ -12,12 +12,7 @@ import (
 
 // ProfileShow renders HTML
 func ProfileShow(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
@@ -59,12 +54,7 @@ func ProfileShow(c *gin.Context) {
 
 // ProfileEdit shows edit form for current user
 func ProfileEdit(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {

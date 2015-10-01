@@ -11,12 +11,7 @@ import (
 
 // LikeCount shows the like count for a particular record
 func LikeCount(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	user, _ := auth.CurrentUser(c)
 	rID, rType, err := getRecord(c)
@@ -37,12 +32,7 @@ func LikeCount(c *gin.Context) {
 
 // LikeCreate creates a Like for a particular record
 func LikeCreate(c *gin.Context) {
-	db, err := db.InitDB()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
+	db := db.GetDB(c)
 
 	var like m.Like
 	var count int
@@ -78,7 +68,7 @@ func LikeCreate(c *gin.Context) {
 			c.AbortWithError(http.StatusNotAcceptable, err)
 			return
 		}
-		m.NewNotification(&like, user.ID, &db)
+		m.NewNotification(&like, user.ID, db)
 		// return the old count + 1
 		c.JSON(http.StatusCreated, gin.H{"record_type": rType, "record_id": rID, "like_count": count + 1, "liked": true})
 	} else {

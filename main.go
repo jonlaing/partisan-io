@@ -20,6 +20,7 @@ func main() {
 	r := gin.Default()
 	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
 	r.Use(sessions.Sessions("partisan-io", store))
+	r.Use(db.DB())
 
 	v1Root := "api/v1"
 
@@ -148,13 +149,8 @@ func main() {
 	r.Use(static.Serve("/", static.LocalFile("dist", false)))
 	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))
 
-	// Database Operations
-	db, err := db.InitDB()
-	if err != nil {
-		panic(err)
-	}
 	// DON'T DO THIS IN PROD!!!
-	s := db.AutoMigrate(
+	db.Database.AutoMigrate(
 		&m.Post{},
 		&m.User{},
 		&m.Friendship{},
@@ -169,8 +165,6 @@ func main() {
 		&m.Flag{},
 		&m.UserTag{},
 	)
-	db.Close()
-	s.Close()
 
 	ginpprof.Wrapper(r)
 

@@ -82,17 +82,12 @@ func Auth() gin.HandlerFunc {
 		}
 
 		// Check this is the right user with correct API key
-		db, err := db.InitDB()
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
+		db := db.GetDB(c)
 		user := m.User{}
 		if err := db.First(&user, userID).Error; err != nil {
 			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user"))
 			return
 		}
-		db.Close() // manually closing db
 
 		c.Set("user", user)
 		c.Next() // continue on to next endpoint
