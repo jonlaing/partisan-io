@@ -1,24 +1,13 @@
-@import './colors.scss';
-@import './typography.scss';
-
 .post {
+  position: relative;
+
   .post-user {
     margin-bottom: $line-height;
     padding: $line-height/2 0;
   }
 
   .post-avatar {
-    width: 60px;
-    height: 60px;
-    margin-right: $line-height;
-    float: left;
-    background: url('/images/avatar.jpg');
-    background-size: 100% 100%;
-
-    .user-avatar {
-      height: 60px;
-      object-fit: cover;
-    }
+    @include avatar(60px);
   }
 
   .post-username {

@@ -2,7 +2,9 @@ import React from 'react/addons';
 
 import CommentsActionCreator from '../actions/CommentsActionCreator';
 import CommentStore from '../stores/CommentStore';
+
 import Comment from './Comment.jsx';
+import CommentComposer from './CommentComposer.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
@@ -47,9 +49,15 @@ export default React.createClass({
 
     return (
       <div className="commentlist">
+        <div className="breakout-arrow">
+          <div className="breakout-arrow-inner">
+            &nbsp;
+          </div>
+        </div>
         <ReactCSSTransitionGroup transitionName="commentlist-item" component="ul">
           {comments}
         </ReactCSSTransitionGroup>
+        <CommentComposer id={this.props.id} />
       </div>
     );
   },

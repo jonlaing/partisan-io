@@ -6,8 +6,9 @@ html, body {
 header {
   background: white;
   @include box-shadow();
-  position: relative;
   padding: $line-height $line-height*2 $line-height*2;
+  position: relative;
+  z-index: 1;
 
   .logo {
     margin-bottom: -1%; // not sure why, but this puts everything in vertical alignment
@@ -20,6 +21,7 @@ header {
 }
 
 .container {
+  position: fixed;
   display: flex;
   display: -webkit-flex;
   z-index: 0;
@@ -32,6 +34,7 @@ header {
     &:first-child {
       margin-right: $line-height;
       background: $darker-grey;
+      overflow-y: scroll;
     }
 
     &:last-child {
@@ -44,7 +47,8 @@ header {
     flex-grow: 2;
     width: 50vw;
     height: 100vh;
-    overflow-y: scroll;
     padding: $line-height*2 $line-height $line-height*6;
+    margin-bottom: $line-height*6;
+    overflow-y: scroll;
   }
 }

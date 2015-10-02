@@ -1,0 +1,45 @@
+.comment-composer {
+  padding: $line-height;
+  background: white;
+}
+
+.comment-composer-form {
+  display: flex;
+}
+
+.comment-composer-image {
+  position: relative;
+  padding: $line-height/4 0;
+  
+  .comment-composer-upload-cancel {
+    position: absolute;
+  }
+
+  img {
+    border: 1px solid $lighter-grey;
+  }
+}
+
+.comment-composer-input {
+  position: relative;
+  margin-right: $line-height/2;
+  width: 100%;
+
+  .comment-composer-uploader {
+    position: absolute;
+    top: $line-height/2;
+    right: $line-height;
+  }
+
+  textarea {
+    border: 2px solid $action-color;
+    border-width: 0 0 2px;
+    font-size: 14px;
+    padding-right: $line-height*2;
+    width: 93%;
+  }
+}
+
+.comment-composer-uploader a {
+  color: $grey;
+}

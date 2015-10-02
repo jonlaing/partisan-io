@@ -10,7 +10,6 @@ import FlagActionCreator from '../actions/FlagActionCreator';
 
 import Likes from './Likes.jsx';
 import CommentCounter from './CommentCounter.jsx';
-import CommentComposer from './CommentComposer.jsx';
 import CommentList from './CommentList.jsx';
 
 export default React.createClass({
@@ -39,7 +38,6 @@ export default React.createClass({
       comments = (
         <div>
           <CommentList id={this.props.data.post.id} show={this.state.showComments}/>
-          <CommentComposer id={this.props.data.post.id} />
         </div>
       );
     }

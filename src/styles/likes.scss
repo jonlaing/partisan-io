@@ -2,7 +2,8 @@ button.like {
   padding: 0;
   padding-right: $line-height*2;
   background: none;
-  color: $grey;
+  color: $darker-grey;
+  font-size: 14px;
   transition: color 0.3s ease;
   cursor: pointer;
 
@@ -10,6 +11,7 @@ button.like {
     font-size: 1.28em;
     color: $grey;
     transition: color 0.3s ease;
+    margin-right: $line-height;
   }
 
   &.active .fa-star {

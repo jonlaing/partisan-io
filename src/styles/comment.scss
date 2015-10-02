@@ -1,13 +1,14 @@
-@import './typography.scss';
-@import './colors.scss';
-
 .comment {
-  padding: $line-height $line-height*2;
-  background: $light-grey;
 }
 
 .comment-author {
-  font-weight: bold;
+}
+
+.comment-avatar {
+  @include avatar(25px);
+}
+.comment-body {
+  padding: $line-height/4 0;
 }
 
 .comment-meta {

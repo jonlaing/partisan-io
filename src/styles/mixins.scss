@@ -16,3 +16,65 @@
     height: 0;
   }
 }
+
+@mixin avatar($size) {
+  width: $size;
+  height: $size;
+  margin-right: $line-height;
+  float: left;
+  background: url('/images/avatar.jpg');
+  background-size: 100% 100%;
+
+  .user-avatar {
+    height: $size;
+    object-fit: cover;
+  }
+}
+
+@mixin breakout($arrow-position: "top left", $color: white, $position: absolute) {
+  position: $position;
+  background: $color;
+  padding: $line-height;
+  padding-left: $line-height/2;
+  z-index: 2;
+  border: 1px solid $light-grey;
+  @if $position == absolute {
+    @include box-shadow();
+  }
+  @include rounded-corners();
+
+  .breakout-arrow {
+    $hypot: round(sqrt(2 * pow(16, 2)));
+    position: absolute;
+    overflow: hidden;
+    height: #{$hypot/2}px;
+    width: #{$hypot}px;
+    @if $arrow-position == "top left" {
+      top: -#{$hypot/2}px;
+      left: $line-height;
+    } 
+    @if $arrow-position == "top right" {
+      top: -#{$hypot/2}px;
+      right: $line-height;
+    } 
+    @if $arrow-position == "bottom right" {
+      bottom: -#{$hypot/2}px;
+      right: $line-height;
+    } 
+
+    div {
+      width: $line-height;
+      height: $line-height;
+      background: $color;
+      border: 1px solid $light-grey;
+      @if $arrow-position == "top left" or $arrow-position == "top right" {
+        transform: rotate(45deg) translateX($line-height/4) translateY(1px);
+        -webkit-transform: rotate(45deg) translateX($line-height/4) translateY(1px);
+      }
+      @if $arrow-position == "bottom left" or $arrow-position == "bottom right" {
+        transform: rotate(45deg) translateX(-$line-height/4) translateY(9px);
+        -webkit-transform: rotate(45deg) translateX(-$line-height/4) translateY(9px);
+      }
+    }
+  }
+}

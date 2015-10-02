@@ -49,8 +49,8 @@ export default React.createClass({
     if(this.state.showList === true) {
       fullList = (
         <div className="notification-list">
-          <div className="notification-arrow">
-            <div className="notification-arrow-inner">
+          <div className="breakout-arrow">
+            <div className="breakout-arrow-inner">
               &nbsp;
             </div>
           </div>

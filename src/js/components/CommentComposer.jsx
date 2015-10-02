@@ -1,7 +1,8 @@
 import React from 'react';
 
+import Icon from 'react-fontawesome';
+
 import CommentsActionCreator from '../actions/CommentsActionCreator';
-import Dropzone from 'react-dropzone';
 
 export default React.createClass({
   getInitialState() {
@@ -15,7 +16,8 @@ export default React.createClass({
   },
 
   handlePhoto() {
-    this.setState({showImageUploader: true});
+    // this.setState({showImageUploader: true});
+    $(React.findDOMNode(this.refs.file)).click();
   },
 
   handleDrop(files) {
@@ -24,49 +26,53 @@ export default React.createClass({
 
   handleImageCancel() {
     this.setState({attachments: [], showImageUploader: false});
+    React.findDOMNode(this.refs.file).value = null;
+  },
+
+  handleFileChange(e) {
+    let attachments = e.target.files[0];
+    this.setState({attachments: [attachments] });
   },
 
   render() {
-    var uploader;
+    var imagePreview;
 
-    if(this.state.showImageUploader === true) {
-      uploader = (
-        <Dropzone multiple={false} onDrop={this.handleDrop}>
-          <div className="text-center">
-            Drop files here <br/>
-            Or click here to browse
-          </div>
-        </Dropzone>
-      );
-    } else if (this.state.attachments.length > 0) {
-      uploader = this.state.attachments.map((file, i) => {
+    if (this.state.attachments.length > 0) {
+      imagePreview = this.state.attachments.map((file, i) => {
         return (
-          <div key={i}>
-            <img src={file.preview} width="100" />
-              <a href="javascript:void(0)" onClick={this.handleImageCancel}>
-                <i className="fi-x"></i>
-              </a>
+          <div key={i} className="comment-composer-image">
+            <img src={window.URL.createObjectURL(file)} width="100" />
+            <a href="javascript:void(0)" onClick={this.handleImageCancel} className="comment-composer-upload-cancel">
+              <Icon name="times" />
+            </a>
           </div>
         );
       });
     } else {
-      uploader = (
-        <a href="javascript:void(0)" onClick={this.handlePhoto}><i className="fi-camera"></i></a>
-      );
+      imagePreview = "";
     }
 
     return (
       <div className="comment-composer">
-        <div className="row collapse">
-          <div className="large-10 columns">
+        <div className="comment-composer-form">
+          <div className="comment-composer-input">
             <textarea type="text" placeholder="Type your comment here..." ref="comment" ></textarea>
+            <label htmlFor={"comment-file-" + this.props.id} className="comment-composer-uploader">
+              <a href="javascript:void(0)" onClick={this.handlePhoto}>
+                <Icon name="camera-retro" />
+              </a>
+              <input
+                type="file"
+                name={"comment-file-" + this.props.id} style={{display: 'none'}}
+                onChange={this.handleFileChange}
+                accept="image/jpeg,image/png"
+                ref="file" />
+            </label>
           </div>
-          <div className="large-2 columns">
-            <button onClick={this.handleSubmit}>Comment</button>
-          </div>
+          <button onClick={this.handleSubmit}>Comment</button>
         </div>
         <div className="row">
-          {uploader}
+          {imagePreview}
         </div>
       </div>
     );
