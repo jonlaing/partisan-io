@@ -1,23 +1,35 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"partisan/auth"
+	"partisan/db"
+	m "partisan/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 // FeedIndex renders HTML
 func FeedIndex(c *gin.Context) {
+	db := db.GetDB(c)
+
 	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 
+	profile := m.Profile{}
+	if err := db.Where("user_id = ?", user.ID).First(&profile).Error; err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
 	c.HTML(http.StatusOK, "feed", gin.H{
 		"title": "My Feed",
 		"data": gin.H{
-			"user": user,
+			"user":    user,
+			"profile": profile,
 		},
 	})
 }

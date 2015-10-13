@@ -1,17 +1,16 @@
 import React from 'react';
 
 import CheckboxGroup from 'react-checkbox-group';
+import Icon from 'react-fontawesome';
 
 import formatter from '../utils/formatter';
 
-import AvatarUpload from './AvatarUpload.jsx';
-import UserSession from './UserSession.jsx';
-import Notifications from './Notifications.jsx';
+import AvatarEditor from './AvatarEditor.jsx';
+import ProfileInfoEditor from './ProfileInfoEditor.jsx';
 
 import ProfileActionCreator from '../actions/ProfileActionCreator';
 import ProfileStore from '../stores/ProfileStore';
 
-let _ENTER = 13; // key code for pressing the ENTER/RETURN key
 
 export default React.createClass({
   getInitialState() {
@@ -26,38 +25,16 @@ export default React.createClass({
     };
   },
 
-  handleAvatarClick() {
-    this.setState({showAvatarUpload: true});
-  },
-
   handleAvatarFinish(avatar) {
-    this.setState({showAvatarUpload: false, avatarUrl: avatar.thumb});
+    this.setState({avatarUrl: avatar.thumb});
   },
 
-  handleAvatarCancel() {
-    this.setState({showAvatarUpload: false});
-  },
-
-  handleLocationClick() {
-    this.setState({editLocation: true});
-  },
-
-  handleLocationKeyDown(e) {
-    if(e.keyCode === _ENTER && e.target.value !== "") {
-      this.setState({editLocation: false});
+  handleLocationFinish(e) {
       ProfileActionCreator.updateLocation(e.target.value);
-    }
   },
 
-  handleGenderClick() {
-    this.setState({editGender: true});
-  },
-
-  handleGenderKeyDown(e) {
-    if(e.keyCode === _ENTER && e.target.value !== "") {
-      this.setState({editGender: false});
+  handleGenderFinish(e) {
       ProfileActionCreator.updateGender(e.target.value);
-    }
   },
 
   handleLookingForChange() {
@@ -91,42 +68,16 @@ export default React.createClass({
   },
 
   render() {
-    var avatar, location, gender, summary;
-
-    if(this.state.showAvatarUpload === false) {
-      avatar = <img src={this.state.avatarUrl} onClick={this.handleAvatarClick} />;
-    } else {
-      avatar = this._uploadTemplate();
-    }
-
-    if(this.state.editLocation === false) {
-      var cityState = this._cityState(this.state.user.location);
-
-      location = (
-        <div className="large-10 columns">
-          <a href="javascript:void(0)" onClick={this.handleLocationClick}>{cityState}</a>
-        </div>
-      );
-    } else {
-      location = this._editLocationTemplate();
-    }
-
-    if(this.state.editGender === false) {
-      let g = this.state.user.gender || "None";
-      gender = (
-        <div className="large-10 columns">
-          <a href="javascript:void(0)" onClick={this.handleGenderClick}>{g}</a>
-        </div>
-      );
-    } else {
-      gender = this._editGenderTemplate();
-    }
+    var summary;
 
     if(this.state.editSummary === false) {
       summary = (
         <div>
+          <h3>
+            Summary
+            <Icon name="pencil" onClick={this.handleSummaryClick} className="profile-summary-edit"/>
+          </h3>
           <div dangerouslySetInnerHTML={ formatter.userSummary(this.state.profile.summary) } />
-          <a href="javascript:void(0)" onClick={this.handleSummaryClick}>Edit</a>
         </div>
       );
     } else {
@@ -135,21 +86,21 @@ export default React.createClass({
 
     return (
       <div className="profile-edit">
-        <header>
-          <UserSession username={this.props.data.user.username} />
-          <Notifications />
-        </header>
-
         <div className="profile-edit-container">
-          <div className="profile-avatar">
-            <div className="user-avatar">
-              {avatar}
-            </div>
+          <div className="profile-avatar-container">
+            <AvatarEditor onSuccess={this.handleAvatarFinish} avatarUrl={this.state.avatarUrl} />
           </div>
-          <h1 className="profile-username">
+          <h2 className="profile-username">
             @{this.props.data.user.username}
-          </h1>
+          </h2>
+          <ProfileInfoEditor
+            location={this.state.user.location}
+            gender={this.state.user.gender}
+            postalCode={this.state.user.postal_code}
+            onLocationFinish={this.handleLocationFinish}
+            onGenderFinish={this.handleGenderFinish} />
           <div className="profile-edit-lookingfor">
+            <h3>Looking For</h3>
             <CheckboxGroup
               name="looking_for"
               value={this._parseLookingFor(this.state.profile.looking_for)}
@@ -166,22 +117,7 @@ export default React.createClass({
                 </label>
             </CheckboxGroup>
           </div>
-          <div className="profile-edit-info">
-            <div className="profile-edit-location">
-              <label>
-                Location
-              </label>
-              {location}
-            </div>
-            <div className="profile-edit-gener">
-              <label>
-                Gender
-              </label>
-              {gender}
-            </div>
-          </div>
           <div className="profile-edit-summary">
-            <h4>Summary</h4>
             {summary}
           </div>
         </div>
@@ -194,42 +130,18 @@ export default React.createClass({
     this.setState(state);
   },
 
-  _uploadTemplate() {
-    return (
-      <div>
-        <AvatarUpload onSuccess={this.handleAvatarFinish} />
-        <br/>
-        <a href="javascript:void(0)" onClick={this.handleAvatarCancel}>Cancel</a>
-      </div>
-    );
-  },
-  _editLocationTemplate() {
-    return (
-      <div className="large-10 columns">
-        <input type="text" defaultValue={this.state.user.postal_code} onKeyDown={this.handleLocationKeyDown} />
-      </div>
-    );
-  },
-  _editGenderTemplate() {
-    let g = this.state.user.gender || "";
-    return (
-      <div className="large-10 columns">
-        <input type="text" placeholder="Type in your gender" defaultValue={g} onKeyDown={this.handleGenderKeyDown} />
-      </div>
-    );
-  },
   _editSummaryTemplate() {
     return (
       <div>
+        <h3>
+          Summary
+        </h3>
         <textarea defaultValue={this.state.profile.summary} placeholder="Tell us a little about yourself!" ref="summary" />
-        <button onClick={this.handleSummarySubmit} >Save</button>
+        <button onClick={this.handleSummarySubmit} >Done</button>
       </div>
     );
   },
 
-  _cityState(location) {
-    return location.replace(/\s\d+.*$/, '');
-  },
   _parseLookingFor(n) {
     var vals = [];
     for(var i = 0; i <= 3; i++) {

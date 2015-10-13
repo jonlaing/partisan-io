@@ -120,6 +120,9 @@ func calcResizeDimensions(bounds image.Point, minBound int) (width, height int) 
 		ratio := float64(bounds.Y) / float64(bounds.X)
 		width = minBound
 		height = int(ratio * float64(minBound))
+	} else {
+		width = minBound
+		height = minBound
 	}
 
 	return

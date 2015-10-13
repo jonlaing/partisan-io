@@ -6,6 +6,7 @@ import FeedStore from '../stores/FeedStore.js';
 import Card from './Card.jsx';
 import Post from './Post.jsx';
 import PostComposer from './PostComposer.jsx';
+import ProfileEdit from './ProfileEdit.jsx';
 import FlagForm from './FlagForm.jsx';
 import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
@@ -58,6 +59,7 @@ export default React.createClass({
 
         <div className="container">
           <aside>
+            <ProfileEdit data={this.props.data} />
           </aside>
           <article>
             <PostComposer />

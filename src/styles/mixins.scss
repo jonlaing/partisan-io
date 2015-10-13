@@ -17,11 +17,18 @@
   }
 }
 
-@mixin avatar($size) {
+@mixin avatar($size, $float: left, $margin: $line-height) {
   width: $size;
   height: $size;
-  margin-right: $line-height;
-  float: left;
+  @if $float == left {
+    margin-right: $margin;
+  }
+
+  @if $float == right {
+    margin-left: $margin;
+  }
+
+  float: $float;
   background: url('/images/avatar.jpg');
   background-size: 100% 100%;
 

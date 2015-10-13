@@ -1,0 +1,74 @@
+.profile-edit-container {
+  padding: $line-height;
+  width: calc(100% - ($line-height * 2));
+  display: flex;
+  display: -webkit-flex;
+
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  
+  justify-content: space-around;
+  -webkit-justify-content: space-around;
+
+  align-items: center;
+  -webkit-align-items: center;
+
+  text-align: center;
+  color: white;
+
+  h3 {
+    font-size: $line-height * .87;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: normal;
+    text-align: center;
+  }
+}
+
+.profile-avatar-container {
+  text-align: center;
+}
+
+.profile-avatar {
+    @include avatar($line-height*7, none, 0);
+    display: inline-block;
+    border: 2px solid white;
+    border-radius: 4px;
+}
+
+.profile-username {
+  font-size: $line-height * 1.5;
+  font-weight: 100;
+  margin-bottom: $line-height*2;
+}
+
+.profile-edit-info {
+  width: 100%;
+  display: flex;
+  display: -webkit-flex;
+
+  justify-content: space-around;
+  -webkit-justify-content: space-around;
+
+  align-items: center;
+  -webkit-align-items: center;
+
+  margin-bottom: $line-height * 2;
+
+  a {
+    color: white;
+    border: 1px dashed $secondary-color;
+    border-width: 0 0 1px;
+    padding: $line-height/4;
+  }
+}
+
+.profile-edit-lookingfor {
+  margin-bottom: $line-height * 2;
+}
+
+.profile-edit-summary {
+  margin-bottom: $line-height * 2;
+  text-align: left;
+  width: 100%;
+}
