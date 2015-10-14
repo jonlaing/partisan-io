@@ -4,5 +4,6 @@
 **/*.swp
 **/*.log
 localfiles
+partisan
 **/config.go
 *.heap
