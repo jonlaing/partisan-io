@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/jasonmoo/geo"
-	"github.com/jinzhu/gorm"
+	"partisan/Godeps/_workspace/src/github.com/jasonmoo/geo"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"partisan/matcher"
 	"time"
 )

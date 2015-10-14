@@ -2,12 +2,12 @@ package auth
 
 import (
 	"fmt"
-	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/contrib/sessions"
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/securecookie"
 	"io/ioutil"
 	"net/http"
+	jwt "partisan/Godeps/_workspace/src/github.com/dgrijalva/jwt-go"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/sessions"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/gorilla/securecookie"
 	"partisan/db"
 	m "partisan/models"
 	"strconv"

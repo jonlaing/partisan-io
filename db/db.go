@@ -1,10 +1,10 @@
 package db
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	_ "github.com/lib/pq"
 	"net/http"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	_ "partisan/Godeps/_workspace/src/github.com/lib/pq"
 )
 
 var Database gorm.DB

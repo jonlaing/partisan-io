@@ -1,9 +1,9 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	"math"
 	"net/http"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	"partisan/matcher"

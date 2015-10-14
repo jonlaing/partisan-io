@@ -2,10 +2,10 @@ package v1
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
-	"github.com/jinzhu/gorm"
 	"net/http"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/gorilla/websocket"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"

@@ -2,9 +2,9 @@ package v1
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
 	"partisan/auth"
 	"partisan/db"
 	"partisan/emailer"

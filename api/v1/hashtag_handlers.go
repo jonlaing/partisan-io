@@ -2,9 +2,9 @@ package v1
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/url"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"

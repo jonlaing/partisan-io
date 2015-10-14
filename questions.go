@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/http"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // Question holds questions to guage a user's political leanings

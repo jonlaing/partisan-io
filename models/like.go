@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
 	"fmt"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
 // Like is polymorphic
@@ -34,7 +34,7 @@ func (l *Like) GetType() string {
 // GetRecordUserID returns the user ID of the record being liked. Satisfies Notifier interface.
 func (l *Like) GetRecordUserID(db *gorm.DB) (uint64, error) {
 	var notifUserIDs []uint64
-        table := fmt.Sprintf("%ss", l.RecordType) // yeah, this is pretty naive, but no need to over engineer at this point
+	table := fmt.Sprintf("%ss", l.RecordType) // yeah, this is pretty naive, but no need to over engineer at this point
 	err := db.Table(table).Where("id = ?", l.RecordID).Pluck("user_id", &notifUserIDs).Error
 
 	if len(notifUserIDs) < 1 {

@@ -3,14 +3,14 @@ package imager
 import (
 	"crypto/rand"
 	"fmt"
-	"github.com/nfnt/resize"
-	"github.com/oliamb/cutter"
 	"image"
 	"image/jpeg"
 	"image/png"
 	"mime/multipart"
 	"net/http"
 	"os"
+	"partisan/Godeps/_workspace/src/github.com/nfnt/resize"
+	"partisan/Godeps/_workspace/src/github.com/oliamb/cutter"
 )
 
 var imgExt = map[string]string{

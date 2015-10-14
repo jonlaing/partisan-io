@@ -2,8 +2,8 @@ package emailer
 
 import (
 	"fmt"
-	"github.com/scorredoira/email"
 	"net/smtp"
+	"partisan/Godeps/_workspace/src/github.com/scorredoira/email"
 )
 
 // Config is configuration for the emaail

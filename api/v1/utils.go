@@ -2,11 +2,11 @@ package v1
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	m "partisan/models"
 	"regexp"
 	"strconv"
-        m "partisan/models"
 )
 
 func getRecord(c *gin.Context) (rID uint64, rType string, err error) {

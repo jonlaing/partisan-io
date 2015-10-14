@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"regexp"
 	"time"
 )
