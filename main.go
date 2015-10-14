@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/DeanThompson/ginpprof"
-	"github.com/gin-gonic/contrib/renders/multitemplate"
-	"github.com/gin-gonic/contrib/sessions"
-	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/DeanThompson/ginpprof"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/renders/multitemplate"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/sessions"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/static"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	api "partisan/api/v1"
 	"partisan/auth"
 	"partisan/db"

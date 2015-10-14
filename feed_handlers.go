@@ -6,7 +6,7 @@ import (
 	"partisan/db"
 	m "partisan/models"
 
-	"github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // FeedIndex renders HTML
