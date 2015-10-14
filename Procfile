@@ -1,1 +1,1 @@
-web: go build && ./partisan
+web: go install && ./partisan
