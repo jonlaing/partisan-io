@@ -1,15 +1,16 @@
 package main
 
 import (
+	api "partisan/api/v1"
+	"partisan/auth"
+	"partisan/db"
+	m "partisan/models"
+
 	"partisan/Godeps/_workspace/src/github.com/DeanThompson/ginpprof"
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/renders/multitemplate"
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/sessions"
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/static"
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	api "partisan/api/v1"
-	"partisan/auth"
-	"partisan/db"
-	m "partisan/models"
 )
 
 func init() {
