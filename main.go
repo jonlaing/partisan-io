@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	api "partisan/api/v1"
 	"partisan/auth"
 	"partisan/db"
@@ -169,7 +170,7 @@ func main() {
 
 	ginpprof.Wrapper(r)
 
-	r.Run(":4000")
+	r.Run(":" + os.Getenv("PORT"))
 }
 
 func createMyRender() multitemplate.Render {
