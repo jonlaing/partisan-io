@@ -16,16 +16,16 @@
 		},
 		{
 			"ImportPath": "github.com/dgrijalva/jwt-go",
-			"Comment": "v2.3.0-4-gc1da563",
-			"Rev": "c1da56349675b292d3200463e2c88b9aa5e02391"
+			"Comment": "v2.3.0-6-gf62f64e",
+			"Rev": "f62f64ea222e5e6d6d86421b5507b0862a3ebf7f"
 		},
 		{
 			"ImportPath": "github.com/garyburd/redigo/internal",
-			"Rev": "d8dbe4d94f15fe89232e0402c6e8a0ddf21af3ab"
+			"Rev": "764a32c188f6ce0bc2565349f0125b3ad4021ea9"
 		},
 		{
 			"ImportPath": "github.com/garyburd/redigo/redis",
-			"Rev": "d8dbe4d94f15fe89232e0402c6e8a0ddf21af3ab"
+			"Rev": "764a32c188f6ce0bc2565349f0125b3ad4021ea9"
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/contrib/renders/multitemplate",
@@ -41,8 +41,8 @@
 		},
 		{
 			"ImportPath": "github.com/gin-gonic/gin",
-			"Comment": "v1.0rc1-143-g704d690",
-			"Rev": "704d690ac0e25fcd060ff82f75f913e879e65a3c"
+			"Comment": "v1.0rc1-148-g52fcc5d",
+			"Rev": "52fcc5dbf6e94df33ad313858fb94b713e9d1b4a"
 		},
 		{
 			"ImportPath": "github.com/gorilla/context",
@@ -54,11 +54,11 @@
 		},
 		{
 			"ImportPath": "github.com/gorilla/sessions",
-			"Rev": "b6bcae186ac3099dba8fafce125dc930393f1e5e"
+			"Rev": "f7261893ca3ea922c30eabe742c036d2c1de6e0a"
 		},
 		{
 			"ImportPath": "github.com/gorilla/websocket",
-			"Rev": "b6ab76f1fe9803ee1d59e7e5b2a797c1fe897ce5"
+			"Rev": "c66b764651cdca39f42d263b07a507c6e8b58ee9"
 		},
 		{
 			"ImportPath": "github.com/jasonmoo/geo",
@@ -66,12 +66,12 @@
 		},
 		{
 			"ImportPath": "github.com/jinzhu/gorm",
-			"Rev": "447885d98f9d07a138733a0e65428dd2de1ed60d"
+			"Rev": "20e37a05337026c18c4f74285ae1f47323d0e9eb"
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
-			"Comment": "go1.0-cutoff-59-gb269bd0",
-			"Rev": "b269bd035a727d6c1081f76e7a239a1b00674c40"
+			"Comment": "go1.0-cutoff-60-gffe986a",
+			"Rev": "ffe986aba3e6cfcded8b06615965941408891ef0"
 		},
 		{
 			"ImportPath": "github.com/manucorporat/sse",
@@ -92,7 +92,7 @@
 		},
 		{
 			"ImportPath": "github.com/qor/inflection",
-			"Rev": "45321e63b98c756df17369c027c1df89298e1288"
+			"Rev": "3272df6c21d04180007eb3349844c89a3856bc25"
 		},
 		{
 			"ImportPath": "github.com/scorredoira/email",
@@ -100,21 +100,20 @@
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/bcrypt",
-			"Rev": "aedad9a179ec1ea11b7064c57cbc6dc30d7724ec"
+			"Rev": "c8b9e6388ef638d5a8a9d865c634befdc46a6784"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/blowfish",
-			"Rev": "aedad9a179ec1ea11b7064c57cbc6dc30d7724ec"
+			"Rev": "c8b9e6388ef638d5a8a9d865c634befdc46a6784"
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
-			"Comment": "null-223",
-			"Rev": "5dedbdc181629d2f3557caf2667e60eb82c5e6d7"
+			"Rev": "21c3935a8fc0f954d03e6b8a560c9600ffee38d2"
 		},
 		{
 			"ImportPath": "gopkg.in/bluesuncorp/validator.v5",
-			"Comment": "v5.11",
-			"Rev": "98121ac23ff3d764f525d18d8de944d150e3c0fe"
+			"Comment": "v5.12",
+			"Rev": "d5acf1dac43705f8bfbb71d878e290e2bed3950b"
 		}
 	]
 }

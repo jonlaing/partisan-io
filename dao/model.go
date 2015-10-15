@@ -15,7 +15,7 @@ func (db *Database) GetByID(m Model, id uint64) error {
 }
 
 func (db *Database) GetCollection(m Model, sel string, inter ...[]interface{}) error {
-	colNames, scanVals := dissectColumns(m)
+	// colNames, scanVals := dissectColumns(m)
 
 	return nil
 }

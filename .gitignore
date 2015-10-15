@@ -7,3 +7,4 @@ localfiles
 partisan
 **/config.go
 *.heap
+Dockerfile

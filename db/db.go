@@ -1,7 +1,10 @@
 package db
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	_ "partisan/Godeps/_workspace/src/github.com/lib/pq"
@@ -11,7 +14,8 @@ var Database gorm.DB
 
 func init() {
 	var err error
-	Database, err = gorm.Open("postgres", "user=partisan dbname=partisan password=bakunin1234 sslmode=disable")
+	connString := fmt.Sprintf("user=%s dbname=%s password=%s sslmode=disable", os.Getenv("DB_USER"), os.Getenv("DB_NAME"), os.Getenv("DB_PASS"))
+	Database, err = gorm.Open("postgres", connString)
 	if err != nil {
 		panic(err)
 	}

@@ -209,7 +209,7 @@ func (scope *Scope) handleHasManyToManyPreload(field *Field, conditions []interf
 		sourceKeys = append(sourceKeys, key.DBName)
 	}
 
-	db := scope.NewDB().Table(scope.New(reflect.New(destType).Interface()).TableName())
+	db := scope.NewDB().Table(scope.New(reflect.New(destType).Interface()).TableName()).Select("*")
 	preloadJoinDB := joinTableHandler.JoinWith(joinTableHandler, db, scope.Value)
 	if len(conditions) > 0 {
 		preloadJoinDB = preloadJoinDB.Where(conditions[0], conditions[1:]...)
@@ -337,15 +337,24 @@ func (scope *Scope) getColumnsAsScope(column string) *Scope {
 			}
 			if column.Kind() == reflect.Slice {
 				for i := 0; i < column.Len(); i++ {
-					columns = reflect.Append(columns, column.Index(i).Addr())
+					elem := column.Index(i)
+					if elem.CanAddr() {
+						columns = reflect.Append(columns, elem.Addr())
+					}
 				}
 			} else {
-				columns = reflect.Append(columns, column.Addr())
+				if column.CanAddr() {
+					columns = reflect.Append(columns, column.Addr())
+				}
 			}
 		}
 		return scope.New(columns.Interface())
 	case reflect.Struct:
-		return scope.New(values.FieldByName(column).Addr().Interface())
+		field := values.FieldByName(column)
+		if !field.CanAddr() {
+			return nil
+		}
+		return scope.New(field.Addr().Interface())
 	}
 	return nil
 }
