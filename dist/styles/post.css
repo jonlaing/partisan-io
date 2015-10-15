@@ -1,0 +1,80 @@
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url("fonts/proximanova-bold-webfont.eot");
+  src: url("fonts/proximanova-bold-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/proximanova-bold-webfont.woff2") format("woff2"), url("fonts/proximanova-bold-webfont.woff") format("woff"), url("fonts/proximanova-bold-webfont.ttf") format("truetype"), url("fonts/proximanova-bold-webfont.svg#proxima_nova_rgbold") format("svg");
+  font-weight: bolder;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url("fonts/proximanova-light-webfont.eot");
+  src: url("fonts/proximanova-light-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/proximanova-light-webfont.woff2") format("woff2"), url("fonts/proximanova-light-webfont.woff") format("woff"), url("fonts/proximanova-light-webfont.ttf") format("truetype"), url("fonts/proximanova-light-webfont.svg#proxima_nova_ltlight") format("svg");
+  font-weight: lighter;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url("fonts/proximanova-reg-webfont.eot");
+  src: url("fonts/proximanova-reg-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/proximanova-reg-webfont.woff2") format("woff2"), url("fonts/proximanova-reg-webfont.woff") format("woff"), url("fonts/proximanova-reg-webfont.ttf") format("truetype"), url("fonts/proximanova-reg-webfont.svg#proxima_nova_rgregular") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url("fonts/proximanova-regit-webfont.eot");
+  src: url("fonts/proximanova-regit-webfont.eot?#iefix") format("embedded-opentype"), url("fonts/proximanova-regit-webfont.woff2") format("woff2"), url("fonts/proximanova-regit-webfont.woff") format("woff"), url("fonts/proximanova-regit-webfont.ttf") format("truetype"), url("fonts/proximanova-regit-webfont.svg#proxima_novaregular_italic") format("svg");
+  font-weight: normal;
+  font-style: italic; }
+
+html, body {
+  font-family: 'Proxima Nova', sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  color: #4a4a4a; }
+
+p {
+  font-family: 'Georgia', serif; }
+
+.post .post-user {
+  margin-bottom: 16px; }
+
+.post .post-avatar {
+  width: 50px;
+  height: 50px;
+  margin-right: 16px;
+  float: left; }
+  .post .post-avatar .user-avatar {
+    height: 50px;
+    object-fit: cover; }
+
+.post .post-username {
+  color: #d215b3; }
+
+.post .post-timestamp {
+  color: #979797; }
+
+.post .post-body {
+  line-height: 24px; }
+
+.post .post-actions {
+  margin-top: 16px;
+  padding: 16px 16px 0;
+  border: 1px solid #e6e6e6;
+  border-width: 1px 0 0; }
+  .post .post-actions button {
+    padding: 0;
+    padding-right: 32px;
+    background: none;
+    color: #00d2c3;
+    transition: color 0.3s ease; }
+    .post .post-actions button.active {
+      color: #d215b3; }
+    .post .post-actions button:last-child {
+      padding: 0; }
+    .post .post-actions button:hover {
+      color: #a4108b; }
+    .post .post-actions button i {
+      font-size: 150%;
+      margin-right: 8px; }
+      .post .post-actions button i.fi-dislike, .post .post-actions button i.fi-comment {
+        vertical-align: -4px; }
