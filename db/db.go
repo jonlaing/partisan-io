@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -14,8 +13,7 @@ var Database gorm.DB
 
 func init() {
 	var err error
-	connString := fmt.Sprintf("user=%s dbname=%s password=%s sslmode=disable", os.Getenv("DB_USER"), os.Getenv("DB_NAME"), os.Getenv("DB_PASS"))
-	Database, err = gorm.Open("postgres", connString)
+	Database, err = gorm.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		panic(err)
 	}
