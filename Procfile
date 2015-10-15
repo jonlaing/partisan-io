@@ -1,1 +1,1 @@
-web: ./partisan
+web: partisan
