@@ -2,6 +2,7 @@
 /node_modules/
 **/*.swp
 **/*.log
+.zshrc
 localfiles
 partisan
 *.heap
