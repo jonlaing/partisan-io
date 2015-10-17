@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/sessions"
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
@@ -12,5 +14,12 @@ func Login(c *gin.Context) {
 
 // SignUp shows the signup screen
 func SignUp(c *gin.Context) {
+	sess := sessions.Default(c)
+
+	if sess.Get("user_id") != nil {
+		c.Redirect(http.StatusFound, "/feed/")
+		return
+	}
+
 	c.HTML(http.StatusOK, "signup", gin.H{"title": "Sign Up for Partisan.IO"})
 }

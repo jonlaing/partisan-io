@@ -26,7 +26,6 @@ export default React.createClass({
   },
 
   handleUsernameChange(e) {
-    console.log(e.target.value);
     SignUpActionCreator.checkUnique(e.target.value);
   },
 
@@ -48,9 +47,11 @@ export default React.createClass({
     var uniquenessMarker;
 
     if(this.state.userUnique === 1) {
-      uniquenessMarker = <span className="label success"><i className="fi-check"></i></span>;
+      uniquenessMarker = <span className="signup-uniqueness success"><i className="fi-check"></i></span>;
     } else if (this.state.userUnique === 2) {
-      uniquenessMarker = <span className="label alert"><i className="fi-x"></i></span>;
+      uniquenessMarker = <span className="signup-uniqueness alert"><i className="fi-x"></i></span>;
+    } else {
+      uniquenessMarker = '';
     }
 
     return (
@@ -60,12 +61,10 @@ export default React.createClass({
           <input type="text" placeholder="you@email.com" ref="email" />
           {this._error("email")}
         </div>
-        <div className={"form-input row collapse" + this._hasError("username")}>
-          <div className="large-1 columns">
-            <span className="prefix">@</span>
-          </div>
-          <div className="large-11 columns">
+        <div className={"form-input" + this._hasError("username")}>
+          <div className="prefixed">
             <input type="text" placeholder="Username" ref="username" onChange={this.handleUsernameChange} />
+            <span className="prefix">@</span>
             {uniquenessMarker}
           </div>
           {this._error("username")}
@@ -80,7 +79,13 @@ export default React.createClass({
           <input type="password" placeholder="Password Confirm" ref="passwordConfirm" />
           {this._error("password_confirm")}
         </div>
-        <button onClick={this.handleSubmit}>Sign Up</button>
+
+        <div className="actions">
+          <div className="right">
+            <a href="/login">Login</a>
+          </div>
+          <button onClick={this.handleSubmit}>Sign Up</button>
+        </div>
       </div>
     );
   },

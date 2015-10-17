@@ -1,11 +1,11 @@
-@import './typography.scss';
-
 .login {
   padding: $line-height;
   position: relative;
+  font-size: $line-height;
 
   h4 {
     margin-bottom: $line-height*3;
+    font-size: 1.5em;
   }
 
   .error {
@@ -27,5 +27,11 @@
     &.login-error-enter-active {
       opacity: 1;
     }
+  }
+
+  input[type="text"], input[type="password"] {
+    padding: $line-height/2;
+    margin-bottom: $line-height;
+    font-size: $line-height;
   }
 }

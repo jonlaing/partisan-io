@@ -2076,12 +2076,33 @@ button, .button {
   color: white;
   background-color: #d215b3;
   border-radius: 2px;
-  font-size: 18px;
-  padding: 5.33333px 32px; }
+  font-size: 16px;
+  padding: 8px 32px;
+  transition: all 0.3s;
+  outline-style: none; }
+  button:hover, .button:hover {
+    background-color: #ea30cc; }
 
-input[type="text"], textarea {
+input[type="text"], input[type="password"], textarea {
   display: block;
-  width: 100%; }
+  width: 100%;
+  border: 1px solid #d9d9d9;
+  border-width: 0 0 1px;
+  transition: 0.3s all ease;
+  outline-style: none; }
+  input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #d215b3; }
+
+.form-input {
+  margin-bottom: 16px; }
+
+* {
+  -webkit-box-sizing: border-box;
+  /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;
+  /* Firefox, other Gecko */
+  box-sizing: border-box;
+  /* Opera/IE 8+ */ }
 
 html, body {
   padding: 0;
@@ -2123,6 +2144,14 @@ header {
     padding: 32px 16px 96px;
     margin-bottom: 96px;
     overflow-y: scroll; }
+
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0; }
 
 .nav {
   display: inline-block; }
@@ -2333,55 +2362,13 @@ a {
       padding: 0;
       margin-right: 0; }
 
-body {
-  background: #f2f2f2; }
-
-a {
-  color: #d215b3;
-  text-decoration: none; }
-
-@font-face {
-  font-family: 'Proxima Nova';
-  src: url("../fonts/proximanova-bold-webfont.eot");
-  src: url("../fonts/proximanova-bold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-bold-webfont.woff2") format("woff2"), url("../fonts/proximanova-bold-webfont.woff") format("woff"), url("../fonts/proximanova-bold-webfont.ttf") format("truetype"), url("../fonts/proximanova-bold-webfont.svg#proxima_nova_rgbold") format("svg");
-  font-weight: bold;
-  font-style: normal; }
-
-@font-face {
-  font-family: 'Proxima Nova';
-  src: url("../fonts/proximanova-light-webfont.eot");
-  src: url("../fonts/proximanova-light-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-light-webfont.woff2") format("woff2"), url("../fonts/proximanova-light-webfont.woff") format("woff"), url("../fonts/proximanova-light-webfont.ttf") format("truetype"), url("../fonts/proximanova-light-webfont.svg#proxima_nova_ltlight") format("svg");
-  font-weight: 100;
-  font-style: normal; }
-
-@font-face {
-  font-family: 'Proxima Nova';
-  src: url("../fonts/proximanova-reg-webfont.eot");
-  src: url("../fonts/proximanova-reg-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-reg-webfont.woff2") format("woff2"), url("../fonts/proximanova-reg-webfont.woff") format("woff"), url("../fonts/proximanova-reg-webfont.ttf") format("truetype"), url("../fonts/proximanova-reg-webfont.svg#proxima_nova_rgregular") format("svg");
-  font-weight: normal;
-  font-style: normal; }
-
-@font-face {
-  font-family: 'Proxima Nova';
-  src: url("../fonts/proximanova-regit-webfont.eot");
-  src: url("../fonts/proximanova-regit-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-regit-webfont.woff2") format("woff2"), url("../fonts/proximanova-regit-webfont.woff") format("woff"), url("../fonts/proximanova-regit-webfont.ttf") format("truetype"), url("../fonts/proximanova-regit-webfont.svg#proxima_novaregular_italic") format("svg");
-  font-weight: normal;
-  font-style: italic; }
-
-html, body {
-  font-family: 'Proxima Nova', sans-serif;
-  font-size: 14px;
-  line-height: 16px;
-  color: #4a4a4a; }
-
-p {
-  font-family: 'Georgia', serif; }
-
 .login {
   padding: 16px;
-  position: relative; }
+  position: relative;
+  font-size: 16px; }
   .login h4 {
-    margin-bottom: 48px; }
+    margin-bottom: 48px;
+    font-size: 1.5em; }
   .login .error {
     position: absolute;
     top: 64px;
@@ -2395,6 +2382,45 @@ p {
     transition: opacity 0.3s ease; }
     .login .login-error-enter.login-error-enter-active {
       opacity: 1; }
+  .login input[type="text"], .login input[type="password"] {
+    padding: 8px;
+    margin-bottom: 16px;
+    font-size: 16px; }
+
+.signup {
+  font-size: 16px; }
+  .signup h4 {
+    margin-bottom: 48px;
+    font-size: 1.5em; }
+  .signup .actions {
+    margin: 32px 0 16px; }
+  .signup .prefixed {
+    display: flex;
+    -webkit-display: flex;
+    position: relative; }
+    .signup .prefixed .prefix {
+      background-color: #d9d9d9;
+      padding: 8px;
+      text-align: center;
+      color: #979797;
+      border-radius: 2px;
+      order: 1;
+      transition: all 0.3s ease; }
+    .signup .prefixed input {
+      order: 2; }
+    .signup .prefixed input:focus + .prefix {
+      color: white;
+      background: #d215b3; }
+    .signup .prefixed .signup-uniqueness {
+      position: absolute;
+      right: 0px; }
+      .signup .prefixed .signup-uniqueness.success {
+        color: green; }
+      .signup .prefixed .signup-uniqueness.alert {
+        color: red; }
+  .signup input[type="text"], .signup input[type="password"] {
+    font-size: 16px;
+    padding: 8px; }
 
 .usersession {
   display: inline-block;
@@ -2471,16 +2497,72 @@ html, body {
 p {
   font-family: 'Georgia', serif; }
 
-.question .card {
+.question {
+  width: 60vw;
+  margin: 16px auto;
+  position: relative; }
+  .question .card {
+    position: absolute;
+    height: 70vh;
+    width: 100%;
+    padding: 64px;
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: center;
+    -webkit-justify-content: center; }
+    .question .card .question-number {
+      position: absolute;
+      right: 32px;
+      top: 32px; }
+    .question .card .card-body {
+      font-size: 24px;
+      line-height: 32px; }
+  .question .question-actions {
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-between;
+    -webkit-justify-content: space-between; }
+    .question .question-actions .button {
+      flex-grow: 1;
+      -webkit-flex-grow: 1;
+      padding: 16px; }
+      .question .question-actions .button.disagree {
+        background: #ff002e; }
+      .question .question-actions .button.agree {
+        background: #00cb6c; }
+      .question .question-actions .button:first-child {
+        margin-right: 16px; }
+      .question .question-actions .button:last-child {
+        margin-left: 16px; }
+
+.question-body {
+  position: relative;
   height: 70vh;
-  padding: 64px;
-  display: flex;
-  display: -webkit-flex;
-  align-items: center;
-  -webkit-align-items: center;
-  justify-content: center;
-  -webkit-justify-content: center;
-  font-size: 24px; }
+  margin: 32px 0; }
+
+.question-body-enter {
+  opacity: 0;
+  transition: all 0.3s ease; }
+  .question-body-enter.question-body-enter-active {
+    opacity: 1; }
+
+.question-body-leave {
+  opacity: 1;
+  transition: all 0.5s ease;
+  transform: translateX(0px) rotate(0deg);
+  -webkit-transform: translateX(0px) rotate(0deg); }
+  .question-body-leave.question-body-leave-active {
+    opacity: 0; }
+    .question-body-leave.question-body-leave-active.agree {
+      transform: translateX(1000px) rotate(45deg);
+      -webkit-transform: translateX(1000px) rotate(45deg);
+      background: #00cb6c; }
+    .question-body-leave.question-body-leave-active.disagree {
+      transform: translateX(-1000px) rotate(-45deg);
+      -webkit-transform: translateX(-1000px) rotate(-45deg);
+      background: #ff002e; }
 
 .commentlist {
   position: relative;
@@ -2619,13 +2701,14 @@ button.like {
 
 .modal {
   min-width: 25vw;
-  max-height: 90vh;
   background: white;
   padding: 32px;
   border-radius: 2px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   transition: all 0.3s;
   z-index: 2; }
+  .modal.modal-fixed {
+    max-height: 90vh; }
 
 .modal-container-enter {
   position: fixed;

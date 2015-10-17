@@ -36871,6 +36871,7 @@ exports['default'] = {
     SIGN_UP_FAIL: null,
     USERNAME_UNIQUE: null,
     USERNAME_NOT_UNIQUE: null,
+    USERNAME_BLANK: null,
 
     GET_QUESTION_SUCESS: null,
     GET_QUESTION_FAIL: null,
@@ -37776,7 +37777,6 @@ exports['default'] = {
       method: 'POST',
       dataType: 'json'
     }).done(function (res) {
-      console.log(res);
       _Dispatcher2['default'].handleViewAction({
         type: _Constants2['default'].ActionTypes.SIGN_UP_SUCCESS,
         data: res
@@ -37791,20 +37791,26 @@ exports['default'] = {
   },
 
   checkUnique: function checkUnique(username) {
-    $.ajax({
-      url: _Constants2['default'].APIROOT + '/user/check_unique',
-      data: { username: username },
-      method: 'GET',
-      dataType: 'json'
-    }).done(function () {
-      _Dispatcher2['default'].handleViewAction({
-        type: _Constants2['default'].ActionTypes.USERNAME_UNIQUE
+    if (username.length > 0) {
+      $.ajax({
+        url: _Constants2['default'].APIROOT + '/user/check_unique',
+        data: { username: username },
+        method: 'GET',
+        dataType: 'json'
+      }).done(function () {
+        _Dispatcher2['default'].handleViewAction({
+          type: _Constants2['default'].ActionTypes.USERNAME_UNIQUE
+        });
+      }).fail(function () {
+        _Dispatcher2['default'].handleViewAction({
+          type: _Constants2['default'].ActionTypes.USERNAME_NOT_UNIQUE
+        });
       });
-    }).fail(function () {
+    } else {
       _Dispatcher2['default'].handleViewAction({
-        type: _Constants2['default'].ActionTypes.USERNAME_NOT_UNIQUE
+        type: _Constants2['default'].ActionTypes.USERNAME_BLANK
       });
-    });
+    }
   }
 };
 module.exports = exports['default'];
@@ -38879,12 +38885,12 @@ exports['default'] = _reactAddons2['default'].createClass({
       ),
       _reactAddons2['default'].createElement(
         'div',
-        { className: 'form-input' },
+        null,
         _reactAddons2['default'].createElement('input', { type: 'text', placeholder: 'you@email.com', ref: 'email' })
       ),
       _reactAddons2['default'].createElement(
         'div',
-        { className: 'form-input' },
+        null,
         _reactAddons2['default'].createElement('input', { type: 'password', placeholder: 'Password', ref: 'password' })
       ),
       _reactAddons2['default'].createElement(
@@ -38892,7 +38898,7 @@ exports['default'] = _reactAddons2['default'].createClass({
         { className: 'right' },
         _reactAddons2['default'].createElement(
           'a',
-          { href: '/sign-up.html' },
+          { href: '/signup' },
           'Sign Up'
         )
       ),
@@ -40253,9 +40259,9 @@ Object.defineProperty(exports, '__esModule', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _react = require('react');
+var _reactAddons = require('react/addons');
 
-var _react2 = _interopRequireDefault(_react);
+var _reactAddons2 = _interopRequireDefault(_reactAddons);
 
 var _actionsQuestionsActionCreator = require('../actions/QuestionsActionCreator');
 
@@ -40273,19 +40279,37 @@ var _UserSessionJsx = require('./UserSession.jsx');
 
 var _UserSessionJsx2 = _interopRequireDefault(_UserSessionJsx);
 
-exports['default'] = _react2['default'].createClass({
+var _ModalJsx = require('./Modal.jsx');
+
+var _ModalJsx2 = _interopRequireDefault(_ModalJsx);
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var ReactCSSTransitionGroup = _reactAddons2['default'].addons.CSSTransitionGroup;
+
+exports['default'] = _reactAddons2['default'].createClass({
   displayName: 'Questions',
 
   getInitialState: function getInitialState() {
-    return { question: { prompt: "Fetching...", map: [] }, questionsAnswered: 0 };
+    return { questions: [], questionsAnswered: 0, showModal: true };
   },
 
   handleAgree: function handleAgree() {
-    _actionsQuestionsActionCreator2['default'].answerQuestion(this.state.question, true);
+    var last = this.state.questions.length - 1;
+    (0, _jquery2['default'])('.card').addClass('agree');
+    _actionsQuestionsActionCreator2['default'].answerQuestion(this.state.questions[last], true);
   },
 
   handleDisagree: function handleDisagree() {
-    _actionsQuestionsActionCreator2['default'].answerQuestion(this.state.question, false);
+    var last = this.state.questions.length - 1;
+    (0, _jquery2['default'])('.card').addClass('disagree');
+    _actionsQuestionsActionCreator2['default'].answerQuestion(this.state.questions[last], false);
+  },
+
+  handleModalClose: function handleModalClose() {
+    this.setState({ showModal: false });
   },
 
   componentDidMount: function componentDidMount() {
@@ -40298,51 +40322,96 @@ exports['default'] = _react2['default'].createClass({
   },
 
   render: function render() {
-    return _react2['default'].createElement(
+    var _this = this;
+
+    var cards = this.state.questions.map(function (q) {
+      return _this._cardTemplate(q);
+    });
+
+    return _reactAddons2['default'].createElement(
       'div',
       { className: 'question' },
-      _react2['default'].createElement(
-        'header',
-        null,
-        _react2['default'].createElement(_UserSessionJsx2['default'], { username: this.props.data.user.username })
+      _reactAddons2['default'].createElement(
+        'div',
+        { className: 'clearfix' },
+        _reactAddons2['default'].createElement(
+          'div',
+          { className: 'right' },
+          _reactAddons2['default'].createElement(_UserSessionJsx2['default'], { username: this.props.data.user.username })
+        ),
+        _reactAddons2['default'].createElement('img', { src: 'images/logo.svg', className: 'logo' })
       ),
-      _react2['default'].createElement(
+      _reactAddons2['default'].createElement(
         'div',
         { className: 'question-container' },
-        _react2['default'].createElement(
-          'div',
-          { className: 'question-number' },
-          this.state.questionsAnswered,
-          ' of ',
-          this._maxQuestions()
-        ),
-        _react2['default'].createElement(
+        _reactAddons2['default'].createElement(
           'div',
           { className: 'question-body' },
-          _react2['default'].createElement(
-            _CardJsx2['default'],
-            null,
-            _react2['default'].createElement(
-              'div',
-              { className: 'card-body' },
-              this.state.question.prompt
-            )
+          _reactAddons2['default'].createElement(
+            ReactCSSTransitionGroup,
+            { transitionName: 'question-body' },
+            cards
           )
         )
       ),
-      _react2['default'].createElement(
+      _reactAddons2['default'].createElement(
         'div',
         { className: 'question-actions' },
-        _react2['default'].createElement(
+        _reactAddons2['default'].createElement(
           'button',
-          { className: 'button alert expand', onClick: this.handleDisagree },
+          { className: 'button disagree', onClick: this.handleDisagree },
           'Disagree'
         ),
-        _react2['default'].createElement(
+        _reactAddons2['default'].createElement(
           'button',
-          { className: 'button success expand', onClick: this.handleAgree },
+          { className: 'button agree', onClick: this.handleAgree },
           'Agree'
         )
+      ),
+      _reactAddons2['default'].createElement(
+        _ModalJsx2['default'],
+        { show: this.state.showModal, onCloseClick: this.handleModalClose },
+        _reactAddons2['default'].createElement(
+          'h2',
+          null,
+          'Answer Questions'
+        ),
+        _reactAddons2['default'].createElement(
+          'div',
+          null,
+          'You\'re about to be presented with ',
+          _reactAddons2['default'].createElement(
+            'strong',
+            null,
+            '20 questions'
+          ),
+          '. This is how we determine',
+          _reactAddons2['default'].createElement('br', null),
+          'your beliefs and match you up with similar people.'
+        )
+      )
+    );
+  },
+
+  _cardTemplate: function _cardTemplate(q) {
+    if (q.prompt === undefined) {
+      return '';
+    }
+
+    return _reactAddons2['default'].createElement(
+      _CardJsx2['default'],
+      { key: q.prompt },
+      _reactAddons2['default'].createElement(
+        'div',
+        { className: 'question-number' },
+        this.state.questionsAnswered,
+        ' of ',
+        this._maxQuestions()
+      ),
+      _reactAddons2['default'].createElement(
+        'div',
+        { className: 'card-body' },
+        q.prompt
       )
     );
   },
@@ -40352,16 +40421,16 @@ exports['default'] = _react2['default'].createClass({
     var answered = this.state.questionsAnswered + 1;
 
     if (this._maxQuestions() > -1 && answered > this._maxQuestions()) {
-      window.location.href = "/profile";
+      window.location.href = "/feed";
       return;
     }
 
-    this.setState({ question: question, questionsAnswered: answered });
+    this.setState({ questions: [question], questionsAnswered: answered });
   },
 
   _maxQuestions: function _maxQuestions() {
     if (this.props.maxQuestions === undefined) {
-      return 15;
+      return 20;
     }
 
     return this.props.maxQuestions;
@@ -40370,7 +40439,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/QuestionsActionCreator":202,"../stores/QuestionsStore":241,"./Card.jsx":206,"./UserSession.jsx":228,"react":187}],227:[function(require,module,exports){
+},{"../actions/QuestionsActionCreator":202,"../stores/QuestionsStore":241,"./Card.jsx":206,"./Modal.jsx":218,"./UserSession.jsx":228,"jquery":6,"react/addons":15}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40417,7 +40486,6 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleUsernameChange: function handleUsernameChange(e) {
-    console.log(e.target.value);
     _actionsSignUpActionCreator2['default'].checkUnique(e.target.value);
   },
 
@@ -40441,15 +40509,17 @@ exports['default'] = _react2['default'].createClass({
     if (this.state.userUnique === 1) {
       uniquenessMarker = _react2['default'].createElement(
         'span',
-        { className: 'label success' },
+        { className: 'signup-uniqueness success' },
         _react2['default'].createElement('i', { className: 'fi-check' })
       );
     } else if (this.state.userUnique === 2) {
       uniquenessMarker = _react2['default'].createElement(
         'span',
-        { className: 'label alert' },
+        { className: 'signup-uniqueness alert' },
         _react2['default'].createElement('i', { className: 'fi-x' })
       );
+    } else {
+      uniquenessMarker = '';
     }
 
     return _react2['default'].createElement(
@@ -40468,20 +40538,16 @@ exports['default'] = _react2['default'].createClass({
       ),
       _react2['default'].createElement(
         'div',
-        { className: "form-input row collapse" + this._hasError("username") },
+        { className: "form-input" + this._hasError("username") },
         _react2['default'].createElement(
           'div',
-          { className: 'large-1 columns' },
+          { className: 'prefixed' },
+          _react2['default'].createElement('input', { type: 'text', placeholder: 'Username', ref: 'username', onChange: this.handleUsernameChange }),
           _react2['default'].createElement(
             'span',
             { className: 'prefix' },
             '@'
-          )
-        ),
-        _react2['default'].createElement(
-          'div',
-          { className: 'large-11 columns' },
-          _react2['default'].createElement('input', { type: 'text', placeholder: 'Username', ref: 'username', onChange: this.handleUsernameChange }),
+          ),
           uniquenessMarker
         ),
         this._error("username")
@@ -40503,9 +40569,22 @@ exports['default'] = _react2['default'].createClass({
         this._error("password_confirm")
       ),
       _react2['default'].createElement(
-        'button',
-        { onClick: this.handleSubmit },
-        'Sign Up'
+        'div',
+        { className: 'actions' },
+        _react2['default'].createElement(
+          'div',
+          { className: 'right' },
+          _react2['default'].createElement(
+            'a',
+            { href: '/login' },
+            'Login'
+          )
+        ),
+        _react2['default'].createElement(
+          'button',
+          { onClick: this.handleSubmit },
+          'Sign Up'
+        )
       )
     );
   },
@@ -41730,6 +41809,11 @@ var SignUpStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
 
       case _Constants2['default'].ActionTypes.USERNAME_NOT_UNIQUE:
         _userUnique = 2;
+        SignUpStore.emitChange();
+        break;
+
+      case _Constants2['default'].ActionTypes.USERNAME_BLANK:
+        _userUnique = 0;
         SignUpStore.emitChange();
         break;
     }

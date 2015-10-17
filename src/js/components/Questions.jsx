@@ -1,20 +1,32 @@
-import React from 'react';
+import React from 'react/addons';
 import QuestionsActionCreator from '../actions/QuestionsActionCreator';
 import QuestionsStore from '../stores/QuestionsStore';
 import Card from './Card.jsx';
 import UserSession from './UserSession.jsx';
+import Modal from './Modal.jsx';
+import $ from 'jquery';
+
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 export default React.createClass({
   getInitialState() {
-    return { question: { prompt: "Fetching...", map: [] }, questionsAnswered: 0};
+    return { questions: [], questionsAnswered: 0, showModal: true};
   },
 
   handleAgree() {
-    QuestionsActionCreator.answerQuestion(this.state.question, true);
+    let last = this.state.questions.length - 1;
+    $('.card').addClass('agree');
+    QuestionsActionCreator.answerQuestion(this.state.questions[last], true);
   },
 
   handleDisagree() {
-    QuestionsActionCreator.answerQuestion(this.state.question, false);
+    let last = this.state.questions.length - 1;
+    $('.card').addClass('disagree');
+    QuestionsActionCreator.answerQuestion(this.state.questions[last], false);
+  },
+
+  handleModalClose() {
+    this.setState({showModal: false});
   },
 
   componentDidMount() {
@@ -27,28 +39,51 @@ export default React.createClass({
   },
 
   render() {
+    var cards = this.state.questions.map((q) => {
+      return this._cardTemplate(q);
+    });
+
     return (
       <div className="question">
-        <header>
-          <UserSession username={this.props.data.user.username} />
-        </header>
-        <div className="question-container">
-          <div className="question-number">
-            {this.state.questionsAnswered} of {this._maxQuestions()}
+        <div className="clearfix">
+          <div className="right">
+            <UserSession username={this.props.data.user.username} />
           </div>
+          <img src="images/logo.svg" className="logo" />
+        </div>
+        <div className="question-container">
           <div className="question-body">
-            <Card>
-              <div className="card-body">
-                {this.state.question.prompt}
-              </div>
-            </Card>
+            <ReactCSSTransitionGroup transitionName="question-body">
+              {cards}
+            </ReactCSSTransitionGroup>
           </div>
         </div>
         <div className="question-actions">
-          <button className="button alert expand" onClick={this.handleDisagree}>Disagree</button>
-          <button className="button success expand" onClick={this.handleAgree}>Agree</button>
+          <button className="button disagree" onClick={this.handleDisagree}>Disagree</button>
+          <button className="button agree" onClick={this.handleAgree}>Agree</button>
         </div>
+        <Modal show={this.state.showModal} onCloseClick={this.handleModalClose} >
+          <h2>Answer Questions</h2>
+          <div>You're about to be presented with <strong>20 questions</strong>. This is how we determine<br/>your beliefs and match you up with similar people.</div>
+        </Modal>
       </div>
+    );
+  },
+
+  _cardTemplate(q) {
+    if(q.prompt === undefined) {
+      return '';
+    }
+
+    return (
+      <Card key={q.prompt}>
+        <div className="question-number">
+          {this.state.questionsAnswered} of {this._maxQuestions()}
+        </div>
+        <div className="card-body">
+          {q.prompt}
+        </div>
+      </Card>
     );
   },
 
@@ -58,16 +93,16 @@ export default React.createClass({
 
 
     if(this._maxQuestions() > -1 && answered > this._maxQuestions()) {
-      window.location.href = "/profile";
+      window.location.href = "/feed";
       return;
     }
 
-    this.setState({question: question, questionsAnswered: answered});
+    this.setState({questions: [question], questionsAnswered: answered});
   },
 
   _maxQuestions() {
     if(this.props.maxQuestions === undefined) {
-      return 15;
+      return 20;
     }
 
     return this.props.maxQuestions;

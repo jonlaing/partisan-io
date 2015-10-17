@@ -4,11 +4,31 @@ button, .button {
   color: white;
   background-color: $action-color;
   @include rounded-corners();
-  font-size: 18px;
-  padding: $line-height/3 $line-height*2;
+  font-size: $line-height;
+  padding: $line-height/2 $line-height*2;
+  transition: all 0.3s;
+
+  outline-style: none;
+
+  &:hover {
+    background-color: lighten($action-color, 10%);
+  }
 }
 
-input[type="text"], textarea {
+input[type="text"], input[type="password"], textarea {
   display: block;
   width: 100%;
+  border: 1px solid $light-grey;
+  border-width: 0 0 1px;
+  transition: 0.3s all ease;
+
+  outline-style: none;
+
+  &:focus {
+    border-color: $action-color;
+  }
+}
+
+.form-input {
+  margin-bottom: $line-height;
 }

@@ -17,7 +17,6 @@ export default {
       dataType: 'json'
     })
       .done(function(res) {
-        console.log(res);
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.SIGN_UP_SUCCESS,
           data: res
@@ -33,21 +32,28 @@ export default {
   },
 
   checkUnique(username) {
-    $.ajax({
-      url: Constants.APIROOT + '/user/check_unique',
-      data: { username: username },
-      method: 'GET',
-      dataType: 'json'
-    })
-      .done(function() {
-        Dispatcher.handleViewAction({
-          type: Constants.ActionTypes.USERNAME_UNIQUE
-        });
+    if(username.length > 0) {
+      $.ajax({
+        url: Constants.APIROOT + '/user/check_unique',
+        data: { username: username },
+        method: 'GET',
+        dataType: 'json'
       })
-      .fail(function() {
-        Dispatcher.handleViewAction({
-          type: Constants.ActionTypes.USERNAME_NOT_UNIQUE
+        .done(function() {
+          Dispatcher.handleViewAction({
+            type: Constants.ActionTypes.USERNAME_UNIQUE
+          });
+        })
+        .fail(function() {
+          Dispatcher.handleViewAction({
+            type: Constants.ActionTypes.USERNAME_NOT_UNIQUE
+          });
         });
+    } else {
+      Dispatcher.handleViewAction({
+        type: Constants.ActionTypes.USERNAME_BLANK
       });
+    }
+
   }
 };

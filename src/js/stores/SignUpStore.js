@@ -43,6 +43,11 @@ const SignUpStore = assign({}, BaseStore, {
         _userUnique = 2;
         SignUpStore.emitChange();
         break;
+
+      case Constants.ActionTypes.USERNAME_BLANK:
+        _userUnique = 0;
+        SignUpStore.emitChange();
+        break;
     }
   })
 });

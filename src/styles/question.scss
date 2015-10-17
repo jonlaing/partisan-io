@@ -1,8 +1,14 @@
 @import './typography.scss';
 
 .question {
+  width: 60vw;
+  margin: $line-height auto;
+  position: relative;
+
   .card {
+    position:absolute;
     height: 70vh;
+    width: 100%;
     padding: $line-height*4;
     display: flex;
     display: -webkit-flex;
@@ -11,6 +17,83 @@
     justify-content: center;
     -webkit-justify-content: center;
 
-    font-size: $line-height*1.5;
+    .question-number {
+      position: absolute;
+      right: $line-height*2;
+      top: $line-height*2;
+    }
+
+    .card-body {
+      font-size: $line-height*1.5;
+      line-height: $line-height*2;
+    }
+  }
+
+  .question-actions {
+    display: flex;
+    display: -webkit-flex;
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+
+    .button {
+      flex-grow: 1;
+      -webkit-flex-grow: 1;
+      padding: $line-height;
+
+      &.disagree {
+        background: $danger;
+      }
+
+      &.agree {
+        background: $success;
+      }
+
+      &:first-child {
+        margin-right: $line-height;
+      }
+
+      &:last-child {
+        margin-left: $line-height;
+      }
+    }
+  }
+}
+
+.question-body {
+  position: relative;
+  height: 70vh;
+  margin: $line-height*2 0;
+}
+
+.question-body-enter {
+  opacity: 0;
+  transition: all 0.3s ease;
+
+  &.question-body-enter-active {
+    opacity: 1;
+  }
+}
+
+.question-body-leave {
+  opacity: 1;
+  transition: all 0.5s ease;
+  transform: translateX(0px) rotate(0deg);
+  -webkit-transform: translateX(0px) rotate(0deg);
+
+
+  &.question-body-leave-active {
+    &.agree {
+      transform: translateX(1000px) rotate(45deg);
+      -webkit-transform: translateX(1000px) rotate(45deg);
+      background: $success;
+    }
+
+    &.disagree {
+      transform: translateX(-1000px) rotate(-45deg);
+      -webkit-transform: translateX(-1000px) rotate(-45deg);
+      background: $danger;
+    }
+
+    opacity: 0;
   }
 }

@@ -49,14 +49,15 @@ export default React.createClass({
         <ReactCSSTransitionGroup transitionName="login-error">
           {error}
         </ReactCSSTransitionGroup>
-        <div className="form-input">
+        <div>
           <input type="text" placeholder="you@email.com" ref="email" />
         </div>
-        <div className="form-input">
+        <div>
           <input type="password" placeholder="Password" ref="password" />
         </div>
+
         <div className="right">
-          <a href="/sign-up.html">Sign Up</a>
+          <a href="/signup">Sign Up</a>
         </div>
         <button onClick={this.handleLogin}>Login</button>
       </div>

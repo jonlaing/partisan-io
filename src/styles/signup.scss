@@ -1,0 +1,57 @@
+.signup {
+  font-size: $line-height;
+
+  h4 {
+    margin-bottom: $line-height*3;
+    font-size: 1.5em;
+  }
+
+  .actions {
+    margin: $line-height*2 0 $line-height;
+  }
+
+  .prefixed {
+    display: flex;
+    -webkit-display: flex;
+    position: relative;
+
+    .prefix {
+      background-color: $light-grey;
+      padding: $line-height/2;
+      text-align: center;
+      color: $grey;
+      @include rounded-corners();
+      order: 1;
+
+      transition: all 0.3s ease;
+    }
+
+    input {
+      order: 2;
+    }
+
+    input:focus + .prefix {
+      color: white;
+      background: $action-color;
+    }
+
+    .signup-uniqueness {
+      position: absolute;
+      right: 0px;
+
+      &.success {
+        color: green;
+      }
+
+      &.alert {
+        color: red;
+      }
+    }
+  }
+
+  input[type="text"], input[type="password"] {
+    font-size: $line-height;
+    padding: $line-height/2;
+  }
+
+}
