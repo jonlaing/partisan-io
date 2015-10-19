@@ -1,12 +1,12 @@
 import React from 'react';
 
-import CheckboxGroup from 'react-checkbox-group';
 import Icon from 'react-fontawesome';
 
 import formatter from '../utils/formatter';
 
 import AvatarEditor from './AvatarEditor.jsx';
 import ProfileInfoEditor from './ProfileInfoEditor.jsx';
+import LookingForEdit from './LookingForEdit.jsx';
 
 import ProfileActionCreator from '../actions/ProfileActionCreator';
 import ProfileStore from '../stores/ProfileStore';
@@ -41,15 +41,8 @@ export default React.createClass({
       ProfileActionCreator.updateBirthdate(e.target.value);
   },
 
-  handleLookingForChange() {
-    var bitMap = 0;
-    let values = this.refs.lookingFor.getCheckedValues();
-
-    values.forEach(function(v) {
-      bitMap += parseInt(v);
-    });
-
-    ProfileActionCreator.updateLookingFor(bitMap);
+  handleLookingForChange(val) {
+    ProfileActionCreator.updateLookingFor(val);
   },
 
   handleSummaryClick() {
@@ -75,13 +68,20 @@ export default React.createClass({
     var summary;
 
     if(this.state.editSummary === false) {
+      var s;
+      if(this.state.profile.summary.length < 1) {
+        s = (<div><em>You haven&apos;t filled out your summary yet</em></div>);
+      } else {
+        s = (<div dangerouslySetInnerHTML={ formatter.userSummary(this.state.profile.summary) } />);
+      }
+
       summary = (
         <div>
           <h3>
             Summary
             <Icon name="pencil" onClick={this.handleSummaryClick} className="profile-summary-edit"/>
           </h3>
-          <div dangerouslySetInnerHTML={ formatter.userSummary(this.state.profile.summary) } />
+          {s}
         </div>
       );
     } else {
@@ -107,21 +107,7 @@ export default React.createClass({
             onBirthdateFinish={this.handleBirthdateFinish} />
           <div className="profile-edit-lookingfor">
             <h3>Looking For</h3>
-            <CheckboxGroup
-              name="looking_for"
-              value={this._parseLookingFor(this.state.profile.looking_for)}
-              ref="lookingFor"
-              onChange={this.handleLookingForChange} >
-                <label>
-                  <input type="checkbox" value={1 << 0} /> Friends
-                </label>
-                <label>
-                  <input type="checkbox" value={1 << 1} /> Love
-                </label>
-                <label>
-                  <input type="checkbox" value={1 << 2} /> Enemy
-                </label>
-            </CheckboxGroup>
+            <LookingForEdit lookingFor={this.state.profile.looking_for} onChange={this.handleLookingForChange}/>
           </div>
           <div className="profile-edit-summary">
             {summary}
@@ -148,13 +134,4 @@ export default React.createClass({
     );
   },
 
-  _parseLookingFor(n) {
-    var vals = [];
-    for(var i = 0; i <= 3; i++) {
-      if((n & 1 << i) !== 0) {
-        vals.push((1 << i).toString());
-      }
-    }
-    return vals;
-  }
 });

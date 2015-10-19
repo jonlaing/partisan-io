@@ -2,8 +2,12 @@
   border-radius: 2px;
 }
 
-@mixin box-shadow() {
-  box-shadow: 0 2px 4px $shadow-color;
+@mixin box-shadow($depth: 2px, $blur: 4px) {
+  box-shadow: 0 $depth $blur $shadow-color;
+}
+
+@mixin text-shadow($depth: 2px, $blur: 4px) {
+  text-shadow: 0 $depth $blur $shadow-color;
 }
 
 @mixin clearfix() {

@@ -1,0 +1,35 @@
+.lookingfor {
+  > div {
+    display: flex;
+    display: -webkit-flex;
+  }
+
+  label {
+    display: block;
+    margin: 0 $line-height;
+    text-align: center;
+    cursor: pointer;
+    color: $light-grey;
+    transition: color 0.3s ease;
+
+    i {
+      font-size: 2em;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    &.active {
+      color: white;
+
+      i {
+        color: $action-color;
+        @include text-shadow();
+      }
+    }
+  }
+
+  input {
+    display: none;
+  }
+
+}

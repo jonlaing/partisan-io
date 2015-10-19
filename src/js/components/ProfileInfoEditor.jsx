@@ -27,7 +27,7 @@ export default React.createClass({
     this.setState({editGender: true});
   },
 
-  handleGenderChange(e) {
+  handleGenderKeyDown(e) {
     if(e.keyCode === _ENTER && e.target.value !== "") {
       this.setState({editGender: false});
       this.props.onGenderFinish(e);
@@ -108,7 +108,7 @@ export default React.createClass({
   _editLocationTemplate() {
     return (
       <div>
-        <input type="text" defaultValue={this.props.postalCode} onKeyDown={this.handleLocationKeyDown} />
+        <input type="text" defaultValue={this.props.postalCode} onKeyDown={this.handleLocationKeyDown} autoFocus={true} />
       </div>
     );
   },
@@ -116,7 +116,7 @@ export default React.createClass({
     let g = this.props.gender || "";
     return (
       <div>
-        <input type="text" placeholder="Type in your gender" defaultValue={g} onKeyDown={this.handleGenderKeyDown} />
+        <input type="text" placeholder="Type in your gender" defaultValue={g} onKeyDown={this.handleGenderKeyDown} autoFocus={true} />
       </div>
     );
   },
