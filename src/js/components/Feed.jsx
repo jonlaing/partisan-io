@@ -10,6 +10,7 @@ import ProfileEdit from './ProfileEdit.jsx';
 import FlagForm from './FlagForm.jsx';
 import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
+import MiniMatcher from './MiniMatcher.jsx';
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
@@ -68,7 +69,9 @@ export default React.createClass({
             </ReactCSSTransitionGroup>
             {nothing}
           </article>
-          <aside>&nbsp;</aside>
+          <aside>
+            <MiniMatcher />
+          </aside>
         </div>
 
         <FlagForm show={this.state.modals.flag.show} id={this.state.modals.flag.id} type={this.state.modals.flag.type} ref="flag"/>

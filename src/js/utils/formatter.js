@@ -1,4 +1,5 @@
 import marked from 'marked';
+import moment from 'moment';
 
 
 marked.setOptions({
@@ -65,5 +66,23 @@ export default {
     content = _hashtagify(content);
     content = _tagify(content);
     return { __html: content };
+  },
+
+  cityState(location) {
+    return location.replace(/\s\d+.*$/, '');
+  },
+
+  age(birthdate, showIfNone) {
+    // You're probably not older than 200 years old, which means
+    // your bithdate hasn't been entered
+    if(moment(birthdate).isBefore('1800-12-31')) {
+      if(showIfNone === false) {
+        return "";
+      }
+
+      return "No Age";
+    }
+
+    return moment().diff(birthdate, 'years') + " years old";
   }
 };

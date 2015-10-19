@@ -1,0 +1,65 @@
+.matchlist-small {
+  position: relative;
+  padding: $line-height;
+  overflow-y: hidden;
+  height: 100%;
+
+  h3 {
+    font-weight: normal;
+    margin-bottom: $line-height*2;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .matchlist-small-item {
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+    -webkit-align-items: center;
+
+    margin: $line-height/2 0;
+
+    > div {
+      margin-right: $line-height;
+    }
+  }
+
+  .matchlist-small-avatar {
+    outline: 1px solid $grey;
+    @include avatar(60px);
+    cursor: pointer;
+  }
+
+  .matchlist-small-match {
+    text-align: right;
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
+    padding-right: $line-height;
+    color: $grey;
+    font-weight: bold;
+  }
+
+  .matchlist-small-info {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 10vw;
+    font-size: 0.85em;
+  }
+
+  .more {
+    position: absolute;
+    bottom: $line-height*2 + 72px;
+    text-align: center;
+    width: 100%;
+
+    .button {
+      @include box-shadow();
+    }
+  }
+
+}

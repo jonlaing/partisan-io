@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import formatter from '../utils/formatter';
 
 let _ENTER = 13; // key code for pressing the ENTER/RETURN key
 
@@ -51,7 +52,7 @@ export default React.createClass({
     var location, gender, birthdate;
 
     if(this.state.editLocation === false) {
-      var cityState = this._cityState(this.props.location);
+      var cityState = formatter.cityState(this.props.location);
 
       location = (
         <div>
@@ -74,16 +75,9 @@ export default React.createClass({
     }
 
     if(this.state.editBirthdate === false) {
-      var b;
-      if(moment(this.props.birthdate).isBefore('1800-12-31')) {
-        b = "No Age";
-      } else {
-        b = moment().diff(this.props.birthdate, 'years') + " years old";
-      }
-
       birthdate = (
         <div>
-          <a href="javascript:void(0)" onClick={this.handleBirthdateClick}>{b}</a>
+          <a href="javascript:void(0)" onClick={this.handleBirthdateClick}>{formatter.age(this.props.birthdate)}</a>
         </div>
       );
     } else {
@@ -132,10 +126,6 @@ export default React.createClass({
         <input type="date" defaultValue={date} onChange={this.handleBirthdateChange} />
       </div>
     );
-  },
-
-
-  _cityState(location) {
-    return location.replace(/\s\d+.*$/, '');
   }
+
 });

@@ -2913,3 +2913,56 @@ button.like {
 
 .lookingfor input {
   display: none; }
+
+.matchlist-small {
+  position: relative;
+  padding: 16px;
+  overflow-y: hidden;
+  height: 100%; }
+  .matchlist-small h3 {
+    font-weight: normal;
+    margin-bottom: 32px; }
+  .matchlist-small ul {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+  .matchlist-small .matchlist-small-item {
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+    -webkit-align-items: center;
+    margin: 8px 0; }
+    .matchlist-small .matchlist-small-item > div {
+      margin-right: 16px; }
+  .matchlist-small .matchlist-small-avatar {
+    outline: 1px solid #979797;
+    width: 60px;
+    height: 60px;
+    margin-right: 16px;
+    float: left;
+    background: url("/images/avatar.jpg");
+    background-size: 100% 100%;
+    cursor: pointer; }
+    .matchlist-small .matchlist-small-avatar .user-avatar {
+      height: 60px;
+      object-fit: cover; }
+  .matchlist-small .matchlist-small-match {
+    text-align: right;
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
+    padding-right: 16px;
+    color: #979797;
+    font-weight: bold; }
+  .matchlist-small .matchlist-small-info {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 10vw;
+    font-size: 0.85em; }
+  .matchlist-small .more {
+    position: absolute;
+    bottom: 104px;
+    text-align: center;
+    width: 100%; }
+    .matchlist-small .more .button {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); }
