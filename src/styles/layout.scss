@@ -47,7 +47,7 @@ header {
 
     &:last-child {
       margin-left: $line-height;
-      background: $light-grey;
+      background: lighten($light-grey, 5%);
     }
   }
 

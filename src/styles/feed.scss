@@ -19,3 +19,13 @@
     opacity: 0;
   }
 }
+
+.feed-nothing {
+  padding: $line-height*2;
+  border: 1px solid $light-grey;
+  @include rounded-corners();
+
+  .button {
+    margin-top: $line-height;
+  }
+}

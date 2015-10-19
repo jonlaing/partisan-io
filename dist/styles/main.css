@@ -2071,17 +2071,20 @@ a {
   text-decoration: none; }
 
 button, .button {
+  display: inline-block;
   cursor: pointer;
   border: none;
   color: white;
   background-color: #d215b3;
   border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   font-size: 16px;
   padding: 8px 32px;
   transition: all 0.3s;
   outline-style: none; }
   button:hover, .button:hover {
-    background-color: #ea30cc; }
+    background-color: #ea30cc;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.25); }
   button.button-small, .button.button-small {
     font-size: 0.85em;
     padding: 5.33333px 16px; }
@@ -2139,7 +2142,7 @@ header {
     overflow-y: scroll; }
   .container.dashboard > aside:last-child {
     margin-left: 16px;
-    background: #d9d9d9; }
+    background: #e6e6e6; }
   .container > article {
     flex-grow: 2;
     width: 75vw;
@@ -2194,6 +2197,13 @@ header {
   transition: opacity 0.3s ease; }
   .feed-leave.feed-leave-active {
     opacity: 0; }
+
+.feed-nothing {
+  padding: 32px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px; }
+  .feed-nothing .button {
+    margin-top: 16px; }
 
 .card {
   border-radius: 2px;
@@ -2596,8 +2606,7 @@ p {
     border: 2px solid #d215b3;
     border-width: 0 0 2px;
     font-size: 14px;
-    padding-right: 32px;
-    width: 93%; }
+    padding-right: 32px; }
 
 .comment-composer-uploader a {
   color: #979797; }
@@ -2809,11 +2818,28 @@ button.like {
   text-align: center;
   float: none;
   display: inline-block;
+  position: relative;
   border: 2px solid white;
   border-radius: 4px; }
   .profile-avatar .user-avatar {
     height: 112px;
     object-fit: cover; }
+  .profile-avatar:hover > .profile-avatar-edit {
+    background: rgba(0, 0, 0, 0.5); }
+  .profile-avatar > .profile-avatar-edit {
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    text-align: right;
+    width: 100%;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.25);
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.3s ease; }
+    .profile-avatar > .profile-avatar-edit .fa {
+      font-size: 16px;
+      margin-left: 4px; }
 
 .profile-username {
   font-size: 24px;
@@ -2841,7 +2867,27 @@ button.like {
 .profile-edit-summary {
   margin-bottom: 32px;
   text-align: left;
-  width: 100%; }
+  line-height: 19.2px;
+  width: 100%;
+  color: #f2f2f2; }
+  .profile-edit-summary .profile-edit-summary-text {
+    background: #646464;
+    padding: 16px; }
+    .profile-edit-summary .profile-edit-summary-text a {
+      color: #00d2c3; }
+  .profile-edit-summary textarea {
+    color: white;
+    background: #646464;
+    font-size: 13.92px;
+    height: 150px;
+    padding: 16px;
+    line-height: 24px;
+    margin-bottom: 16px; }
+
+.profile-summary-edit {
+  color: #00d2c3;
+  margin-left: 8px;
+  cursor: pointer; }
 
 .lookingfor > div {
   display: flex;
@@ -2935,7 +2981,6 @@ button.like {
     .matchlist-small .matchlist-small-item > div {
       margin-right: 16px; }
   .matchlist-small .matchlist-small-avatar {
-    outline: 1px solid #979797;
     width: 60px;
     height: 60px;
     overflow: hidden;

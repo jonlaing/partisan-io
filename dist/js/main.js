@@ -37847,6 +37847,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactFontawesome = require('react-fontawesome');
+
+var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
+
 var _utilsFormatter = require('../utils/formatter');
 
 var _utilsFormatter2 = _interopRequireDefault(_utilsFormatter);
@@ -37881,7 +37885,13 @@ exports['default'] = _react2['default'].createClass({
     if (this.state.showAvatarUpload === false) {
       return _react2['default'].createElement(
         'div',
-        { className: 'profile-avatar', onClick: this.handleAvatarClick },
+        { className: 'profile-avatar' },
+        _react2['default'].createElement(
+          'div',
+          { className: 'profile-avatar-edit', onClick: this.handleAvatarClick },
+          'Edit Avatar ',
+          _react2['default'].createElement(_reactFontawesome2['default'], { name: 'camera-retro' })
+        ),
         _react2['default'].createElement('img', { className: 'user-avatar', src: _utilsFormatter2['default'].avatarUrl(this.props.avatarUrl) })
       );
     } else {
@@ -37902,7 +37912,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":245,"./AvatarUpload.jsx":205,"react":187}],205:[function(require,module,exports){
+},{"../utils/formatter":245,"./AvatarUpload.jsx":205,"react":187,"react-fontawesome":13}],205:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38394,6 +38404,10 @@ var _reactAddons = require('react/addons');
 
 var _reactAddons2 = _interopRequireDefault(_reactAddons);
 
+var _reactFontawesome = require('react-fontawesome');
+
+var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
+
 var _actionsFeedActionCreatorJs = require('../actions/FeedActionCreator.js');
 
 var _actionsFeedActionCreatorJs2 = _interopRequireDefault(_actionsFeedActionCreatorJs);
@@ -38472,9 +38486,24 @@ exports['default'] = _reactAddons2['default'].createClass({
 
     if (this.state.feed.length === 0) {
       nothing = _reactAddons2['default'].createElement(
-        'strong',
-        null,
-        'Nothing here yet!'
+        'div',
+        { className: 'feed-nothing' },
+        _reactAddons2['default'].createElement(
+          'h3',
+          null,
+          'You don\'t have any friends! ',
+          _reactAddons2['default'].createElement(_reactFontawesome2['default'], { name: 'frown-o' })
+        ),
+        _reactAddons2['default'].createElement(
+          'div',
+          null,
+          'Well, at least not on Partisan. To find friends check out your matches, where we\'ll find people you\'ll probably vibe with'
+        ),
+        _reactAddons2['default'].createElement(
+          'a',
+          { className: 'button', href: '/matches' },
+          'Find Matches'
+        )
       );
     }
 
@@ -38524,7 +38553,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":235,"./Card.jsx":206,"./FlagForm.jsx":212,"./MiniMatcher.jsx":219,"./Nav.jsx":221,"./Post.jsx":223,"./PostComposer.jsx":224,"./ProfileEdit.jsx":225,"./UserSession.jsx":230,"react/addons":15}],212:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":235,"./Card.jsx":206,"./FlagForm.jsx":212,"./MiniMatcher.jsx":219,"./Nav.jsx":221,"./Post.jsx":223,"./PostComposer.jsx":224,"./ProfileEdit.jsx":225,"./UserSession.jsx":230,"react-fontawesome":13,"react/addons":15}],212:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38975,7 +39004,6 @@ exports['default'] = _react2['default'].createClass({
 
   render: function render() {
     var lookingFor = this._parseLookingFor(this.props.lookingFor);
-    console.log(lookingFor);
 
     return _react2['default'].createElement(
       'div',
@@ -39006,7 +39034,7 @@ exports['default'] = _react2['default'].createClass({
           { className: this._active(1 << 2) ? " active" : "" },
           _react2['default'].createElement('i', { className: 'fi-skull' }),
           _react2['default'].createElement('input', { type: 'checkbox', value: 1 << 2 }),
-          ' Enemy'
+          ' Enemies'
         )
       )
     );
@@ -40202,7 +40230,7 @@ exports['default'] = _react2['default'].createClass({
       if (this.state.profile.summary.length < 1) {
         s = _react2['default'].createElement(
           'div',
-          null,
+          { onClick: this.handleSummaryClick },
           _react2['default'].createElement(
             'em',
             null,
@@ -40210,7 +40238,7 @@ exports['default'] = _react2['default'].createClass({
           )
         );
       } else {
-        s = _react2['default'].createElement('div', { dangerouslySetInnerHTML: _utilsFormatter2['default'].userSummary(this.state.profile.summary) });
+        s = _react2['default'].createElement('div', { className: 'profile-edit-summary-text', dangerouslySetInnerHTML: _utilsFormatter2['default'].userSummary(this.state.profile.summary) });
       }
 
       summary = _react2['default'].createElement(
@@ -40286,11 +40314,15 @@ exports['default'] = _react2['default'].createClass({
         null,
         'Summary'
       ),
-      _react2['default'].createElement('textarea', { defaultValue: this.state.profile.summary, placeholder: 'Tell us a little about yourself!', ref: 'summary' }),
       _react2['default'].createElement(
-        'button',
-        { onClick: this.handleSummarySubmit },
-        'Done'
+        'div',
+        { className: 'profile-edit-summary' },
+        _react2['default'].createElement('textarea', { defaultValue: this.state.profile.summary, placeholder: 'Tell us a little about yourself!', ref: 'summary', autoFocus: true }),
+        _react2['default'].createElement(
+          'button',
+          { className: 'button-small', onClick: this.handleSummarySubmit },
+          'Done'
+        )
       )
     );
   }
@@ -42230,7 +42262,7 @@ exports['default'] = {
     var content = (0, _marked2['default'])(body, { renderer: _markedRenderer });
     content = _hashtagify(content);
     content = _tagify(content);
-    return { __html: content };
+    return { __html: '<div>' + content + '</div>' };
   },
 
   cityState: function cityState(location) {

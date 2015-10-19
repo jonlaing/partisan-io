@@ -66,7 +66,7 @@ export default {
     let content = marked(body, {renderer: _markedRenderer} );
     content = _hashtagify(content);
     content = _tagify(content);
-    return { __html: content };
+    return { __html: '<div>' + content + '</div>' };
   },
 
   cityState(location) {

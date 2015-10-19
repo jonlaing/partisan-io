@@ -29,7 +29,6 @@
   }
 
   .matchlist-small-avatar {
-    outline: 1px solid $grey;
     @include avatar(60px);
     cursor: pointer;
   }

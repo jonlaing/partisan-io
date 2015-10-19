@@ -70,9 +70,9 @@ export default React.createClass({
     if(this.state.editSummary === false) {
       var s;
       if(this.state.profile.summary.length < 1) {
-        s = (<div><em>You haven&apos;t filled out your summary yet</em></div>);
+        s = (<div onClick={this.handleSummaryClick}><em>You haven&apos;t filled out your summary yet</em></div>);
       } else {
-        s = (<div dangerouslySetInnerHTML={ formatter.userSummary(this.state.profile.summary) } />);
+        s = (<div className="profile-edit-summary-text" dangerouslySetInnerHTML={ formatter.userSummary(this.state.profile.summary) } />);
       }
 
       summary = (
@@ -128,10 +128,12 @@ export default React.createClass({
         <h3>
           Summary
         </h3>
-        <textarea defaultValue={this.state.profile.summary} placeholder="Tell us a little about yourself!" ref="summary" />
-        <button onClick={this.handleSummarySubmit} >Done</button>
+        <div className="profile-edit-summary">
+          <textarea defaultValue={this.state.profile.summary} placeholder="Tell us a little about yourself!" ref="summary" autoFocus={true} />
+          <button className="button-small" onClick={this.handleSummarySubmit} >Done</button>
+        </div>
       </div>
     );
-  },
+  }
 
 });

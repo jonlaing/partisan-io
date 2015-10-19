@@ -30,10 +30,34 @@
 }
 
 .profile-avatar {
-    @include avatar($line-height*7, none, 0);
-    display: inline-block;
-    border: 2px solid white;
-    border-radius: 4px;
+  @include avatar($line-height*7, none, 0);
+  display: inline-block;
+  position: relative;
+  border: 2px solid white;
+  border-radius: 4px;
+
+  &:hover > .profile-avatar-edit {
+    background: rgba(0,0,0,0.5);
+  }
+
+  > .profile-avatar-edit {
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    text-align: right;
+    width: 100%;
+    padding: 4px;
+    background: rgba(0,0,0,0.25);
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+
+    .fa {
+      font-size: $line-height;
+      margin-left: 4px;
+    }
+  }
 }
 
 .profile-username {
@@ -70,5 +94,32 @@
 .profile-edit-summary {
   margin-bottom: $line-height * 2;
   text-align: left;
+  line-height: $line-height*1.2;
   width: 100%;
+  color: $lighter-grey;
+
+  .profile-edit-summary-text {
+    background: lighten($darker-grey, 10%);
+    padding: $line-height;
+    
+    a {
+      color: $secondary-color;
+    }
+  }
+
+  textarea {
+    color: white;
+    background: lighten($darker-grey, 10%);
+    font-size: $line-height * 0.87;
+    height: 150px;
+    padding: $line-height;
+    line-height: $line-height*1.5;
+    margin-bottom: $line-height;
+  }
+}
+
+.profile-summary-edit {
+  color: $secondary-color;
+  margin-left: $line-height/2;
+  cursor: pointer;
 }

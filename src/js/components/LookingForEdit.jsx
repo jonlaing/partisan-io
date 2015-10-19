@@ -18,7 +18,6 @@ export default React.createClass({
 
   render() {
     let lookingFor = this._parseLookingFor(this.props.lookingFor);
-    console.log(lookingFor);
 
     return (
       <div className="lookingfor">
@@ -37,7 +36,7 @@ export default React.createClass({
             </label>
             <label className={(this._active(1 << 2) ? " active" : "")}>
               <i className="fi-skull"></i>
-              <input type="checkbox" value={1 << 2} /> Enemy
+              <input type="checkbox" value={1 << 2} /> Enemies
             </label>
         </CheckboxGroup>
       </div>

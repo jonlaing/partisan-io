@@ -1,4 +1,7 @@
 import React from 'react/addons';
+
+import Icon from 'react-fontawesome';
+
 import FeedActionCreator from '../actions/FeedActionCreator.js';
 import FeedStore from '../stores/FeedStore.js';
 
@@ -46,7 +49,13 @@ export default React.createClass({
     });
 
     if(this.state.feed.length === 0) {
-      nothing = (<strong>Nothing here yet!</strong>);
+      nothing = (
+        <div className="feed-nothing">
+          <h3>You don't have any friends! <Icon name="frown-o"/></h3>
+          <div>Well, at least not on Partisan. To find friends check out your matches, where we'll find people you'll probably vibe with</div>
+          <a className="button" href="/matches">Find Matches</a>
+        </div>
+      );
     }
 
     return (

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Icon from 'react-fontawesome';
 import formatter from '../utils/formatter';
 
 import AvatarUpload from './AvatarUpload.jsx';
@@ -27,7 +28,8 @@ export default React.createClass({
   render() {
     if(this.state.showAvatarUpload === false) {
       return (
-        <div className="profile-avatar" onClick={this.handleAvatarClick}>
+        <div className="profile-avatar" >
+          <div className="profile-avatar-edit" onClick={this.handleAvatarClick}>Edit Avatar&nbsp;<Icon name="camera-retro" /></div>
           <img className="user-avatar" src={formatter.avatarUrl(this.props.avatarUrl)} />
         </div>
       );
