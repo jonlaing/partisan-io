@@ -3,16 +3,16 @@ package v1
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
 	"partisan/auth"
 	"partisan/db"
-	"partisan/emailer"
 	"partisan/imager"
 	"partisan/matcher"
 	m "partisan/models"
 	"regexp"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
 )
 
 // UserCreate is the sign up route
@@ -76,9 +76,11 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	if err := emailer.SendWelcomeEmail(user.Username, user.Email); err != nil {
-		fmt.Println(err)
-	}
+	// if err := emailer.SendWelcomeEmail(user.Username, user.Email); err != nil {
+	// 	fmt.Println(err)
+	// }
+
+	fmt.Println("WARN: EMAILS ARE NOT SENDING")
 
 	auth.Login(user, c)
 
@@ -107,6 +109,14 @@ func UserUpdate(c *gin.Context) {
 	}
 
 	user.Gender = c.DefaultPostForm("gender", user.Gender)
+
+	birthdate := c.PostForm("birthdate")
+	if birthdate != "" {
+		user.Birthdate, err = time.Parse("2006-01-02", birthdate)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 
 	postalCode := c.PostForm("postal_code")
 	if postalCode != "" {

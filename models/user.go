@@ -1,10 +1,11 @@
 package models
 
 import (
-	"partisan/Godeps/_workspace/src/github.com/jasonmoo/geo"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"partisan/matcher"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/jasonmoo/geo"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
 // User the user model
@@ -13,6 +14,7 @@ type User struct {
 	Username           string               `form:"username" json:"username" sql:"not null,unique" binding:"required"`
 	Email              string               `form:"email" json:"email" sql:"not null,unique" binding:"required"`
 	Gender             string               `form:"gender" json:"gender"`
+	Birthdate          time.Time            `form:"birthdate" json:"birthdate"`
 	AvatarURL          string               `form:"avatar_url" json:"avatar_url"`
 	AvatarThumbnailURL string               `form:"avatar_thumbnail_url" json:"avatar_thumbnail_url"`
 	PoliticalMap       matcher.PoliticalMap `json:"political_map" sql:"type:varchar(255)"`

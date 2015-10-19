@@ -42,6 +42,26 @@ export default {
       });
   },
 
+  updateBirthdate(date) {
+    $.ajax({
+      url: Constants.APIROOT + '/users',
+      data: {
+        "birthdate": date
+      },
+      method: 'PATCH',
+      dataType: 'json'
+    })
+      .done(function(res) {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.UPDATE_USER_SUCCESS,
+          user: res
+        });
+      })
+      .fail(function(res) {
+        console.log(res);
+      });
+  },
+
   updateLookingFor(val) {
     $.ajax({
       url: Constants.APIROOT + '/profile',

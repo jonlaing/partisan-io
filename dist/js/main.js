@@ -37648,6 +37648,24 @@ exports['default'] = {
     });
   },
 
+  updateBirthdate: function updateBirthdate(date) {
+    $.ajax({
+      url: _Constants2['default'].APIROOT + '/users',
+      data: {
+        "birthdate": date
+      },
+      method: 'PATCH',
+      dataType: 'json'
+    }).done(function (res) {
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.UPDATE_USER_SUCCESS,
+        user: res
+      });
+    }).fail(function (res) {
+      console.log(res);
+    });
+  },
+
   updateLookingFor: function updateLookingFor(val) {
     $.ajax({
       url: _Constants2['default'].APIROOT + '/profile',
@@ -39873,6 +39891,10 @@ exports['default'] = _react2['default'].createClass({
     _actionsProfileActionCreator2['default'].updateGender(e.target.value);
   },
 
+  handleBirthdateFinish: function handleBirthdateFinish(e) {
+    _actionsProfileActionCreator2['default'].updateBirthdate(e.target.value);
+  },
+
   handleLookingForChange: function handleLookingForChange() {
     var bitMap = 0;
     var values = this.refs.lookingFor.getCheckedValues();
@@ -39942,9 +39964,11 @@ exports['default'] = _react2['default'].createClass({
         _react2['default'].createElement(_ProfileInfoEditorJsx2['default'], {
           location: this.state.user.location,
           gender: this.state.user.gender,
+          birthdate: this.state.user.birthdate,
           postalCode: this.state.user.postal_code,
           onLocationFinish: this.handleLocationFinish,
-          onGenderFinish: this.handleGenderFinish }),
+          onGenderFinish: this.handleGenderFinish,
+          onBirthdateFinish: this.handleBirthdateFinish }),
         _react2['default'].createElement(
           'div',
           { className: 'profile-edit-lookingfor' },
@@ -40026,27 +40050,32 @@ module.exports = exports['default'];
 
 
 },{"../actions/ProfileActionCreator":201,"../stores/ProfileStore":240,"../utils/formatter":243,"./AvatarEditor.jsx":204,"./ProfileInfoEditor.jsx":224,"react":187,"react-checkbox-group":10,"react-fontawesome":13}],224:[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
 var _ENTER = 13; // key code for pressing the ENTER/RETURN key
 
-exports["default"] = _react2["default"].createClass({
-  displayName: "ProfileInfoEditor",
+exports['default'] = _react2['default'].createClass({
+  displayName: 'ProfileInfoEditor',
 
   getInitialState: function getInitialState() {
     return {
       editLocation: false,
-      editGender: false
+      editGender: false,
+      editBirthdate: false
     };
   },
 
@@ -40065,27 +40094,37 @@ exports["default"] = _react2["default"].createClass({
     this.setState({ editGender: true });
   },
 
-  handleGenderKeyDown: function handleGenderKeyDown(e) {
+  handleGenderChange: function handleGenderChange(e) {
     if (e.keyCode === _ENTER && e.target.value !== "") {
       this.setState({ editGender: false });
       this.props.onGenderFinish(e);
     }
   },
 
+  handleBirthdateClick: function handleBirthdateClick() {
+    this.setState({ editBirthdate: true });
+  },
+
+  handleBirthdateChange: function handleBirthdateChange(e) {
+    console.log(e.target.value);
+    this.setState({ editBirthdate: false });
+    this.props.onBirthdateFinish(e);
+  },
+
   componentDidMount: function componentDidMount() {},
 
   render: function render() {
-    var location, gender;
+    var location, gender, birthdate;
 
     if (this.state.editLocation === false) {
       var cityState = this._cityState(this.props.location);
 
-      location = _react2["default"].createElement(
-        "div",
+      location = _react2['default'].createElement(
+        'div',
         null,
-        _react2["default"].createElement(
-          "a",
-          { href: "javascript:void(0)", onClick: this.handleLocationClick },
+        _react2['default'].createElement(
+          'a',
+          { href: 'javascript:void(0)', onClick: this.handleLocationClick },
           cityState
         )
       );
@@ -40095,12 +40134,12 @@ exports["default"] = _react2["default"].createClass({
 
     if (this.state.editGender === false) {
       var g = this.props.gender || "No Gender";
-      gender = _react2["default"].createElement(
-        "div",
+      gender = _react2['default'].createElement(
+        'div',
         null,
-        _react2["default"].createElement(
-          "a",
-          { href: "javascript:void(0)", onClick: this.handleGenderClick },
+        _react2['default'].createElement(
+          'a',
+          { href: 'javascript:void(0)', onClick: this.handleGenderClick },
           g
         )
       );
@@ -40108,35 +40147,74 @@ exports["default"] = _react2["default"].createClass({
       gender = this._editGenderTemplate();
     }
 
-    return _react2["default"].createElement(
-      "div",
-      { className: "profile-edit-info" },
-      _react2["default"].createElement(
-        "div",
-        { className: "profile-edit-location" },
+    if (this.state.editBirthdate === false) {
+      var b;
+      if ((0, _moment2['default'])(this.props.birthdate).isBefore('1800-12-31')) {
+        b = "No Age";
+      } else {
+        b = (0, _moment2['default'])().diff(this.props.birthdate, 'years') + " years old";
+      }
+
+      birthdate = _react2['default'].createElement(
+        'div',
+        null,
+        _react2['default'].createElement(
+          'a',
+          { href: 'javascript:void(0)', onClick: this.handleBirthdateClick },
+          b
+        )
+      );
+    } else {
+      birthdate = this._editBirthdateTemplate();
+    }
+
+    return _react2['default'].createElement(
+      'div',
+      { className: 'profile-edit-info' },
+      _react2['default'].createElement(
+        'div',
+        { className: 'profile-edit-birthdate' },
+        birthdate
+      ),
+      _react2['default'].createElement(
+        'div',
+        { className: 'profile-edit-location' },
         location
       ),
-      _react2["default"].createElement(
-        "div",
-        { className: "profile-edit-gender" },
+      _react2['default'].createElement(
+        'div',
+        { className: 'profile-edit-gender' },
         gender
       )
     );
   },
 
   _editLocationTemplate: function _editLocationTemplate() {
-    return _react2["default"].createElement(
-      "div",
+    return _react2['default'].createElement(
+      'div',
       null,
-      _react2["default"].createElement("input", { type: "text", defaultValue: this.props.postalCode, onKeyDown: this.handleLocationKeyDown })
+      _react2['default'].createElement('input', { type: 'text', defaultValue: this.props.postalCode, onKeyDown: this.handleLocationKeyDown })
     );
   },
   _editGenderTemplate: function _editGenderTemplate() {
     var g = this.props.gender || "";
-    return _react2["default"].createElement(
-      "div",
+    return _react2['default'].createElement(
+      'div',
       null,
-      _react2["default"].createElement("input", { type: "text", placeholder: "Type in your gender", defaultValue: g, onKeyDown: this.handleGenderKeyDown })
+      _react2['default'].createElement('input', { type: 'text', placeholder: 'Type in your gender', defaultValue: g, onKeyDown: this.handleGenderKeyDown })
+    );
+  },
+  _editBirthdateTemplate: function _editBirthdateTemplate() {
+    var date = (0, _moment2['default'])(this.props.birthdate);
+
+    if (parseInt(date.get('year')) === 0) {
+      date = "";
+    }
+
+    return _react2['default'].createElement(
+      'div',
+      null,
+      _react2['default'].createElement('input', { type: 'date', defaultValue: date, onChange: this.handleBirthdateChange })
     );
   },
 
@@ -40144,10 +40222,10 @@ exports["default"] = _react2["default"].createClass({
     return location.replace(/\s\d+.*$/, '');
   }
 });
-module.exports = exports["default"];
+module.exports = exports['default'];
 
 
-},{"react":187}],225:[function(require,module,exports){
+},{"moment":8,"react":187}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

@@ -37,6 +37,10 @@ export default React.createClass({
       ProfileActionCreator.updateGender(e.target.value);
   },
 
+  handleBirthdateFinish(e) {
+      ProfileActionCreator.updateBirthdate(e.target.value);
+  },
+
   handleLookingForChange() {
     var bitMap = 0;
     let values = this.refs.lookingFor.getCheckedValues();
@@ -96,9 +100,11 @@ export default React.createClass({
           <ProfileInfoEditor
             location={this.state.user.location}
             gender={this.state.user.gender}
+            birthdate={this.state.user.birthdate}
             postalCode={this.state.user.postal_code}
             onLocationFinish={this.handleLocationFinish}
-            onGenderFinish={this.handleGenderFinish} />
+            onGenderFinish={this.handleGenderFinish}
+            onBirthdateFinish={this.handleBirthdateFinish} />
           <div className="profile-edit-lookingfor">
             <h3>Looking For</h3>
             <CheckboxGroup
