@@ -1,10 +1,6 @@
-/* Card */
-@import './typography.scss';
-@import './colors.scss';
-
 .card {
-  border-radius: 2px;
-  box-shadow: 0 2px 4px $shadow-color;
+  @include rounded-corners();
+  @include box-shadow();
   background: white;
   margin-bottom: $line-height;
 

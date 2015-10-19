@@ -1,5 +1,7 @@
 import React from 'react';
 
+import formatter from '../utils/formatter';
+
 import AvatarUpload from './AvatarUpload.jsx';
 
 export default React.createClass({
@@ -26,7 +28,7 @@ export default React.createClass({
     if(this.state.showAvatarUpload === false) {
       return (
         <div className="profile-avatar" onClick={this.handleAvatarClick}>
-          <img className="user-avatar" src={this.props.avatarUrl} />
+          <img className="user-avatar" src={formatter.avatarUrl(this.props.avatarUrl)} />
         </div>
       );
     } else {

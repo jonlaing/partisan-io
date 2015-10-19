@@ -2,7 +2,6 @@ import React from 'react/addons';
 import FeedActionCreator from '../actions/FeedActionCreator.js';
 import FeedStore from '../stores/FeedStore.js';
 
-// import ProfileEdit from './ProfileEdit.jsx';
 import Card from './Card.jsx';
 import Post from './Post.jsx';
 import PostComposer from './PostComposer.jsx';
@@ -58,7 +57,7 @@ export default React.createClass({
           <Nav currentPage="feed" />
         </header>
 
-        <div className="container">
+        <div className="container dashboard">
           <aside>
             <ProfileEdit data={this.props.data} />
           </aside>

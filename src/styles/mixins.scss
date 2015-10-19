@@ -24,6 +24,9 @@
 @mixin avatar($size, $float: left, $margin: $line-height) {
   width: $size;
   height: $size;
+  overflow: hidden;
+  text-align: center;
+
   @if $float == left {
     margin-right: $margin;
   }
@@ -33,8 +36,6 @@
   }
 
   float: $float;
-  background: url('/images/avatar.jpg');
-  background-size: 100% 100%;
 
   .user-avatar {
     height: $size;

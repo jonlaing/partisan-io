@@ -1,3 +1,4 @@
+import React from 'react';
 import marked from 'marked';
 import moment from 'moment';
 
@@ -84,5 +85,27 @@ export default {
     }
 
     return moment().diff(birthdate, 'years') + " years old";
+  },
+
+  avatarUrl(url) {
+    if(url.length < 1) {
+      return "/images/avatar.jpg";
+    }
+
+    return url;
+  },
+
+  match(percent) {
+    var height;
+
+    if(percent >= 85) {
+      height = "high";
+    } else if(percent < 85 && percent >= 65) {
+      height = "med";
+    } else {
+      height = "low";
+    }
+
+    return <span className={height}>{percent}% Match</span>;
   }
 };

@@ -2082,6 +2082,9 @@ button, .button {
   outline-style: none; }
   button:hover, .button:hover {
     background-color: #ea30cc; }
+  button.button-small, .button.button-small {
+    font-size: 0.85em;
+    padding: 5.33333px 16px; }
 
 input[type="text"], input[type="password"], textarea {
   display: block;
@@ -2130,20 +2133,22 @@ header {
     flex-grow: 1;
     width: 25vw;
     height: 100vh; }
-    .container > aside:first-child {
-      margin-right: 16px;
-      background: #4a4a4a;
-      overflow-y: scroll; }
-    .container > aside:last-child {
-      margin-left: 16px;
-      background: #d9d9d9; }
+  .container.dashboard > aside:first-child {
+    margin-right: 16px;
+    background: #4a4a4a;
+    overflow-y: scroll; }
+  .container.dashboard > aside:last-child {
+    margin-left: 16px;
+    background: #d9d9d9; }
   .container > article {
     flex-grow: 2;
-    width: 50vw;
+    width: 75vw;
     height: 100vh;
     padding: 32px 16px 96px;
     margin-bottom: 96px;
     overflow-y: scroll; }
+  .container.dashboard > article {
+    width: 50vw; }
 
 .clearfix:after {
   visibility: hidden;
@@ -2189,58 +2194,6 @@ header {
   transition: opacity 0.3s ease; }
   .feed-leave.feed-leave-active {
     opacity: 0; }
-
-/* Card */
-body {
-  background: #f2f2f2; }
-
-a {
-  color: #d215b3;
-  text-decoration: none; }
-
-@font-face {
-  font-family: 'Proxima Nova';
-  src: url("../fonts/proximanova-bold-webfont.eot");
-  src: url("../fonts/proximanova-bold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-bold-webfont.woff2") format("woff2"), url("../fonts/proximanova-bold-webfont.woff") format("woff"), url("../fonts/proximanova-bold-webfont.ttf") format("truetype"), url("../fonts/proximanova-bold-webfont.svg#proxima_nova_rgbold") format("svg");
-  font-weight: bold;
-  font-style: normal; }
-
-@font-face {
-  font-family: 'Proxima Nova';
-  src: url("../fonts/proximanova-light-webfont.eot");
-  src: url("../fonts/proximanova-light-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-light-webfont.woff2") format("woff2"), url("../fonts/proximanova-light-webfont.woff") format("woff"), url("../fonts/proximanova-light-webfont.ttf") format("truetype"), url("../fonts/proximanova-light-webfont.svg#proxima_nova_ltlight") format("svg");
-  font-weight: 100;
-  font-style: normal; }
-
-@font-face {
-  font-family: 'Proxima Nova';
-  src: url("../fonts/proximanova-reg-webfont.eot");
-  src: url("../fonts/proximanova-reg-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-reg-webfont.woff2") format("woff2"), url("../fonts/proximanova-reg-webfont.woff") format("woff"), url("../fonts/proximanova-reg-webfont.ttf") format("truetype"), url("../fonts/proximanova-reg-webfont.svg#proxima_nova_rgregular") format("svg");
-  font-weight: normal;
-  font-style: normal; }
-
-@font-face {
-  font-family: 'Proxima Nova';
-  src: url("../fonts/proximanova-regit-webfont.eot");
-  src: url("../fonts/proximanova-regit-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-regit-webfont.woff2") format("woff2"), url("../fonts/proximanova-regit-webfont.woff") format("woff"), url("../fonts/proximanova-regit-webfont.ttf") format("truetype"), url("../fonts/proximanova-regit-webfont.svg#proxima_novaregular_italic") format("svg");
-  font-weight: normal;
-  font-style: italic; }
-
-html, body {
-  font-family: 'Proxima Nova', sans-serif;
-  font-size: 14px;
-  line-height: 16px;
-  color: #4a4a4a; }
-
-p {
-  font-family: 'Georgia', serif; }
-
-body {
-  background: #f2f2f2; }
-
-a {
-  color: #d215b3;
-  text-decoration: none; }
 
 .card {
   border-radius: 2px;
@@ -2324,10 +2277,10 @@ a {
   .post .post-avatar {
     width: 60px;
     height: 60px;
+    overflow: hidden;
+    text-align: center;
     margin-right: 16px;
-    float: left;
-    background: url("/images/avatar.jpg");
-    background-size: 100% 100%; }
+    float: left; }
     .post .post-avatar .user-avatar {
       height: 60px;
       object-fit: cover; }
@@ -2652,10 +2605,10 @@ p {
 .comment-avatar {
   width: 25px;
   height: 25px;
+  overflow: hidden;
+  text-align: center;
   margin-right: 16px;
-  float: left;
-  background: url("/images/avatar.jpg");
-  background-size: 100% 100%; }
+  float: left; }
   .comment-avatar .user-avatar {
     height: 25px;
     object-fit: cover; }
@@ -2818,10 +2771,10 @@ button.like {
     .notification-list li .notification-avatar {
       width: 25px;
       height: 25px;
+      overflow: hidden;
+      text-align: center;
       margin-right: 16px;
-      float: left;
-      background: url("/images/avatar.jpg");
-      background-size: 100% 100%; }
+      float: left; }
       .notification-list li .notification-avatar .user-avatar {
         height: 25px;
         object-fit: cover; }
@@ -2852,9 +2805,9 @@ button.like {
 .profile-avatar {
   width: 112px;
   height: 112px;
+  overflow: hidden;
+  text-align: center;
   float: none;
-  background: url("/images/avatar.jpg");
-  background-size: 100% 100%;
   display: inline-block;
   border: 2px solid white;
   border-radius: 4px; }
@@ -2914,6 +2867,53 @@ button.like {
 .lookingfor input {
   display: none; }
 
+.matchlist {
+  list-style: none;
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+  -webkit-flex-wrap: wrap; }
+  .matchlist li {
+    padding: 16px;
+    width: 33%;
+    cursor: pointer; }
+    .matchlist li > div {
+      border-radius: 2px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+      background: white;
+      padding: 16px;
+      border: 0 solid #d215b3;
+      transition: all 0.3s ease; }
+      .matchlist li > div:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0; }
+      .matchlist li > div:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+        border-width: 0 0 4px;
+        margin-bottom: -4px; }
+    .matchlist li .matchlist-avatar {
+      width: 112px;
+      height: 112px;
+      overflow: hidden;
+      text-align: center;
+      margin-right: 16px;
+      float: left; }
+      .matchlist li .matchlist-avatar .user-avatar {
+        height: 112px;
+        object-fit: cover; }
+  .matchlist .matchlist-location, .matchlist .matchlist-info {
+    font-size: 0.85em; }
+  .matchlist .matchlist-match {
+    margin: 32px 0 0;
+    font-size: 1.5em;
+    font-weight: 100; }
+  .matchlist .matchlist-user {
+    font-weight: bold; }
+
 .matchlist-small {
   position: relative;
   padding: 16px;
@@ -2938,10 +2938,10 @@ button.like {
     outline: 1px solid #979797;
     width: 60px;
     height: 60px;
+    overflow: hidden;
+    text-align: center;
     margin-right: 16px;
     float: left;
-    background: url("/images/avatar.jpg");
-    background-size: 100% 100%;
     cursor: pointer; }
     .matchlist-small .matchlist-small-avatar .user-avatar {
       height: 60px;

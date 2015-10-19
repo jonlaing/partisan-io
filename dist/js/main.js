@@ -37847,6 +37847,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _utilsFormatter = require('../utils/formatter');
+
+var _utilsFormatter2 = _interopRequireDefault(_utilsFormatter);
+
 var _AvatarUploadJsx = require('./AvatarUpload.jsx');
 
 var _AvatarUploadJsx2 = _interopRequireDefault(_AvatarUploadJsx);
@@ -37878,7 +37882,7 @@ exports['default'] = _react2['default'].createClass({
       return _react2['default'].createElement(
         'div',
         { className: 'profile-avatar', onClick: this.handleAvatarClick },
-        _react2['default'].createElement('img', { className: 'user-avatar', src: this.props.avatarUrl })
+        _react2['default'].createElement('img', { className: 'user-avatar', src: _utilsFormatter2['default'].avatarUrl(this.props.avatarUrl) })
       );
     } else {
       return _react2['default'].createElement(
@@ -37898,7 +37902,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./AvatarUpload.jsx":205,"react":187}],205:[function(require,module,exports){
+},{"../utils/formatter":245,"./AvatarUpload.jsx":205,"react":187}],205:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38077,7 +38081,7 @@ exports['default'] = _react2['default'].createClass({
       _react2['default'].createElement(
         'div',
         { className: 'comment-avatar' },
-        _react2['default'].createElement('img', { className: 'user-avatar', src: this.props.data.user.avatar_thumbnail_url })
+        _react2['default'].createElement('img', { className: 'user-avatar', src: _utilsFormatter2['default'].avatarUrl(this.props.data.user.avatar_thumbnail_url) })
       ),
       _react2['default'].createElement(
         'div',
@@ -38398,8 +38402,6 @@ var _storesFeedStoreJs = require('../stores/FeedStore.js');
 
 var _storesFeedStoreJs2 = _interopRequireDefault(_storesFeedStoreJs);
 
-// import ProfileEdit from './ProfileEdit.jsx';
-
 var _CardJsx = require('./Card.jsx');
 
 var _CardJsx2 = _interopRequireDefault(_CardJsx);
@@ -38488,7 +38490,7 @@ exports['default'] = _reactAddons2['default'].createClass({
       ),
       _reactAddons2['default'].createElement(
         'div',
-        { className: 'container' },
+        { className: 'container dashboard' },
         _reactAddons2['default'].createElement(
           'aside',
           null,
@@ -39047,6 +39049,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _utilsFormatter = require('../utils/formatter');
+
+var _utilsFormatter2 = _interopRequireDefault(_utilsFormatter);
+
 var _actionsMatchesActionCreator = require('../actions/MatchesActionCreator');
 
 var _actionsMatchesActionCreator2 = _interopRequireDefault(_actionsMatchesActionCreator);
@@ -39059,15 +39065,21 @@ var _UserSessionJsx = require('./UserSession.jsx');
 
 var _UserSessionJsx2 = _interopRequireDefault(_UserSessionJsx);
 
-var _NotificationsJsx = require('./Notifications.jsx');
+var _NavJsx = require('./Nav.jsx');
 
-var _NotificationsJsx2 = _interopRequireDefault(_NotificationsJsx);
+var _NavJsx2 = _interopRequireDefault(_NavJsx);
 
 exports['default'] = _react2['default'].createClass({
   displayName: 'Matches',
 
   getInitialState: function getInitialState() {
     return { matches: [] };
+  },
+
+  handleAvatarClick: function handleAvatarClick(username) {
+    return function () {
+      window.location.href = '/profiles/' + username;
+    };
   },
 
   componentDidMount: function componentDidMount() {
@@ -39081,42 +39093,49 @@ exports['default'] = _react2['default'].createClass({
 
   render: function render() {
     var nothing, matches;
+    var self = this;
 
     matches = this.state.matches.map(function (match, i) {
       return _react2['default'].createElement(
         'li',
-        { key: i },
+        { key: i, onClick: self.handleAvatarClick(match.user.username) },
         _react2['default'].createElement(
           'div',
-          { className: 'row' },
+          null,
           _react2['default'].createElement(
             'div',
-            { className: 'large-5 columns' },
+            { className: 'matchlist-avatar' },
+            _react2['default'].createElement('img', { src: _utilsFormatter2['default'].avatarUrl(match.user.avatar_thumbnail_url), className: 'user-avatar' })
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
             _react2['default'].createElement(
               'div',
-              null,
+              { className: 'matchlist-user' },
               _react2['default'].createElement(
                 'a',
-                { href: "profiles/" + match.user.id },
+                { href: "profiles/" + match.user.username },
                 '@',
                 match.user.username
               )
             ),
-            match.user.location
-          ),
-          _react2['default'].createElement(
-            'div',
-            { className: 'large-4 columns' },
-            match.match,
-            '% Match'
-          ),
-          _react2['default'].createElement(
-            'div',
-            { className: 'large-3 columns' },
             _react2['default'].createElement(
-              'a',
-              { className: 'button', href: "profiles/" + match.user.id },
-              'View Profile'
+              'div',
+              { className: 'matchlist-info' },
+              _utilsFormatter2['default'].age(match.user.birthdate),
+              ' - ',
+              match.user.gender
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'matchlist-location' },
+              _utilsFormatter2['default'].cityState(match.user.location)
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'matchlist-match' },
+              _utilsFormatter2['default'].match(match.match)
             )
           )
         )
@@ -39137,18 +39156,28 @@ exports['default'] = _react2['default'].createClass({
       _react2['default'].createElement(
         'header',
         null,
-        _react2['default'].createElement(_UserSessionJsx2['default'], { username: this.props.data.user.username }),
-        _react2['default'].createElement(_NotificationsJsx2['default'], null)
+        _react2['default'].createElement(_UserSessionJsx2['default'], { className: 'right', username: this.props.data.user.username, avatar: this.props.data.user.avatar_thumbnail_url }),
+        _react2['default'].createElement('img', { src: 'images/logo.svg', className: 'logo' }),
+        _react2['default'].createElement(_NavJsx2['default'], { currentPage: 'matches' })
       ),
       _react2['default'].createElement(
         'div',
-        { className: 'matches-container' },
+        { className: 'container' },
         _react2['default'].createElement(
-          'ul',
+          'aside',
           null,
-          matches
+          'Blah'
         ),
-        nothing
+        _react2['default'].createElement(
+          'article',
+          { className: 'matches-container' },
+          _react2['default'].createElement(
+            'ul',
+            { className: 'matchlist' },
+            matches
+          ),
+          nothing
+        )
       )
     );
   },
@@ -39156,12 +39185,14 @@ exports['default'] = _react2['default'].createClass({
   _onChange: function _onChange() {
     var state = _storesMatchesStore2['default'].getAll();
     this.setState(state);
-  }
+  },
+
+  _matchClass: function _matchClass() {}
 });
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":239,"./Notifications.jsx":222,"./UserSession.jsx":230,"react":187}],219:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":239,"../utils/formatter":245,"./Nav.jsx":221,"./UserSession.jsx":230,"react":187}],219:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39237,11 +39268,11 @@ exports['default'] = _react2['default'].createClass({
 
       return _react2['default'].createElement(
         'li',
-        { className: 'matchlist-small-item' },
+        { className: 'matchlist-small-item', key: match.user.id },
         _react2['default'].createElement(
           'div',
           { className: 'matchlist-small-avatar', onClick: _this.handleAvatarClick(match.user.username) },
-          _react2['default'].createElement('img', { className: 'user-avatar', src: match.user.avatar_thumbnail_url })
+          _react2['default'].createElement('img', { className: 'user-avatar', src: _utilsFormatter2['default'].avatarUrl(match.user.avatar_thumbnail_url) })
         ),
         _react2['default'].createElement(
           'div',
@@ -39797,7 +39828,7 @@ exports['default'] = _react2['default'].createClass({
           _react2['default'].createElement(
             'div',
             { className: 'post-avatar' },
-            _react2['default'].createElement('img', { className: 'user-avatar', src: this.props.data.user.avatar_thumbnail_url })
+            _react2['default'].createElement('img', { className: 'user-avatar', src: _utilsFormatter2['default'].avatarUrl(this.props.data.user.avatar_thumbnail_url) })
           ),
           _react2['default'].createElement(
             'div',
@@ -42124,6 +42155,10 @@ Object.defineProperty(exports, '__esModule', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
 var _marked = require('marked');
 
 var _marked2 = _interopRequireDefault(_marked);
@@ -42214,9 +42249,36 @@ exports['default'] = {
     }
 
     return (0, _moment2['default'])().diff(birthdate, 'years') + " years old";
+  },
+
+  avatarUrl: function avatarUrl(url) {
+    if (url.length < 1) {
+      return "/images/avatar.jpg";
+    }
+
+    return url;
+  },
+
+  match: function match(percent) {
+    var height;
+
+    if (percent >= 85) {
+      height = "high";
+    } else if (percent < 85 && percent >= 65) {
+      height = "med";
+    } else {
+      height = "low";
+    }
+
+    return _react2['default'].createElement(
+      'span',
+      { className: height },
+      percent,
+      '% Match'
+    );
   }
 };
 module.exports = exports['default'];
 
 
-},{"marked":7,"moment":8}]},{},[231]);
+},{"marked":7,"moment":8,"react":187}]},{},[231]);

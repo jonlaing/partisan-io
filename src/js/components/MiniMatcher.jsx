@@ -40,9 +40,9 @@ export default React.createClass({
       }
 
       return (
-        <li className="matchlist-small-item">
+        <li className="matchlist-small-item" key={match.user.id}>
           <div className="matchlist-small-avatar" onClick={this.handleAvatarClick(match.user.username)}>
-            <img className="user-avatar" src={match.user.avatar_thumbnail_url} />
+            <img className="user-avatar" src={formatter.avatarUrl(match.user.avatar_thumbnail_url)} />
           </div>
           <div className="matchlist-small-user">
             <div className="matchlist-small-username">

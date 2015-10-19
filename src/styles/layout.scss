@@ -36,7 +36,9 @@ header {
     flex-grow: 1;
     width: 25vw;
     height: 100vh;
+  }
 
+  &.dashboard > aside {
     &:first-child {
       margin-right: $line-height;
       background: $darker-grey;
@@ -51,11 +53,15 @@ header {
 
   > article {
     flex-grow: 2;
-    width: 50vw;
+    width: 75vw;
     height: 100vh;
     padding: $line-height*2 $line-height $line-height*6;
     margin-bottom: $line-height*6;
     overflow-y: scroll;
+  }
+
+  &.dashboard > article {
+    width: 50vw;
   }
 }
 

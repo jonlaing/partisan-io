@@ -1,0 +1,61 @@
+.matchlist {
+  list-style: none;
+  display: flex;
+  display: -webkit-flex;
+
+  flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+
+  li {
+    padding: $line-height;
+    width: 33%;
+    cursor: pointer;
+
+    > div {
+      @include clearfix();
+      @include rounded-corners();
+      @include box-shadow();
+      background: white;
+      padding: $line-height;
+      border: 0 solid $action-color;
+      transition: all 0.3s ease;
+
+      &:hover {
+        @include box-shadow(4px, 6px);
+        border-width: 0 0 4px;
+        margin-bottom: -4px;
+      }
+
+    }
+
+    .matchlist-avatar {
+      @include avatar($line-height * 7);
+    }
+  }
+
+  .matchlist-location, .matchlist-info {
+    font-size: 0.85em;
+  }
+
+  .matchlist-match {
+    margin: $line-height*2 0 0;
+    font-size: 1.5em;
+    font-weight: 100;
+
+    // .high {
+    //   color: $success;
+    // }
+
+    // .med {
+    //   color: $alert;
+    // }
+
+    // .low {
+    //   color: $danger;
+    // }
+  }
+
+  .matchlist-user {
+    font-weight: bold;
+  }
+}

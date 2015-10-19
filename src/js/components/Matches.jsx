@@ -1,14 +1,22 @@
 import React from 'react';
 
+import formatter from '../utils/formatter';
+
 import MatchesActionCreator from '../actions/MatchesActionCreator';
 import MatchesStore from '../stores/MatchesStore';
 
 import UserSession from './UserSession.jsx';
-import Notifications from './Notifications.jsx';
+import Nav from './Nav.jsx';
 
 export default React.createClass({
   getInitialState() {
     return {matches: []};
+  },
+
+  handleAvatarClick(username) {
+    return () => {
+      window.location.href = '/profiles/' + username;
+    };
   },
 
   componentDidMount() {
@@ -22,22 +30,22 @@ export default React.createClass({
 
   render() {
     var nothing, matches;
+    let self = this;
 
     matches = this.state.matches.map(function(match, i) {
       return (
-        <li key={i}>
-          <div className="row">
-            <div className="large-5 columns">
-              <div>
-                <a href={"profiles/" + match.user.id}>@{match.user.username}</a>
+        <li key={i} onClick={self.handleAvatarClick(match.user.username)}>
+          <div>
+            <div className="matchlist-avatar">
+              <img src={formatter.avatarUrl(match.user.avatar_thumbnail_url)} className="user-avatar" />
+            </div>
+            <div>
+              <div className="matchlist-user">
+                <a href={"profiles/" + match.user.username}>@{match.user.username}</a>
               </div>
-              {match.user.location}
-            </div>
-            <div className="large-4 columns">
-              {match.match}% Match
-            </div>
-            <div className="large-3 columns">
-              <a className="button" href={"profiles/" + match.user.id}>View Profile</a>
+              <div className="matchlist-info">{formatter.age(match.user.birthdate)}&nbsp;-&nbsp;{match.user.gender}</div>
+              <div className="matchlist-location">{formatter.cityState(match.user.location)}</div>
+              <div className="matchlist-match">{formatter.match(match.match)}</div>
             </div>
           </div>
         </li>
@@ -51,15 +59,19 @@ export default React.createClass({
     return (
       <div className="matches">
         <header>
-          <UserSession username={this.props.data.user.username} />
-          <Notifications />
+          <UserSession className="right" username={this.props.data.user.username} avatar={this.props.data.user.avatar_thumbnail_url} />
+          <img src="images/logo.svg" className="logo" />
+          <Nav currentPage="matches" />
         </header>
 
-        <div className="matches-container">
-          <ul>
-            {matches}
-          </ul>
-          {nothing}
+        <div className="container">
+          <aside>Blah</aside>
+          <article className="matches-container">
+            <ul className="matchlist">
+              {matches}
+            </ul>
+            {nothing}
+          </article>
         </div>
       </div>
     );
@@ -68,5 +80,8 @@ export default React.createClass({
   _onChange() {
     let state = MatchesStore.getAll();
     this.setState(state);
+  },
+
+  _matchClass() {
   }
 });

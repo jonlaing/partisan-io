@@ -29,7 +29,7 @@ export default React.createClass({
     return (
       <div className="comment">
         <div className="comment-avatar">
-          <img className="user-avatar" src={this.props.data.user.avatar_thumbnail_url} />
+          <img className="user-avatar" src={formatter.avatarUrl(this.props.data.user.avatar_thumbnail_url)} />
         </div>
         <div>
           <div className="comment-author">
