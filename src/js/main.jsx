@@ -51,7 +51,7 @@ if(questions !== null) {
 }
 
 if(profileShow !== null) {
-  React.render(<ProfileShow user={data.user} match={data.match} profile={data.profile} />, profileShow);
+  React.render(<ProfileShow user={data.user} match={data.match} profile={data.profile} currentUser={data.current_user} />, profileShow);
 }
 
 if(profileEdit !== null) {

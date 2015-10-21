@@ -26,30 +26,37 @@ export default React.createClass({
   },
 
   render() {
-    var text;
-
-    console.log(this.state.friendship);
+    var text, header;
 
     if(this.state.friendship.id !== undefined && this.state.friendship.confirmed === true) {
       text = "Friends";
+      header = "You and @" + this.props.username + " are friends";
     } else if (this.state.friendship.id !== undefined
        && this.state.friendship.confirmed === false
        && this.state.friendship.user_id === this.props.id) {
 
       text = "Confirm";
+      header = "Confirm your friendship with @" + this.props.username;
     } else if (this.state.friendship.id !== undefined
        && this.state.friendship.confirmed === false
        && this.state.friendship.user_id !== this.props.id) {
 
       text = "Request Sent";
+      header = "Awaiting @" + this.props.username + "'s confirmation";
     } else {
       text = "Add Friend";
+      header = "You and @" + this.props.username + " are not friends";
     }
 
     return (
-      <button onClick={this.toggleFriend} className={"friendship" + (this.state.isFriend ? " active" : "")}>
-        {text}
-      </button>
+      <div className="profile-friend">
+        <div className="right">
+          <button onClick={this.toggleFriend} className={"friendship" + (this.state.isFriend ? " active" : "")}>
+            {text}
+          </button>
+        </div>
+        <h3>{header}</h3>
+      </div>
     );
   },
 

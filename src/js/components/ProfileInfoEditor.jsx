@@ -85,7 +85,7 @@ export default React.createClass({
     }
 
     return (
-      <div className="profile-edit-info">
+      <div className="profile-info">
         <div className="profile-edit-birthdate">
           {birthdate}
         </div>

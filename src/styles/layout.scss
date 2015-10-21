@@ -40,13 +40,11 @@ header {
 
   &.dashboard > aside {
     &:first-child {
-      margin-right: $line-height;
       background: $darker-grey;
       overflow-y: scroll;
     }
 
     &:last-child {
-      margin-left: $line-height;
       background: lighten($light-grey, 5%);
     }
   }
@@ -55,7 +53,7 @@ header {
     flex-grow: 2;
     width: 75vw;
     height: 100vh;
-    padding: $line-height*2 $line-height $line-height*6;
+    padding: $line-height $line-height*2 $line-height*6;
     margin-bottom: $line-height*6;
     overflow-y: scroll;
   }

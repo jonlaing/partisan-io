@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	"partisan/matcher"
 	m "partisan/models"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // ProfileShow renders HTML
@@ -45,9 +46,10 @@ func ProfileShow(c *gin.Context) {
 		gin.H{
 			"title": "@" + user.Username + "'s Profile",
 			"data": gin.H{
-				"profile": profile,
-				"user":    user,
-				"match":   fmt.Sprintf("%.f", match*100),
+				"profile":      profile,
+				"user":         user,
+				"current_user": currentUser,
+				"match":        fmt.Sprintf("%.f", match*100),
 			},
 		})
 }

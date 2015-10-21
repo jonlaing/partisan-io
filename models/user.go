@@ -33,6 +33,8 @@ type User struct {
 	PasswordConfirm    string               `form:"password_confirm" json:"password_confirm" sql:"-" binding:"required"`
 }
 
+type Users []User
+
 // Friends returns all the User's friends
 func (u User) Friends(db *gorm.DB) []User {
 	friendIDs := u.FriendIDs(db)

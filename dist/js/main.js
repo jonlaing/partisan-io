@@ -36860,6 +36860,7 @@ exports['default'] = {
   ActionTypes: (0, _reactLibKeyMirror2['default'])({
     GET_FEED: null,
     ADD_FEED_ITEM: null,
+    NO_FRIENDS: null,
 
     LOGIN_SUCCESS: null,
     LOGIN_FAIL: null,
@@ -37140,6 +37141,31 @@ exports['default'] = {
   getFeed: function getFeed() {
     $.ajax({
       url: '/api/v1/feed',
+      dataType: 'json',
+      method: 'GET'
+    }).done(function (res) {
+      var data = res.feed_items;
+
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.GET_FEED,
+        data: data
+      });
+    }).fail(function (res) {
+      // Logged out
+      if (res.status === 401) {
+        _Dispatcher2['default'].handleViewAction({
+          type: _Constants2['default'].ActionTypes.LOGGED_OUT
+        });
+      } else if (res.status === 404) {
+        _Dispatcher2['default'].handleViewAction({
+          type: _Constants2['default'].ActionTypes.NO_FRIENDS
+        });
+      }
+    });
+  },
+  getByUser: function getByUser(userID) {
+    $.ajax({
+      url: '/api/v1/feed/' + userID,
       dataType: 'json',
       method: 'GET'
     }).done(function (res) {
@@ -37912,7 +37938,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":245,"./AvatarUpload.jsx":205,"react":187,"react-fontawesome":13}],205:[function(require,module,exports){
+},{"../utils/formatter":246,"./AvatarUpload.jsx":205,"react":187,"react-fontawesome":13}],205:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38009,7 +38035,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":232,"react":187,"react-dropzone":11}],206:[function(require,module,exports){
+},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":233,"react":187,"react-dropzone":11}],206:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38129,7 +38155,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LikeActionCreator":196,"../utils/formatter":245,"./Likes.jsx":215,"moment":8,"react":187}],208:[function(require,module,exports){
+},{"../actions/LikeActionCreator":196,"../utils/formatter":246,"./Likes.jsx":216,"moment":8,"react":187}],208:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38391,7 +38417,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/CommentsActionCreator":191,"../stores/CommentStore":234,"./Comment.jsx":207,"./CommentComposer.jsx":208,"react/addons":15}],211:[function(require,module,exports){
+},{"../actions/CommentsActionCreator":191,"../stores/CommentStore":235,"./Comment.jsx":207,"./CommentComposer.jsx":208,"react/addons":15}],211:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38416,13 +38442,9 @@ var _storesFeedStoreJs = require('../stores/FeedStore.js');
 
 var _storesFeedStoreJs2 = _interopRequireDefault(_storesFeedStoreJs);
 
-var _CardJsx = require('./Card.jsx');
+var _FeedListJsx = require('./FeedList.jsx');
 
-var _CardJsx2 = _interopRequireDefault(_CardJsx);
-
-var _PostJsx = require('./Post.jsx');
-
-var _PostJsx2 = _interopRequireDefault(_PostJsx);
+var _FeedListJsx2 = _interopRequireDefault(_FeedListJsx);
 
 var _PostComposerJsx = require('./PostComposer.jsx');
 
@@ -38448,14 +38470,13 @@ var _MiniMatcherJsx = require('./MiniMatcher.jsx');
 
 var _MiniMatcherJsx2 = _interopRequireDefault(_MiniMatcherJsx);
 
-var ReactCSSTransitionGroup = _reactAddons2['default'].addons.CSSTransitionGroup;
-
 exports['default'] = _reactAddons2['default'].createClass({
   displayName: 'Feed',
 
   getInitialState: function getInitialState() {
     return {
       feed: [],
+      noFriends: false,
       modals: {
         flag: { show: false, flagID: 0 }
       }
@@ -38472,20 +38493,10 @@ exports['default'] = _reactAddons2['default'].createClass({
   },
 
   render: function render() {
-    var cards, nothing;
+    var noFriends;
 
-    cards = this.state.feed.map(function (item, i) {
-      if (item.record_type === "post") {
-        return _reactAddons2['default'].createElement(
-          _CardJsx2['default'],
-          { key: i },
-          _reactAddons2['default'].createElement(_PostJsx2['default'], { data: item.record })
-        );
-      }
-    });
-
-    if (this.state.feed.length === 0) {
-      nothing = _reactAddons2['default'].createElement(
+    if (this.state.noFriends === true) {
+      noFriends = _reactAddons2['default'].createElement(
         'div',
         { className: 'feed-nothing' },
         _reactAddons2['default'].createElement(
@@ -38514,7 +38525,7 @@ exports['default'] = _reactAddons2['default'].createClass({
         'header',
         null,
         _reactAddons2['default'].createElement(_UserSessionJsx2['default'], { className: 'right', username: this.props.data.user.username, avatar: this.props.data.user.avatar_thumbnail_url }),
-        _reactAddons2['default'].createElement('img', { src: 'images/logo.svg', className: 'logo' }),
+        _reactAddons2['default'].createElement('img', { src: '/images/logo.svg', className: 'logo' }),
         _reactAddons2['default'].createElement(_NavJsx2['default'], { currentPage: 'feed' })
       ),
       _reactAddons2['default'].createElement(
@@ -38529,12 +38540,8 @@ exports['default'] = _reactAddons2['default'].createClass({
           'article',
           null,
           _reactAddons2['default'].createElement(_PostComposerJsx2['default'], null),
-          _reactAddons2['default'].createElement(
-            ReactCSSTransitionGroup,
-            { transitionName: 'feed' },
-            cards
-          ),
-          nothing
+          _reactAddons2['default'].createElement(_FeedListJsx2['default'], { feed: this.state.feed, noFriends: this.state.noFriends }),
+          noFriends
         ),
         _reactAddons2['default'].createElement(
           'aside',
@@ -38553,7 +38560,60 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":235,"./Card.jsx":206,"./FlagForm.jsx":212,"./MiniMatcher.jsx":219,"./Nav.jsx":221,"./Post.jsx":223,"./PostComposer.jsx":224,"./ProfileEdit.jsx":225,"./UserSession.jsx":230,"react-fontawesome":13,"react/addons":15}],212:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":236,"./FeedList.jsx":212,"./FlagForm.jsx":213,"./MiniMatcher.jsx":220,"./Nav.jsx":222,"./PostComposer.jsx":225,"./ProfileEdit.jsx":226,"./UserSession.jsx":231,"react-fontawesome":13,"react/addons":15}],212:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _reactAddons = require('react/addons');
+
+var _reactAddons2 = _interopRequireDefault(_reactAddons);
+
+var _CardJsx = require('./Card.jsx');
+
+var _CardJsx2 = _interopRequireDefault(_CardJsx);
+
+var _PostJsx = require('./Post.jsx');
+
+var _PostJsx2 = _interopRequireDefault(_PostJsx);
+
+var ReactCSSTransitionGroup = _reactAddons2['default'].addons.CSSTransitionGroup;
+
+exports['default'] = _reactAddons2['default'].createClass({
+  displayName: 'FeedList',
+
+  render: function render() {
+    var cards;
+
+    cards = this.props.feed.map(function (item, i) {
+      if (item.record_type === "post") {
+        return _reactAddons2['default'].createElement(
+          _CardJsx2['default'],
+          { key: i },
+          _reactAddons2['default'].createElement(_PostJsx2['default'], { data: item.record })
+        );
+      }
+    });
+
+    return _reactAddons2['default'].createElement(
+      'div',
+      null,
+      _reactAddons2['default'].createElement(
+        ReactCSSTransitionGroup,
+        { transitionName: 'feed' },
+        cards
+      )
+    );
+  }
+});
+module.exports = exports['default'];
+
+
+},{"./Card.jsx":206,"./Post.jsx":224,"react/addons":15}],213:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38641,7 +38701,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":193,"./Modal.jsx":220,"react":187,"react-radio":14}],213:[function(require,module,exports){
+},{"../actions/FlagActionCreator":193,"./Modal.jsx":221,"react":187,"react-radio":14}],214:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38687,26 +38747,41 @@ exports['default'] = _react2['default'].createClass({
   },
 
   render: function render() {
-    var text;
-
-    console.log(this.state.friendship);
+    var text, header;
 
     if (this.state.friendship.id !== undefined && this.state.friendship.confirmed === true) {
       text = "Friends";
+      header = "You and @" + this.props.username + " are friends";
     } else if (this.state.friendship.id !== undefined && this.state.friendship.confirmed === false && this.state.friendship.user_id === this.props.id) {
 
       text = "Confirm";
+      header = "Confirm your friendship with @" + this.props.username;
     } else if (this.state.friendship.id !== undefined && this.state.friendship.confirmed === false && this.state.friendship.user_id !== this.props.id) {
 
       text = "Request Sent";
+      header = "Awaiting @" + this.props.username + "'s confirmation";
     } else {
       text = "Add Friend";
+      header = "You and @" + this.props.username + " are not friends";
     }
 
     return _react2['default'].createElement(
-      'button',
-      { onClick: this.toggleFriend, className: "friendship" + (this.state.isFriend ? " active" : "") },
-      text
+      'div',
+      { className: 'profile-friend' },
+      _react2['default'].createElement(
+        'div',
+        { className: 'right' },
+        _react2['default'].createElement(
+          'button',
+          { onClick: this.toggleFriend, className: "friendship" + (this.state.isFriend ? " active" : "") },
+          text
+        )
+      ),
+      _react2['default'].createElement(
+        'h3',
+        null,
+        header
+      )
     );
   },
 
@@ -38718,7 +38793,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":236,"react":187}],214:[function(require,module,exports){
+},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":237,"react":187}],215:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38808,7 +38883,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/HashtagActionCreator":195,"../stores/HashtagStore":237,"./Card.jsx":206,"./Post.jsx":223,"react":187}],215:[function(require,module,exports){
+},{"../actions/HashtagActionCreator":195,"../stores/HashtagStore":238,"./Card.jsx":206,"./Post.jsx":224,"react":187}],216:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38855,7 +38930,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-fontawesome":13}],216:[function(require,module,exports){
+},{"react":187,"react-fontawesome":13}],217:[function(require,module,exports){
 /*global $ */
 'use strict';
 
@@ -38969,7 +39044,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":197,"../stores/LoginStore":238,"react/addons":15}],217:[function(require,module,exports){
+},{"../actions/LoginActionCreator":197,"../stores/LoginStore":239,"react/addons":15}],218:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39064,7 +39139,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-checkbox-group":10}],218:[function(require,module,exports){
+},{"react":187,"react-checkbox-group":10}],219:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39220,7 +39295,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":239,"../utils/formatter":245,"./Nav.jsx":221,"./UserSession.jsx":230,"react":187}],219:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":240,"../utils/formatter":246,"./Nav.jsx":222,"./UserSession.jsx":231,"react":187}],220:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39365,7 +39440,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":239,"../utils/formatter":245,"react":187}],220:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":240,"../utils/formatter":246,"react":187}],221:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -39427,7 +39502,7 @@ exports["default"] = _reactAddons2["default"].createClass({
 module.exports = exports["default"];
 
 
-},{"react/addons":15}],221:[function(require,module,exports){
+},{"react/addons":15}],222:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39502,7 +39577,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Notifications.jsx":222,"react":187}],222:[function(require,module,exports){
+},{"./Notifications.jsx":223,"react":187}],223:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39760,7 +39835,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/NotificationActionCreator":199,"../stores/NotificationStore":240,"moment":8,"react":187,"react-fontawesome":13}],223:[function(require,module,exports){
+},{"../actions/NotificationActionCreator":199,"../stores/NotificationStore":241,"moment":8,"react":187,"react-fontawesome":13}],224:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39905,7 +39980,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":193,"../actions/LikeActionCreator":196,"../utils/formatter":245,"./CommentCounter.jsx":209,"./CommentList.jsx":210,"./Likes.jsx":215,"moment":8,"react":187,"react-fontawesome":13}],224:[function(require,module,exports){
+},{"../actions/FlagActionCreator":193,"../actions/LikeActionCreator":196,"../utils/formatter":246,"./CommentCounter.jsx":209,"./CommentList.jsx":210,"./Likes.jsx":216,"moment":8,"react":187,"react-fontawesome":13}],225:[function(require,module,exports){
 /*global $ */
 'use strict';
 
@@ -40127,7 +40202,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/PostActionCreator":200,"../stores/PostComposerStore":241,"react":187,"react-dropzone":11,"react-fontawesome":13}],225:[function(require,module,exports){
+},{"../actions/PostActionCreator":200,"../stores/PostComposerStore":242,"react":187,"react-dropzone":11,"react-fontawesome":13}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40238,7 +40313,7 @@ exports['default'] = _react2['default'].createClass({
           )
         );
       } else {
-        s = _react2['default'].createElement('div', { className: 'profile-edit-summary-text', dangerouslySetInnerHTML: _utilsFormatter2['default'].userSummary(this.state.profile.summary) });
+        s = _react2['default'].createElement('div', { className: 'profile-summary-text', dangerouslySetInnerHTML: _utilsFormatter2['default'].userSummary(this.state.profile.summary) });
       }
 
       summary = _react2['default'].createElement(
@@ -40283,7 +40358,7 @@ exports['default'] = _react2['default'].createClass({
           onBirthdateFinish: this.handleBirthdateFinish }),
         _react2['default'].createElement(
           'div',
-          { className: 'profile-edit-lookingfor' },
+          { className: 'profile-lookingfor' },
           _react2['default'].createElement(
             'h3',
             null,
@@ -40293,7 +40368,7 @@ exports['default'] = _react2['default'].createClass({
         ),
         _react2['default'].createElement(
           'div',
-          { className: 'profile-edit-summary' },
+          { className: 'profile-summary' },
           summary
         )
       )
@@ -40331,7 +40406,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ProfileActionCreator":201,"../stores/ProfileStore":242,"../utils/formatter":245,"./AvatarEditor.jsx":204,"./LookingForEdit.jsx":217,"./ProfileInfoEditor.jsx":226,"react":187,"react-fontawesome":13}],226:[function(require,module,exports){
+},{"../actions/ProfileActionCreator":201,"../stores/ProfileStore":243,"../utils/formatter":246,"./AvatarEditor.jsx":204,"./LookingForEdit.jsx":218,"./ProfileInfoEditor.jsx":227,"react":187,"react-fontawesome":13}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40449,7 +40524,7 @@ exports['default'] = _react2['default'].createClass({
 
     return _react2['default'].createElement(
       'div',
-      { className: 'profile-edit-info' },
+      { className: 'profile-info' },
       _react2['default'].createElement(
         'div',
         { className: 'profile-edit-birthdate' },
@@ -40501,7 +40576,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":245,"moment":8,"react":187}],227:[function(require,module,exports){
+},{"../utils/formatter":246,"moment":8,"react":187}],228:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40518,6 +40593,18 @@ var _utilsFormatter = require('../utils/formatter');
 
 var _utilsFormatter2 = _interopRequireDefault(_utilsFormatter);
 
+var _actionsFeedActionCreatorJs = require('../actions/FeedActionCreator.js');
+
+var _actionsFeedActionCreatorJs2 = _interopRequireDefault(_actionsFeedActionCreatorJs);
+
+var _storesFeedStoreJs = require('../stores/FeedStore.js');
+
+var _storesFeedStoreJs2 = _interopRequireDefault(_storesFeedStoreJs);
+
+var _FeedListJsx = require('./FeedList.jsx');
+
+var _FeedListJsx2 = _interopRequireDefault(_FeedListJsx);
+
 var _FriendJsx = require('./Friend.jsx');
 
 var _FriendJsx2 = _interopRequireDefault(_FriendJsx);
@@ -40526,18 +40613,34 @@ var _UserSessionJsx = require('./UserSession.jsx');
 
 var _UserSessionJsx2 = _interopRequireDefault(_UserSessionJsx);
 
-var _NotificationsJsx = require('./Notifications.jsx');
+var _NavJsx = require('./Nav.jsx');
 
-var _NotificationsJsx2 = _interopRequireDefault(_NotificationsJsx);
+var _NavJsx2 = _interopRequireDefault(_NavJsx);
+
+var _FlagFormJsx = require('./FlagForm.jsx');
+
+var _FlagFormJsx2 = _interopRequireDefault(_FlagFormJsx);
 
 exports['default'] = _react2['default'].createClass({
   displayName: 'ProfileShow',
 
   getInitialState: function getInitialState() {
-    return {};
+    return {
+      feed: [],
+      modals: {
+        flag: { show: false, flagID: 0 }
+      }
+    };
   },
 
-  componentDidMount: function componentDidMount() {},
+  componentDidMount: function componentDidMount() {
+    _storesFeedStoreJs2['default'].addChangeListener(this._onChange);
+    _actionsFeedActionCreatorJs2['default'].getByUser(this.props.user.id);
+  },
+
+  componentWillUnmount: function componentWillUnmount() {
+    _storesFeedStoreJs2['default'].removeChangeListener(this._onChange);
+  },
 
   render: function render() {
     return _react2['default'].createElement(
@@ -40546,65 +40649,150 @@ exports['default'] = _react2['default'].createClass({
       _react2['default'].createElement(
         'header',
         null,
-        _react2['default'].createElement(_UserSessionJsx2['default'], { username: this.props.user.username }),
-        _react2['default'].createElement(_NotificationsJsx2['default'], null)
+        _react2['default'].createElement(_UserSessionJsx2['default'], { className: 'right', username: this.props.currentUser.username, avatar: _utilsFormatter2['default'].avatarUrl(this.props.currentUser.avatar_thumbnail_url) }),
+        _react2['default'].createElement('img', { src: '/images/logo.svg', className: 'logo' }),
+        _react2['default'].createElement(_NavJsx2['default'], null)
       ),
       _react2['default'].createElement(
         'div',
-        { className: 'profile-container' },
+        { className: 'container dashboard' },
         _react2['default'].createElement(
-          'div',
-          { className: 'profile-user' },
+          'aside',
+          { className: 'profile-show-container' },
           _react2['default'].createElement(
-            'h1',
-            null,
+            'div',
+            { className: 'profile-avatar-container' },
+            _react2['default'].createElement(
+              'div',
+              { className: 'profile-avatar' },
+              _react2['default'].createElement('img', { src: _utilsFormatter2['default'].avatarUrl(this.props.user.avatar_thumbnail_url), className: 'user-avatar' })
+            )
+          ),
+          _react2['default'].createElement(
+            'h2',
+            { className: 'profile-username' },
             '@',
             this.props.user.username
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'right' },
-            _react2['default'].createElement(_FriendJsx2['default'], { id: this.props.user.id })
-          )
-        ),
-        _react2['default'].createElement(
-          'div',
-          { className: 'profile-match' },
-          this.props.match,
-          '%',
-          _react2['default'].createElement(
-            'span',
-            null,
-            'Match'
-          )
-        ),
-        _react2['default'].createElement(
-          'div',
-          { className: 'profile-info' },
-          _react2['default'].createElement(
-            'div',
-            { className: 'profile-info-location' },
-            this.props.user.location
+            { className: 'profile-info' },
+            _react2['default'].createElement(
+              'div',
+              { className: 'profile-info-age' },
+              _utilsFormatter2['default'].age(this.props.user.birthdate)
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'profile-info-location' },
+              _utilsFormatter2['default'].cityState(this.props.user.location)
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'profile-info-gender' },
+              this.props.user.gender
+            )
           ),
           _react2['default'].createElement(
             'div',
-            { className: 'profile-info-gender' },
-            this.props.user.gender
+            { className: 'profile-match' },
+            this.props.match,
+            '% Match'
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'profile-lookingfor' },
+            _react2['default'].createElement(
+              'h3',
+              null,
+              'Looking For'
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'lookingfor' },
+              _react2['default'].createElement(
+                'div',
+                null,
+                _react2['default'].createElement(
+                  'label',
+                  { className: this._active(1 << 0) ? " active" : "" },
+                  _react2['default'].createElement('i', { className: 'fi-torsos-all-female' }),
+                  'Friends'
+                ),
+                _react2['default'].createElement(
+                  'label',
+                  { className: this._active(1 << 1) ? " active" : "" },
+                  _react2['default'].createElement('i', { className: 'fi-heart' }),
+                  'Love'
+                ),
+                _react2['default'].createElement(
+                  'label',
+                  { className: this._active(1 << 2) ? " active" : "" },
+                  _react2['default'].createElement('i', { className: 'fi-skull' }),
+                  'Enemies'
+                )
+              )
+            )
+          ),
+          _react2['default'].createElement(
+            'div',
+            { className: 'profile-summary' },
+            _react2['default'].createElement(
+              'h3',
+              null,
+              'Summary'
+            ),
+            _react2['default'].createElement('div', { className: 'profile-summary-text', dangerouslySetInnerHTML: _utilsFormatter2['default'].userSummary(this.props.profile.summary) })
           )
         ),
         _react2['default'].createElement(
-          'div',
-          { className: 'profile-summary' },
-          _utilsFormatter2['default'].userSummary(this.props.profile.summary)
+          'article',
+          null,
+          _react2['default'].createElement(
+            'div',
+            null,
+            _react2['default'].createElement(_FriendJsx2['default'], { id: this.props.user.id, username: this.props.user.username })
+          ),
+          _react2['default'].createElement(_FeedListJsx2['default'], { feed: this.state.feed })
+        ),
+        _react2['default'].createElement(
+          'aside',
+          null,
+          'Something else goes here'
         )
-      )
+      ),
+      _react2['default'].createElement(_FlagFormJsx2['default'], { show: this.state.modals.flag.show, id: this.state.modals.flag.id, type: this.state.modals.flag.type, ref: 'flag' })
     );
+  },
+
+  _onChange: function _onChange() {
+    this.setState(_storesFeedStoreJs2['default'].getState());
+  },
+
+  _parseLookingFor: function _parseLookingFor(n) {
+    var vals = [];
+    for (var i = 0; i <= 3; i++) {
+      if ((n & 1 << i) !== 0) {
+        vals.push((1 << i).toString());
+      }
+    }
+    return vals;
+  },
+
+  _active: function _active(n) {
+    var vals = this._parseLookingFor(this.props.profile.looking_for);
+    for (var i in vals) {
+      if (parseInt(vals[i]) === n) {
+        return true;
+      }
+    }
+    return false;
   }
 });
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":245,"./Friend.jsx":213,"./Notifications.jsx":222,"./UserSession.jsx":230,"react":187}],228:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":236,"../utils/formatter":246,"./FeedList.jsx":212,"./FlagForm.jsx":213,"./Friend.jsx":214,"./Nav.jsx":222,"./UserSession.jsx":231,"react":187}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40793,7 +40981,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/QuestionsActionCreator":202,"../stores/QuestionsStore":243,"./Card.jsx":206,"./Modal.jsx":220,"./UserSession.jsx":230,"jquery":6,"react/addons":15}],229:[function(require,module,exports){
+},{"../actions/QuestionsActionCreator":202,"../stores/QuestionsStore":244,"./Card.jsx":206,"./Modal.jsx":221,"./UserSession.jsx":231,"jquery":6,"react/addons":15}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40968,7 +41156,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/SignUpActionCreator":203,"../stores/SignUpStore":244,"react":187}],230:[function(require,module,exports){
+},{"../actions/SignUpActionCreator":203,"../stores/SignUpStore":245,"react":187}],231:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41038,7 +41226,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":197,"react":187,"react-fontawesome":13}],231:[function(require,module,exports){
+},{"../actions/LoginActionCreator":197,"react":187,"react-fontawesome":13}],232:[function(require,module,exports){
 (function (global){
 /*global data */
 'use strict';
@@ -41134,7 +41322,7 @@ if (questions !== null) {
 }
 
 if (profileShow !== null) {
-  _reactAddons2['default'].render(_reactAddons2['default'].createElement(_componentsProfileShowJsx2['default'], { user: data.user, match: data.match, profile: data.profile }), profileShow);
+  _reactAddons2['default'].render(_reactAddons2['default'].createElement(_componentsProfileShowJsx2['default'], { user: data.user, match: data.match, profile: data.profile, currentUser: data.current_user }), profileShow);
 }
 
 if (profileEdit !== null) {
@@ -41162,7 +41350,7 @@ Perf.printWasted(Perf.getLastMeasurements());
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./components/Card.jsx":206,"./components/Feed.jsx":211,"./components/HashtagSearch.jsx":214,"./components/Login.jsx":216,"./components/Matches.jsx":218,"./components/Post.jsx":223,"./components/ProfileEdit.jsx":225,"./components/ProfileShow.jsx":227,"./components/Questions.jsx":228,"./components/SignUp.jsx":229,"events":1,"jquery":6,"react/addons":15}],232:[function(require,module,exports){
+},{"./components/Card.jsx":206,"./components/Feed.jsx":211,"./components/HashtagSearch.jsx":215,"./components/Login.jsx":217,"./components/Matches.jsx":219,"./components/Post.jsx":224,"./components/ProfileEdit.jsx":226,"./components/ProfileShow.jsx":228,"./components/Questions.jsx":229,"./components/SignUp.jsx":230,"events":1,"jquery":6,"react/addons":15}],233:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41221,7 +41409,7 @@ exports['default'] = AvatarStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],233:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41258,7 +41446,7 @@ exports['default'] = (0, _objectAssign2['default'])({}, _events.EventEmitter.pro
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"events":1,"object-assign":9}],234:[function(require,module,exports){
+},{"../Constants":188,"events":1,"object-assign":9}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41366,7 +41554,7 @@ exports['default'] = CommentStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],235:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41393,6 +41581,8 @@ var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
 // data storage
 var _feedItems = [];
+
+var _noFriends = false;
 
 var _likes = {
   postLikes: [],
@@ -41440,7 +41630,7 @@ exports['default'] = FeedStore;
 // Facebook style store creation.
 var FeedStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
   getState: function getState() {
-    return { feed: _feedItems, modals: _modals };
+    return { feed: _feedItems, modals: _modals, noFriends: _noFriends };
   },
 
   // countComments(id) {
@@ -41470,6 +41660,10 @@ var FeedStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
           _addItems(action.data);
           FeedStore.emitChange();
         }
+        break;
+      case _Constants2['default'].ActionTypes.NO_FRIENDS:
+        _noFriends = true;
+        FeedStore.emitChange();
         break;
       case _Constants2['default'].ActionTypes.ADD_FEED_ITEM:
         if (action.data) {
@@ -41520,7 +41714,7 @@ exports['default'] = FeedStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],236:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41599,7 +41793,7 @@ exports['default'] = FriendsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],237:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],238:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41679,7 +41873,7 @@ exports['default'] = HashtagStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],238:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41771,7 +41965,7 @@ exports['default'] = LoginStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],239:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],240:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41829,7 +42023,7 @@ exports['default'] = MatchesStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],240:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],241:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41904,7 +42098,7 @@ exports['default'] = NotificationStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],241:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41964,7 +42158,7 @@ exports['default'] = PostComposerStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],242:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42041,7 +42235,7 @@ exports['default'] = ProfileStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],243:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42100,7 +42294,7 @@ exports['default'] = QuestionsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],244:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],245:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42178,7 +42372,7 @@ exports['default'] = SignUpStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":233,"object-assign":9}],245:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":234,"object-assign":9}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42313,4 +42507,4 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"marked":7,"moment":8,"react":187}]},{},[231]);
+},{"marked":7,"moment":8,"react":187}]},{},[232]);

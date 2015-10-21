@@ -1,4 +1,4 @@
-.profile-edit-container {
+.profile-edit-container, .profile-show-container {
   padding: $line-height;
   width: calc(100% - ($line-height * 2));
   display: flex;
@@ -7,9 +7,6 @@
   flex-direction: column;
   -webkit-flex-direction: column;
   
-  justify-content: space-around;
-  -webkit-justify-content: space-around;
-
   align-items: center;
   -webkit-align-items: center;
 
@@ -66,7 +63,7 @@
   margin-bottom: $line-height*2;
 }
 
-.profile-edit-info {
+.profile-info {
   width: 100%;
   display: flex;
   display: -webkit-flex;
@@ -87,18 +84,18 @@
   }
 }
 
-.profile-edit-lookingfor {
+.profile-lookingfor {
   margin-bottom: $line-height * 2;
 }
 
-.profile-edit-summary {
+.profile-summary {
   margin-bottom: $line-height * 2;
   text-align: left;
   line-height: $line-height*1.2;
   width: 100%;
   color: $lighter-grey;
 
-  .profile-edit-summary-text {
+  .profile-summary-text {
     background: lighten($darker-grey, 10%);
     padding: $line-height;
     
@@ -122,4 +119,23 @@
   color: $secondary-color;
   margin-left: $line-height/2;
   cursor: pointer;
+}
+
+.profile-match {
+  display: inline-block;
+  box-sizing: content-box;
+  font-size: $line-height*2;
+  font-weight: 100;
+  padding: $line-height;
+  margin-bottom: $line-height;
+  background: lighten($darker-grey, 10%);
+  @include rounded-corners();
+}
+
+.profile-friend {
+  @include clearfix();
+  border: 1px solid $light-grey;
+  padding: $line-height; 
+  @include rounded-corners();
+  margin-bottom: $line-height;
 }

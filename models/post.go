@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 )
 
@@ -12,6 +13,8 @@ type Post struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type Posts []Post
 
 // GetID satisfies Hashtagger interface
 func (p *Post) GetID() uint64 {
@@ -30,5 +33,25 @@ func (p *Post) GetType() string {
 
 // GetContent satisfies Hashtagger interface
 func (p *Post) GetContent() string {
-  return p.Body
+	return p.Body
+}
+
+func (ps Posts) GetUserIDs() (userIDs []uint64) {
+	for _, p := range ps {
+		userIDs = append(userIDs, p.UserID)
+	}
+	return
+}
+
+func (ps Posts) GetRecordTypeAndIDs() (t string, ids []uint64, err error) {
+	if len(ps) < 1 {
+		err = errors.New("Cannot be empty array")
+		return
+	}
+
+	for _, p := range ps {
+		ids = append(ids, p.ID)
+	}
+
+	return "post", ids, nil
 }

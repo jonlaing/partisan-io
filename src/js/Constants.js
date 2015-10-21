@@ -10,6 +10,7 @@ export default {
   ActionTypes: keyMirror({
     GET_FEED: null,
     ADD_FEED_ITEM: null,
+    NO_FRIENDS: null,
 
     LOGIN_SUCCESS: null,
     LOGIN_FAIL: null,

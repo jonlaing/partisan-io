@@ -2137,17 +2137,15 @@ header {
     width: 25vw;
     height: 100vh; }
   .container.dashboard > aside:first-child {
-    margin-right: 16px;
     background: #4a4a4a;
     overflow-y: scroll; }
   .container.dashboard > aside:last-child {
-    margin-left: 16px;
     background: #e6e6e6; }
   .container > article {
     flex-grow: 2;
     width: 75vw;
     height: 100vh;
-    padding: 32px 16px 96px;
+    padding: 16px 32px 96px;
     margin-bottom: 96px;
     overflow-y: scroll; }
   .container.dashboard > article {
@@ -2313,7 +2311,8 @@ header {
       background: none;
       color: #4a4a4a;
       transition: color 0.3s ease;
-      font-size: 14px; }
+      font-size: 14px;
+      box-shadow: none; }
       .post .post-actions button:hover, .post .post-actions .button:hover {
         color: #7e7e7e; }
       .post .post-actions button .fa, .post .post-actions .button .fa {
@@ -2636,7 +2635,8 @@ button.like {
   color: #4a4a4a;
   font-size: 14px;
   transition: color 0.3s ease;
-  cursor: pointer; }
+  cursor: pointer;
+  box-shadow: none; }
   button.like .fa-star {
     font-size: 1.28em;
     color: #979797;
@@ -2788,20 +2788,18 @@ button.like {
         height: 25px;
         object-fit: cover; }
 
-.profile-edit-container {
+.profile-edit-container, .profile-show-container {
   padding: 16px;
   width: calc(100% - ($line-height * 2));
   display: flex;
   display: -webkit-flex;
   flex-direction: column;
   -webkit-flex-direction: column;
-  justify-content: space-around;
-  -webkit-justify-content: space-around;
   align-items: center;
   -webkit-align-items: center;
   text-align: center;
   color: white; }
-  .profile-edit-container h3 {
+  .profile-edit-container h3, .profile-show-container h3 {
     font-size: 13.92px;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -2846,7 +2844,7 @@ button.like {
   font-weight: 100;
   margin-bottom: 32px; }
 
-.profile-edit-info {
+.profile-info {
   width: 100%;
   display: flex;
   display: -webkit-flex;
@@ -2855,27 +2853,27 @@ button.like {
   align-items: center;
   -webkit-align-items: center;
   margin-bottom: 32px; }
-  .profile-edit-info a {
+  .profile-info a {
     color: white;
     border: 1px dashed #00d2c3;
     border-width: 0 0 1px;
     padding: 4px; }
 
-.profile-edit-lookingfor {
+.profile-lookingfor {
   margin-bottom: 32px; }
 
-.profile-edit-summary {
+.profile-summary {
   margin-bottom: 32px;
   text-align: left;
   line-height: 19.2px;
   width: 100%;
   color: #f2f2f2; }
-  .profile-edit-summary .profile-edit-summary-text {
+  .profile-summary .profile-summary-text {
     background: #646464;
     padding: 16px; }
-    .profile-edit-summary .profile-edit-summary-text a {
+    .profile-summary .profile-summary-text a {
       color: #00d2c3; }
-  .profile-edit-summary textarea {
+  .profile-summary textarea {
     color: white;
     background: #646464;
     font-size: 13.92px;
@@ -2888,6 +2886,29 @@ button.like {
   color: #00d2c3;
   margin-left: 8px;
   cursor: pointer; }
+
+.profile-match {
+  display: inline-block;
+  box-sizing: content-box;
+  font-size: 32px;
+  font-weight: 100;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #646464;
+  border-radius: 2px; }
+
+.profile-friend {
+  border: 1px solid #d9d9d9;
+  padding: 16px;
+  border-radius: 2px;
+  margin-bottom: 16px; }
+  .profile-friend:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0; }
 
 .lookingfor > div {
   display: flex;
@@ -2967,7 +2988,7 @@ button.like {
   height: 100%; }
   .matchlist-small h3 {
     font-weight: normal;
-    margin-bottom: 32px; }
+    margin-bottom: 24px; }
   .matchlist-small ul {
     list-style: none;
     margin: 0;

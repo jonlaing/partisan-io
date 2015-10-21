@@ -1,8 +1,6 @@
 package models
 
-import(
-  "time"
-)
+import "time"
 
 // FeedItem is the record of a user interacting with a Post, this is used to build a feed
 type FeedItem struct {
@@ -14,4 +12,15 @@ type FeedItem struct {
 	Record     interface{} `json:"record,omitempty" sql:"-"`
 	CreatedAt  time.Time   `json:"created_at"`
 	UpdatedAt  time.Time   `json:"updated_at"`
+}
+
+type FeedItems []FeedItem
+
+func (fs FeedItems) GetPostIDs() (ids []uint64) {
+	for _, f := range fs {
+		if f.RecordType == "post" {
+			ids = append(ids, f.RecordID)
+		}
+	}
+	return
 }

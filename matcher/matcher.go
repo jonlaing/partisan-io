@@ -116,7 +116,6 @@ func (p PoliticalMap) Value() (driver.Value, error) {
 		}
 	}
 
-	fmt.Println(str)
 	return str, nil
 }
 

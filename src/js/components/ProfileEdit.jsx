@@ -72,7 +72,7 @@ export default React.createClass({
       if(this.state.profile.summary.length < 1) {
         s = (<div onClick={this.handleSummaryClick}><em>You haven&apos;t filled out your summary yet</em></div>);
       } else {
-        s = (<div className="profile-edit-summary-text" dangerouslySetInnerHTML={ formatter.userSummary(this.state.profile.summary) } />);
+        s = (<div className="profile-summary-text" dangerouslySetInnerHTML={ formatter.userSummary(this.state.profile.summary) } />);
       }
 
       summary = (
@@ -105,11 +105,11 @@ export default React.createClass({
             onLocationFinish={this.handleLocationFinish}
             onGenderFinish={this.handleGenderFinish}
             onBirthdateFinish={this.handleBirthdateFinish} />
-          <div className="profile-edit-lookingfor">
+          <div className="profile-lookingfor">
             <h3>Looking For</h3>
             <LookingForEdit lookingFor={this.state.profile.looking_for} onChange={this.handleLookingForChange}/>
           </div>
-          <div className="profile-edit-summary">
+          <div className="profile-summary">
             {summary}
           </div>
         </div>

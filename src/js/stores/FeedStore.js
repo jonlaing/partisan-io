@@ -6,6 +6,8 @@ import assign from 'object-assign';
 // data storage
 let _feedItems = [];
 
+let _noFriends = false;
+
 let _likes = {
   postLikes: [],
   commentLikes: [],
@@ -52,7 +54,7 @@ export default FeedStore;
 // Facebook style store creation.
 const FeedStore = assign({}, BaseStore, {
   getState() {
-    return { feed: _feedItems, modals: _modals };
+    return { feed: _feedItems, modals: _modals, noFriends: _noFriends };
   },
 
   // countComments(id) {
@@ -82,6 +84,10 @@ const FeedStore = assign({}, BaseStore, {
           _addItems(action.data);
           FeedStore.emitChange();
         }
+        break;
+      case Constants.ActionTypes.NO_FRIENDS:
+        _noFriends = true;
+        FeedStore.emitChange();
         break;
       case Constants.ActionTypes.ADD_FEED_ITEM:
         if(action.data) {

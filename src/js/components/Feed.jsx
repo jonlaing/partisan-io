@@ -5,8 +5,7 @@ import Icon from 'react-fontawesome';
 import FeedActionCreator from '../actions/FeedActionCreator.js';
 import FeedStore from '../stores/FeedStore.js';
 
-import Card from './Card.jsx';
-import Post from './Post.jsx';
+import FeedList from './FeedList.jsx';
 import PostComposer from './PostComposer.jsx';
 import ProfileEdit from './ProfileEdit.jsx';
 import FlagForm from './FlagForm.jsx';
@@ -14,12 +13,11 @@ import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
 import MiniMatcher from './MiniMatcher.jsx';
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-
 export default React.createClass({
   getInitialState() {
     return {
       feed: [],
+      noFriends: false,
       modals: {
         flag: { show: false, flagID: 0 }
       }
@@ -36,20 +34,11 @@ export default React.createClass({
   },
 
   render() {
-    var cards, nothing;
+    var noFriends;
 
-    cards = this.state.feed.map(function(item, i) {
-      if(item.record_type === "post") {
-        return (
-          <Card key={i}>
-            <Post data={item.record} />
-          </Card>
-        );
-      }
-    });
 
-    if(this.state.feed.length === 0) {
-      nothing = (
+    if(this.state.noFriends === true) {
+      noFriends = (
         <div className="feed-nothing">
           <h3>You don't have any friends! <Icon name="frown-o"/></h3>
           <div>Well, at least not on Partisan. To find friends check out your matches, where we'll find people you'll probably vibe with</div>
@@ -62,7 +51,7 @@ export default React.createClass({
       <div className="feed">
         <header>
           <UserSession className="right" username={this.props.data.user.username} avatar={this.props.data.user.avatar_thumbnail_url} />
-          <img src="images/logo.svg" className="logo" />
+          <img src="/images/logo.svg" className="logo" />
           <Nav currentPage="feed" />
         </header>
 
@@ -72,10 +61,8 @@ export default React.createClass({
           </aside>
           <article>
             <PostComposer />
-            <ReactCSSTransitionGroup transitionName="feed">
-              {cards}
-            </ReactCSSTransitionGroup>
-            {nothing}
+            <FeedList feed={this.state.feed} noFriends={this.state.noFriends} />
+            {noFriends}
           </article>
           <aside>
             <MiniMatcher />
