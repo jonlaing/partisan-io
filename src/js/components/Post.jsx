@@ -59,7 +59,7 @@ export default React.createClass({
             </div>
             <div className="post-user">
               <h4 className="post-username">
-                <a href={"/profiles/" + this.props.data.user.id}>@{this.props.data.user.username}</a>
+                <a href={"/profiles/" + this.props.data.user.username}>@{this.props.data.user.username}</a>
               </h4>
               <span className="post-timestamp">{moment(this.props.data.post.created_at).fromNow()}</span>
             </div>

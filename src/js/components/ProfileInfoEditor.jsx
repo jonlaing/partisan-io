@@ -2,6 +2,8 @@ import React from 'react';
 import moment from 'moment';
 import formatter from '../utils/formatter';
 
+import DatePicker from './DatePicker.jsx';
+
 let _ENTER = 13; // key code for pressing the ENTER/RETURN key
 
 export default React.createClass({
@@ -39,10 +41,11 @@ export default React.createClass({
     this.setState({editBirthdate: true});
   },
 
-  handleBirthdateChange(e) {
-    console.log(e.target.value);
+  handleBirthdateChange() {
+    let date = this.refs.birthdate.getDate();
     this.setState({editBirthdate: false});
-    this.props.onBirthdateFinish(e);
+    console.log(date);
+    this.props.onBirthdateFinish(date);
   },
 
   componentDidMount() {
@@ -123,7 +126,7 @@ export default React.createClass({
 
     return (
       <div>
-        <input type="date" defaultValue={date} onChange={this.handleBirthdateChange} />
+        <DatePicker defaultDate={this.props.birthdate} onChange={this.handleBirthdateChange} ref="birthdate"/>
       </div>
     );
   }

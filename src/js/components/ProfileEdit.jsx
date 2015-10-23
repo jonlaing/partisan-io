@@ -37,8 +37,8 @@ export default React.createClass({
       ProfileActionCreator.updateGender(e.target.value);
   },
 
-  handleBirthdateFinish(e) {
-      ProfileActionCreator.updateBirthdate(e.target.value);
+  handleBirthdateFinish(date) {
+      ProfileActionCreator.updateBirthdate(date);
   },
 
   handleLookingForChange(val) {

@@ -96,12 +96,11 @@
   color: $lighter-grey;
 
   .profile-summary-text {
-    background: lighten($darker-grey, 10%);
-    padding: $line-height;
-    
-    a {
-      color: $secondary-color;
-    }
+    padding: 0 $line-height $line-height*4;
+  }
+
+  p {
+    font-family: 'Proxima Nova', sans-serif;
   }
 
   textarea {

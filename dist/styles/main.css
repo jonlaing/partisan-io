@@ -2718,6 +2718,7 @@ button.like {
   padding: 4px;
   background: #ffb860;
   border-radius: 16px;
+  box-sizing: content-box;
   color: white;
   font-weight: bolder;
   min-width: 16px;
@@ -2869,10 +2870,9 @@ button.like {
   width: 100%;
   color: #f2f2f2; }
   .profile-summary .profile-summary-text {
-    background: #646464;
-    padding: 16px; }
-    .profile-summary .profile-summary-text a {
-      color: #00d2c3; }
+    padding: 0 16px 64px; }
+  .profile-summary p {
+    font-family: 'Proxima Nova', sans-serif; }
   .profile-summary textarea {
     color: white;
     background: #646464;
