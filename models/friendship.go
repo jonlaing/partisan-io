@@ -1,8 +1,9 @@
 package models
 
 import (
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
 // Friendship is a joining table between two users who are friends. For each
@@ -16,10 +17,12 @@ type Friendship struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+// GetID satisfies Notifier interface
 func (f *Friendship) GetID() uint64 {
 	return f.ID
 }
 
+// Kinda wish I documented why I needed it to work this way...
 func (f *Friendship) GetRecordUserID(db *gorm.DB) (uint64, error) {
 	if !f.Confirmed {
 		return f.FriendID, nil
@@ -28,6 +31,7 @@ func (f *Friendship) GetRecordUserID(db *gorm.DB) (uint64, error) {
 	}
 }
 
+// GetType satisfies Notifier interface
 func (f *Friendship) GetType() string {
 	return "friendship"
 }
