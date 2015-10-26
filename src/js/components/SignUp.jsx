@@ -56,7 +56,6 @@ export default React.createClass({
 
     return (
       <div className="signup">
-        <h4>Sign Up for Partisan.IO</h4>
         <div className={"form-input" + this._hasError("email")}>
           <input type="text" placeholder="you@email.com" ref="email" />
           {this._error("email")}

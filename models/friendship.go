@@ -26,9 +26,9 @@ func (f *Friendship) GetID() uint64 {
 func (f *Friendship) GetRecordUserID(db *gorm.DB) (uint64, error) {
 	if !f.Confirmed {
 		return f.FriendID, nil
-	} else {
-		return f.UserID, nil
 	}
+
+	return f.UserID, nil
 }
 
 // GetType satisfies Notifier interface

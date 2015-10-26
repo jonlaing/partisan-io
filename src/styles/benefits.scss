@@ -1,0 +1,39 @@
+.benefits {
+  > div {
+    background: rgb(172, 214, 211);
+    padding: $line-height $line-height*2 $line-height*3;
+
+    > h3 {
+      text-align: center;
+      font-size: $line-height*1.5;
+      line-height: $line-height*2;
+    }
+
+    > p {
+      padding: 0 $line-height;
+    }
+
+    h4 {
+      margin-bottom: -$line-height/2;
+      margin-right: -$line-height;
+    }
+
+    img {
+      margin-top: 16px;
+    }
+  }
+
+  > div:first-child {
+    background: $action-color;
+    color: white;
+
+    h3 {
+      color: white;
+    }
+  }
+
+  > div:last-child {
+    background: $alert;
+  }
+}
+

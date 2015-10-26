@@ -9,6 +9,10 @@
 }
 .comment-body {
   padding: $line-height/4 0;
+
+  p {
+    font-family: 'Georgia', serif;
+  }
 }
 
 .comment-meta {

@@ -46,6 +46,10 @@ module.exports = {
     src: src + '/images/**.*',
     dest: dest + '/images'
   },
+  skeleton: {
+    src: src + '/styles/skeleton/*.css',
+    dest: dest + '/styles/skeleton'
+  },
   watch: {
     src: 'src/**/*.*',
     tasks: ['build']

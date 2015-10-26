@@ -6,7 +6,6 @@ import (
 
 	m "partisan/models"
 
-	// _ "github.com/lib/pq"
 	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 

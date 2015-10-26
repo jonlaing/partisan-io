@@ -17,8 +17,15 @@ header {
   z-index: 1;
 
   .logo {
+    margin: 0;
     margin-bottom: -1%; // not sure why, but this puts everything in vertical alignment
     margin-right: $line-height*4;
+  }
+
+  &.header-front {
+    background: none;
+    box-shadow: none;
+    padding: none;
   }
 }
 
@@ -26,7 +33,7 @@ header {
   float: right;
 }
 
-.container {
+.dashboard {
   position: fixed;
   display: flex;
   display: -webkit-flex;
@@ -38,7 +45,7 @@ header {
     height: 100vh;
   }
 
-  &.dashboard > aside {
+  &.dashboard-3col > aside {
     &:first-child {
       background: $darker-grey;
       overflow-y: scroll;
@@ -58,7 +65,7 @@ header {
     overflow-y: scroll;
   }
 
-  &.dashboard > article {
+  &.dashboard-3col > article {
     width: 50vw;
   }
 }

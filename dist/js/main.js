@@ -38639,7 +38639,7 @@ exports['default'] = _reactAddons2['default'].createClass({
       ),
       _reactAddons2['default'].createElement(
         'div',
-        { className: 'container dashboard' },
+        { className: 'dashboard dashboard-3col' },
         _reactAddons2['default'].createElement(
           'aside',
           null,
@@ -39374,7 +39374,7 @@ exports['default'] = _react2['default'].createClass({
       ),
       _react2['default'].createElement(
         'div',
-        { className: 'container' },
+        { className: 'dashboard' },
         _react2['default'].createElement(
           'aside',
           null,
@@ -40769,7 +40769,7 @@ exports['default'] = _react2['default'].createClass({
       ),
       _react2['default'].createElement(
         'div',
-        { className: 'container dashboard' },
+        { className: 'dashboard dashboard-3col' },
         _react2['default'].createElement(
           'aside',
           { className: 'profile-show-container' },
@@ -41181,11 +41181,6 @@ exports['default'] = _react2['default'].createClass({
     return _react2['default'].createElement(
       'div',
       { className: 'signup' },
-      _react2['default'].createElement(
-        'h4',
-        null,
-        'Sign Up for Partisan.IO'
-      ),
       _react2['default'].createElement(
         'div',
         { className: "form-input" + this._hasError("email") },

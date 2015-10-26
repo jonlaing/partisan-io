@@ -39,7 +39,7 @@ export default React.createClass({
           <Nav />
         </header>
 
-        <div className="container dashboard">
+        <div className="dashboard dashboard-3col">
           <aside className="profile-show-container">
             <div className="profile-avatar-container">
               <div className="profile-avatar">

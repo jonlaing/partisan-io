@@ -55,7 +55,7 @@ export default React.createClass({
           <Nav currentPage="feed" />
         </header>
 
-        <div className="container dashboard">
+        <div className="dashboard dashboard-3col">
           <aside>
             <ProfileEdit data={this.props.data} />
           </aside>

@@ -24,6 +24,10 @@
   .post-body {
     font-size: 1.28em;
     line-height: $line-height*2;
+
+    p {
+      font-family: 'Georgia', serif;
+    }
   }
 
   .post-actions {

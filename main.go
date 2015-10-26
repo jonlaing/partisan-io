@@ -149,8 +149,10 @@ func main() {
 	r.GET("/login", Login)
 	r.GET("/signup", SignUp)
 
-	r.Use(static.Serve("/", static.LocalFile("dist", false)))
 	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))
+	r.Use(static.Serve("/", static.LocalFile("dist", false)))
+
+	r.StaticFile("/", "dist/index.html")
 
 	// DON'T DO THIS IN PROD!!!
 	db.Database.AutoMigrate(

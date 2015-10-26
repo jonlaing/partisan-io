@@ -64,7 +64,7 @@ export default React.createClass({
           <Nav currentPage="matches" />
         </header>
 
-        <div className="container">
+        <div className="dashboard">
           <aside>Blah</aside>
           <article className="matches-container">
             <ul className="matchlist">

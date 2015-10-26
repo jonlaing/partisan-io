@@ -16,4 +16,24 @@ func TestFriendshipGetRecordUserID(t *testing.T) {
 		FriendID:  5,
 		Confirmed: false,
 	}
+
+	// ignoring error, since it's impossible to return one in this implementation
+	if id, _ := f.GetRecordUserID(&testDB); id != 5 {
+		t.Error("GetRecordUserID should have returned 5, but returned:", id)
+	}
+
+	f.Confirmed = true
+
+	// ignoring error, since it's impossible to return one in this implementation
+	if id, _ := f.GetRecordUserID(&testDB); id != 4 {
+		t.Error("GetRecordUserID should have returned 4, but returned:", id)
+	}
+}
+
+func TestFriendshipGetType(t *testing.T) {
+	f := Friendship{}
+
+	if f.GetType() != "friendship" {
+		t.Fail()
+	}
 }

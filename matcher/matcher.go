@@ -39,12 +39,29 @@ func (p *PoliticalMap) Add(aMap []int, agree bool) error {
 			return fmt.Errorf("Answer map coordinate out of range at %d! Must be 16 or less. Was %d", k, v)
 		}
 
-		if sign > 0 || p[v] > 0 {
-			p[v] += sign
+		p[v] += sign
+	}
+
+	p.normalize() // if any term is < 0, shift the whole thing up
+
+	return nil
+}
+
+// if any part of the PoliticalMap is < 0, then shift everything up,
+// so that the smallest value is zero
+func (p *PoliticalMap) normalize() {
+	smallest := 0
+	for _, v := range p {
+		if v < smallest {
+			smallest = v
 		}
 	}
 
-	return nil
+	if smallest < 0 {
+		for k := range p {
+			p[k] -= smallest
+		}
+	}
 }
 
 // Center finds the center of gravity of the map for faster lookups in SQL
@@ -54,15 +71,15 @@ func (p *PoliticalMap) Add(aMap []int, agree bool) error {
 // so it'll make the initial SQL look up easier to match them.
 // TODO: Actually test this with real people and real questions
 func (p *PoliticalMap) Center() (int, int) {
-	var x, y, t float64
+	var x, y, t float64 // t is the total points
 
 	// distance from the "origin"
 	// moving up by two places at a time (since there's no 0 on the grid)
 	xCoef := []int{
-		-3, 1, 1, 3,
-		-3, 1, 1, 3,
-		-3, 1, 1, 3,
-		-3, 1, 1, 3,
+		-3, -1, 1, 3,
+		-3, -1, 1, 3,
+		-3, -1, 1, 3,
+		-3, -1, 1, 3,
 	}
 
 	yCoef := []int{
@@ -89,7 +106,7 @@ func (p *PoliticalMap) Center() (int, int) {
 func (p *PoliticalMap) Scan(src interface{}) error {
 	str, ok := src.([]byte)
 	if !ok {
-		return fmt.Errorf("Cannot scan values for PoliticalMap: %v", src)
+		return ErrScan{src}
 	}
 
 	strs := strings.Split(string(str), ",")
@@ -145,4 +162,12 @@ func contains(a []int, i int) bool {
 		}
 	}
 	return false
+}
+
+type ErrScan struct {
+	Val interface{}
+}
+
+func (e ErrScan) Error() string {
+	return fmt.Sprintf("partisan/matcher: Can't scan values: %v", e.Val)
 }

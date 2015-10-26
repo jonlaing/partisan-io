@@ -2037,6 +2037,13 @@ a {
   font-family: 'Proxima Nova';
   src: url("../fonts/proximanova-light-webfont.eot");
   src: url("../fonts/proximanova-light-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-light-webfont.woff2") format("woff2"), url("../fonts/proximanova-light-webfont.woff") format("woff"), url("../fonts/proximanova-light-webfont.ttf") format("truetype"), url("../fonts/proximanova-light-webfont.svg#proxima_nova_ltlight") format("svg");
+  font-weight: 200;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url("../fonts/proximanova-thin-webfont.eot");
+  src: url("../fonts/proximanova-thin-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-thin-webfont.woff") format("woff"), url("../fonts/proximanova-thin-webfont.ttf") format("truetype"), url("../fonts/proximanova-thin-webfont.svg#proxima_nova_ththin") format("svg");
   font-weight: 100;
   font-style: normal; }
 
@@ -2060,8 +2067,8 @@ html, body {
   line-height: 16px;
   color: #4a4a4a; }
 
-p {
-  font-family: 'Georgia', serif; }
+.text-center {
+  text-align: center; }
 
 body {
   background: #f2f2f2; }
@@ -2121,34 +2128,39 @@ header {
   position: relative;
   z-index: 1; }
   header .logo {
+    margin: 0;
     margin-bottom: -1%;
     margin-right: 64px; }
+  header.header-front {
+    background: none;
+    box-shadow: none;
+    padding: none; }
 
 .right {
   float: right; }
 
-.container {
+.dashboard {
   position: fixed;
   display: flex;
   display: -webkit-flex;
   z-index: 0; }
-  .container > aside {
+  .dashboard > aside {
     flex-grow: 1;
     width: 25vw;
     height: 100vh; }
-  .container.dashboard > aside:first-child {
+  .dashboard.dashboard-3col > aside:first-child {
     background: #4a4a4a;
     overflow-y: scroll; }
-  .container.dashboard > aside:last-child {
+  .dashboard.dashboard-3col > aside:last-child {
     background: #e6e6e6; }
-  .container > article {
+  .dashboard > article {
     flex-grow: 2;
     width: 75vw;
     height: 100vh;
     padding: 16px 32px 96px;
     margin-bottom: 96px;
     overflow-y: scroll; }
-  .container.dashboard > article {
+  .dashboard.dashboard-3col > article {
     width: 50vw; }
 
 .clearfix:after {
@@ -2221,7 +2233,7 @@ header {
   .post-composer textarea {
     font-size: 1.71em;
     font-family: 'Proxima Nova', sans-serif;
-    font-weight: 100;
+    font-weight: 200;
     min-height: 1.71em;
     border: 2px solid #d215b3;
     border-width: 0 0 2px;
@@ -2302,6 +2314,8 @@ header {
   .post .post-body {
     font-size: 1.28em;
     line-height: 32px; }
+    .post .post-body p {
+      font-family: 'Georgia', serif; }
   .post .post-actions {
     padding: 0 16px 16px; }
     .post .post-actions button, .post .post-actions .button {
@@ -2433,6 +2447,13 @@ a {
   font-family: 'Proxima Nova';
   src: url("../fonts/proximanova-light-webfont.eot");
   src: url("../fonts/proximanova-light-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-light-webfont.woff2") format("woff2"), url("../fonts/proximanova-light-webfont.woff") format("woff"), url("../fonts/proximanova-light-webfont.ttf") format("truetype"), url("../fonts/proximanova-light-webfont.svg#proxima_nova_ltlight") format("svg");
+  font-weight: 200;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Proxima Nova';
+  src: url("../fonts/proximanova-thin-webfont.eot");
+  src: url("../fonts/proximanova-thin-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proximanova-thin-webfont.woff") format("woff"), url("../fonts/proximanova-thin-webfont.ttf") format("truetype"), url("../fonts/proximanova-thin-webfont.svg#proxima_nova_ththin") format("svg");
   font-weight: 100;
   font-style: normal; }
 
@@ -2456,8 +2477,8 @@ html, body {
   line-height: 16px;
   color: #4a4a4a; }
 
-p {
-  font-family: 'Georgia', serif; }
+.text-center {
+  text-align: center; }
 
 .question {
   width: 60vw;
@@ -2623,6 +2644,8 @@ p {
 
 .comment-body {
   padding: 4px 0; }
+  .comment-body p {
+    font-family: 'Georgia', serif; }
 
 .comment-meta {
   font-size: 12px;
@@ -2842,7 +2865,7 @@ button.like {
 
 .profile-username {
   font-size: 24px;
-  font-weight: 100;
+  font-weight: 200;
   margin-bottom: 32px; }
 
 .profile-info {
@@ -2891,7 +2914,7 @@ button.like {
   display: inline-block;
   box-sizing: content-box;
   font-size: 32px;
-  font-weight: 100;
+  font-weight: 200;
   padding: 16px;
   margin-bottom: 16px;
   background: #646464;
@@ -2977,7 +3000,7 @@ button.like {
   .matchlist .matchlist-match {
     margin: 32px 0 0;
     font-size: 1.5em;
-    font-weight: 100; }
+    font-weight: 200; }
   .matchlist .matchlist-user {
     font-weight: bold; }
 
@@ -3032,3 +3055,74 @@ button.like {
     width: 100%; }
     .matchlist-small .more .button {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); }
+
+.jumbotron .jumbotron-content {
+  text-align: center; }
+
+.jumbotron.jumbotron-main {
+  background: #00d2c3;
+  padding: 8px 0 128px;
+  color: white;
+  margin-bottom: -96px; }
+  .jumbotron.jumbotron-main h2 {
+    font-weight: 100;
+    font-size: 64px;
+    text-align: center;
+    margin-bottom: 32px; }
+  .jumbotron.jumbotron-main p {
+    font-size: 18px;
+    line-height: 24px; }
+  .jumbotron.jumbotron-main hr {
+    display: block;
+    margin: 16px 0;
+    border-color: white;
+    border-style: solid;
+    border-bottom-width: 0px; }
+
+.jumbotron nav ul {
+  list-style: none;
+  display: flex;
+  display: -webkit-flex;
+  justify-content: flex-end;
+  -webkit-justify-content: flex-end; }
+
+.jumbotron nav li {
+  padding: 0 16px; }
+
+.jumbotron nav a {
+  color: white; }
+  .jumbotron nav a.button {
+    background: white;
+    color: #00d2c3;
+    box-shadow: none;
+    margin-top: -16px;
+    font-size: 14px;
+    padding: 8px 16px; }
+    .jumbotron nav a.button.button-border {
+      color: white;
+      background: none;
+      border: 1px solid white; }
+
+.benefits > div {
+  background: #acd6d3;
+  padding: 16px 32px 48px; }
+  .benefits > div > h3 {
+    text-align: center;
+    font-size: 24px;
+    line-height: 32px; }
+  .benefits > div > p {
+    padding: 0 16px; }
+  .benefits > div h4 {
+    margin-bottom: -8px;
+    margin-right: -16px; }
+  .benefits > div img {
+    margin-top: 16px; }
+
+.benefits > div:first-child {
+  background: #d215b3;
+  color: white; }
+  .benefits > div:first-child h3 {
+    color: white; }
+
+.benefits > div:last-child {
+  background: #ffb860; }

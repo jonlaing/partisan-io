@@ -59,7 +59,7 @@
 
 .profile-username {
   font-size: $line-height * 1.5;
-  font-weight: 100;
+  font-weight: 200;
   margin-bottom: $line-height*2;
 }
 
@@ -124,7 +124,7 @@
   display: inline-block;
   box-sizing: content-box;
   font-size: $line-height*2;
-  font-weight: 100;
+  font-weight: 200;
   padding: $line-height;
   margin-bottom: $line-height;
   background: lighten($darker-grey, 10%);

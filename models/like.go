@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+
 	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
@@ -45,7 +46,9 @@ func (l *Like) GetRecordUserID(db *gorm.DB) (uint64, error) {
 }
 
 // GetLikes retrives Likes for a group of records
+// PENDING DEPRECATION! See partisan/dao
 func GetLikes(uID uint64, recordType string, recordIDs []uint64, db *gorm.DB) ([]RecordLikes, error) {
+	fmt.Println("Warning: partisan/models.GetLikes is pending deprecation. See partisan/dao")
 	var likes []RecordLikes
 
 	// gorm seems to be having trouble with too many variables
