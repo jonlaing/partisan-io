@@ -2150,7 +2150,8 @@ header {
     height: 100vh; }
   .dashboard.dashboard-3col > aside:first-child {
     background: #4a4a4a;
-    overflow-y: scroll; }
+    overflow-y: scroll;
+    padding-bottom: 96px; }
   .dashboard.dashboard-3col > aside:last-child {
     background: #e6e6e6; }
   .dashboard > article {

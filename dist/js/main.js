@@ -37549,7 +37549,17 @@ exports['default'] = {
   },
 
   getNotificationCount: function getNotificationCount() {
-    var _socket = new WebSocket("ws://localhost:4000" + _Constants2['default'].APIROOT + "/notifications/count");
+    var domain;
+    var url = window.location.href;
+
+    //find & remove protocol (http, ftp, etc.) and get domain
+    if (url.indexOf("://") > -1) {
+      domain = url.split('/')[2];
+    } else {
+      domain = url.split('/')[0];
+    }
+
+    var _socket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/notifications/count");
 
     _socket.onmessage = function (res) {
       var data = JSON.parse(res.data);

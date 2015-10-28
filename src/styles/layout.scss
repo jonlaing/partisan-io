@@ -49,6 +49,7 @@ header {
     &:first-child {
       background: $darker-grey;
       overflow-y: scroll;
+      padding-bottom: $line-height*6;
     }
 
     &:last-child {
