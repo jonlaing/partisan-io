@@ -37938,7 +37938,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":247,"./AvatarUpload.jsx":205,"react":187,"react-fontawesome":13}],205:[function(require,module,exports){
+},{"../utils/formatter":248,"./AvatarUpload.jsx":205,"react":187,"react-fontawesome":13}],205:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38035,7 +38035,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":234,"react":187,"react-dropzone":11}],206:[function(require,module,exports){
+},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":235,"react":187,"react-dropzone":11}],206:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38155,7 +38155,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LikeActionCreator":196,"../utils/formatter":247,"./Likes.jsx":217,"moment":8,"react":187}],208:[function(require,module,exports){
+},{"../actions/LikeActionCreator":196,"../utils/formatter":248,"./Likes.jsx":218,"moment":8,"react":187}],208:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38417,7 +38417,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/CommentsActionCreator":191,"../stores/CommentStore":236,"./Comment.jsx":207,"./CommentComposer.jsx":208,"react/addons":15}],211:[function(require,module,exports){
+},{"../actions/CommentsActionCreator":191,"../stores/CommentStore":237,"./Comment.jsx":207,"./CommentComposer.jsx":208,"react/addons":15}],211:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38669,7 +38669,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":237,"./FeedList.jsx":213,"./FlagForm.jsx":214,"./MiniMatcher.jsx":221,"./Nav.jsx":223,"./PostComposer.jsx":226,"./ProfileEdit.jsx":227,"./UserSession.jsx":232,"react-fontawesome":13,"react/addons":15}],213:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":238,"./FeedList.jsx":213,"./FlagForm.jsx":214,"./MiniMatcher.jsx":222,"./Nav.jsx":224,"./PostComposer.jsx":227,"./ProfileEdit.jsx":228,"./UserSession.jsx":233,"react-fontawesome":13,"react/addons":15}],213:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38722,7 +38722,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Card.jsx":206,"./Post.jsx":225,"react/addons":15}],214:[function(require,module,exports){
+},{"./Card.jsx":206,"./Post.jsx":226,"react/addons":15}],214:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38810,7 +38810,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":193,"./Modal.jsx":222,"react":187,"react-radio":14}],215:[function(require,module,exports){
+},{"../actions/FlagActionCreator":193,"./Modal.jsx":223,"react":187,"react-radio":14}],215:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38902,7 +38902,40 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":238,"react":187}],216:[function(require,module,exports){
+},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":239,"react":187}],216:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'Friends',
+
+  getInitialState: function getInitialState() {
+    return {};
+  },
+
+  componentDidMount: function componentDidMount() {},
+
+  render: function render() {
+    return _react2['default'].createElement(
+      'p',
+      null,
+      'Hello, world!'
+    );
+  }
+});
+module.exports = exports['default'];
+
+
+},{"react":187}],217:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38992,7 +39025,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/HashtagActionCreator":195,"../stores/HashtagStore":239,"./Card.jsx":206,"./Post.jsx":225,"react":187}],217:[function(require,module,exports){
+},{"../actions/HashtagActionCreator":195,"../stores/HashtagStore":240,"./Card.jsx":206,"./Post.jsx":226,"react":187}],218:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39039,7 +39072,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-fontawesome":13}],218:[function(require,module,exports){
+},{"react":187,"react-fontawesome":13}],219:[function(require,module,exports){
 /*global $ */
 'use strict';
 
@@ -39153,7 +39186,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":197,"../stores/LoginStore":240,"react/addons":15}],219:[function(require,module,exports){
+},{"../actions/LoginActionCreator":197,"../stores/LoginStore":241,"react/addons":15}],220:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39248,7 +39281,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-checkbox-group":10}],220:[function(require,module,exports){
+},{"react":187,"react-checkbox-group":10}],221:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39404,7 +39437,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":241,"../utils/formatter":247,"./Nav.jsx":223,"./UserSession.jsx":232,"react":187}],221:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":242,"../utils/formatter":248,"./Nav.jsx":224,"./UserSession.jsx":233,"react":187}],222:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39549,7 +39582,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":241,"../utils/formatter":247,"react":187}],222:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":198,"../stores/MatchesStore":242,"../utils/formatter":248,"react":187}],223:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -39611,7 +39644,7 @@ exports["default"] = _reactAddons2["default"].createClass({
 module.exports = exports["default"];
 
 
-},{"react/addons":15}],223:[function(require,module,exports){
+},{"react/addons":15}],224:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39686,7 +39719,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Notifications.jsx":224,"react":187}],224:[function(require,module,exports){
+},{"./Notifications.jsx":225,"react":187}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39944,7 +39977,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/NotificationActionCreator":199,"../stores/NotificationStore":242,"moment":8,"react":187,"react-fontawesome":13}],225:[function(require,module,exports){
+},{"../actions/NotificationActionCreator":199,"../stores/NotificationStore":243,"moment":8,"react":187,"react-fontawesome":13}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40089,7 +40122,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":193,"../actions/LikeActionCreator":196,"../utils/formatter":247,"./CommentCounter.jsx":209,"./CommentList.jsx":210,"./Likes.jsx":217,"moment":8,"react":187,"react-fontawesome":13}],226:[function(require,module,exports){
+},{"../actions/FlagActionCreator":193,"../actions/LikeActionCreator":196,"../utils/formatter":248,"./CommentCounter.jsx":209,"./CommentList.jsx":210,"./Likes.jsx":218,"moment":8,"react":187,"react-fontawesome":13}],227:[function(require,module,exports){
 /*global $ */
 'use strict';
 
@@ -40311,7 +40344,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/PostActionCreator":200,"../stores/PostComposerStore":243,"react":187,"react-dropzone":11,"react-fontawesome":13}],227:[function(require,module,exports){
+},{"../actions/PostActionCreator":200,"../stores/PostComposerStore":244,"react":187,"react-dropzone":11,"react-fontawesome":13}],228:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40515,7 +40548,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ProfileActionCreator":201,"../stores/ProfileStore":244,"../utils/formatter":247,"./AvatarEditor.jsx":204,"./LookingForEdit.jsx":219,"./ProfileInfoEditor.jsx":228,"react":187,"react-fontawesome":13}],228:[function(require,module,exports){
+},{"../actions/ProfileActionCreator":201,"../stores/ProfileStore":245,"../utils/formatter":248,"./AvatarEditor.jsx":204,"./LookingForEdit.jsx":220,"./ProfileInfoEditor.jsx":229,"react":187,"react-fontawesome":13}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40690,7 +40723,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":247,"./DatePicker.jsx":211,"moment":8,"react":187}],229:[function(require,module,exports){
+},{"../utils/formatter":248,"./DatePicker.jsx":211,"moment":8,"react":187}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40906,7 +40939,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":237,"../utils/formatter":247,"./FeedList.jsx":213,"./FlagForm.jsx":214,"./Friend.jsx":215,"./Nav.jsx":223,"./UserSession.jsx":232,"react":187}],230:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":238,"../utils/formatter":248,"./FeedList.jsx":213,"./FlagForm.jsx":214,"./Friend.jsx":215,"./Nav.jsx":224,"./UserSession.jsx":233,"react":187}],231:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41095,7 +41128,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/QuestionsActionCreator":202,"../stores/QuestionsStore":245,"./Card.jsx":206,"./Modal.jsx":222,"./UserSession.jsx":232,"jquery":6,"react/addons":15}],231:[function(require,module,exports){
+},{"../actions/QuestionsActionCreator":202,"../stores/QuestionsStore":246,"./Card.jsx":206,"./Modal.jsx":223,"./UserSession.jsx":233,"jquery":6,"react/addons":15}],232:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41265,7 +41298,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/SignUpActionCreator":203,"../stores/SignUpStore":246,"react":187}],232:[function(require,module,exports){
+},{"../actions/SignUpActionCreator":203,"../stores/SignUpStore":247,"react":187}],233:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41335,7 +41368,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":197,"react":187,"react-fontawesome":13}],233:[function(require,module,exports){
+},{"../actions/LoginActionCreator":197,"react":187,"react-fontawesome":13}],234:[function(require,module,exports){
 (function (global){
 /*global data */
 'use strict';
@@ -41378,6 +41411,10 @@ var _componentsMatchesJsx = require('./components/Matches.jsx');
 
 var _componentsMatchesJsx2 = _interopRequireDefault(_componentsMatchesJsx);
 
+var _componentsFriendsJsx = require('./components/Friends.jsx');
+
+var _componentsFriendsJsx2 = _interopRequireDefault(_componentsFriendsJsx);
+
 var _componentsProfileEditJsx = require('./components/ProfileEdit.jsx');
 
 var _componentsProfileEditJsx2 = _interopRequireDefault(_componentsProfileEditJsx);
@@ -41410,6 +41447,7 @@ var questions = document.getElementById('questions');
 var profileShow = document.getElementById('profile-show');
 var profileEdit = document.getElementById('profile-edit');
 var matches = document.getElementById('matches');
+var friends = document.getElementById('friends');
 var post = document.getElementById('post');
 var hashtags = document.getElementById('hashtags');
 
@@ -41442,6 +41480,10 @@ if (matches !== null) {
   _reactAddons2['default'].render(_reactAddons2['default'].createElement(_componentsMatchesJsx2['default'], { data: data }), matches);
 }
 
+if (friends !== null) {
+  _reactAddons2['default'].render(_reactAddons2['default'].createElement(_componentsFriendsJsx2['default'], { data: data }), friends);
+}
+
 if (post !== null) {
   _reactAddons2['default'].render(_reactAddons2['default'].createElement(
     _componentsCardJsx2['default'],
@@ -41459,7 +41501,7 @@ Perf.printWasted(Perf.getLastMeasurements());
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./components/Card.jsx":206,"./components/Feed.jsx":212,"./components/HashtagSearch.jsx":216,"./components/Login.jsx":218,"./components/Matches.jsx":220,"./components/Post.jsx":225,"./components/ProfileEdit.jsx":227,"./components/ProfileShow.jsx":229,"./components/Questions.jsx":230,"./components/SignUp.jsx":231,"events":1,"jquery":6,"react/addons":15}],234:[function(require,module,exports){
+},{"./components/Card.jsx":206,"./components/Feed.jsx":212,"./components/Friends.jsx":216,"./components/HashtagSearch.jsx":217,"./components/Login.jsx":219,"./components/Matches.jsx":221,"./components/Post.jsx":226,"./components/ProfileEdit.jsx":228,"./components/ProfileShow.jsx":230,"./components/Questions.jsx":231,"./components/SignUp.jsx":232,"events":1,"jquery":6,"react/addons":15}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41518,7 +41560,7 @@ exports['default'] = AvatarStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],235:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41555,7 +41597,7 @@ exports['default'] = (0, _objectAssign2['default'])({}, _events.EventEmitter.pro
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"events":1,"object-assign":9}],236:[function(require,module,exports){
+},{"../Constants":188,"events":1,"object-assign":9}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41663,7 +41705,7 @@ exports['default'] = CommentStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],237:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],238:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41823,7 +41865,7 @@ exports['default'] = FeedStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],238:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41902,7 +41944,7 @@ exports['default'] = FriendsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],239:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],240:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41982,7 +42024,7 @@ exports['default'] = HashtagStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],240:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],241:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42074,7 +42116,7 @@ exports['default'] = LoginStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],241:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42132,7 +42174,7 @@ exports['default'] = MatchesStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],242:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42207,7 +42249,7 @@ exports['default'] = NotificationStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],243:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42267,7 +42309,7 @@ exports['default'] = PostComposerStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],244:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],245:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42344,7 +42386,7 @@ exports['default'] = ProfileStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],245:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42403,7 +42445,7 @@ exports['default'] = QuestionsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],246:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42481,7 +42523,7 @@ exports['default'] = SignUpStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":235,"object-assign":9}],247:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":236,"object-assign":9}],248:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42616,4 +42658,4 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"marked":7,"moment":8,"react":187}]},{},[233]);
+},{"marked":7,"moment":8,"react":187}]},{},[234]);

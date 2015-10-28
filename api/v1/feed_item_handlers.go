@@ -22,7 +22,7 @@ func FeedIndex(c *gin.Context) {
 
 	user, _ := auth.CurrentUser(c)
 
-	friendIDs, err := ConfirmedFriendIDs(user, c)
+	friendIDs, err := dao.ConfirmedFriendIDs(user, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

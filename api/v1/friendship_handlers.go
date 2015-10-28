@@ -3,12 +3,14 @@ package v1
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
+	"partisan/dao"
 	"partisan/db"
 	m "partisan/models"
 	"strconv"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // FriendshipIndex returns all friends as a slice of m.User (in JSON)
@@ -17,14 +19,8 @@ func FriendshipIndex(c *gin.Context) {
 
 	user, _ := auth.CurrentUser(c)
 
-	friendIDs, err := FriendIDs(user, c)
+	friends, err := dao.ConfirmedFriends(user, db)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
-	}
-
-	var friends []m.User
-	if err := db.Where("user_id IN ?", friendIDs).Find(&friends).Error; err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
@@ -45,20 +41,13 @@ func FriendshipShow(c *gin.Context) {
 		return
 	}
 
-	var f1, f2 m.Friendship
-
-	if err := db.Where("user_id = ? AND friend_id = ?", user.ID, friendID).Find(&f1).Error; err == nil {
-		c.JSON(http.StatusOK, f1)
+	var friendship m.Friendship
+	if friendship, err = dao.GetFriendship(user, friendID, db); err != nil {
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("Couldn't find friendship between User: %d and Friend: %d", user.ID, friendID))
 		return
 	}
 
-	if err := db.Where("user_id = ? AND friend_id = ?", friendID, user.ID).Find(&f2).Error; err == nil {
-		c.JSON(http.StatusOK, f2)
-		return
-	}
-
-	c.AbortWithError(http.StatusNotFound, fmt.Errorf("Couldn't find friendship between User: %d and Friend: %d", user.ID, friendID))
-	return
+	c.JSON(http.StatusOK, friendship)
 }
 
 // FriendshipCreate handles making a new friendship
@@ -105,8 +94,7 @@ func FriendshipConfirm(c *gin.Context) {
 		return
 	}
 
-	f := m.Friendship{}
-
+	var f m.Friendship
 	// only the friend can confirm, so we put friendID in the user slot and userID in the friend slot
 	if err := db.Where("friend_id = ? AND user_id = ?", user.ID, friendID).First(&f).Error; err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
@@ -157,54 +145,4 @@ func FriendshipDestroy(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
-}
-
-// FriendIDs returns all userIDs associated with a user's friends
-func FriendIDs(user m.User, c *gin.Context) (friendIDs []uint64, err error) {
-	db := db.GetDB(c)
-
-	var friendships []m.Friendship
-	if err = db.Where("user_id = ? OR friend_id = ?", user.ID, user.ID).Find(&friendships).Error; err != nil {
-		return
-	}
-
-	if len(friendships) < 1 {
-		err = fmt.Errorf("Couldn't find any friends associated with User: %d", user.ID)
-		return
-	}
-
-	for _, v := range friendships {
-		if v.UserID != user.ID {
-			friendIDs = append(friendIDs, v.UserID)
-		} else {
-			friendIDs = append(friendIDs, v.FriendID)
-		}
-	}
-
-	return
-}
-
-// ConfirmedFriendIDs returns all userIDs associated with a user's CONFIRMED friends
-func ConfirmedFriendIDs(user m.User, c *gin.Context) (friendIDs []uint64, err error) {
-	db := db.GetDB(c)
-
-	var friendships []m.Friendship
-	if err = db.Where("user_id = ? OR friend_id = ? AND confirmed = ?", user.ID, user.ID, true).Find(&friendships).Error; err != nil {
-		return
-	}
-
-	if len(friendships) < 1 {
-		err = fmt.Errorf("Couldn't find any friends associated with User: %d", user.ID)
-		return
-	}
-
-	for _, v := range friendships {
-		if v.UserID != user.ID {
-			friendIDs = append(friendIDs, v.UserID)
-		} else {
-			friendIDs = append(friendIDs, v.FriendID)
-		}
-	}
-
-	return
 }

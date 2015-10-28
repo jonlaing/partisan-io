@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"partisan/Godeps/_workspace/src/github.com/jasonmoo/geo"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
 // User the user model
@@ -31,23 +30,6 @@ type User struct {
 	PasswordHash       []byte               `json:"-"`
 	Password           string               `form:"password" json:"password" sql:"-" binding:"required"`
 	PasswordConfirm    string               `form:"password_confirm" json:"password_confirm" sql:"-" binding:"required"`
-}
-
-type Users []User
-
-// Friends returns all the User's friends
-func (u User) Friends(db *gorm.DB) []User {
-	friendIDs := u.FriendIDs(db)
-	users := []User{}
-	db.Where(friendIDs).Find(&users)
-	return users
-}
-
-// FriendIDs returns all IDs of User's Friends
-func (u User) FriendIDs(db *gorm.DB) []uint64 {
-	var friendIDs []uint64
-	db.Table("friendships").Select("friend_id").Where("confirmed = ?", true).Scan(&friendIDs)
-	return friendIDs
 }
 
 // GetLocation finds the latitude/longitude by postal code

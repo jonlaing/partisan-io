@@ -4,6 +4,7 @@ import (
 	"math"
 	"net/http"
 	"partisan/auth"
+	"partisan/dao"
 	"partisan/db"
 	"partisan/matcher"
 	m "partisan/models"
@@ -86,7 +87,7 @@ func MatchesIndex(c *gin.Context) {
 	minY := user.CenterY - centerBounds
 	maxY := user.CenterY + centerBounds
 
-	friendIDs, _ := ConfirmedFriendIDs(user, c)
+	friendIDs, _ := dao.ConfirmedFriendIDs(user, db)
 
 	var users []m.User
 

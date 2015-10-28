@@ -23,6 +23,9 @@ func main() {
 	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
 	r.Use(sessions.Sessions("partisan-io", store))
 	r.Use(db.DB())
+	r.Use(gin.BasicAuth(gin.Accounts{
+		"partisan-basic": "antistate123",
+	}))
 
 	v1Root := "api/v1"
 
@@ -140,6 +143,7 @@ func main() {
 	r.GET("/profile", auth.Auth(), ProfileEdit)
 	r.GET("/questions", auth.Auth(), QuestionsIndex)
 	r.GET("/matches", auth.Auth(), MatchesIndex)
+	r.GET("/friends", auth.Auth(), FriendsIndex)
 	r.GET("/comments/:record_id", auth.Auth(), CommentShow)
 	r.GET("/likes/:record_id", auth.Auth(), LikeShow)
 	r.GET("/posts/:record_id", auth.Auth(), PostShow)
@@ -185,6 +189,7 @@ func createMyRender() multitemplate.Render {
 	r.AddFromFiles("hashtags", base, root+"/hashtags.html")
 	r.AddFromFiles("login", base, root+"/login.html")
 	r.AddFromFiles("matches", base, root+"/matches.html")
+	r.AddFromFiles("friends", base, root+"/friends.html")
 	r.AddFromFiles("post", base, root+"/post.html")
 	r.AddFromFiles("profile_edit", base, root+"/profile_edit.html")
 	r.AddFromFiles("profile_show", base, root+"/profile_show.html")
