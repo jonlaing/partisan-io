@@ -6,12 +6,19 @@ import (
 	"partisan/auth"
 	"partisan/dao"
 	"partisan/db"
+	"partisan/matcher"
 	m "partisan/models"
 	"strconv"
 	"time"
 
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
+
+// FriendResp is the JSON schema we respond with
+type FriendResp struct {
+	User  m.User  `json:"user"`
+	Match float64 `json:"match"`
+}
 
 // FriendshipIndex returns all friends as a slice of m.User (in JSON)
 func FriendshipIndex(c *gin.Context) {
@@ -25,7 +32,17 @@ func FriendshipIndex(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, friends)
+	var friendships []FriendResp
+	for _, f := range friends {
+		if match, err := matcher.Match(user.PoliticalMap, f.PoliticalMap); err != nil {
+			fmt.Println(err)
+		} else {
+			match = float64(int(match*1000)) / 10
+			friendships = append(friendships, FriendResp{User: f, Match: match})
+		}
+	}
+
+	c.JSON(http.StatusOK, friendships)
 }
 
 // FriendshipShow shows a friendship

@@ -4,7 +4,8 @@ import BaseStore from './BaseStore';
 import assign from 'object-assign';
 
 // data storage
-let _friends = [];
+let _friends = []; // holds data for "Friender" button
+let _friendships = []; // holds data for Friend List
 
 // add private functions to modify data
 function addFriend(id, friendship) {
@@ -14,6 +15,10 @@ function addFriend(id, friendship) {
 // Facebook style store creation.
 const FriendsStore = assign({}, BaseStore, {
   // public methods used by Controller-View to operate on data
+  getAll() {
+    return { friendships: _friendships };
+  },
+
   getFriend(id) {
     let friendship = _friends[id];
     if(friendship !== undefined) {
@@ -28,6 +33,12 @@ const FriendsStore = assign({}, BaseStore, {
     let action = payload.action;
 
     switch(action.type) {
+      case Constants.ActionTypes.GET_FRIENDSHIPS_SUCCESS:
+        if(action.data) {
+          _friendships = action.data;
+          FriendsStore.emitChange();
+        }
+        break;
       case Constants.ActionTypes.GET_FRIENDSHIP_SUCCESS:
         if(action.data.friendship) {
           addFriend(action.data.id, action.data.friendship);

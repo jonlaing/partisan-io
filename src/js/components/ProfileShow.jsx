@@ -6,7 +6,7 @@ import FeedActionCreator from '../actions/FeedActionCreator.js';
 import FeedStore from '../stores/FeedStore.js';
 
 import FeedList from './FeedList.jsx';
-import Friend from './Friend.jsx';
+import Friender from './Friender.jsx';
 import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
 import FlagForm from './FlagForm.jsx';
@@ -81,7 +81,7 @@ export default React.createClass({
           </aside>
           <article>
             <div>
-              <Friend id={this.props.user.id} username={this.props.user.username} />
+              <Friender id={this.props.user.id} username={this.props.user.username} />
             </div>
             <FeedList feed={this.state.feed} />
           </article>

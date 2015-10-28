@@ -1,7 +1,5 @@
 import React from 'react/addons';
 
-import Icon from 'react-fontawesome';
-
 import FeedActionCreator from '../actions/FeedActionCreator.js';
 import FeedStore from '../stores/FeedStore.js';
 
@@ -12,6 +10,7 @@ import FlagForm from './FlagForm.jsx';
 import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
 import MiniMatcher from './MiniMatcher.jsx';
+import NoFriends from './NoFriends.jsx';
 
 export default React.createClass({
   getInitialState() {
@@ -38,13 +37,7 @@ export default React.createClass({
 
 
     if(this.state.noFriends === true) {
-      noFriends = (
-        <div className="feed-nothing">
-          <h3>You don't have any friends! <Icon name="frown-o"/></h3>
-          <div>Well, at least not on Partisan. To find friends check out your matches, where we'll find people you'll probably vibe with</div>
-          <a className="button" href="/matches">Find Matches</a>
-        </div>
-      );
+      noFriends = <NoFriends />;
     }
 
     return (

@@ -1,19 +1,19 @@
 import React from 'react';
 
-import formatter from '../utils/formatter';
 
 import MatchesActionCreator from '../actions/MatchesActionCreator';
 import MatchesStore from '../stores/MatchesStore';
 
 import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
+import Match from './Match.jsx';
 
 export default React.createClass({
   getInitialState() {
     return {matches: []};
   },
 
-  handleAvatarClick(username) {
+  handleMatchClick(username) {
     return () => {
       window.location.href = '/profiles/' + username;
     };
@@ -34,20 +34,8 @@ export default React.createClass({
 
     matches = this.state.matches.map(function(match, i) {
       return (
-        <li key={i} onClick={self.handleAvatarClick(match.user.username)}>
-          <div>
-            <div className="matchlist-avatar">
-              <img src={formatter.avatarUrl(match.user.avatar_thumbnail_url)} className="user-avatar" />
-            </div>
-            <div>
-              <div className="matchlist-user">
-                <a href={"profiles/" + match.user.username}>@{match.user.username}</a>
-              </div>
-              <div className="matchlist-info">{formatter.age(match.user.birthdate)}&nbsp;-&nbsp;{match.user.gender}</div>
-              <div className="matchlist-location">{formatter.cityState(match.user.location)}</div>
-              <div className="matchlist-match">{formatter.match(match.match)}</div>
-            </div>
-          </div>
+        <li key={i} onClick={self.handleMatchClick(match.user.username)}>
+          <Match user={match.user} match={match.match} />
         </li>
       );
     });

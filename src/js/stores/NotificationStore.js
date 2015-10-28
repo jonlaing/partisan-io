@@ -34,13 +34,19 @@ const NotificationStore = assign({}, BaseStore, {
         let count = action.data;
 
         if (count !== _notificationCount) {
-          // TODO: Make this better!
-          if(count > 0) {
-            $('title').text('My Feed (' + count + ')');
-          } else {
-            $('title').text('My Feed');
+          let titleMatch = $('title').text().match(/([a-zA-Z\s]+)/);
+          var title;
+
+          if(titleMatch.length > 0) {
+            title = titleMatch[1];
+
+            if(count > 0) {
+              $('title').text(title + ' (' + count + ')');
+            } else {
+              $('title').text(title);
+            }
+            _notificationCount = count;
           }
-          _notificationCount = count;
           NotificationStore.emitChange();
         }
         break;

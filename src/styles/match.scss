@@ -1,0 +1,45 @@
+.match {
+  @include clearfix();
+  @include rounded-corners();
+  @include box-shadow();
+  background: white;
+  padding: $line-height;
+  border: 0 solid $action-color;
+  transition: all 0.3s ease;
+
+  &:hover {
+    @include box-shadow(4px, 6px);
+    border-width: 0 0 4px;
+    margin-bottom: -4px;
+  }
+
+  .match-avatar {
+    @include avatar($line-height * 7);
+  }
+
+  .match-location, .match-info {
+    font-size: 0.85em;
+  }
+
+  .match-match {
+    margin: $line-height*2 0 0;
+    font-size: 1.5em;
+    font-weight: 200;
+
+    // .high {
+    //   color: $success;
+    // }
+
+    // .med {
+    //   color: $alert;
+    // }
+
+    // .low {
+    //   color: $danger;
+    // }
+  }
+
+  .match-user {
+    font-weight: bold;
+  }
+}

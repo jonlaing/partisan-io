@@ -2,6 +2,23 @@ import Dispatcher from '../Dispatcher';
 import Constants from '../Constants';
 
 export default {
+  getAll() {
+    $.ajax({
+      url: Constants.APIROOT + '/friendships/',
+      method: 'GET',
+      dataType: 'json'
+    })
+      .done(function(res) {
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.GET_FRIENDSHIPS_SUCCESS,
+          data: res
+        });
+      })
+      .fail(function(res) {
+        console.log(res);
+      });
+  },
+
   getFriendship(friendID) {
     $.ajax({
       url: Constants.APIROOT + '/friendships/' + friendID,

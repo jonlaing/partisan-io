@@ -2195,6 +2195,12 @@ header {
 
 .feed {
   opacity: 1; }
+  .feed .friends-none {
+    padding: 32px;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px; }
+    .feed .friends-none .button {
+      margin-top: 16px; }
 
 .feed-enter {
   opacity: 0;
@@ -2207,13 +2213,6 @@ header {
   transition: opacity 0.3s ease; }
   .feed-leave.feed-leave-active {
     opacity: 0; }
-
-.feed-nothing {
-  padding: 32px;
-  border: 1px solid #d9d9d9;
-  border-radius: 2px; }
-  .feed-nothing .button {
-    margin-top: 16px; }
 
 .card {
   border-radius: 2px;
@@ -2967,42 +2966,6 @@ button.like {
     padding: 16px;
     width: 33%;
     cursor: pointer; }
-    .matchlist li > div {
-      border-radius: 2px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
-      background: white;
-      padding: 16px;
-      border: 0 solid #d215b3;
-      transition: all 0.3s ease; }
-      .matchlist li > div:after {
-        visibility: hidden;
-        display: block;
-        font-size: 0;
-        content: " ";
-        clear: both;
-        height: 0; }
-      .matchlist li > div:hover {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
-        border-width: 0 0 4px;
-        margin-bottom: -4px; }
-    .matchlist li .matchlist-avatar {
-      width: 112px;
-      height: 112px;
-      overflow: hidden;
-      text-align: center;
-      margin-right: 16px;
-      float: left; }
-      .matchlist li .matchlist-avatar .user-avatar {
-        height: 112px;
-        object-fit: cover; }
-  .matchlist .matchlist-location, .matchlist .matchlist-info {
-    font-size: 0.85em; }
-  .matchlist .matchlist-match {
-    margin: 32px 0 0;
-    font-size: 1.5em;
-    font-weight: 200; }
-  .matchlist .matchlist-user {
-    font-weight: bold; }
 
 .matchlist-small {
   position: relative;
@@ -3055,6 +3018,43 @@ button.like {
     width: 100%; }
     .matchlist-small .more .button {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); }
+
+.match {
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  background: white;
+  padding: 16px;
+  border: 0 solid #d215b3;
+  transition: all 0.3s ease; }
+  .match:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0; }
+  .match:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+    border-width: 0 0 4px;
+    margin-bottom: -4px; }
+  .match .match-avatar {
+    width: 112px;
+    height: 112px;
+    overflow: hidden;
+    text-align: center;
+    margin-right: 16px;
+    float: left; }
+    .match .match-avatar .user-avatar {
+      height: 112px;
+      object-fit: cover; }
+  .match .match-location, .match .match-info {
+    font-size: 0.85em; }
+  .match .match-match {
+    margin: 32px 0 0;
+    font-size: 1.5em;
+    font-weight: 200; }
+  .match .match-user {
+    font-weight: bold; }
 
 .jumbotron .jumbotron-content {
   text-align: center; }
@@ -3126,3 +3126,21 @@ button.like {
 
 .benefits > div:last-child {
   background: #ffb860; }
+
+.friendlist {
+  list-style: none;
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+  -webkit-flex-wrap: wrap; }
+  .friendlist li {
+    padding: 16px;
+    width: 33%;
+    cursor: pointer; }
+
+.friends .friends-none {
+  padding: 32px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px; }
+  .friends .friends-none .button {
+    margin-top: 16px; }

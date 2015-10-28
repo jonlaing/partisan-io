@@ -14,7 +14,7 @@ func Friends(u m.User, confirmed bool, db *gorm.DB) ([]m.User, error) {
 	}
 
 	users := []m.User{}
-	db.Where(friendIDs).Find(&users)
+	db.Where(friendIDs).Order("username asc").Find(&users)
 	return users, nil
 }
 

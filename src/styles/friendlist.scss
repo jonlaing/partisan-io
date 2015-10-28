@@ -1,0 +1,29 @@
+.friendlist {
+  list-style: none;
+  display: flex;
+  display: -webkit-flex;
+
+  flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+
+  li {
+    padding: $line-height;
+    width: 33%;
+    cursor: pointer;
+
+  }
+}
+
+.friends {
+
+  .friends-none {
+    padding: $line-height*2;
+    border: 1px solid $light-grey;
+    @include rounded-corners();
+
+    .button {
+      margin-top: $line-height;
+    }
+  }
+
+}

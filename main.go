@@ -71,6 +71,7 @@ func main() {
 		friends := r.Group(v1Root + "/friendships")
 		friends.Use(auth.Auth())
 		{
+			friends.GET("/", api.FriendshipIndex)
 			friends.POST("/", api.FriendshipCreate)
 			friends.GET("/:friend_id", api.FriendshipShow)
 			friends.PATCH("/", api.FriendshipConfirm)

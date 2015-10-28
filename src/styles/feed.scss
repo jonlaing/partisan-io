@@ -1,5 +1,15 @@
 .feed {
   opacity: 1;
+
+  .friends-none {
+    padding: $line-height*2;
+    border: 1px solid $light-grey;
+    @include rounded-corners();
+
+    .button {
+      margin-top: $line-height;
+    }
+  }
 }
 
 .feed-enter {
@@ -20,12 +30,3 @@
   }
 }
 
-.feed-nothing {
-  padding: $line-height*2;
-  border: 1px solid $light-grey;
-  @include rounded-corners();
-
-  .button {
-    margin-top: $line-height;
-  }
-}
