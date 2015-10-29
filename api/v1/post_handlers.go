@@ -3,11 +3,12 @@ package v1
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // PostResponse is the response schema
@@ -41,13 +42,6 @@ func PostsIndex(c *gin.Context) {
 
 // PostsCreate create a post
 func PostsCreate(c *gin.Context) {
-	// type conversion from getting user from context can cause panic
-	defer func() {
-		if r := recover(); r != nil {
-			c.AbortWithStatus(http.StatusInternalServerError)
-		}
-	}()
-
 	db := db.GetDB(c)
 
 	user, err := auth.CurrentUser(c)

@@ -73,7 +73,19 @@
 }
 
 .post-composer-usernames {
-  position: absolute;
-  background: white;
-  @include box-shadow();
+  @include breakout();
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      padding: $line-height/2;
+
+      &.selected {
+        background: $lighter-grey;
+      }
+    }
+  }
 }

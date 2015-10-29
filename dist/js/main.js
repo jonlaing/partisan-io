@@ -40326,6 +40326,7 @@ var _storesPostComposerStore = require('../stores/PostComposerStore');
 
 var _storesPostComposerStore2 = _interopRequireDefault(_storesPostComposerStore);
 
+var BACKSPACE = 8;
 var TAB = 9;
 var UP = 38;
 var DOWN = 40;
@@ -40387,6 +40388,9 @@ exports['default'] = _react2['default'].createClass({
 
     if (this.state.usernameSuggestions.length > 0) {
       switch (e.keyCode) {
+        case BACKSPACE:
+          this.setState({ usernameIndex: -1 });
+          break;
         case TAB:
           e.preventDefault();
           newBody = e.target.value.replace(/@[a-zA-Z0-9_]+$/, "@" + this.state.usernameSuggestions[this.state.usernameIndex]);
@@ -40395,8 +40399,6 @@ exports['default'] = _react2['default'].createClass({
         case DOWN:
           e.preventDefault();
           index = this.state.usernameIndex + 1;
-
-          console.log(index);
 
           if (index < this.state.usernameSuggestions.length) {
             this.setState({ usernameIndex: index });
@@ -40407,8 +40409,6 @@ exports['default'] = _react2['default'].createClass({
         case UP:
           e.preventDefault();
           index = this.state.usernameIndex - 1;
-
-          console.log(index);
 
           if (index >= 0) {
             this.setState({ usernameIndex: index });
@@ -40437,7 +40437,7 @@ exports['default'] = _react2['default'].createClass({
   render: function render() {
     var _this = this;
 
-    var imageUploader, usernameList;
+    var imageUploader, usernameList, usernameListContainer;
 
     if (this.state.showImageUploader === true) {
       imageUploader = _react2['default'].createElement(
@@ -40466,15 +40466,37 @@ exports['default'] = _react2['default'].createClass({
       );
     }
 
-    usernameList = this.state.usernameSuggestions.map(function (suggestion) {
+    usernameList = this.state.usernameSuggestions.map(function (suggestion, i) {
+      var selected = _this.state.usernameIndex === i;
       return _react2['default'].createElement(
         'li',
-        { key: suggestion, onClick: _this.handleSuggestionClick },
+        { key: suggestion, onClick: _this.handleSuggestionClick, className: selected ? "selected" : "" },
         ' ',
         suggestion,
         ' '
       );
     });
+
+    if (usernameList.length > 0) {
+      usernameListContainer = _react2['default'].createElement(
+        'div',
+        { className: 'post-composer-usernames' },
+        _react2['default'].createElement(
+          'div',
+          { className: 'breakout-arrow' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'breakout-arrow-inner' },
+            ' '
+          )
+        ),
+        _react2['default'].createElement(
+          'ul',
+          null,
+          usernameList
+        )
+      );
+    }
 
     return _react2['default'].createElement(
       'div',
@@ -40498,15 +40520,7 @@ exports['default'] = _react2['default'].createClass({
           'Post'
         )
       ),
-      _react2['default'].createElement(
-        'div',
-        { className: 'post-composer-usernames' },
-        _react2['default'].createElement(
-          'ul',
-          null,
-          usernameList
-        )
-      )
+      usernameListContainer
     );
   },
 

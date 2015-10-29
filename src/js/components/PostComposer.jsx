@@ -7,6 +7,7 @@ import Icon from 'react-fontawesome';
 import PostActionCreator from '../actions/PostActionCreator';
 import PostComposerStore from '../stores/PostComposerStore';
 
+const BACKSPACE = 8;
 const TAB = 9;
 const UP = 38;
 const DOWN = 40;
@@ -66,6 +67,9 @@ export default React.createClass({
 
     if(this.state.usernameSuggestions.length > 0) {
       switch(e.keyCode) {
+      case BACKSPACE:
+        this.setState({usernameIndex: -1});
+        break;
       case TAB:
         e.preventDefault();
         newBody = e.target.value.replace(/@[a-zA-Z0-9_]+$/, "@" + this.state.usernameSuggestions[this.state.usernameIndex]);
@@ -74,8 +78,6 @@ export default React.createClass({
       case DOWN:
         e.preventDefault();
         index = this.state.usernameIndex + 1;
-
-        console.log(index);
 
         if(index < this.state.usernameSuggestions.length) {
           this.setState({usernameIndex: index});
@@ -86,8 +88,6 @@ export default React.createClass({
       case UP:
         e.preventDefault();
         index = this.state.usernameIndex - 1;
-
-        console.log(index);
 
         if(index >= 0) {
           this.setState({usernameIndex: index});
@@ -114,7 +114,7 @@ export default React.createClass({
   },
 
   render() {
-    var imageUploader, usernameList;
+    var imageUploader, usernameList, usernameListContainer;
 
     if(this.state.showImageUploader === true) {
       imageUploader = (
@@ -141,7 +141,23 @@ export default React.createClass({
       );
     }
 
-    usernameList = this.state.usernameSuggestions.map((suggestion) => <li key={suggestion} onClick={this.handleSuggestionClick}> {suggestion} </li> );
+    usernameList = this.state.usernameSuggestions.map((suggestion, i) => {
+      let selected = this.state.usernameIndex === i;
+      return <li key={suggestion} onClick={this.handleSuggestionClick} className={selected ? "selected" : ""}> {suggestion} </li>;
+    });
+
+    if(usernameList.length > 0) {
+      usernameListContainer = (
+        <div className="post-composer-usernames">
+          <div className="breakout-arrow">
+            <div className="breakout-arrow-inner">&nbsp;</div>
+          </div>
+          <ul>
+            {usernameList}
+          </ul>
+        </div>
+      );
+    }
 
     return (
       <div className="post-composer">
@@ -154,11 +170,7 @@ export default React.createClass({
           </div>
           <button className="button" onClick={this.handleCreate}>Post</button>
         </div>
-        <div className="post-composer-usernames">
-          <ul>
-            {usernameList}
-          </ul>
-        </div>
+        {usernameListContainer}
       </div>
     );
   },

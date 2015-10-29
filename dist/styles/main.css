@@ -2287,7 +2287,34 @@ header {
 .post-composer-usernames {
   position: absolute;
   background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25); }
+  padding: 16px;
+  padding-left: 8px;
+  z-index: 2;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 2px; }
+  .post-composer-usernames .breakout-arrow {
+    position: absolute;
+    overflow: hidden;
+    height: 11.5px;
+    width: 23px;
+    top: -11.5px;
+    left: 16px; }
+    .post-composer-usernames .breakout-arrow div {
+      width: 16px;
+      height: 16px;
+      background: white;
+      border: 1px solid #d9d9d9;
+      transform: rotate(45deg) translateX(4px) translateY(1px);
+      -webkit-transform: rotate(45deg) translateX(4px) translateY(1px); }
+  .post-composer-usernames ul {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    .post-composer-usernames ul li {
+      padding: 8px; }
+      .post-composer-usernames ul li.selected {
+        background: #f2f2f2; }
 
 .post {
   position: relative; }
