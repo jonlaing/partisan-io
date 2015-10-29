@@ -41248,7 +41248,7 @@ exports['default'] = _reactAddons2['default'].createClass({
         _reactAddons2['default'].createElement(
           'div',
           { className: 'right' },
-          _reactAddons2['default'].createElement(_UserSessionJsx2['default'], { username: this.props.data.user.username })
+          _reactAddons2['default'].createElement(_UserSessionJsx2['default'], { username: this.props.data.user.username, avatar: this.props.data.user.avatar_thumbnail_url })
         ),
         _reactAddons2['default'].createElement('img', { src: 'images/logo.svg', className: 'logo' })
       ),
@@ -41299,6 +41299,17 @@ exports['default'] = _reactAddons2['default'].createClass({
           '. This is how we determine',
           _reactAddons2['default'].createElement('br', null),
           'your beliefs and match you up with similar people.'
+        ),
+        _reactAddons2['default'].createElement('br', null),
+        _reactAddons2['default'].createElement('br', null),
+        _reactAddons2['default'].createElement(
+          'div',
+          { className: 'text-center' },
+          _reactAddons2['default'].createElement(
+            'button',
+            { onClick: this.handleModalClose },
+            'Get Started'
+          )
         )
       )
     );

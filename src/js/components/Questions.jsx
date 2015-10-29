@@ -47,7 +47,7 @@ export default React.createClass({
       <div className="question">
         <div className="clearfix">
           <div className="right">
-            <UserSession username={this.props.data.user.username} />
+            <UserSession username={this.props.data.user.username} avatar={this.props.data.user.avatar_thumbnail_url} />
           </div>
           <img src="images/logo.svg" className="logo" />
         </div>
@@ -64,7 +64,12 @@ export default React.createClass({
         </div>
         <Modal show={this.state.showModal} onCloseClick={this.handleModalClose} >
           <h2>Answer Questions</h2>
-          <div>You're about to be presented with <strong>20 questions</strong>. This is how we determine<br/>your beliefs and match you up with similar people.</div>
+          <div>You&apos;re about to be presented with <strong>20 questions</strong>. This is how we determine<br/>your beliefs and match you up with similar people.</div>
+          <br/>
+          <br/>
+          <div className="text-center">
+            <button onClick={this.handleModalClose} >Get Started</button>
+          </div>
         </Modal>
       </div>
     );
