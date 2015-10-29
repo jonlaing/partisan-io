@@ -12,8 +12,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/mitchellh/goamz/aws"
-	"github.com/mitchellh/goamz/s3"
+	"partisan/Godeps/_workspace/src/github.com/mitchellh/goamz/aws"
+	"partisan/Godeps/_workspace/src/github.com/mitchellh/goamz/s3"
 
 	"partisan/Godeps/_workspace/src/github.com/nfnt/resize"
 	"partisan/Godeps/_workspace/src/github.com/oliamb/cutter"
