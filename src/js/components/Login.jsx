@@ -14,7 +14,8 @@ export default React.createClass({
     return {error: "", success: false };
   },
 
-  handleLogin() {
+  handleLogin(e) {
+    e.preventDefault();
     let email = $(React.findDOMNode(this.refs.email)).val();
     let password = $(React.findDOMNode(this.refs.password)).val();
     LoginActionCreator.login(email, password);
@@ -49,17 +50,19 @@ export default React.createClass({
         <ReactCSSTransitionGroup transitionName="login-error">
           {error}
         </ReactCSSTransitionGroup>
-        <div>
-          <input type="text" placeholder="you@email.com" ref="email" />
-        </div>
-        <div>
-          <input type="password" placeholder="Password" ref="password" />
-        </div>
+        <form onSubmit={this.handleLogin}>
+          <div>
+            <input type="text" placeholder="you@email.com" ref="email" />
+          </div>
+          <div>
+            <input type="password" placeholder="Password" ref="password" />
+          </div>
 
-        <div className="right">
-          <a href="/signup">Sign Up</a>
-        </div>
-        <button onClick={this.handleLogin}>Login</button>
+          <div className="right">
+            <a href="/signup">Sign Up</a>
+          </div>
+          <button onClick={this.handleLogin}>Login</button>
+        </form>
       </div>
     );
   },

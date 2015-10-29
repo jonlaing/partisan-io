@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"os"
 	api "partisan/api/v1"
 	"partisan/auth"
@@ -23,9 +24,9 @@ func main() {
 	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
 	r.Use(sessions.Sessions("partisan-io", store))
 	r.Use(db.DB())
-	r.Use(gin.BasicAuth(gin.Accounts{
-		"partisan-basic": "antistate123",
-	}))
+	// r.Use(gin.BasicAuth(gin.Accounts{
+	// 	"partisan-basic": "antistate123",
+	// }))
 
 	v1Root := "api/v1"
 
@@ -37,18 +38,18 @@ func main() {
 		r.GET(v1Root+"/logout", api.LogoutHandler)
 
 		feed := r.Group(v1Root + "/feed")
-		feed.Use(auth.Auth())
+		feed.Use(auth.Auth("/login"))
 		{
 			feed.GET("/", api.FeedIndex)
 			feed.GET("/:user_id", api.FeedShow)
 		}
 
 		users := r.Group(v1Root + "/users")
-		users.Use(auth.Auth())
+		users.Use(auth.Auth("/login"))
 		{
 			r.POST(v1Root+"/users", api.UserCreate)
 			r.GET(v1Root+"/user/check_unique", api.UserCheckUnique)
-			r.GET(v1Root+"/username_suggest", auth.Auth(), api.UsernameSuggest)
+			r.GET(v1Root+"/username_suggest", auth.Auth("/login"), api.UsernameSuggest)
 			users.GET("/", api.UserShow) // Show Current User
 			users.PATCH("/", api.UserUpdate)
 			users.GET("/:user_id/match", api.UserMatch)
@@ -56,20 +57,20 @@ func main() {
 		}
 
 		profiles := r.Group(v1Root + "/profiles")
-		profiles.Use(auth.Auth())
+		profiles.Use(auth.Auth("/login"))
 		{
 			profiles.GET("/", api.ProfileShow)         // Show Current User's profile
 			profiles.GET("/:user_id", api.ProfileShow) // Show Other User's profile
 		}
 
 		profile := r.Group(v1Root + "/profile")
-		profile.Use(auth.Auth())
+		profile.Use(auth.Auth("/login"))
 		{
 			profile.PATCH("/", api.ProfileUpdate) // Update Current User's profile
 		}
 
 		friends := r.Group(v1Root + "/friendships")
-		friends.Use(auth.Auth())
+		friends.Use(auth.Auth("/login"))
 		{
 			friends.GET("/", api.FriendshipIndex)
 			friends.POST("/", api.FriendshipCreate)
@@ -79,19 +80,19 @@ func main() {
 		}
 
 		questions := r.Group(v1Root + "/questions")
-		questions.Use(auth.Auth())
+		questions.Use(auth.Auth("/login"))
 		{
 			questions.GET("/", QuestionShow)
 		}
 
 		answers := r.Group(v1Root + "/answers")
-		answers.Use(auth.Auth())
+		answers.Use(auth.Auth("/login"))
 		{
 			answers.PATCH("/", api.AnswersUpdate)
 		}
 
 		posts := r.Group(v1Root + "/posts")
-		posts.Use(auth.Auth())
+		posts.Use(auth.Auth("/login"))
 		{
 			posts.GET("/", api.PostsIndex)
 			posts.POST("/", api.PostsCreate)
@@ -109,7 +110,7 @@ func main() {
 		}
 
 		comments := r.Group(v1Root + "/comments")
-		comments.Use(auth.Auth())
+		comments.Use(auth.Auth("/login"))
 		{
 			comments.POST("/", api.CommentsCreate)
 			comments.GET("/:record_id/likes", api.LikeCount)
@@ -117,39 +118,39 @@ func main() {
 		}
 
 		matches := r.Group(v1Root + "/matches")
-		matches.Use(auth.Auth())
+		matches.Use(auth.Auth("/login"))
 		{
 			matches.GET("/", api.MatchesIndex)
 		}
 
 		notifications := r.Group(v1Root + "/notifications")
-		notifications.Use(auth.Auth())
+		notifications.Use(auth.Auth("/login"))
 		{
 			notifications.GET("/", api.NotificationsIndex)
 			notifications.PATCH("/", api.NotificationsRead)
 			notifications.GET("/count", api.NotificationsCount)
 		}
 
-		r.GET(v1Root+"/hashtags", auth.Auth(), api.HashtagShow)
+		r.GET(v1Root+"/hashtags", auth.Auth("/login"), api.HashtagShow)
 
-		r.POST(v1Root+"/flag", auth.Auth(), api.FlagCreate)
+		r.POST(v1Root+"/flag", auth.Auth("/login"), api.FlagCreate)
 
 	}
 
 	// HTML
 	r.HTMLRender = createMyRender()
 
-	r.GET("/profiles/:username", auth.Auth(), ProfileShow)
-	r.GET("/feed", auth.Auth(), FeedIndex)
-	r.GET("/profile", auth.Auth(), ProfileEdit)
-	r.GET("/questions", auth.Auth(), QuestionsIndex)
-	r.GET("/matches", auth.Auth(), MatchesIndex)
-	r.GET("/friends", auth.Auth(), FriendsIndex)
-	r.GET("/comments/:record_id", auth.Auth(), CommentShow)
-	r.GET("/likes/:record_id", auth.Auth(), LikeShow)
-	r.GET("/posts/:record_id", auth.Auth(), PostShow)
+	r.GET("/profiles/:username", auth.Auth("/login"), ProfileShow)
+	r.GET("/feed", auth.Auth("/login"), FeedIndex)
+	r.GET("/profile", auth.Auth("/login"), ProfileEdit)
+	r.GET("/questions", auth.Auth("/login"), QuestionsIndex)
+	r.GET("/matches", auth.Auth("/login"), MatchesIndex)
+	r.GET("/friends", auth.Auth("/login"), FriendsIndex)
+	r.GET("/comments/:record_id", auth.Auth("/login"), CommentShow)
+	r.GET("/likes/:record_id", auth.Auth("/login"), LikeShow)
+	r.GET("/posts/:record_id", auth.Auth("/login"), PostShow)
 
-	r.GET("/hashtags", auth.Auth(), HashtagShow)
+	r.GET("/hashtags", auth.Auth("/login"), HashtagShow)
 
 	r.GET("/login", Login)
 	r.GET("/signup", SignUp)
@@ -157,7 +158,17 @@ func main() {
 	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))
 	r.Use(static.Serve("/", static.LocalFile("dist", false)))
 
-	r.StaticFile("/", "dist/index.html")
+	// homepage
+	r.GET("/", func(c *gin.Context) {
+		sess := sessions.Default(c)
+
+		if sess.Get("user_id") != nil {
+			c.Redirect(http.StatusFound, "/feed")
+			return
+		}
+
+		c.File("dist/index.html")
+	})
 
 	// DON'T DO THIS IN PROD!!!
 	db.Database.AutoMigrate(

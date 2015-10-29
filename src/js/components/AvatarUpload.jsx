@@ -1,6 +1,8 @@
 import React from 'react';
 
+import Icon from 'react-fontawesome';
 import Dropzone from 'react-dropzone';
+
 import AvatarActionCreator from '../actions/AvatarActionCreator';
 import AvatarStore from '../stores/AvatarStore';
 
@@ -38,7 +40,7 @@ export default React.createClass({
     }
 
     return (
-      <div>
+      <div className="avatar-uploader">
         {content}
       </div>
     );
@@ -46,10 +48,10 @@ export default React.createClass({
 
   _dropTemplate() {
     return (
-      <Dropzone multiple={false} onDrop={this.handleDrop}>
-        <div className="text-center">
-          Drop files here <br/>
-          Or click here to browse
+      <Dropzone multiple={false} onDrop={this.handleDrop} className="dropzone" activeClassName="dropzone-active">
+        <div>
+          <Icon name="download" />
+          <span className="help-text">Drag image here, or click to browse</span>
         </div>
       </Dropzone>
     );
@@ -58,7 +60,8 @@ export default React.createClass({
   _previewTemplate() {
     return (
       <div>
-        Uploading ...
+        <i className="fa fa-circle-o-notch fa-spin"></i>
+        &nbsp;Uploading&hellip;
       </div>
     );
   },

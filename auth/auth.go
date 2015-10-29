@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	jwt "partisan/Godeps/_workspace/src/github.com/dgrijalva/jwt-go"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/sessions"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/github.com/gorilla/securecookie"
 	"partisan/db"
 	m "partisan/models"
 	"strconv"
 	"time"
+
+	jwt "partisan/Godeps/_workspace/src/github.com/dgrijalva/jwt-go"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/sessions"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/gorilla/securecookie"
 )
 
 const (
@@ -46,7 +47,7 @@ type LoginJSON struct {
 var store = sessions.NewCookieStore(securecookie.GenerateRandomKey(16))
 
 // Auth is the authentication middleware
-func Auth() gin.HandlerFunc {
+func Auth(redirectPath string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sess := sessions.Default(c)
 		tokn, okTok := c.Request.Header["X-Auth-Token"]
@@ -73,7 +74,7 @@ func Auth() gin.HandlerFunc {
 			// apiKey = fmt.Sprintf("%s", token.Claims["api_key"])
 		} else {
 			if sess.Get("user_id") == nil {
-				c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("No session"))
+				c.Redirect(http.StatusFound, redirectPath)
 				return
 			}
 

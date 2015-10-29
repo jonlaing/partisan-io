@@ -1,0 +1,29 @@
+.avatar-uploader {
+  .dropzone {
+    display: flex;
+    display: -webkit-flex;
+    width: $line-height*7;
+    height: $line-height*7;
+    align-items: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -webkit-justify-content: center;
+    padding: $line-height;
+
+    background: $grey;
+    color: white;
+    font-size: $line-height*2;
+    cursor: pointer;
+    @include rounded-corners();
+    transition: all 0.3s ease;
+
+    &.dropzone-active {
+      background: $grey;
+    }
+
+    span.help-text {
+      display: block;
+      font-size: 12px;
+    }
+  }
+}

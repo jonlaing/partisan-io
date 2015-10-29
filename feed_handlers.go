@@ -15,7 +15,7 @@ func FeedIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		c.Redirect(http.StatusUnauthorized, "/login")
 		return
 	}
 

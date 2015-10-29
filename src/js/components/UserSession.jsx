@@ -12,7 +12,7 @@ export default React.createClass({
 
   handleLogout() {
     LoginActionCreator.logout();
-    window.location.href = "/login.html";
+    window.location.href = "/login";
   },
 
   handleDropdown() {

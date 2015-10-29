@@ -37976,6 +37976,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactFontawesome = require('react-fontawesome');
+
+var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
+
 var _reactDropzone = require('react-dropzone');
 
 var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
@@ -38025,7 +38029,7 @@ exports['default'] = _react2['default'].createClass({
 
     return _react2['default'].createElement(
       'div',
-      null,
+      { className: 'avatar-uploader' },
       content
     );
   },
@@ -38033,13 +38037,16 @@ exports['default'] = _react2['default'].createClass({
   _dropTemplate: function _dropTemplate() {
     return _react2['default'].createElement(
       _reactDropzone2['default'],
-      { multiple: false, onDrop: this.handleDrop },
+      { multiple: false, onDrop: this.handleDrop, className: 'dropzone', activeClassName: 'dropzone-active' },
       _react2['default'].createElement(
         'div',
-        { className: 'text-center' },
-        'Drop files here ',
-        _react2['default'].createElement('br', null),
-        'Or click here to browse'
+        null,
+        _react2['default'].createElement(_reactFontawesome2['default'], { name: 'download' }),
+        _react2['default'].createElement(
+          'span',
+          { className: 'help-text' },
+          'Drag image here, or click to browse'
+        )
       )
     );
   },
@@ -38048,7 +38055,8 @@ exports['default'] = _react2['default'].createClass({
     return _react2['default'].createElement(
       'div',
       null,
-      'Uploading ...'
+      _react2['default'].createElement('i', { className: 'fa fa-circle-o-notch fa-spin' }),
+      ' Uploading…'
     );
   },
 
@@ -38060,7 +38068,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":238,"react":187,"react-dropzone":11}],206:[function(require,module,exports){
+},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":238,"react":187,"react-dropzone":11,"react-fontawesome":13}],206:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -39240,7 +39248,8 @@ exports['default'] = _reactAddons2['default'].createClass({
     return { error: "", success: false };
   },
 
-  handleLogin: function handleLogin() {
+  handleLogin: function handleLogin(e) {
+    e.preventDefault();
     var email = $(_reactAddons2['default'].findDOMNode(this.refs.email)).val();
     var password = $(_reactAddons2['default'].findDOMNode(this.refs.password)).val();
     _actionsLoginActionCreator2['default'].login(email, password);
@@ -39287,28 +39296,32 @@ exports['default'] = _reactAddons2['default'].createClass({
         error
       ),
       _reactAddons2['default'].createElement(
-        'div',
-        null,
-        _reactAddons2['default'].createElement('input', { type: 'text', placeholder: 'you@email.com', ref: 'email' })
-      ),
-      _reactAddons2['default'].createElement(
-        'div',
-        null,
-        _reactAddons2['default'].createElement('input', { type: 'password', placeholder: 'Password', ref: 'password' })
-      ),
-      _reactAddons2['default'].createElement(
-        'div',
-        { className: 'right' },
+        'form',
+        { onSubmit: this.handleLogin },
         _reactAddons2['default'].createElement(
-          'a',
-          { href: '/signup' },
-          'Sign Up'
+          'div',
+          null,
+          _reactAddons2['default'].createElement('input', { type: 'text', placeholder: 'you@email.com', ref: 'email' })
+        ),
+        _reactAddons2['default'].createElement(
+          'div',
+          null,
+          _reactAddons2['default'].createElement('input', { type: 'password', placeholder: 'Password', ref: 'password' })
+        ),
+        _reactAddons2['default'].createElement(
+          'div',
+          { className: 'right' },
+          _reactAddons2['default'].createElement(
+            'a',
+            { href: '/signup' },
+            'Sign Up'
+          )
+        ),
+        _reactAddons2['default'].createElement(
+          'button',
+          { onClick: this.handleLogin },
+          'Login'
         )
-      ),
-      _reactAddons2['default'].createElement(
-        'button',
-        { onClick: this.handleLogin },
-        'Login'
       )
     );
   },
@@ -41565,7 +41578,7 @@ exports['default'] = _react2['default'].createClass({
 
   handleLogout: function handleLogout() {
     _actionsLoginActionCreator2['default'].logout();
-    window.location.href = "/login.html";
+    window.location.href = "/login";
   },
 
   handleDropdown: function handleDropdown() {
