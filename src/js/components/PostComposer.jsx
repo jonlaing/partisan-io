@@ -7,6 +7,8 @@ import Icon from 'react-fontawesome';
 import PostActionCreator from '../actions/PostActionCreator';
 import PostComposerStore from '../stores/PostComposerStore';
 
+import Breakout from './Breakout.jsx';
+
 const BACKSPACE = 8;
 const TAB = 9;
 const UP = 38;
@@ -148,14 +150,11 @@ export default React.createClass({
 
     if(usernameList.length > 0) {
       usernameListContainer = (
-        <div className="post-composer-usernames">
-          <div className="breakout-arrow">
-            <div className="breakout-arrow-inner">&nbsp;</div>
-          </div>
+        <Breakout className="post-composer-usernames">
           <ul>
             {usernameList}
           </ul>
-        </div>
+        </Breakout>
       );
     }
 

@@ -64,14 +64,26 @@
     @if $arrow-position == "top left" {
       top: -#{$hypot/2}px;
       left: $line-height;
+      bottom: auto;
+      right: auto;
     } 
     @if $arrow-position == "top right" {
       top: -#{$hypot/2}px;
       right: $line-height;
+      bottom: auto;
+      left: auto;
+    } 
+    @if $arrow-position == "bottom left" {
+      bottom: -#{$hypot/2}px;
+      left: $line-height;
+      top: auto;
+      right: auto;
     } 
     @if $arrow-position == "bottom right" {
       bottom: -#{$hypot/2}px;
       right: $line-height;
+      top: auto;
+      left: auto;
     } 
 
     div {

@@ -6,6 +6,8 @@ import Icon from 'react-fontawesome';
 import NotificationActionCreator from '../actions/NotificationActionCreator';
 import NotificationStore from '../stores/NotificationStore';
 
+import Breakout from './Breakout.jsx';
+
 export default React.createClass({
   getInitialState() {
     return {count: 0, notifications: [], showList: false};
@@ -48,16 +50,11 @@ export default React.createClass({
 
     if(this.state.showList === true) {
       fullList = (
-        <div className="notification-list">
-          <div className="breakout-arrow">
-            <div className="breakout-arrow-inner">
-              &nbsp;
-            </div>
-          </div>
+        <Breakout className="notification-list">
           <ul>
             {list}
           </ul>
-        </div>
+        </Breakout>
       );
     }
 

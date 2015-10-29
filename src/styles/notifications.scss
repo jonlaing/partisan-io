@@ -18,7 +18,6 @@
 }
 
 .notification-list {
-  @include breakout();
   min-width: 300px;
   top: $line-height*2;
 

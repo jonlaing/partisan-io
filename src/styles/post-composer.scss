@@ -73,8 +73,6 @@
 }
 
 .post-composer-usernames {
-  @include breakout();
-
   ul {
     list-style: none;
     margin: 0;
