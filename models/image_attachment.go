@@ -1,10 +1,12 @@
 package models
 
 import (
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"os"
 	"partisan/db"
 	"partisan/imager"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // ImageAttachment is used to attach images to a Post (or something else, when we have it)
@@ -43,9 +45,19 @@ func AttachImage(c *gin.Context, r ImageAttacher) error {
 	if err := processor.Resize(1500); err != nil {
 		return err
 	}
-	path, err = processor.Save("/localfiles/img")
-	if err != nil {
-		return err
+
+	// check if we're using AWS
+	if len(os.Getenv("AWS_ACCESS_KEY_ID")) > 0 {
+		path, err = processor.Save("/img")
+		if err != nil {
+			return err
+		}
+	} else {
+		// if not, save locally
+		path, err = processor.Save("/localfiles/img")
+		if err != nil {
+			return err
+		}
 	}
 
 	a := ImageAttachment{

@@ -1,7 +1,9 @@
 package imager
 
 import (
+	"bytes"
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -9,6 +11,10 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+
+	"github.com/mitchellh/goamz/aws"
+	"github.com/mitchellh/goamz/s3"
+
 	"partisan/Godeps/_workspace/src/github.com/nfnt/resize"
 	"partisan/Godeps/_workspace/src/github.com/oliamb/cutter"
 )
@@ -56,7 +62,63 @@ func (i *ImageProcessor) Thumbnail(size int) (err error) {
 }
 
 // Save saves the new image in the specified path
-func (i *ImageProcessor) Save(path string) (newPath string, err error) {
+func (i *ImageProcessor) Save(path string) (string, error) {
+	newPath, err := i.saveS3(path)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		return newPath, nil
+	}
+
+	return i.saveLocal(path)
+}
+
+func (i *ImageProcessor) saveS3(path string) (string, error) {
+	bucketName := os.Getenv("AWS_S3_BUCKET")
+	if len(bucketName) == 0 {
+		return "", errors.New("AWS_S3_BUCKET not set")
+	}
+
+	auth, err := aws.EnvAuth()
+	if err != nil {
+		return "", err
+	}
+
+	client := s3.New(auth, aws.USWest2)
+	bucket := client.Bucket(bucketName)
+
+	fileName, err := i.FileName()
+	if err != nil {
+		return "", err
+	}
+
+	newPath := path + "/" + fileName
+
+	buf := new(bytes.Buffer)
+
+	switch i.fileType {
+	case "image/jpeg", "image/jpg":
+		err := jpeg.Encode(buf, i.Image, &jpeg.Options{Quality: 100})
+		if err != nil {
+			return "", err
+		}
+	case "image/png":
+		err := png.Encode(buf, i.Image)
+		if err != nil {
+			return "", err
+		}
+	default:
+		return "", fmt.Errorf("Unsupported image type: %s", i.fileType)
+	}
+
+	if err := bucket.Put(newPath, buf.Bytes(), i.fileType, s3.PublicReadWrite); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s/%s%s", aws.USWest2.S3Endpoint, bucketName, newPath), nil
+}
+
+func (i *ImageProcessor) saveLocal(path string) (newPath string, err error) {
 	fileName, err := i.FileName()
 	if err != nil {
 		return

@@ -1,9 +1,6 @@
 {
 	"ImportPath": "partisan",
 	"GoVersion": "go1.5",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/DeanThompson/ginpprof",
@@ -82,6 +79,14 @@
 			"Rev": "40e4aedc8fabf8c23e040057540867186712faa5"
 		},
 		{
+			"ImportPath": "github.com/mitchellh/goamz/aws",
+			"Rev": "caaaea8b30ee15616494ee68abd5d8ebbbef05cf"
+		},
+		{
+			"ImportPath": "github.com/mitchellh/goamz/s3",
+			"Rev": "caaaea8b30ee15616494ee68abd5d8ebbbef05cf"
+		},
+		{
 			"ImportPath": "github.com/nfnt/resize",
 			"Rev": "dc93e1b98c579d90ee2fa15c1fd6dac34f6e7899"
 		},
@@ -97,6 +102,10 @@
 		{
 			"ImportPath": "github.com/scorredoira/email",
 			"Rev": "a58300b9ee01193986251e7e4cc9bf441b2e82ba"
+		},
+		{
+			"ImportPath": "github.com/vaughan0/go-ini",
+			"Rev": "a98ad7ee00ec53921f08832bc06ecf7fd600e6a1"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/bcrypt",
