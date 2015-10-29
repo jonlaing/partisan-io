@@ -163,6 +163,7 @@ export default React.createClass({
       <div className="post-composer">
         <div className="post-composer-field">
           <textarea rows="1" placeholder="Write a new post" onFocus={this.handleFocus} onKeyDown={this.handleKeyDown} onChange={this.handleChange} ref="body"></textarea>
+          {usernameListContainer}
         </div>
         <div className="post-composer-actions">
           <div>
@@ -170,7 +171,6 @@ export default React.createClass({
           </div>
           <button className="button" onClick={this.handleCreate}>Post</button>
         </div>
-        {usernameListContainer}
       </div>
     );
   },

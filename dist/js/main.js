@@ -40504,7 +40504,8 @@ exports['default'] = _react2['default'].createClass({
       _react2['default'].createElement(
         'div',
         { className: 'post-composer-field' },
-        _react2['default'].createElement('textarea', { rows: '1', placeholder: 'Write a new post', onFocus: this.handleFocus, onKeyDown: this.handleKeyDown, onChange: this.handleChange, ref: 'body' })
+        _react2['default'].createElement('textarea', { rows: '1', placeholder: 'Write a new post', onFocus: this.handleFocus, onKeyDown: this.handleKeyDown, onChange: this.handleChange, ref: 'body' }),
+        usernameListContainer
       ),
       _react2['default'].createElement(
         'div',
@@ -40519,8 +40520,7 @@ exports['default'] = _react2['default'].createClass({
           { className: 'button', onClick: this.handleCreate },
           'Post'
         )
-      ),
-      usernameListContainer
+      )
     );
   },
 
