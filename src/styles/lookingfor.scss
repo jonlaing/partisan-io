@@ -4,6 +4,7 @@
     display: -webkit-flex;
   }
 
+
   label {
     display: block;
     margin: 0 $line-height;
@@ -11,6 +12,7 @@
     cursor: pointer;
     color: $light-grey;
     transition: color 0.3s ease;
+    font-size: 0.86em;
 
     i {
       font-size: 2em;

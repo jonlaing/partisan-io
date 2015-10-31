@@ -63,6 +63,10 @@ export default {
 
   // format for a User Summary
   userSummary(body) {
+    if(body === undefined || body.length < 1) {
+      return { __html: '<em>No Summary</em>' };
+    }
+
     let content = marked(body, {renderer: _markedRenderer} );
     content = _hashtagify(content);
     content = _tagify(content);
@@ -84,7 +88,8 @@ export default {
       return "No Age";
     }
 
-    return moment().diff(birthdate, 'years') + " years old";
+    // return moment().diff(birthdate, 'years') + " years old";
+    return moment().diff(birthdate, 'years') + "yrs";
   },
 
   avatarUrl(url) {

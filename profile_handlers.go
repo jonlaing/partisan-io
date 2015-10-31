@@ -34,6 +34,11 @@ func ProfileShow(c *gin.Context) {
 		return
 	}
 
+	if user.ID == currentUser.ID {
+		c.Redirect(http.StatusFound, "/feed")
+		return
+	}
+
 	profile := m.Profile{}
 	if err := db.Where("user_id = ?", user.ID).First(&profile).Error; err != nil {
 		c.AbortWithError(http.StatusNotFound, err)

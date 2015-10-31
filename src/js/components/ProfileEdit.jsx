@@ -97,6 +97,10 @@ export default React.createClass({
           <h2 className="profile-username">
             @{this.props.data.user.username}
           </h2>
+          <div className="profile-lookingfor">
+            <h3>Looking For:</h3>
+            <LookingForEdit lookingFor={this.state.profile.looking_for} onChange={this.handleLookingForChange}/>
+          </div>
           <ProfileInfoEditor
             location={this.state.user.location}
             gender={this.state.user.gender}
@@ -105,10 +109,6 @@ export default React.createClass({
             onLocationFinish={this.handleLocationFinish}
             onGenderFinish={this.handleGenderFinish}
             onBirthdateFinish={this.handleBirthdateFinish} />
-          <div className="profile-lookingfor">
-            <h3>Looking For</h3>
-            <LookingForEdit lookingFor={this.state.profile.looking_for} onChange={this.handleLookingForChange}/>
-          </div>
           <div className="profile-summary">
             {summary}
           </div>

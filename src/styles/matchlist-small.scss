@@ -1,7 +1,6 @@
 .matchlist-small {
   position: relative;
   padding: $line-height;
-  overflow-y: hidden;
   height: 100%;
 
   h3 {
@@ -51,8 +50,7 @@
   }
 
   .more {
-    position: absolute;
-    bottom: $line-height*2 + 72px;
+    margin-top: $line-height*2;
     text-align: center;
     width: 100%;
 

@@ -1,29 +1,16 @@
 .profile-edit-container, .profile-show-container {
+  background: $darker-grey;
+  @include rounded-corners();
   padding: $line-height;
   width: calc(100% - ($line-height * 2));
-  display: flex;
-  display: -webkit-flex;
-
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  
-  align-items: center;
-  -webkit-align-items: center;
-
-  text-align: center;
   color: white;
-
-  h3 {
-    font-size: $line-height * .87;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: normal;
-    text-align: center;
-  }
 }
 
 .profile-avatar-container {
-  text-align: center;
+  float: left;
+  margin-right: $line-height;
+  position: relative;
+  z-index: 2;
 }
 
 .profile-avatar {
@@ -60,7 +47,7 @@
 .profile-username {
   font-size: $line-height * 1.5;
   font-weight: 200;
-  margin-bottom: $line-height*2;
+  margin-top: $line-height/2;
 }
 
 .profile-info {
@@ -74,7 +61,10 @@
   align-items: center;
   -webkit-align-items: center;
 
-  margin-bottom: $line-height * 2;
+  padding: $line-height 0;
+
+
+  @include clearfix();
 
   a {
     color: white;
@@ -86,17 +76,37 @@
 
 .profile-lookingfor {
   margin-bottom: $line-height * 2;
+
+  h3 {
+    font-size: 0.86em;
+    color: $grey;
+    font-weight: normal;
+    margin-bottom: $line-height/2;
+  }
+
+  .lookingfor {
+    position: relative;
+    left: -$line-height;
+  }
 }
 
 .profile-summary {
-  margin-bottom: $line-height * 2;
+  margin: $line-height * 2 0;
   text-align: left;
   line-height: $line-height*1.2;
   width: 100%;
   color: $lighter-grey;
 
+  h3 {
+    font-size: $line-height * .87;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: normal;
+    text-align: center;
+  }
+
   .profile-summary-text {
-    padding: 0 $line-height $line-height*4;
+    padding: 0 $line-height;
   }
 
   p {
@@ -120,13 +130,17 @@
   cursor: pointer;
 }
 
+.profile-match-container {
+  text-align: center;
+}
+
 .profile-match {
   display: inline-block;
   box-sizing: content-box;
   font-size: $line-height*2;
   font-weight: 200;
   padding: $line-height;
-  margin-bottom: $line-height;
+  margin: 0 auto $line-height;
   background: lighten($darker-grey, 10%);
   @include rounded-corners();
 }

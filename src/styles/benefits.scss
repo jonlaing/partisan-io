@@ -1,7 +1,16 @@
 .benefits {
+  display: flex;
+  display: -webkit-flex;
+
   > div {
     background: rgb(172, 214, 211);
     padding: $line-height $line-height*2 $line-height*3;
+    margin-left: 4%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    -webkit-flex-grow: 1;
+    -webkit-flex-shrink: 1;
+    width: 33.3333%;
 
     > h3 {
       text-align: center;
@@ -26,6 +35,7 @@
   > div:first-child {
     background: $action-color;
     color: white;
+    margin-left: 0;
 
     h3 {
       color: white;

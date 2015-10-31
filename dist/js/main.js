@@ -39041,7 +39041,7 @@ exports['default'] = _react2['default'].createClass({
       { className: 'friends' },
       _react2['default'].createElement(
         'header',
-        null,
+        { className: 'header' },
         _react2['default'].createElement(_UserSessionJsx2['default'], { className: 'right', username: this.props.data.user.username, avatar: this.props.data.user.avatar_thumbnail_url }),
         _react2['default'].createElement('img', { src: 'images/logo.svg', className: 'logo' }),
         _react2['default'].createElement(_NavJsx2['default'], { currentPage: 'friends' })
@@ -39579,7 +39579,7 @@ exports['default'] = _react2['default'].createClass({
       { className: 'matches' },
       _react2['default'].createElement(
         'header',
-        null,
+        { className: 'header' },
         _react2['default'].createElement(_UserSessionJsx2['default'], { className: 'right', username: this.props.data.user.username, avatar: this.props.data.user.avatar_thumbnail_url }),
         _react2['default'].createElement('img', { src: 'images/logo.svg', className: 'logo' }),
         _react2['default'].createElement(_NavJsx2['default'], { currentPage: 'matches' })
@@ -40725,6 +40725,16 @@ exports['default'] = _react2['default'].createClass({
           '@',
           this.props.data.user.username
         ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'profile-lookingfor' },
+          _react2['default'].createElement(
+            'h3',
+            null,
+            'Looking For:'
+          ),
+          _react2['default'].createElement(_LookingForEditJsx2['default'], { lookingFor: this.state.profile.looking_for, onChange: this.handleLookingForChange })
+        ),
         _react2['default'].createElement(_ProfileInfoEditorJsx2['default'], {
           location: this.state.user.location,
           gender: this.state.user.gender,
@@ -40733,16 +40743,6 @@ exports['default'] = _react2['default'].createClass({
           onLocationFinish: this.handleLocationFinish,
           onGenderFinish: this.handleGenderFinish,
           onBirthdateFinish: this.handleBirthdateFinish }),
-        _react2['default'].createElement(
-          'div',
-          { className: 'profile-lookingfor' },
-          _react2['default'].createElement(
-            'h3',
-            null,
-            'Looking For'
-          ),
-          _react2['default'].createElement(_LookingForEditJsx2['default'], { lookingFor: this.state.profile.looking_for, onChange: this.handleLookingForChange })
-        ),
         _react2['default'].createElement(
           'div',
           { className: 'profile-summary' },
@@ -41025,12 +41025,22 @@ exports['default'] = _react2['default'].createClass({
   },
 
   render: function render() {
+    var gender;
+
+    if (this.props.gender !== undefined) {
+      gender = _react2['default'].createElement(
+        'div',
+        { className: 'profile-info-gender' },
+        this.props.user.gender
+      );
+    }
+
     return _react2['default'].createElement(
       'div',
       { className: 'profile' },
       _react2['default'].createElement(
         'header',
-        null,
+        { className: 'header' },
         _react2['default'].createElement(_UserSessionJsx2['default'], { className: 'right', username: this.props.currentUser.username, avatar: _utilsFormatter2['default'].avatarUrl(this.props.currentUser.avatar_thumbnail_url) }),
         _react2['default'].createElement('img', { src: '/images/logo.svg', className: 'logo' }),
         _react2['default'].createElement(_NavJsx2['default'], null)
@@ -41040,91 +41050,95 @@ exports['default'] = _react2['default'].createClass({
         { className: 'dashboard dashboard-3col' },
         _react2['default'].createElement(
           'aside',
-          { className: 'profile-show-container' },
+          null,
           _react2['default'].createElement(
             'div',
-            { className: 'profile-avatar-container' },
+            { className: 'profile-show-container' },
             _react2['default'].createElement(
               'div',
-              { className: 'profile-avatar' },
-              _react2['default'].createElement('img', { src: _utilsFormatter2['default'].avatarUrl(this.props.user.avatar_thumbnail_url), className: 'user-avatar' })
-            )
-          ),
-          _react2['default'].createElement(
-            'h2',
-            { className: 'profile-username' },
-            '@',
-            this.props.user.username
-          ),
-          _react2['default'].createElement(
-            'div',
-            { className: 'profile-info' },
-            _react2['default'].createElement(
-              'div',
-              { className: 'profile-info-age' },
-              _utilsFormatter2['default'].age(this.props.user.birthdate)
-            ),
-            _react2['default'].createElement(
-              'div',
-              { className: 'profile-info-location' },
-              _utilsFormatter2['default'].cityState(this.props.user.location)
-            ),
-            _react2['default'].createElement(
-              'div',
-              { className: 'profile-info-gender' },
-              this.props.user.gender
-            )
-          ),
-          _react2['default'].createElement(
-            'div',
-            { className: 'profile-match' },
-            this.props.match,
-            '% Match'
-          ),
-          _react2['default'].createElement(
-            'div',
-            { className: 'profile-lookingfor' },
-            _react2['default'].createElement(
-              'h3',
-              null,
-              'Looking For'
-            ),
-            _react2['default'].createElement(
-              'div',
-              { className: 'lookingfor' },
+              { className: 'profile-avatar-container' },
               _react2['default'].createElement(
                 'div',
+                { className: 'profile-avatar' },
+                _react2['default'].createElement('img', { src: _utilsFormatter2['default'].avatarUrl(this.props.user.avatar_thumbnail_url), className: 'user-avatar' })
+              )
+            ),
+            _react2['default'].createElement(
+              'h2',
+              { className: 'profile-username' },
+              '@',
+              this.props.user.username
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'profile-lookingfor' },
+              _react2['default'].createElement(
+                'h3',
                 null,
+                'Looking For'
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'lookingfor' },
                 _react2['default'].createElement(
-                  'label',
-                  { className: this._active(1 << 0) ? " active" : "" },
-                  _react2['default'].createElement('i', { className: 'fi-torsos-all-female' }),
-                  'Friends'
-                ),
-                _react2['default'].createElement(
-                  'label',
-                  { className: this._active(1 << 1) ? " active" : "" },
-                  _react2['default'].createElement('i', { className: 'fi-heart' }),
-                  'Love'
-                ),
-                _react2['default'].createElement(
-                  'label',
-                  { className: this._active(1 << 2) ? " active" : "" },
-                  _react2['default'].createElement('i', { className: 'fi-skull' }),
-                  'Enemies'
+                  'div',
+                  null,
+                  _react2['default'].createElement(
+                    'label',
+                    { className: this._active(1 << 0) ? " active" : "" },
+                    _react2['default'].createElement('i', { className: 'fi-torsos-all-female' }),
+                    'Friends'
+                  ),
+                  _react2['default'].createElement(
+                    'label',
+                    { className: this._active(1 << 1) ? " active" : "" },
+                    _react2['default'].createElement('i', { className: 'fi-heart' }),
+                    'Love'
+                  ),
+                  _react2['default'].createElement(
+                    'label',
+                    { className: this._active(1 << 2) ? " active" : "" },
+                    _react2['default'].createElement('i', { className: 'fi-skull' }),
+                    'Enemies'
+                  )
                 )
               )
-            )
-          ),
-          _react2['default'].createElement(
-            'div',
-            { className: 'profile-summary' },
-            _react2['default'].createElement(
-              'h3',
-              null,
-              'Summary'
             ),
-            _react2['default'].createElement('div', { className: 'profile-summary-text', dangerouslySetInnerHTML: _utilsFormatter2['default'].userSummary(this.props.profile.summary) })
+            _react2['default'].createElement(
+              'div',
+              { className: 'profile-match-container' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'profile-match' },
+                this.props.match,
+                '% Match'
+              )
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'profile-info' },
+              _react2['default'].createElement(
+                'div',
+                { className: 'profile-info-age' },
+                _utilsFormatter2['default'].age(this.props.user.birthdate)
+              ),
+              _react2['default'].createElement(
+                'div',
+                { className: 'profile-info-location' },
+                _utilsFormatter2['default'].cityState(this.props.user.location)
+              ),
+              gender
+            ),
+            _react2['default'].createElement(
+              'div',
+              { className: 'profile-summary' },
+              _react2['default'].createElement(
+                'h3',
+                null,
+                'Summary'
+              ),
+              _react2['default'].createElement('div', { className: 'profile-summary-text', dangerouslySetInnerHTML: _utilsFormatter2['default'].userSummary(this.props.profile.summary) })
+            )
           )
         ),
         _react2['default'].createElement(
@@ -42874,6 +42888,10 @@ exports['default'] = {
 
   // format for a User Summary
   userSummary: function userSummary(body) {
+    if (body === undefined || body.length < 1) {
+      return { __html: '<em>No Summary</em>' };
+    }
+
     var content = (0, _marked2['default'])(body, { renderer: _markedRenderer });
     content = _hashtagify(content);
     content = _tagify(content);
@@ -42895,7 +42913,8 @@ exports['default'] = {
       return "No Age";
     }
 
-    return (0, _moment2['default'])().diff(birthdate, 'years') + " years old";
+    // return moment().diff(birthdate, 'years') + " years old";
+    return (0, _moment2['default'])().diff(birthdate, 'years') + "yrs";
   },
 
   avatarUrl: function avatarUrl(url) {
