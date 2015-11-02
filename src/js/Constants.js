@@ -59,7 +59,10 @@ export default {
     CANCEL_FLAG: null,
     SUBMIT_FLAG: null,
 
-    GET_USERNAME_SUGGESTIONS: null
+    GET_USERNAME_SUGGESTIONS: null,
+
+    LIGHTBOX_OPEN: null,
+    LIGHTBOX_CLOSE: null
   }),
 
   ActionSources: keyMirror({

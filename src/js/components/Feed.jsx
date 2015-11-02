@@ -11,6 +11,7 @@ import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
 import MiniMatcher from './MiniMatcher.jsx';
 import NoFriends from './NoFriends.jsx';
+import Lightbox from './Lightbox.jsx';
 
 export default React.createClass({
   getInitialState() {
@@ -63,6 +64,7 @@ export default React.createClass({
         </div>
 
         <FlagForm show={this.state.modals.flag.show} id={this.state.modals.flag.id} type={this.state.modals.flag.type} ref="flag"/>
+        <Lightbox />
       </div>
     );
   },

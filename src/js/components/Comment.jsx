@@ -4,6 +4,7 @@ import moment from 'moment';
 import formatter from '../utils/formatter';
 
 import LikeActionCreator from '../actions/LikeActionCreator';
+import LightboxActionCreator from '../actions/LightboxActionCreator';
 import Likes from './Likes.jsx';
 
 export default React.createClass({
@@ -15,12 +16,16 @@ export default React.createClass({
     LikeActionCreator.like("comment", this.props.data.comment.id);
   },
 
+  handleImageClick() {
+    LightboxActionCreator.open(this.props.data.image_attachment.image_url);
+  },
+
   render() {
     var image;
 
     if(this.props.data.image_attachment.id !== 0) {
       image = (
-        <img src={this.props.data.image_attachment.image_url} width="30%" />
+        <img src={this.props.data.image_attachment.image_url} width="30%" onClick={this.handleImageClick} />
       );
     } else {
       image = "";

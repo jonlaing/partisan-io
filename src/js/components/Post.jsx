@@ -7,6 +7,7 @@ import Icon from 'react-fontawesome';
 
 import LikeActionCreator from '../actions/LikeActionCreator';
 import FlagActionCreator from '../actions/FlagActionCreator';
+import LightboxActionCreator from '../actions/LightboxActionCreator';
 
 import Likes from './Likes.jsx';
 import CommentCounter from './CommentCounter.jsx';
@@ -31,6 +32,10 @@ export default React.createClass({
     FlagActionCreator.beginReport(this.props.data.post.id, "post");
   },
 
+  handleImageClick() {
+    LightboxActionCreator.open(this.props.data.image_attachment.image_url);
+  },
+
   render() {
     var comments, attachment;
 
@@ -45,7 +50,7 @@ export default React.createClass({
     if(this.props.data.image_attachment.id > 0) {
       attachment = (
         <div className="post-attachment">
-          <img src={this.props.data.image_attachment.image_url} width="100%" />
+          <img src={this.props.data.image_attachment.image_url} width="100%" onClick={this.handleImageClick}/>
         </div>
       );
     }

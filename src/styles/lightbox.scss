@@ -1,0 +1,12 @@
+.lightbox {
+  max-width: 90vw;
+  max-height: 90vh;
+  position: relative;
+
+  .lightbox-image {
+    @include clearfix();
+    display: block;
+    max-width: 80vw;
+    max-height: 80vh;
+  }
+}
