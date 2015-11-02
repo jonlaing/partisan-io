@@ -22,6 +22,14 @@
       font-weight: bold;
       font-size: 36px;
       display: inline-block;
+      margin-bottom: $line-height;
+
+    }
+
+    .jumbotron-main-for {
+      padding: 0 0 0;
+      border: dashed white 1px;
+      border-width: 0 0 1px;
     }
 
     p {

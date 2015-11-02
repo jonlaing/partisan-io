@@ -38690,7 +38690,7 @@ exports['default'] = _reactAddons2['default'].createClass({
       { className: 'feed' },
       _reactAddons2['default'].createElement(
         'header',
-        null,
+        { className: 'header' },
         _reactAddons2['default'].createElement(_UserSessionJsx2['default'], { className: 'right', username: this.props.data.user.username, avatar: this.props.data.user.avatar_thumbnail_url }),
         _reactAddons2['default'].createElement('img', { src: '/images/logo.svg', className: 'logo' }),
         _reactAddons2['default'].createElement(_NavJsx2['default'], { currentPage: 'feed' })
@@ -41027,7 +41027,7 @@ exports['default'] = _react2['default'].createClass({
   render: function render() {
     var gender;
 
-    if (this.props.gender !== undefined) {
+    if (this.props.user.gender !== undefined) {
       gender = _react2['default'].createElement(
         'div',
         { className: 'profile-info-gender' },

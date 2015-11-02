@@ -42,7 +42,7 @@ export default React.createClass({
 
     return (
       <div className="feed">
-        <header>
+        <header className="header">
           <UserSession className="right" username={this.props.data.user.username} avatar={this.props.data.user.avatar_thumbnail_url} />
           <img src="/images/logo.svg" className="logo" />
           <Nav currentPage="feed" />

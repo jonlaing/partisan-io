@@ -33,7 +33,7 @@ export default React.createClass({
   render() {
     var gender;
 
-    if(this.props.gender !== undefined) {
+    if(this.props.user.gender !== undefined) {
       gender = <div className="profile-info-gender">{this.props.user.gender}</div>;
     }
 
