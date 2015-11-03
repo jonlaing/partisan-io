@@ -1,5 +1,6 @@
 import React from 'react';
 
+import moment from 'moment';
 
 import MatchesActionCreator from '../actions/MatchesActionCreator';
 import MatchesStore from '../stores/MatchesStore';
@@ -7,6 +8,7 @@ import MatchesStore from '../stores/MatchesStore';
 import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
 import Match from './Match.jsx';
+import MatchSearch from './MatchSearch.jsx';
 
 export default React.createClass({
   getInitialState() {
@@ -21,7 +23,7 @@ export default React.createClass({
 
   componentDidMount() {
     MatchesStore.addChangeListener(this._onChange);
-    MatchesActionCreator.getMatches();
+    MatchesActionCreator.getMatches(25, "", 18, moment().diff(this.props.data.user.birthdate, 'years') + 10);
   },
 
   componentWillUnount() {
@@ -53,7 +55,9 @@ export default React.createClass({
         </header>
 
         <div className="dashboard">
-          <aside>Blah</aside>
+          <aside>
+            <MatchSearch birthdate={this.props.data.user.birthdate} />
+          </aside>
           <article className="matches-container">
             <ul className="matchlist">
               {matches}

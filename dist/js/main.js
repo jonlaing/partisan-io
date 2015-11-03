@@ -37516,9 +37516,16 @@ var _Constants = require('../Constants');
 var _Constants2 = _interopRequireDefault(_Constants);
 
 exports['default'] = {
-  getMatches: function getMatches() {
+  getMatches: function getMatches(distance, gender, minAge, maxAge) {
+    console.log(gender);
     $.ajax({
       url: _Constants2['default'].APIROOT + '/matches',
+      data: {
+        distance: distance,
+        gender: gender,
+        minAge: minAge,
+        maxAge: maxAge
+      },
       method: 'GET',
       dataType: 'json'
     }).done(function (res) {
@@ -37984,7 +37991,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":254,"./AvatarUpload.jsx":206,"react":187,"react-fontawesome":13}],206:[function(require,module,exports){
+},{"../utils/formatter":255,"./AvatarUpload.jsx":206,"react":187,"react-fontawesome":13}],206:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38089,7 +38096,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":240,"react":187,"react-dropzone":12,"react-fontawesome":13}],207:[function(require,module,exports){
+},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":241,"react":187,"react-dropzone":12,"react-fontawesome":13}],207:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38261,7 +38268,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LightboxActionCreator":196,"../actions/LikeActionCreator":197,"../utils/formatter":254,"./Likes.jsx":221,"moment":8,"react":187}],210:[function(require,module,exports){
+},{"../actions/LightboxActionCreator":196,"../actions/LikeActionCreator":197,"../utils/formatter":255,"./Likes.jsx":221,"moment":8,"react":187}],210:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38523,7 +38530,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/CommentsActionCreator":191,"../stores/CommentStore":242,"./Comment.jsx":209,"./CommentComposer.jsx":210,"react/addons":15}],213:[function(require,module,exports){
+},{"../actions/CommentsActionCreator":191,"../stores/CommentStore":243,"./Comment.jsx":209,"./CommentComposer.jsx":210,"react/addons":15}],213:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38761,7 +38768,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":243,"./FeedList.jsx":215,"./FlagForm.jsx":216,"./Lightbox.jsx":220,"./MiniMatcher.jsx":226,"./Nav.jsx":228,"./NoFriends.jsx":229,"./PostComposer.jsx":232,"./ProfileEdit.jsx":233,"./UserSession.jsx":238,"react/addons":15}],215:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":244,"./FeedList.jsx":215,"./FlagForm.jsx":216,"./Lightbox.jsx":220,"./MiniMatcher.jsx":227,"./Nav.jsx":229,"./NoFriends.jsx":230,"./PostComposer.jsx":233,"./ProfileEdit.jsx":234,"./UserSession.jsx":239,"react/addons":15}],215:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38814,7 +38821,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Card.jsx":208,"./Post.jsx":231,"react/addons":15}],216:[function(require,module,exports){
+},{"./Card.jsx":208,"./Post.jsx":232,"react/addons":15}],216:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38902,7 +38909,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":193,"./Modal.jsx":227,"react":187,"react-radio":14}],217:[function(require,module,exports){
+},{"../actions/FlagActionCreator":193,"./Modal.jsx":228,"react":187,"react-radio":14}],217:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38994,7 +39001,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":244,"react":187}],218:[function(require,module,exports){
+},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":245,"react":187}],218:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39110,7 +39117,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":244,"./Match.jsx":224,"./Nav.jsx":228,"./NoFriends.jsx":229,"./UserSession.jsx":238,"react":187}],219:[function(require,module,exports){
+},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":245,"./Match.jsx":224,"./Nav.jsx":229,"./NoFriends.jsx":230,"./UserSession.jsx":239,"react":187}],219:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39200,7 +39207,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/HashtagActionCreator":195,"../stores/HashtagStore":245,"./Card.jsx":208,"./Post.jsx":231,"react":187}],220:[function(require,module,exports){
+},{"../actions/HashtagActionCreator":195,"../stores/HashtagStore":246,"./Card.jsx":208,"./Post.jsx":232,"react":187}],220:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39259,7 +39266,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LightboxActionCreator":196,"../stores/LightboxStore":246,"./Modal.jsx":227,"react":187}],221:[function(require,module,exports){
+},{"../actions/LightboxActionCreator":196,"../stores/LightboxStore":247,"./Modal.jsx":228,"react":187}],221:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39425,7 +39432,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":198,"../stores/LoginStore":247,"react/addons":15}],223:[function(require,module,exports){
+},{"../actions/LoginActionCreator":198,"../stores/LoginStore":248,"react/addons":15}],223:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39592,7 +39599,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":254,"react":187}],225:[function(require,module,exports){
+},{"../utils/formatter":255,"react":187}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39604,6 +39611,192 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _actionsMatchesActionCreator = require('../actions/MatchesActionCreator');
+
+var _actionsMatchesActionCreator2 = _interopRequireDefault(_actionsMatchesActionCreator);
+
+var _CardJsx = require('./Card.jsx');
+
+var _CardJsx2 = _interopRequireDefault(_CardJsx);
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'MatchSearch',
+
+  getInitialState: function getInitialState() {
+    return {
+      miles: 25,
+      gender: "",
+      minAge: 18,
+      maxAge: (0, _moment2['default'])().diff(this.props.birthdate, 'years') + 10,
+      changed: false
+    };
+  },
+
+  onMilesChange: function onMilesChange(e) {
+    this.setState({ miles: e.target.value, changed: true });
+  },
+
+  onRedoSearch: function onRedoSearch() {
+    var minAge = this._getAge(this.state.minAge);
+    var maxAge = this._getAge(this.state.maxAge);
+    if (minAge > this.state.maxAge) {
+      minAge = this.state.maxAge;
+    }
+    if (maxAge < this.state.minAge) {
+      maxAge = this.state.minAge;
+    }
+
+    this.setState({ changed: false });
+    _actionsMatchesActionCreator2['default'].getMatches(this.state.miles, this.state.gender, minAge, maxAge);
+  },
+
+  onMinAgeChange: function onMinAgeChange(e) {
+    this.setState({ minAge: e.target.value, changed: true });
+  },
+
+  onMinAgeBlur: function onMinAgeBlur(e) {
+    var age = this._getAge(e.target.value);
+    if (age > this.state.maxAge) {
+      age = this.state.maxAge;
+    }
+
+    this.setState({ minAge: age });
+  },
+
+  onMaxAgeChange: function onMaxAgeChange(e) {
+    this.setState({ maxAge: e.target.value, changed: true });
+  },
+
+  onMaxAgeBlur: function onMaxAgeBlur(e) {
+    var age = this._getAge(e.target.value);
+    if (age < this.state.minAge) {
+      age = this.state.minAge;
+    }
+
+    this.setState({ maxAge: age });
+  },
+
+  onGenderChange: function onGenderChange(e) {
+    this.setState({ gender: e.target.value, changed: true });
+  },
+
+  componentDidMount: function componentDidMount() {},
+
+  render: function render() {
+    var button;
+
+    if (this.state.changed === true) {
+      button = _react2['default'].createElement(
+        'button',
+        { className: 'button button-small', onClick: this.onRedoSearch },
+        'Redo Search'
+      );
+    }
+
+    return _react2['default'].createElement(
+      'div',
+      { className: 'matches-search' },
+      _react2['default'].createElement(
+        _CardJsx2['default'],
+        null,
+        _react2['default'].createElement(
+          'h2',
+          null,
+          'Search Parameters'
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'matches-search-distance' },
+          _react2['default'].createElement(
+            'label',
+            null,
+            'Distance:'
+          ),
+          _react2['default'].createElement('input', { id: 'miles', name: 'miles', type: 'range', min: 0, max: 100, defaultValue: 25, onChange: this.onMilesChange }),
+          _react2['default'].createElement(
+            'output',
+            { htmlFor: 'miles' },
+            this.state.miles,
+            ' miles'
+          )
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'matches-search-ages' },
+          _react2['default'].createElement(
+            'div',
+            null,
+            _react2['default'].createElement(
+              'label',
+              null,
+              'Min Age:'
+            ),
+            _react2['default'].createElement('input', { type: 'number', value: this.state.minAge, onChange: this.onMinAgeChange, onBlur: this.onMinAgeBlur })
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
+            _react2['default'].createElement(
+              'label',
+              null,
+              'Max Age:'
+            ),
+            _react2['default'].createElement('input', { type: 'number', value: this.state.maxAge, onChange: this.onMaxAgeChange, onBlur: this.onMaxAgeBlur })
+          )
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'matches-search-gender' },
+          _react2['default'].createElement(
+            'label',
+            null,
+            'Gender:'
+          ),
+          _react2['default'].createElement('input', { type: 'text', placeholder: 'Any gender', onChange: this.onGenderChange })
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'text-center' },
+          button
+        )
+      )
+    );
+  },
+
+  _getAge: function _getAge(val) {
+    var age = parseInt(val);
+    // can't search for minors!
+    if (age < 18) {
+      age = 18;
+    }
+
+    return age;
+  }
+});
+module.exports = exports['default'];
+
+
+},{"../actions/MatchesActionCreator":199,"./Card.jsx":208,"moment":8,"react":187}],226:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
 
 var _actionsMatchesActionCreator = require('../actions/MatchesActionCreator');
 
@@ -39625,6 +39818,10 @@ var _MatchJsx = require('./Match.jsx');
 
 var _MatchJsx2 = _interopRequireDefault(_MatchJsx);
 
+var _MatchSearchJsx = require('./MatchSearch.jsx');
+
+var _MatchSearchJsx2 = _interopRequireDefault(_MatchSearchJsx);
+
 exports['default'] = _react2['default'].createClass({
   displayName: 'Matches',
 
@@ -39640,7 +39837,7 @@ exports['default'] = _react2['default'].createClass({
 
   componentDidMount: function componentDidMount() {
     _storesMatchesStore2['default'].addChangeListener(this._onChange);
-    _actionsMatchesActionCreator2['default'].getMatches();
+    _actionsMatchesActionCreator2['default'].getMatches(25, "", 18, (0, _moment2['default'])().diff(this.props.data.user.birthdate, 'years') + 10);
   },
 
   componentWillUnount: function componentWillUnount() {
@@ -39683,7 +39880,7 @@ exports['default'] = _react2['default'].createClass({
         _react2['default'].createElement(
           'aside',
           null,
-          'Blah'
+          _react2['default'].createElement(_MatchSearchJsx2['default'], { birthdate: this.props.data.user.birthdate })
         ),
         _react2['default'].createElement(
           'article',
@@ -39709,7 +39906,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":199,"../stores/MatchesStore":248,"./Match.jsx":224,"./Nav.jsx":228,"./UserSession.jsx":238,"react":187}],226:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":199,"../stores/MatchesStore":249,"./Match.jsx":224,"./MatchSearch.jsx":225,"./Nav.jsx":229,"./UserSession.jsx":239,"moment":8,"react":187}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39854,7 +40051,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":199,"../stores/MatchesStore":248,"../utils/formatter":254,"react":187}],227:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":199,"../stores/MatchesStore":249,"../utils/formatter":255,"react":187}],228:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -39916,7 +40113,7 @@ exports["default"] = _reactAddons2["default"].createClass({
 module.exports = exports["default"];
 
 
-},{"react/addons":15}],228:[function(require,module,exports){
+},{"react/addons":15}],229:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39991,7 +40188,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Notifications.jsx":230,"react":187}],229:[function(require,module,exports){
+},{"./Notifications.jsx":231,"react":187}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40043,7 +40240,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-fontawesome":13}],230:[function(require,module,exports){
+},{"react":187,"react-fontawesome":13}],231:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40296,7 +40493,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/NotificationActionCreator":200,"../stores/NotificationStore":249,"./Breakout.jsx":207,"moment":8,"react":187,"react-fontawesome":13}],231:[function(require,module,exports){
+},{"../actions/NotificationActionCreator":200,"../stores/NotificationStore":250,"./Breakout.jsx":207,"moment":8,"react":187,"react-fontawesome":13}],232:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40449,7 +40646,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":193,"../actions/LightboxActionCreator":196,"../actions/LikeActionCreator":197,"../utils/formatter":254,"./CommentCounter.jsx":211,"./CommentList.jsx":212,"./Likes.jsx":221,"moment":8,"react":187,"react-fontawesome":13}],232:[function(require,module,exports){
+},{"../actions/FlagActionCreator":193,"../actions/LightboxActionCreator":196,"../actions/LikeActionCreator":197,"../utils/formatter":255,"./CommentCounter.jsx":211,"./CommentList.jsx":212,"./Likes.jsx":221,"moment":8,"react":187,"react-fontawesome":13}],233:[function(require,module,exports){
 /*global $ */
 'use strict';
 
@@ -40680,7 +40877,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/PostActionCreator":201,"../stores/PostComposerStore":250,"./Breakout.jsx":207,"react":187,"react-dropzone":12,"react-fontawesome":13}],233:[function(require,module,exports){
+},{"../actions/PostActionCreator":201,"../stores/PostComposerStore":251,"./Breakout.jsx":207,"react":187,"react-dropzone":12,"react-fontawesome":13}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40884,7 +41081,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ProfileActionCreator":202,"../stores/ProfileStore":251,"../utils/formatter":254,"./AvatarEditor.jsx":205,"./LookingForEdit.jsx":223,"./ProfileInfoEditor.jsx":234,"react":187,"react-fontawesome":13}],234:[function(require,module,exports){
+},{"../actions/ProfileActionCreator":202,"../stores/ProfileStore":252,"../utils/formatter":255,"./AvatarEditor.jsx":205,"./LookingForEdit.jsx":223,"./ProfileInfoEditor.jsx":235,"react":187,"react-fontawesome":13}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41059,7 +41256,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":254,"./DatePicker.jsx":213,"moment":8,"react":187}],235:[function(require,module,exports){
+},{"../utils/formatter":255,"./DatePicker.jsx":213,"moment":8,"react":187}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41289,7 +41486,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":243,"../utils/formatter":254,"./FeedList.jsx":215,"./FlagForm.jsx":216,"./Friender.jsx":217,"./Nav.jsx":228,"./UserSession.jsx":238,"react":187}],236:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":244,"../utils/formatter":255,"./FeedList.jsx":215,"./FlagForm.jsx":216,"./Friender.jsx":217,"./Nav.jsx":229,"./UserSession.jsx":239,"react":187}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41489,7 +41686,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/QuestionsActionCreator":203,"../stores/QuestionsStore":252,"./Card.jsx":208,"./Modal.jsx":227,"./UserSession.jsx":238,"jquery":6,"react/addons":15}],237:[function(require,module,exports){
+},{"../actions/QuestionsActionCreator":203,"../stores/QuestionsStore":253,"./Card.jsx":208,"./Modal.jsx":228,"./UserSession.jsx":239,"jquery":6,"react/addons":15}],238:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41659,7 +41856,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/SignUpActionCreator":204,"../stores/SignUpStore":253,"react":187}],238:[function(require,module,exports){
+},{"../actions/SignUpActionCreator":204,"../stores/SignUpStore":254,"react":187}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41736,7 +41933,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":198,"./Breakout.jsx":207,"react":187,"react-fontawesome":13}],239:[function(require,module,exports){
+},{"../actions/LoginActionCreator":198,"./Breakout.jsx":207,"react":187,"react-fontawesome":13}],240:[function(require,module,exports){
 (function (global){
 /*global data */
 'use strict';
@@ -41869,7 +42066,7 @@ Perf.printWasted(Perf.getLastMeasurements());
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./components/Card.jsx":208,"./components/Feed.jsx":214,"./components/Friends.jsx":218,"./components/HashtagSearch.jsx":219,"./components/Login.jsx":222,"./components/Matches.jsx":225,"./components/Post.jsx":231,"./components/ProfileEdit.jsx":233,"./components/ProfileShow.jsx":235,"./components/Questions.jsx":236,"./components/SignUp.jsx":237,"events":2,"jquery":6,"react/addons":15}],240:[function(require,module,exports){
+},{"./components/Card.jsx":208,"./components/Feed.jsx":214,"./components/Friends.jsx":218,"./components/HashtagSearch.jsx":219,"./components/Login.jsx":222,"./components/Matches.jsx":226,"./components/Post.jsx":232,"./components/ProfileEdit.jsx":234,"./components/ProfileShow.jsx":236,"./components/Questions.jsx":237,"./components/SignUp.jsx":238,"events":2,"jquery":6,"react/addons":15}],241:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41928,7 +42125,7 @@ exports['default'] = AvatarStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],241:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41965,7 +42162,7 @@ exports['default'] = (0, _objectAssign2['default'])({}, _events.EventEmitter.pro
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"events":2,"object-assign":9}],242:[function(require,module,exports){
+},{"../Constants":188,"events":2,"object-assign":9}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42073,7 +42270,7 @@ exports['default'] = CommentStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],243:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42233,7 +42430,7 @@ exports['default'] = FeedStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],244:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],245:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42323,7 +42520,7 @@ exports['default'] = FriendsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],245:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42403,7 +42600,7 @@ exports['default'] = HashtagStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],246:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42469,7 +42666,7 @@ exports['default'] = LightboxStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],247:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],248:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42561,7 +42758,7 @@ exports['default'] = LoginStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],248:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],249:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42606,6 +42803,8 @@ var MatchesStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
       case _Constants2['default'].ActionTypes.GET_MATCHES:
         if (action.data) {
           _matches = action.data;
+        } else {
+          _matches = [];
         }
         MatchesStore.emitChange();
         break;
@@ -42619,7 +42818,7 @@ exports['default'] = MatchesStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],249:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],250:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42700,7 +42899,7 @@ exports['default'] = NotificationStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],250:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],251:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42760,7 +42959,7 @@ exports['default'] = PostComposerStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],251:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],252:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42837,7 +43036,7 @@ exports['default'] = ProfileStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],252:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],253:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42896,7 +43095,7 @@ exports['default'] = QuestionsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],253:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42974,7 +43173,7 @@ exports['default'] = SignUpStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":241,"object-assign":9}],254:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],255:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43114,4 +43313,4 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"marked":7,"moment":8,"react":187}]},{},[239]);
+},{"marked":7,"moment":8,"react":187}]},{},[240]);

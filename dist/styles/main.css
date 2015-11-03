@@ -2096,14 +2096,15 @@ button, .button {
     font-size: 0.85em;
     padding: 5.33333px 16px; }
 
-input[type="text"], input[type="password"], textarea {
+input[type="text"], input[type="password"], input[type="number"], textarea {
   display: block;
   width: 100%;
   border: 1px solid #d9d9d9;
   border-width: 0 0 1px;
   transition: 0.3s all ease;
+  font-size: 13.92px;
   outline-style: none; }
-  input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+  input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, textarea:focus {
     border-color: #d215b3; }
 
 .form-input {
@@ -2982,7 +2983,9 @@ button.like {
   display: flex;
   display: -webkit-flex;
   flex-wrap: wrap;
-  -webkit-flex-wrap: wrap; }
+  -webkit-flex-wrap: wrap;
+  padding: 0;
+  margin: 0; }
   .matchlist li {
     padding: 16px;
     width: 33%;
@@ -3251,3 +3254,45 @@ button.like {
       content: " ";
       clear: both;
       height: 0; }
+
+.matches-search .card {
+  padding: 32px; }
+
+.matches-search h2 {
+  margin-bottom: 32px; }
+
+.matches-search label {
+  font-weight: bold; }
+
+.matches-search .matches-search-distance {
+  display: flex;
+  display: -webkit-flex;
+  margin-bottom: 32px;
+  width: 100%; }
+  .matches-search .matches-search-distance input {
+    margin: 0 8px; }
+  .matches-search .matches-search-distance output, .matches-search .matches-search-distance label {
+    display: inline-block; }
+  .matches-search .matches-search-distance output {
+    width: 90px; }
+
+.matches-search .matches-search-ages {
+  display: flex;
+  display: -webkit-flex;
+  margin-bottom: 32px; }
+  .matches-search .matches-search-ages > div {
+    width: 50%;
+    display: flex;
+    display: -webkit-flex; }
+    .matches-search .matches-search-ages > div:first-child {
+      margin-right: 16px; }
+    .matches-search .matches-search-ages > div input {
+      width: 33%;
+      margin-left: 8px; }
+
+.matches-search .matches-search-gender {
+  display: flex;
+  display: -webkit-flex;
+  margin-bottom: 32px; }
+  .matches-search .matches-search-gender input {
+    margin-left: 8px; }

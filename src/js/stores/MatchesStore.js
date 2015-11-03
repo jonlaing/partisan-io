@@ -23,6 +23,8 @@ const MatchesStore = assign({}, BaseStore, {
       case Constants.ActionTypes.GET_MATCHES:
         if(action.data) {
           _matches = action.data;
+        } else {
+          _matches = [];
         }
         MatchesStore.emitChange();
         break;

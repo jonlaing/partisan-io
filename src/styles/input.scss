@@ -23,12 +23,13 @@ button, .button {
   }
 }
 
-input[type="text"], input[type="password"], textarea {
+input[type="text"], input[type="password"], input[type="number"], textarea {
   display: block;
   width: 100%;
   border: 1px solid $light-grey;
   border-width: 0 0 1px;
   transition: 0.3s all ease;
+  font-size: $line-height*0.87;
 
   outline-style: none;
 

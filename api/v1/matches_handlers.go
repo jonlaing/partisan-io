@@ -9,14 +9,13 @@ import (
 	"partisan/matcher"
 	m "partisan/models"
 	"sort"
+	"strconv"
 
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 const (
-	earthRadius  float64 = 3959 // in miles
-	geoBounds    float64 = float64(25) / earthRadius * float64(180) / math.Pi
-	centerBounds int     = 50
+	earthRadius float64 = 3959 // in miles
 )
 
 // MatchResp is the JSON schema we respond with
@@ -53,56 +52,39 @@ func MatchesIndex(c *gin.Context) {
 		return
 	}
 
-	// LATITUDE
-	minLat := user.Latitude - geoBounds
-	maxLat := user.Latitude + geoBounds
-	if minLat > 90 {
-		minLat = 90 - minLat
-	} else if minLat < -90 {
-		minLat = 90 + minLat
-	}
-	if maxLat > 90 {
-		maxLat = 90 - maxLat
-	} else if maxLat < -90 {
-		maxLat = 90 + maxLat
+	// Offset
+	p := c.DefaultQuery("page", "1")
+	page, err := strconv.Atoi(p)
+	if err != nil {
+		page = 1
 	}
 
-	// LONGITUDE
-	minLong := user.Longitude - geoBounds
-	maxLong := user.Longitude + geoBounds
-	if minLong > 180 {
-		minLong = 180 - minLong
-	} else if minLong < -180 {
-		minLong = 180 + minLong
-	}
-	if maxLong > 180 {
-		maxLong = 180 - maxLong
-	} else if maxLong < -180 {
-		maxLong = 180 + maxLong
+	// search radius
+	distance := c.DefaultQuery("distance", "25")
+	radius, err := convertMilesToDegrees(distance)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 
-	// MATCH BOUNDS
-	minX := user.CenterX - centerBounds
-	maxX := user.CenterX + centerBounds
-	minY := user.CenterY - centerBounds
-	maxY := user.CenterY + centerBounds
+	// Gender
+	gender := c.Query("gender")
 
-	friendIDs, _ := dao.ConfirmedFriendIDs(user, db)
-
-	var users []m.User
-
-	query := db.Where("id != ?", user.ID)
-	// query = query.Where("latitude > ? AND latitude < ?", minLat, maxLat)
-	// query = query.Where("longitude > ? AND longitude < ?", minLat, maxLat)
-	query = query.Where("center_x > ? AND center_x < ?", minX, maxX)
-	query = query.Where("center_y > ? AND center_y < ?", minY, maxY)
-
-	if len(friendIDs) > 0 {
-		query = query.Where("id NOT IN (?)", friendIDs)
+	// Age
+	minA := c.DefaultQuery("minAge", "-1")
+	maxA := c.DefaultQuery("maxAge", "-1")
+	minAge, err := strconv.Atoi(minA)
+	if err != nil {
+		minAge = -1
+	}
+	maxAge, err := strconv.Atoi(maxA)
+	if err != nil {
+		maxAge = -1
 	}
 
-	if err := query.Limit(24).Find(&users).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
+	users, err := dao.GetMatches(user, gender, minAge, maxAge, radius, page, db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
@@ -116,4 +98,15 @@ func MatchesIndex(c *gin.Context) {
 	sort.Sort(sort.Reverse(matches))
 
 	c.JSON(http.StatusOK, matches)
+}
+
+// converts miles from the context params (string) into coordinate degrees
+func convertMilesToDegrees(m string) (float64, error) {
+	miles, err := strconv.Atoi(m)
+	if err != nil {
+		return 0, err
+	}
+
+	geoBounds := float64(miles) / earthRadius * float64(180) / math.Pi
+	return geoBounds, nil
 }

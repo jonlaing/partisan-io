@@ -1,0 +1,63 @@
+.matches-search {
+  .card {
+    padding: $line-height*2;
+  }
+
+  h2 {
+    margin-bottom: $line-height*2;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  .matches-search-distance {
+    display: flex;
+    display: -webkit-flex;
+    margin-bottom: $line-height*2;
+    width: 100%;
+
+    input {
+      margin: 0 $line-height/2;
+    }
+
+    output, label {
+      display: inline-block;
+    }
+
+    output {
+      width: 90px;
+    }
+  }
+
+  .matches-search-ages {
+    display: flex;
+    display: -webkit-flex;
+    margin-bottom: $line-height*2;
+
+    > div {
+      width: 50%;
+      display: flex;
+      display: -webkit-flex;
+
+      &:first-child {
+        margin-right: $line-height;
+      }
+
+      input {
+        width: 33%;
+        margin-left: $line-height/2;
+      }
+    }
+  }
+
+  .matches-search-gender {
+    display: flex;
+    display: -webkit-flex;
+    margin-bottom: $line-height*2;
+
+    input {
+      margin-left: $line-height/2;
+    }
+  }
+}
