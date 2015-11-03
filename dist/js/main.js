@@ -42428,7 +42428,7 @@ exports['default'] = FeedStore;
 // Facebook style store creation.
 var FeedStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
   getState: function getState() {
-    return { feed: _feedItems, modals: _modals, noFriends: _noFriends };
+    return { feed: _feedItems, modals: _modals, noFriends: _noFriends, scrollLoading: false };
   },
 
   // countComments(id) {

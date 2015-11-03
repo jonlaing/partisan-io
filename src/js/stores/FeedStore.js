@@ -58,7 +58,7 @@ export default FeedStore;
 // Facebook style store creation.
 const FeedStore = assign({}, BaseStore, {
   getState() {
-    return { feed: _feedItems, modals: _modals, noFriends: _noFriends };
+    return { feed: _feedItems, modals: _modals, noFriends: _noFriends, scrollLoading: false };
   },
 
   // countComments(id) {
