@@ -6,9 +6,11 @@ import (
 	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
-func GetFeedByUserIDs(currentUserID uint64, userIDs []uint64, db *gorm.DB) (feedItems []m.FeedItem, err error) {
+func GetFeedByUserIDs(currentUserID uint64, userIDs []uint64, page int, db *gorm.DB) (feedItems []m.FeedItem, err error) {
+	offset := (page - 1) * 25
+
 	// TODO: limit feed so a particular record only comes up once
-	if err = db.Where("user_id IN (?) AND action = ?", userIDs, "post").Order("created_at desc").Limit(25).Find(&feedItems).Error; err != nil {
+	if err = db.Where("user_id IN (?) AND action = ?", userIDs, "post").Order("created_at desc").Limit(25).Offset(offset).Find(&feedItems).Error; err != nil {
 		return
 	}
 

@@ -52,12 +52,7 @@ func MatchesIndex(c *gin.Context) {
 		return
 	}
 
-	// Offset
-	p := c.DefaultQuery("page", "1")
-	page, err := strconv.Atoi(p)
-	if err != nil {
-		page = 1
-	}
+	page := getPage(c)
 
 	// search radius
 	distance := c.DefaultQuery("distance", "25")

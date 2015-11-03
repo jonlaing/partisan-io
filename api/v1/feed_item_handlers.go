@@ -22,6 +22,8 @@ func FeedIndex(c *gin.Context) {
 
 	user, _ := auth.CurrentUser(c)
 
+	page := getPage(c)
+
 	friendIDs, err := dao.ConfirmedFriendIDs(user, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
@@ -30,7 +32,7 @@ func FeedIndex(c *gin.Context) {
 
 	friendIDs = append(friendIDs, user.ID)
 
-	feedItems, err := dao.GetFeedByUserIDs(user.ID, friendIDs, db)
+	feedItems, err := dao.GetFeedByUserIDs(user.ID, friendIDs, page, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
@@ -49,7 +51,9 @@ func FeedShow(c *gin.Context) {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 	}
 
-	feedItems, err := dao.GetFeedByUserIDs(user.ID, []uint64{uint64(userID)}, db)
+	page := getPage(c)
+
+	feedItems, err := dao.GetFeedByUserIDs(user.ID, []uint64{uint64(userID)}, page, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return

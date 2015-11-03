@@ -18,13 +18,29 @@ export default React.createClass({
     return {
       feed: [],
       noFriends: false,
+      scrollLoading: false,
+      page: 1,
       modals: {
         flag: { show: false, flagID: 0 }
       }
     };
   },
 
+  handleScroll() {
+    var docHeight = $(document).height();
+    var inHeight = window.innerHeight;
+    var scrollT = $(window).scrollTop();
+    var totalScrolled = scrollT + inHeight;
+    if(totalScrolled + 100 > docHeight) {  //user reached at bottom
+      if(this.state.scrollLoading === false) {  //to avoid multiple request
+          this.setState({ scrollLoading: true, page: this.state.page + 1 });
+          FeedActionCreator.getPage(this.state.page);
+      }
+    }
+  },
+
   componentDidMount() {
+    window.addEventListener("scroll", this.handleScroll);
     FeedStore.addChangeListener(this._onChange);
     FeedActionCreator.getFeed();
   },

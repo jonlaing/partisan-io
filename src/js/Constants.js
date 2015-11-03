@@ -9,6 +9,7 @@ export default {
   // Each time you add an action, add it here
   ActionTypes: keyMirror({
     GET_FEED: null,
+    GET_FEED_PAGE: null,
     ADD_FEED_ITEM: null,
     NO_FRIENDS: null,
 

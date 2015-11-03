@@ -36843,6 +36843,7 @@ exports['default'] = {
   // Each time you add an action, add it here
   ActionTypes: (0, _reactLibKeyMirror2['default'])({
     GET_FEED: null,
+    GET_FEED_PAGE: null,
     ADD_FEED_ITEM: null,
     NO_FRIENDS: null,
 
@@ -37146,6 +37147,30 @@ exports['default'] = {
       } else if (res.status === 404) {
         _Dispatcher2['default'].handleViewAction({
           type: _Constants2['default'].ActionTypes.NO_FRIENDS
+        });
+      }
+    });
+  },
+  getPage: function getPage(page) {
+    var p = page || 1;
+
+    $.ajax({
+      url: '/api/v1/feed',
+      data: { page: p },
+      dataType: 'json',
+      method: 'GET'
+    }).done(function (res) {
+      var data = res.feed_items;
+
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.GET_FEED_PAGE,
+        data: data
+      });
+    }).fail(function (res) {
+      // Logged out
+      if (res.status === 401) {
+        _Dispatcher2['default'].handleViewAction({
+          type: _Constants2['default'].ActionTypes.LOGGED_OUT
         });
       }
     });
@@ -38703,13 +38728,31 @@ exports['default'] = _reactAddons2['default'].createClass({
     return {
       feed: [],
       noFriends: false,
+      scrollLoading: false,
+      page: 1,
       modals: {
         flag: { show: false, flagID: 0 }
       }
     };
   },
 
+  handleScroll: function handleScroll() {
+    var docHeight = $(document).height();
+    var inHeight = window.innerHeight;
+    var scrollT = $(window).scrollTop();
+    var totalScrolled = scrollT + inHeight;
+    if (totalScrolled + 100 > docHeight) {
+      //user reached at bottom
+      if (this.state.scrollLoading === false) {
+        //to avoid multiple request
+        this.setState({ scrollLoading: true, page: this.state.page + 1 });
+        _actionsFeedActionCreatorJs2['default'].getPage(this.state.page);
+      }
+    }
+  },
+
   componentDidMount: function componentDidMount() {
+    window.addEventListener("scroll", this.handleScroll);
     _storesFeedStoreJs2['default'].addChangeListener(this._onChange);
     _actionsFeedActionCreatorJs2['default'].getFeed();
   },
@@ -42372,6 +42415,7 @@ var FeedStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
     switch (action.type) {
       // FEED ACTIONS
       case _Constants2['default'].ActionTypes.GET_FEED:
+      case _Constants2['default'].ActionTypes.GET_FEED_PAGE:
         if (action.data) {
           _addItems(action.data);
           FeedStore.emitChange();

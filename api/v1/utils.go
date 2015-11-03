@@ -2,11 +2,12 @@ package v1
 
 import (
 	"fmt"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	m "partisan/models"
 	"regexp"
 	"strconv"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
 func getRecord(c *gin.Context) (rID uint64, rType string, err error) {
@@ -68,4 +69,13 @@ func getPostComments(postIDs []uint64, db *gorm.DB) ([]PostComments, error) {
 	}
 
 	return comments, nil
+}
+
+func getPage(c *gin.Context) int {
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if err != nil {
+		return 1
+	}
+
+	return page
 }

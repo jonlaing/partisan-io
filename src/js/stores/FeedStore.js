@@ -80,6 +80,7 @@ const FeedStore = assign({}, BaseStore, {
     switch(action.type) {
       // FEED ACTIONS
       case Constants.ActionTypes.GET_FEED:
+      case Constants.ActionTypes.GET_FEED_PAGE:
         if(action.data) {
           _addItems(action.data);
           FeedStore.emitChange();

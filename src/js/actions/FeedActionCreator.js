@@ -30,6 +30,32 @@ export default {
         }
       });
   },
+  getPage(page) {
+    var p = page || 1;
+
+    $.ajax({
+      url: '/api/v1/feed',
+      data: { page: p },
+      dataType: 'json',
+      method: 'GET'
+    })
+      .done(function(res) {
+        let data = res.feed_items;
+
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.GET_FEED_PAGE,
+          data: data
+        });
+      })
+      .fail(function(res) {
+        // Logged out
+        if(res.status === 401) {
+          Dispatcher.handleViewAction({
+            type: Constants.ActionTypes.LOGGED_OUT
+          });
+        }
+      });
+  },
   getByUser(userID) {
     $.ajax({
       url: '/api/v1/feed/' + userID,
