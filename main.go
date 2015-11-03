@@ -41,7 +41,8 @@ func main() {
 		feed.Use(auth.Auth("/login"))
 		{
 			feed.GET("/", api.FeedIndex)
-			feed.GET("/:user_id", api.FeedShow)
+			feed.GET("/socket", api.FeedSocket)
+			feed.GET("/show/:user_id", api.FeedShow)
 		}
 
 		users := r.Group(v1Root + "/users")

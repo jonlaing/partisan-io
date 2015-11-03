@@ -27,6 +27,10 @@ function _addItems(items) {
   _feedItems = _feedItems.concat(items);
 }
 
+function _prependItems(items) {
+  _feedItems = items.concat(_feedItems);
+}
+
 function _addItem(item) {
   _feedItems = [item].concat(_feedItems);
 }
@@ -83,6 +87,13 @@ const FeedStore = assign({}, BaseStore, {
       case Constants.ActionTypes.GET_FEED_PAGE:
         if(action.data) {
           _addItems(action.data);
+          FeedStore.emitChange();
+        }
+        break;
+      case Constants.ActionTypes.GET_NEW_FEED_ITEMS:
+        if(action.data.length > 0) {
+          console.log(action.data);
+          _prependItems(action.data);
           FeedStore.emitChange();
         }
         break;

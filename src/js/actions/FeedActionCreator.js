@@ -1,6 +1,8 @@
-/*global $ */
+/*global $, WebSocket */
 import Dispatcher from '../Dispatcher';
 import Constants from '../Constants';
+
+import moment from 'moment';
 
 export default {
   getFeed() {
@@ -58,7 +60,7 @@ export default {
   },
   getByUser(userID) {
     $.ajax({
-      url: '/api/v1/feed/' + userID,
+      url: '/api/v1/feed/show/' + userID,
       dataType: 'json',
       method: 'GET'
     })
@@ -78,6 +80,36 @@ export default {
           });
         }
       });
+  },
+  feedSocket() {
+    var domain;
+    let url = window.location.href;
+
+    //find & remove protocol (http, ftp, etc.) and get domain
+    if (url.indexOf("://") > -1) {
+        domain = url.split('/')[2];
+    }
+    else {
+        domain = url.split('/')[0];
+    }
+
+    var _socket = new WebSocket("ws://" + domain + Constants.APIROOT + "/feed/socket");
+
+    _socket.onmessage = (res) => {
+      let data = JSON.parse(res.data);
+      Dispatcher.handleViewAction({
+        type: Constants.ActionTypes.GET_NEW_FEED_ITEMS,
+        data: data.feed_items
+      });
+    };
+
+    _socket.onopen = () => {
+      let lastNow = moment(Date.now()).unix();
+      window.setInterval(() => {
+        _socket.send(lastNow.toString());
+        lastNow = moment(Date.now()).unix();
+      }, 600000);
+    };
   },
   addItem(data) {
     Dispatcher.handleViewAction({

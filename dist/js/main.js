@@ -36845,6 +36845,7 @@ exports['default'] = {
     GET_FEED: null,
     GET_FEED_PAGE: null,
     ADD_FEED_ITEM: null,
+    GET_NEW_FEED_ITEMS: null,
     NO_FRIENDS: null,
 
     LOGIN_SUCCESS: null,
@@ -37108,7 +37109,7 @@ module.exports = exports['default'];
 
 
 },{"../Constants":188,"../Dispatcher":189}],192:[function(require,module,exports){
-/*global $ */
+/*global $, WebSocket */
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -37124,6 +37125,10 @@ var _Dispatcher2 = _interopRequireDefault(_Dispatcher);
 var _Constants = require('../Constants');
 
 var _Constants2 = _interopRequireDefault(_Constants);
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
 
 exports['default'] = {
   getFeed: function getFeed() {
@@ -37177,7 +37182,7 @@ exports['default'] = {
   },
   getByUser: function getByUser(userID) {
     $.ajax({
-      url: '/api/v1/feed/' + userID,
+      url: '/api/v1/feed/show/' + userID,
       dataType: 'json',
       method: 'GET'
     }).done(function (res) {
@@ -37196,6 +37201,35 @@ exports['default'] = {
       }
     });
   },
+  feedSocket: function feedSocket() {
+    var domain;
+    var url = window.location.href;
+
+    //find & remove protocol (http, ftp, etc.) and get domain
+    if (url.indexOf("://") > -1) {
+      domain = url.split('/')[2];
+    } else {
+      domain = url.split('/')[0];
+    }
+
+    var _socket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/feed/socket");
+
+    _socket.onmessage = function (res) {
+      var data = JSON.parse(res.data);
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.GET_NEW_FEED_ITEMS,
+        data: data.feed_items
+      });
+    };
+
+    _socket.onopen = function () {
+      var lastNow = (0, _moment2['default'])(Date.now()).unix();
+      window.setInterval(function () {
+        _socket.send(lastNow.toString());
+        lastNow = (0, _moment2['default'])(Date.now()).unix();
+      }, 600000);
+    };
+  },
   addItem: function addItem(data) {
     _Dispatcher2['default'].handleViewAction({
       type: _Constants2['default'].ActionTypes.ADD_FEED_ITEM,
@@ -37206,7 +37240,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189}],193:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"moment":8}],193:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38755,6 +38789,7 @@ exports['default'] = _reactAddons2['default'].createClass({
     window.addEventListener("scroll", this.handleScroll);
     _storesFeedStoreJs2['default'].addChangeListener(this._onChange);
     _actionsFeedActionCreatorJs2['default'].getFeed();
+    _actionsFeedActionCreatorJs2['default'].feedSocket();
   },
 
   componentWillUnmount: function componentWillUnmount() {
@@ -42362,6 +42397,10 @@ function _addItems(items) {
   _feedItems = _feedItems.concat(items);
 }
 
+function _prependItems(items) {
+  _feedItems = items.concat(_feedItems);
+}
+
 function _addItem(item) {
   _feedItems = [item].concat(_feedItems);
 }
@@ -42418,6 +42457,13 @@ var FeedStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
       case _Constants2['default'].ActionTypes.GET_FEED_PAGE:
         if (action.data) {
           _addItems(action.data);
+          FeedStore.emitChange();
+        }
+        break;
+      case _Constants2['default'].ActionTypes.GET_NEW_FEED_ITEMS:
+        if (action.data.length > 0) {
+          console.log(action.data);
+          _prependItems(action.data);
           FeedStore.emitChange();
         }
         break;

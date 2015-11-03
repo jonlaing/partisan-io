@@ -11,6 +11,7 @@ export default {
     GET_FEED: null,
     GET_FEED_PAGE: null,
     ADD_FEED_ITEM: null,
+    GET_NEW_FEED_ITEMS: null,
     NO_FRIENDS: null,
 
     LOGIN_SUCCESS: null,

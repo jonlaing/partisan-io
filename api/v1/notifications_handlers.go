@@ -3,12 +3,13 @@ package v1
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/github.com/gorilla/websocket"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/gorilla/websocket"
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
 // NotifResp is the response for the Notification Index
@@ -96,8 +97,8 @@ func NotificationsCount(c *gin.Context) {
 	msg := make(chan bool)
 	quit := make(chan bool)
 
-	go readLoop(conn, msg, quit)
-	go writeLoop(user.ID, db, conn, msg, quit)
+	go notifReadLoop(conn, msg, quit)
+	go notifWriteLoop(user.ID, db, conn, msg, quit)
 
 }
 
@@ -116,19 +117,19 @@ func NotificationsRead(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "marked read"})
 }
 
-func readLoop(c *websocket.Conn, send chan bool, quit chan bool) {
+func notifReadLoop(c *websocket.Conn, send chan bool, quit chan bool) {
 	for {
 		if _, _, err := c.NextReader(); err != nil {
 			c.Close()
 			quit <- true
 			return
-		} else {
-			send <- true
 		}
+
+		send <- true
 	}
 }
 
-func writeLoop(userID uint64, db *gorm.DB, c *websocket.Conn, received chan bool, quit chan bool) {
+func notifWriteLoop(userID uint64, db *gorm.DB, c *websocket.Conn, received chan bool, quit chan bool) {
 	var count int
 
 	for {

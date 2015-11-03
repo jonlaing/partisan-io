@@ -43,6 +43,7 @@ export default React.createClass({
     window.addEventListener("scroll", this.handleScroll);
     FeedStore.addChangeListener(this._onChange);
     FeedActionCreator.getFeed();
+    FeedActionCreator.feedSocket();
   },
 
   componentWillUnmount() {
