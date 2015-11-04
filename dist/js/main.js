@@ -40903,9 +40903,8 @@ exports['default'] = _react2['default'].createClass({
       return _react2['default'].createElement(
         'li',
         { key: suggestion, onClick: _this.handleSuggestionClick, className: selected ? "selected" : "" },
-        ' ',
-        suggestion,
-        ' '
+        '@',
+        suggestion
       );
     });
 

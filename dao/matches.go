@@ -2,7 +2,6 @@ package dao
 
 import (
 	"errors"
-	"fmt"
 	m "partisan/models"
 	"strconv"
 	"time"
@@ -36,7 +35,7 @@ func GetMatches(user m.User, gender string, minAge, maxAge int, radius float64, 
 
 	// make sure you can't overload on gender
 	if len(gender) > 0 && len(gender) < 256 {
-		query = query.Where("gender ILIKE ?", fmt.Sprintf("%%%s%%", gender))
+		query = query.Where("gender ILIKE ?", "%"+gender+"%")
 	}
 
 	if minAge > -1 {

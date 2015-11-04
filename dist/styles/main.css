@@ -2287,7 +2287,8 @@ header.header {
   margin: 0;
   padding: 0; }
   .post-composer-usernames ul li {
-    padding: 8px; }
+    padding: 8px;
+    color: #d215b3; }
     .post-composer-usernames ul li.selected {
       background: #f2f2f2; }
 

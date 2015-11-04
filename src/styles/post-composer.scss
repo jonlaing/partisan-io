@@ -80,6 +80,7 @@
 
     li {
       padding: $line-height/2;
+      color: $action-color;
 
       &.selected {
         background: $lighter-grey;

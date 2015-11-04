@@ -145,7 +145,7 @@ export default React.createClass({
 
     usernameList = this.state.usernameSuggestions.map((suggestion, i) => {
       let selected = this.state.usernameIndex === i;
-      return <li key={suggestion} onClick={this.handleSuggestionClick} className={selected ? "selected" : ""}> {suggestion} </li>;
+      return <li key={suggestion} onClick={this.handleSuggestionClick} className={selected ? "selected" : ""}>@{suggestion}</li>;
     });
 
     if(usernameList.length > 0) {

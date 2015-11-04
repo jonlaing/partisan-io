@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"partisan/auth"
+	"partisan/dao"
 	"partisan/db"
 	"partisan/imager"
 	"partisan/matcher"
@@ -232,10 +233,22 @@ func UserCheckUnique(c *gin.Context) {
 func UsernameSuggest(c *gin.Context) {
 	db := db.GetDB(c)
 
+	u, err := auth.CurrentUser(c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
 	username := c.Query("tag")
 
+	friendIDs, err := dao.FriendIDs(u, true, db)
+	if err != nil || len(friendIDs) == 0 {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
 	var suggestions []string
-	db.Model(m.User{}).Where("username LIKE ?", "%"+username+"%").Pluck("username", &suggestions)
+	db.Model(m.User{}).Where("id IN (?) AND username LIKE ?", friendIDs, "%"+username+"%").Pluck("username", &suggestions)
 
 	c.JSON(http.StatusOK, gin.H{"suggestions": suggestions})
 }
