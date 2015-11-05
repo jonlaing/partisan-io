@@ -132,6 +132,16 @@ func main() {
 			notifications.GET("/count", api.NotificationsCount)
 		}
 
+		messages := r.Group(v1Root + "/messages")
+		messages.Use(auth.Auth("/login"))
+		{
+			messages.GET("/", api.MessageThreadIndex)
+			messages.GET("/count", api.MessageCount)
+			messages.GET("/threads/:thread_id", api.MessageIndex)
+			messages.POST("/threads/:thread_id", api.MessageCreate)
+			messages.GET("/threads/:thread_id/socket", api.MessageSocket)
+		}
+
 		r.GET(v1Root+"/hashtags", auth.Auth("/login"), api.HashtagShow)
 
 		r.POST(v1Root+"/flag", auth.Auth("/login"), api.FlagCreate)
@@ -186,6 +196,8 @@ func main() {
 		&m.Taxonomy{},
 		&m.Flag{},
 		&m.UserTag{},
+		&m.Message{},
+		&m.MessageThread{},
 	)
 
 	ginpprof.Wrapper(r)

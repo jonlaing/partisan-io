@@ -33,5 +33,7 @@ func init() {
 		&m.Taxonomy{},
 		&m.Flag{},
 		&m.UserTag{},
+		&m.Message{},
+		&m.MessageThread{},
 	)
 }

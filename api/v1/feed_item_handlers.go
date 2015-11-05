@@ -27,7 +27,11 @@ type PostComments struct {
 func FeedIndex(c *gin.Context) {
 	db := db.GetDB(c)
 
-	user, _ := auth.CurrentUser(c)
+	user, err := auth.CurrentUser(c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
 
 	page := getPage(c)
 
