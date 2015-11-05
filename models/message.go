@@ -4,9 +4,9 @@ import "time"
 
 // Message is a direct message. Its "to" User is set by the MessageThread and MessageThreadUser
 type Message struct {
-	ID        uint64    `json:"id" gorm:"primary_key"`      // Primary key
-	UserID    uint64    `json:"user_id" binding:"required"` // ID of user that created Message
+	ID        uint64    `json:"id" gorm:"primary_key"` // Primary key
 	ThreadID  uint64    `json:"thread_id" binding:"required"`
+	UserID    uint64    `json:"user_id" binding:"required"` // ID of user that created Message
 	User      User      `sql:"-"`
 	Body      string    `json:"body" binding:"required"` // The text based body
 	Read      bool      `json:"read"`                    // has the message been read?
@@ -15,6 +15,15 @@ type Message struct {
 }
 
 type Messages []Message
+
+// MessageThreadUser is a join table between Message and MessageThread
+type MessageThreadUser struct {
+	ID        uint64    `json:"id" gorm:"primary_key"`      // Primary key
+	UserID    uint64    `json:"user_id" binding:"required"` // ID of user that created Message
+	ThreadID  uint64    `json:"thread_id" binding:"required"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
 
 // MessageThread holds all messages between two (or more, eventually) Users
 type MessageThread struct {

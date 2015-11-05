@@ -49,6 +49,66 @@ func MessageThreadIndex(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"threads": tresps})
 }
 
+func MessageThreadCreate(c *gin.Context) {
+	db := db.GetDB(c)
+
+	currentUser, err := auth.CurrentUser(c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	uID := c.Request.FormValue("user_id")
+	if len(uID) == 0 {
+		c.AbortWithError(http.StatusNotAcceptable, errors.New("No userID specified"))
+		return
+	}
+
+	userID, err := strconv.Atoi(uID)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	thread, err := dao.GetMessageThreadByUsers(currentUser.ID, uint64(userID), db)
+	if err == nil {
+		// Apparently, this thread already exists
+		c.JSON(http.StatusOK, gin.H{"thread": thread})
+		return
+	}
+
+	if _, ok := err.(*dao.MessageThreadUnreciprocated); ok {
+		// somehow we didn't create all the MessageThreadUsers
+		// last time, so we have to correct that
+		var mtu m.MessageThreadUser
+		if err := db.Where("thread_id = ? AND user_id IN (?)", []uint64{currentUser.ID, uint64(userID)}).First(&mtu).Error; err == nil {
+			if mtu.UserID == currentUser.ID {
+				db.Create(m.MessageThreadUser{ThreadID: thread.ID, UserID: uint64(userID)})
+			} else {
+				db.Create(m.MessageThreadUser{ThreadID: thread.ID, UserID: currentUser.ID})
+			}
+		}
+	} else {
+		// unknown error
+		c.AbortWithError(http.StatusNotAcceptable, err)
+		return
+	}
+
+	thread = m.MessageThread{}
+	if err := db.Create(&thread).Error; err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
+		return
+	}
+
+	mtu1 := m.MessageThreadUser{UserID: currentUser.ID, ThreadID: thread.ID}
+	mtu2 := m.MessageThreadUser{UserID: uint64(userID), ThreadID: thread.ID}
+
+	db.Create(&mtu1)
+	db.Create(&mtu2)
+
+	c.JSON(http.StatusOK, gin.H{"thread": thread})
+}
+
 func MessageIndex(c *gin.Context) {
 	db := db.GetDB(c)
 

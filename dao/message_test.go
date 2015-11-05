@@ -9,6 +9,7 @@ import (
 func TestMessageUnreadCount(t *testing.T) {
 	u := m.User{ID: 0}
 	var msgs []m.Message
+	var mtus []m.MessageThreadUser
 	var threads []m.MessageThread
 
 	for i := 1; i <= 10; i++ {
@@ -17,16 +18,22 @@ func TestMessageUnreadCount(t *testing.T) {
 			threadID = 0
 		}
 
-		msg1 := m.Message{UserID: uint64(i), ThreadID: uint64(threadID), Read: i%2 == 0}
-		msg2 := m.Message{UserID: u.ID, ThreadID: uint64(threadID), Read: true}
+		msg1 := m.Message{UserID: uint64(i), Read: i%2 == 0}
+		mtu1 := m.MessageThreadUser{UserID: uint64(i), ThreadID: uint64(threadID)}
+		msg2 := m.Message{UserID: u.ID, Read: true}
+		mtu2 := m.MessageThreadUser{UserID: u.ID, ThreadID: uint64(threadID)}
 		thread := m.MessageThread{ID: uint64(i)}
 		db.Create(&msg1)
+		db.Create(&mtu1)
 		db.Create(&msg2)
+		db.Create(&mtu2)
 		db.Create(&thread)
 		msgs = append(msgs, msg1, msg2)
+		mtus = append(mtus, mtu1, mtu2)
 		threads = append(threads, thread)
 	}
 	defer db.Delete(&msgs)
+	defer db.Delete(&mtus)
 	defer db.Delete(&threads)
 
 	c, err := MessageUnreadCount(u.ID, &db)
@@ -43,14 +50,19 @@ func TestGetMessages(t *testing.T) {
 	thread := m.MessageThread{ID: 1}
 
 	var msgs []m.Message
+	var mtus []m.MessageThreadUser
 
 	for i := 1; i <= 10; i++ {
 		// UserID will be either 1 or 0
-		msg := m.Message{ID: uint64(i), ThreadID: uint64(i % 2)}
+		msg := m.Message{ID: uint64(i), UserID: uint64(i), ThreadID: uint64(i % 2)}
+		mtu := m.MessageThreadUser{UserID: uint64(i), ThreadID: uint64(i % 2)}
 		db.Create(&msg)
+		db.Create(&mtu)
 		msgs = append(msgs, msg)
+		mtus = append(mtus, mtu)
 	}
 	defer db.Delete(&msgs)
+	defer db.Delete(&mtus)
 
 	ms, err := GetMessages(thread.ID, &db)
 	if err != nil {
@@ -73,16 +85,22 @@ func TestGetMessages(t *testing.T) {
 
 func TestGetMessagesAfter(t *testing.T) {
 	var msgs []m.Message
+	var mtus []m.MessageThreadUser
 
 	for i := 1; i <= 10; i++ {
-		msg := m.Message{ID: uint64(i), ThreadID: 1}
+		msg := m.Message{ID: uint64(i), UserID: uint64(i), ThreadID: 1}
+		mtu := m.MessageThreadUser{UserID: uint64(i), ThreadID: 1}
 		db.Create(&msg)
+		db.Create(&mtu)
 		if i%2 == 0 {
 			msg.CreatedAt = time.Time{}
 			db.Save(&msg)
 		}
 		msgs = append(msgs, msg)
+		mtus = append(mtus, mtu)
 	}
+	defer db.Delete(&msgs)
+	defer db.Delete(&mtus)
 
 	after := time.Now().AddDate(0, 0, -1)
 	ms, err := GetMessagesAfter(1, after, &db)

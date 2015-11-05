@@ -35,5 +35,6 @@ func init() {
 		&m.UserTag{},
 		&m.Message{},
 		&m.MessageThread{},
+		&m.MessageThreadUser{},
 	)
 }
