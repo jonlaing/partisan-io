@@ -6,7 +6,7 @@ import (
 	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
-func GetThread(threadID uint64, db *gorm.DB) (thread m.MessageThread, err error) {
+func GetMessageThread(threadID uint64, db *gorm.DB) (thread m.MessageThread, err error) {
 	err = db.Where("id = ?", threadID).Find(&thread).Error
 	return
 }
@@ -14,6 +14,7 @@ func GetThread(threadID uint64, db *gorm.DB) (thread m.MessageThread, err error)
 func GetMessageThreads(userID uint64, db *gorm.DB) (threads []m.MessageThread, err error) {
 	err = db.Joins("LEFT JOIN messages on messages.thread_id = message_threads.id").
 		Where("messages.user_id = ?", userID).
+		Order("message_threads.updated_at DESC").
 		Find(&threads).Error
 
 	return

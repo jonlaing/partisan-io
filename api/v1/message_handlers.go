@@ -105,14 +105,20 @@ func MessageCreate(c *gin.Context) {
 		return
 	}
 
-	if hasUser, err := dao.MessageThreadHasUser(user.ID, uint64(threadID), db); err != nil || !hasUser {
+	thread, err := dao.GetMessageThread(uint64(threadID), db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	if hasUser, err := dao.MessageThreadHasUser(user.ID, thread.ID, db); err != nil || !hasUser {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
 	msg := m.Message{
 		UserID:    user.ID,
-		ThreadID:  uint64(threadID),
+		ThreadID:  thread.ID,
 		Body:      c.Request.FormValue("body"),
 		Read:      false,
 		CreatedAt: time.Now(),
@@ -123,6 +129,9 @@ func MessageCreate(c *gin.Context) {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
+
+	thread.UpdatedAt = time.Now()
+	db.Save(&thread) // Not handling error here, because it's really not that big a deal
 
 	c.JSON(http.StatusOK, gin.H{"message": msg})
 }
