@@ -2,6 +2,7 @@ package dao
 
 import (
 	"errors"
+	"sort"
 	"time"
 
 	m "partisan/models"
@@ -26,7 +27,7 @@ func MessageUnreadCount(userID uint64, db *gorm.DB) (count int, err error) {
 }
 
 func GetMessages(threadID uint64, db *gorm.DB) (msgs []m.Message, err error) {
-	err = db.Where("thread_id = ?", threadID).Find(&msgs).Error
+	err = db.Where("thread_id = ?", threadID).Limit(200).Order("created_at DESC").Find(&msgs).Error
 	if err != nil {
 		return
 	}
@@ -43,12 +44,14 @@ func GetMessages(threadID uint64, db *gorm.DB) (msgs []m.Message, err error) {
 	}
 
 	collectMessageUsers(msgs, users)
+
+	sort.Sort(m.Messages(msgs))
 
 	return
 }
 
 func GetMessagesAfter(threadID uint64, after time.Time, db *gorm.DB) (msgs []m.Message, err error) {
-	err = db.Where("thread_id = ? AND created_at >= ?::timestamp", threadID, after).Find(&msgs).Error
+	err = db.Where("thread_id = ? AND created_at >= ?::timestamp", threadID, after).Order("created_at DESC").Find(&msgs).Error
 	if err != nil {
 		return
 	}
@@ -66,7 +69,13 @@ func GetMessagesAfter(threadID uint64, after time.Time, db *gorm.DB) (msgs []m.M
 
 	collectMessageUsers(msgs, users)
 
+	sort.Sort(m.Messages(msgs))
+
 	return
+}
+
+func MarkAllMessagesRead(userID, threadID uint64, db *gorm.DB) error {
+	return db.Model(m.Message{}).Where("user_id != ? AND thread_id = ?", userID, threadID).Updates(map[string]interface{}{"read": true}).Error
 }
 
 func collectMessageUsers(msgs []m.Message, users []m.User) {

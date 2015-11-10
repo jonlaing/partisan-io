@@ -18,8 +18,8 @@ import (
 )
 
 type ThreadResp struct {
-	Thread    m.MessageThread
-	HasUnread bool
+	ThreadUser m.MessageThreadUser `json:"thread_user"`
+	HasUnread  bool                `json:"has_read"`
 }
 
 func MessageThreadIndex(c *gin.Context) {
@@ -31,7 +31,7 @@ func MessageThreadIndex(c *gin.Context) {
 		return
 	}
 
-	threads, err := dao.GetMessageThreads(user.ID, db)
+	threads, err := dao.GetMessageThreadUsers(user.ID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -42,7 +42,7 @@ func MessageThreadIndex(c *gin.Context) {
 		// Possible N+1 problem, but there shouldn't be so manythreads that it's an issue... maybe...
 		// Not handling error, because the worst that happens is that a thread looks unread when it isn't.
 		// We'll live...
-		hasUnread, _ := dao.MessageThreadHasUnread(t.ID, db)
+		hasUnread, _ := dao.MessageThreadHasUnread(t.ThreadID, db)
 		tresps = append(tresps, ThreadResp{t, hasUnread})
 	}
 
@@ -67,6 +67,13 @@ func MessageThreadCreate(c *gin.Context) {
 	userID, err := strconv.Atoi(uID)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	// can only start a thread with friends
+	_, err = dao.GetFriendship(currentUser, uint64(userID), db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
 
@@ -141,6 +148,8 @@ func MessageIndex(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
 	}
+
+	dao.MarkAllMessagesRead(user.ID, uint64(threadID), db)
 
 	c.JSON(http.StatusOK, gin.H{"messages": msgs})
 }
@@ -252,7 +261,7 @@ func MessageSocket(c *gin.Context) {
 	quit := make(chan bool)
 
 	go messageReadLoop(conn, msg, quit)
-	go messageWriteLoop(uint64(threadID), db, conn, msg, quit)
+	go messageWriteLoop(user.ID, uint64(threadID), db, conn, msg, quit)
 }
 
 func messageCountReadLoop(c *websocket.Conn, send chan bool, quit chan bool) {
@@ -307,7 +316,7 @@ func messageReadLoop(c *websocket.Conn, send chan string, quit chan bool) {
 	}
 }
 
-func messageWriteLoop(threadID uint64, db *gorm.DB, c *websocket.Conn, received chan string, quit chan bool) {
+func messageWriteLoop(userID, threadID uint64, db *gorm.DB, c *websocket.Conn, received chan string, quit chan bool) {
 	for {
 		select {
 		case stamp := <-received:
@@ -326,6 +335,8 @@ func messageWriteLoop(threadID uint64, db *gorm.DB, c *websocket.Conn, received 
 			if err := c.WriteJSON(gin.H{"messages": msgs}); err != nil {
 				return
 			}
+
+			dao.MarkAllMessagesRead(userID, uint64(threadID), db)
 		case <-quit:
 			return // kill the loop
 		}

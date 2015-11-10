@@ -1,0 +1,12 @@
+.thread-list {
+
+  .thread-list-header {
+    display: flex;
+    display: -webkit-flex;
+
+    h2 {
+      width: 100%;
+      font-size: $line-height;
+    }
+  }
+}

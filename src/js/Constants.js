@@ -64,7 +64,12 @@ export default {
     GET_USERNAME_SUGGESTIONS: null,
 
     LIGHTBOX_OPEN: null,
-    LIGHTBOX_CLOSE: null
+    LIGHTBOX_CLOSE: null,
+
+    GET_THREADS_SUCCESS: null,
+    GET_MESSAGES_SUCCESS: null,
+    GET_NEW_MESSAGES: null,
+    SEND_MESSAGE_SUCCESS: null
   }),
 
   ActionSources: keyMirror({

@@ -53,11 +53,11 @@ func ConfirmedFriendIDs(u m.User, db *gorm.DB) ([]uint64, error) {
 func GetFriendship(u m.User, fID uint64, db *gorm.DB) (m.Friendship, error) {
 	var f1, f2 m.Friendship
 
-	if err := db.Where("user_id = ? AND friend_id = ?", u.ID, fID).Find(&f1).Error; err == nil {
+	if err := db.Where("user_id = ? AND friend_id = ?", u.ID, fID).First(&f1).Error; err == nil {
 		return f1, nil
 	}
 
-	err := db.Where("user_id = ? AND friend_id = ?", fID, u.ID).Find(&f2).Error
+	err := db.Where("user_id = ? AND friend_id = ?", fID, u.ID).First(&f2).Error
 
 	return f2, err
 }

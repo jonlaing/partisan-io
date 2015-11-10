@@ -96,8 +96,8 @@
         -webkit-transform: rotate(45deg) translateX($line-height/4) translateY(1px);
       }
       @if $arrow-position == "bottom left" or $arrow-position == "bottom right" {
-        transform: rotate(45deg) translateX(-$line-height/4) translateY(9px);
-        -webkit-transform: rotate(45deg) translateX(-$line-height/4) translateY(9px);
+        transform: rotate(45deg) translateX(-$line-height/4) translateY(-9px);
+        -webkit-transform: rotate(45deg) translateX(-$line-height/4) translateY(-9px);
       }
     }
   }

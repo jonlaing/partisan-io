@@ -1,3 +1,11 @@
 .breakout {
   @include breakout();
+
+  &.breakout-bottom-left {
+    @include breakout($arrow-position: "bottom left");
+  }
+
+  &.breakout-bottom-right {
+    @include breakout($arrow-position: "bottom right");
+  }
 }

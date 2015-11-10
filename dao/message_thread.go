@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"errors"
 	"fmt"
 	m "partisan/models"
 
@@ -22,10 +23,45 @@ func GetMessageThread(threadID uint64, db *gorm.DB) (thread m.MessageThread, err
 }
 
 func GetMessageThreads(userID uint64, db *gorm.DB) (threads []m.MessageThread, err error) {
-	err = db.Joins("LEFT JOIN message_thread_users on message_thread_users.thread_id = message_threads.id").
+	err = db.Joins("INNER JOIN message_thread_users on message_thread_users.thread_id = message_threads.id").
 		Where("message_thread_users.user_id = ?", userID).
 		Order("message_threads.updated_at DESC").
 		Find(&threads).Error
+
+	return
+}
+
+func GetMessageThreadUsers(userID uint64, db *gorm.DB) (mtus []m.MessageThreadUser, err error) {
+	threadIDs, err := GetMessageThreadIDs(userID, db)
+	if err != nil {
+		return
+	}
+
+	if len(threadIDs) == 0 {
+		return mtus, errors.New("No threads found")
+	}
+
+	err = db.Where("user_id != ? AND thread_id IN (?)", userID, threadIDs).Find(&mtus).Error
+	if err != nil {
+		return
+	}
+
+	if len(mtus) == 0 {
+		return mtus, errors.New("No MessageThreadUsers found")
+	}
+
+	users, err := GetRelatedUsers(m.MessageThreadUsers(mtus), db)
+	if err != nil {
+		return
+	}
+
+	for k := range mtus {
+		for _, u := range users {
+			if u.ID == mtus[k].UserID {
+				mtus[k].User = u
+			}
+		}
+	}
 
 	return
 }

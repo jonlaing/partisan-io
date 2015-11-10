@@ -16,6 +16,7 @@ import Feed from './components/Feed.jsx';
 import Questions from './components/Questions.jsx';
 import ProfileShow from './components/ProfileShow.jsx';
 import Matches from './components/Matches.jsx';
+import Messages from './components/Messages.jsx';
 import Friends from './components/Friends.jsx';
 import ProfileEdit from './components/ProfileEdit.jsx';
 import Post from './components/Post.jsx';
@@ -30,6 +31,7 @@ let questions = document.getElementById('questions');
 let profileShow = document.getElementById('profile-show');
 let profileEdit = document.getElementById('profile-edit');
 let matches = document.getElementById('matches');
+let messages = document.getElementById('messages');
 let friends = document.getElementById('friends');
 let post = document.getElementById('post');
 let hashtags = document.getElementById('hashtags');
@@ -62,6 +64,10 @@ if(profileEdit !== null) {
 
 if(matches !== null) {
   React.render(<Matches data={data} />, matches);
+}
+
+if(messages !== null) {
+  React.render(<Messages data={data} />, messages);
 }
 
 if(friends !== null) {

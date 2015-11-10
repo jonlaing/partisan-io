@@ -135,7 +135,7 @@ func main() {
 		messages := r.Group(v1Root + "/messages")
 		messages.Use(auth.Auth("/login"))
 		{
-			messages.GET("/", api.MessageThreadIndex)
+			messages.GET("/threads", api.MessageThreadIndex)
 			messages.GET("/count", api.MessageCount)
 			messages.GET("/threads/:thread_id", api.MessageIndex)
 			messages.POST("/threads/:thread_id", api.MessageCreate)
@@ -157,6 +157,7 @@ func main() {
 	r.GET("/questions", auth.Auth("/login"), QuestionsIndex)
 	r.GET("/matches", auth.Auth("/login"), MatchesIndex)
 	r.GET("/friends", auth.Auth("/login"), FriendsIndex)
+	r.GET("/messages", auth.Auth("/login"), MessagesIndex)
 	r.GET("/comments/:record_id", auth.Auth("/login"), CommentShow)
 	r.GET("/likes/:record_id", auth.Auth("/login"), LikeShow)
 	r.GET("/posts/:record_id", auth.Auth("/login"), PostShow)
@@ -198,6 +199,7 @@ func main() {
 		&m.UserTag{},
 		&m.Message{},
 		&m.MessageThread{},
+		&m.MessageThreadUser{},
 	)
 
 	ginpprof.Wrapper(r)
@@ -214,6 +216,7 @@ func createMyRender() multitemplate.Render {
 	r.AddFromFiles("hashtags", base, root+"/hashtags.html")
 	r.AddFromFiles("login", base, root+"/login.html")
 	r.AddFromFiles("matches", base, root+"/matches.html")
+	r.AddFromFiles("messages", base, root+"/messages.html")
 	r.AddFromFiles("friends", base, root+"/friends.html")
 	r.AddFromFiles("post", base, root+"/post.html")
 	r.AddFromFiles("profile_edit", base, root+"/profile_edit.html")

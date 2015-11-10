@@ -36898,7 +36898,12 @@ exports['default'] = {
     GET_USERNAME_SUGGESTIONS: null,
 
     LIGHTBOX_OPEN: null,
-    LIGHTBOX_CLOSE: null
+    LIGHTBOX_CLOSE: null,
+
+    GET_THREADS_SUCCESS: null,
+    GET_MESSAGES_SUCCESS: null,
+    GET_NEW_MESSAGES: null,
+    SEND_MESSAGE_SUCCESS: null
   }),
 
   ActionSources: (0, _reactLibKeyMirror2['default'])({
@@ -37576,7 +37581,6 @@ var _Constants2 = _interopRequireDefault(_Constants);
 
 exports['default'] = {
   getMatches: function getMatches(distance, gender, minAge, maxAge) {
-    console.log(gender);
     $.ajax({
       url: _Constants2['default'].APIROOT + '/matches',
       data: {
@@ -37588,6 +37592,7 @@ exports['default'] = {
       method: 'GET',
       dataType: 'json'
     }).done(function (res) {
+      console.log(res);
       _Dispatcher2['default'].handleViewAction({
         type: _Constants2['default'].ActionTypes.GET_MATCHES,
         data: res
@@ -37601,6 +37606,125 @@ module.exports = exports['default'];
 
 
 },{"../Constants":188,"../Dispatcher":189}],200:[function(require,module,exports){
+/*global WebSocket */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _Dispatcher = require('../Dispatcher');
+
+var _Dispatcher2 = _interopRequireDefault(_Dispatcher);
+
+var _Constants = require('../Constants');
+
+var _Constants2 = _interopRequireDefault(_Constants);
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
+exports['default'] = {
+  getMessages: function getMessages(threadID) {
+    $.ajax({
+      url: _Constants2['default'].APIROOT + '/messages/threads/' + threadID,
+      method: 'GET',
+      dataType: 'json'
+    }).done(function (res) {
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.GET_MESSAGES_SUCCESS,
+        data: res.messages
+      });
+    }).fail(function (res) {
+      console.log(res);
+    });
+  },
+  messageSocket: function messageSocket(threadID) {
+    var domain;
+    var url = window.location.href;
+
+    //find & remove protocol (http, ftp, etc.) and get domain
+    if (url.indexOf("://") > -1) {
+      domain = url.split('/')[2];
+    } else {
+      domain = url.split('/')[0];
+    }
+
+    var _socket, sendInterval, reopenInterval;
+
+    var start = function start() {
+      if (!_socket) {
+        _socket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/messages/threads/" + threadID + "/socket");
+      } else {
+        return;
+      }
+
+      _socket.onmessage = function (res) {
+        var data = JSON.parse(res.data);
+        if (data.messages) {
+          _Dispatcher2['default'].handleViewAction({
+            type: _Constants2['default'].ActionTypes.GET_NEW_MESSAGES,
+            data: data.messages
+          });
+        }
+      };
+
+      _socket.onopen = function () {
+        window.clearInterval(reopenInterval);
+
+        var lastNow = (0, _moment2['default'])(Date.now()).unix();
+
+        sendInterval = window.setInterval(function () {
+          if (!_socket || _socket.readyState === 2 || _socket.readyState === 3) {
+            window.clearInterval(sendInterval);
+            return;
+          }
+
+          _socket.send(lastNow.toString());
+          lastNow = (0, _moment2['default'])(Date.now()).unix();
+        }, 500);
+      };
+
+      _socket.onclose = function () {
+        reopenInterval = window.setInterval(function () {
+          if (!_socket || _socket.readyState === 0 || _socket.readyState === 1) {
+            window.clearInterval(reopenInterval);
+            return;
+          }
+
+          _socket = null;
+          start();
+        }, 5000);
+      };
+    };
+
+    start();
+  },
+  sendMessage: function sendMessage(threadID, text) {
+    $.ajax({
+      url: _Constants2['default'].APIROOT + '/messages/threads/' + threadID,
+      data: {
+        body: text
+      },
+      method: 'POST',
+      dataType: 'json'
+    }).done(function (res) {
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.SEND_MESSAGE_SUCCESS,
+        data: res
+      });
+    }).fail(function (res) {
+      console.log(res);
+    });
+  }
+};
+module.exports = exports['default'];
+
+
+},{"../Constants":188,"../Dispatcher":189,"moment":8}],201:[function(require,module,exports){
 /*global WebSocket */
 'use strict';
 
@@ -37667,7 +37791,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189}],201:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189}],202:[function(require,module,exports){
 /*global $, FormData */
 'use strict';
 
@@ -37732,7 +37856,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189}],202:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189}],203:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -37843,7 +37967,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189}],203:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189}],204:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -37901,7 +38025,7 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189}],204:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189}],205:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -37972,7 +38096,43 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189}],205:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189}],206:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _Dispatcher = require('../Dispatcher');
+
+var _Dispatcher2 = _interopRequireDefault(_Dispatcher);
+
+var _Constants = require('../Constants');
+
+var _Constants2 = _interopRequireDefault(_Constants);
+
+exports['default'] = {
+  getThreads: function getThreads() {
+    $.ajax({
+      url: _Constants2['default'].APIROOT + '/messages/threads',
+      method: 'GET',
+      dataType: 'json'
+    }).done(function (res) {
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.GET_THREADS_SUCCESS,
+        data: res
+      });
+    }).fail(function (res) {
+      console.log(res);
+    });
+  }
+};
+module.exports = exports['default'];
+
+
+},{"../Constants":188,"../Dispatcher":189}],207:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38050,7 +38210,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":255,"./AvatarUpload.jsx":206,"react":187,"react-fontawesome":13}],206:[function(require,module,exports){
+},{"../utils/formatter":264,"./AvatarUpload.jsx":208,"react":187,"react-fontawesome":13}],208:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38155,7 +38315,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":241,"react":187,"react-dropzone":12,"react-fontawesome":13}],207:[function(require,module,exports){
+},{"../actions/AvatarActionCreator":190,"../stores/AvatarStore":248,"react":187,"react-dropzone":12,"react-fontawesome":13}],209:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38199,7 +38359,7 @@ exports["default"] = _react2["default"].createClass({
 module.exports = exports["default"];
 
 
-},{"react":187}],208:[function(require,module,exports){
+},{"react":187}],210:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38226,7 +38386,7 @@ exports["default"] = _react2["default"].createClass({
 module.exports = exports["default"];
 
 
-},{"react":187}],209:[function(require,module,exports){
+},{"react":187}],211:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38327,7 +38487,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LightboxActionCreator":196,"../actions/LikeActionCreator":197,"../utils/formatter":255,"./Likes.jsx":221,"moment":8,"react":187}],210:[function(require,module,exports){
+},{"../actions/LightboxActionCreator":196,"../actions/LikeActionCreator":197,"../utils/formatter":264,"./Likes.jsx":223,"moment":8,"react":187}],212:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38445,7 +38605,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/CommentsActionCreator":191,"react":187,"react-fontawesome":13}],211:[function(require,module,exports){
+},{"../actions/CommentsActionCreator":191,"react":187,"react-fontawesome":13}],213:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38488,7 +38648,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-fontawesome":13}],212:[function(require,module,exports){
+},{"react":187,"react-fontawesome":13}],214:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38589,7 +38749,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/CommentsActionCreator":191,"../stores/CommentStore":243,"./Comment.jsx":209,"./CommentComposer.jsx":210,"react/addons":15}],213:[function(require,module,exports){
+},{"../actions/CommentsActionCreator":191,"../stores/CommentStore":250,"./Comment.jsx":211,"./CommentComposer.jsx":212,"react/addons":15}],215:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38698,7 +38858,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187}],214:[function(require,module,exports){
+},{"react":187}],216:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38846,7 +39006,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":244,"./FeedList.jsx":215,"./FlagForm.jsx":216,"./Lightbox.jsx":220,"./MiniMatcher.jsx":227,"./Nav.jsx":229,"./NoFriends.jsx":230,"./PostComposer.jsx":233,"./ProfileEdit.jsx":234,"./UserSession.jsx":239,"react/addons":15}],215:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":251,"./FeedList.jsx":217,"./FlagForm.jsx":218,"./Lightbox.jsx":222,"./MiniMatcher.jsx":233,"./Nav.jsx":235,"./NoFriends.jsx":236,"./PostComposer.jsx":239,"./ProfileEdit.jsx":240,"./UserSession.jsx":246,"react/addons":15}],217:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38899,7 +39059,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Card.jsx":208,"./Post.jsx":232,"react/addons":15}],216:[function(require,module,exports){
+},{"./Card.jsx":210,"./Post.jsx":238,"react/addons":15}],218:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38987,7 +39147,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":193,"./Modal.jsx":228,"react":187,"react-radio":14}],217:[function(require,module,exports){
+},{"../actions/FlagActionCreator":193,"./Modal.jsx":234,"react":187,"react-radio":14}],219:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39079,7 +39239,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":245,"react":187}],218:[function(require,module,exports){
+},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":252,"react":187}],220:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39195,7 +39355,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":245,"./Match.jsx":224,"./Nav.jsx":229,"./NoFriends.jsx":230,"./UserSession.jsx":239,"react":187}],219:[function(require,module,exports){
+},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":252,"./Match.jsx":226,"./Nav.jsx":235,"./NoFriends.jsx":236,"./UserSession.jsx":246,"react":187}],221:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39285,7 +39445,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/HashtagActionCreator":195,"../stores/HashtagStore":246,"./Card.jsx":208,"./Post.jsx":232,"react":187}],220:[function(require,module,exports){
+},{"../actions/HashtagActionCreator":195,"../stores/HashtagStore":253,"./Card.jsx":210,"./Post.jsx":238,"react":187}],222:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39344,7 +39504,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LightboxActionCreator":196,"../stores/LightboxStore":247,"./Modal.jsx":228,"react":187}],221:[function(require,module,exports){
+},{"../actions/LightboxActionCreator":196,"../stores/LightboxStore":254,"./Modal.jsx":234,"react":187}],223:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39391,7 +39551,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-fontawesome":13}],222:[function(require,module,exports){
+},{"react":187,"react-fontawesome":13}],224:[function(require,module,exports){
 /*global $ */
 'use strict';
 
@@ -39510,7 +39670,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":198,"../stores/LoginStore":248,"react/addons":15}],223:[function(require,module,exports){
+},{"../actions/LoginActionCreator":198,"../stores/LoginStore":255,"react/addons":15}],225:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39605,7 +39765,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-checkbox-group":11}],224:[function(require,module,exports){
+},{"react":187,"react-checkbox-group":11}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39677,7 +39837,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":255,"react":187}],225:[function(require,module,exports){
+},{"../utils/formatter":264,"react":187}],227:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39859,7 +40019,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":199,"./Card.jsx":208,"moment":8,"react":187}],226:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":199,"./Card.jsx":210,"moment":8,"react":187}],228:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39984,7 +40144,321 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":199,"../stores/MatchesStore":249,"./Match.jsx":224,"./MatchSearch.jsx":225,"./Nav.jsx":229,"./UserSession.jsx":239,"moment":8,"react":187}],227:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":199,"../stores/MatchesStore":256,"./Match.jsx":226,"./MatchSearch.jsx":227,"./Nav.jsx":235,"./UserSession.jsx":246,"moment":8,"react":187}],229:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _BreakoutJsx = require('./Breakout.jsx');
+
+var _BreakoutJsx2 = _interopRequireDefault(_BreakoutJsx);
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'Message',
+
+  getInitialState: function getInitialState() {
+    return {};
+  },
+
+  handleAvatarClick: function handleAvatarClick(username) {
+    return function () {
+      window.location.href = "/profiles/" + username;
+    };
+  },
+
+  componentDidMount: function componentDidMount() {},
+
+  render: function render() {
+    var className = "message";
+    if (this.props.thisUser === true) {
+      className += " message-mine";
+    }
+
+    // make sure newlines are respected
+    var text = this.props.message.body.split("\n").map(function (line) {
+      return _react2['default'].createElement(
+        'span',
+        null,
+        line,
+        _react2['default'].createElement('br', null)
+      );
+    });
+
+    return _react2['default'].createElement(
+      'li',
+      { className: className },
+      _react2['default'].createElement(
+        _BreakoutJsx2['default'],
+        null,
+        _react2['default'].createElement(
+          'div',
+          { className: 'message-avatar' },
+          _react2['default'].createElement('img', { src: this.props.message.user.avatar_thumbnail_url, className: 'user-avatar', onClick: this.handleAvatarClick(this.props.message.user.username) })
+        ),
+        _react2['default'].createElement(
+          'div',
+          { className: 'message-body' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'message-timestamp' },
+            (0, _moment2['default'])(this.props.message.created_at).fromNow()
+          ),
+          text
+        )
+      )
+    );
+  }
+});
+module.exports = exports['default'];
+
+
+},{"./Breakout.jsx":209,"moment":8,"react":187}],230:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _actionsMessageActionCreator = require('../actions/MessageActionCreator');
+
+var _actionsMessageActionCreator2 = _interopRequireDefault(_actionsMessageActionCreator);
+
+var _ENTER = 13;
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'MessageComposer',
+
+  getInitialState: function getInitialState() {
+    return {};
+  },
+
+  handleKeyDown: function handleKeyDown(e) {
+    if (e.keyCode === _ENTER && !e.shiftKey) {
+      _actionsMessageActionCreator2['default'].sendMessage(1, e.target.value);
+      e.target.value = "";
+    }
+  },
+
+  handleButtonClick: function handleButtonClick() {
+    var message = _react2['default'].findDOMNode(this.refs.message);
+    // MessageActionCreator.sendMessage(this.props.thread, message.value);
+    _actionsMessageActionCreator2['default'].sendMessage(1, message.value);
+    message.value = "";
+  },
+
+  componentDidMount: function componentDidMount() {},
+
+  render: function render() {
+    return _react2['default'].createElement(
+      'div',
+      { className: 'message-composer' },
+      _react2['default'].createElement('textarea', { type: 'text', placeholder: 'Type your message here', onKeyDown: this.handleKeyDown, ref: 'message' }),
+      _react2['default'].createElement(
+        'button',
+        { onClick: this.handleButtonClick },
+        'Send'
+      )
+    );
+  }
+});
+module.exports = exports['default'];
+
+
+},{"../actions/MessageActionCreator":200,"react":187}],231:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _MessageJsx = require('./Message.jsx');
+
+var _MessageJsx2 = _interopRequireDefault(_MessageJsx);
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'MessageList',
+
+  getInitialState: function getInitialState() {
+    return {};
+  },
+
+  componentDidMount: function componentDidMount() {
+    this._scroll();
+  },
+
+  shouldComponentUpdate: function shouldComponentUpdate(nextProps) {
+    return nextProps.messages.length !== this.props.messages.length;
+  },
+
+  componentDidUpdate: function componentDidUpdate() {
+    this._scroll();
+  },
+
+  render: function render() {
+    var _this = this;
+
+    var messages = this.props.messages.map(function (msg) {
+      return _react2['default'].createElement(_MessageJsx2['default'], { key: msg.id, message: msg, thisUser: _this.props.userID === parseInt(msg.user_id) });
+    });
+
+    return _react2['default'].createElement(
+      'div',
+      { className: 'message-list', ref: 'list' },
+      _react2['default'].createElement(
+        'ul',
+        null,
+        messages
+      )
+    );
+  },
+
+  _scroll: function _scroll() {
+    var list = $(_react2['default'].findDOMNode(this.refs.list));
+    var height = list.find("ul").outerHeight();
+    list.scrollTop(height);
+  }
+});
+module.exports = exports['default'];
+
+
+},{"./Message.jsx":229,"react":187}],232:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _actionsThreadActionCreator = require('../actions/ThreadActionCreator');
+
+var _actionsThreadActionCreator2 = _interopRequireDefault(_actionsThreadActionCreator);
+
+var _actionsMessageActionCreator = require('../actions/MessageActionCreator');
+
+var _actionsMessageActionCreator2 = _interopRequireDefault(_actionsMessageActionCreator);
+
+var _storesThreadStore = require('../stores/ThreadStore');
+
+var _storesThreadStore2 = _interopRequireDefault(_storesThreadStore);
+
+var _storesMessageStore = require('../stores/MessageStore');
+
+var _storesMessageStore2 = _interopRequireDefault(_storesMessageStore);
+
+var _NavJsx = require('./Nav.jsx');
+
+var _NavJsx2 = _interopRequireDefault(_NavJsx);
+
+var _UserSessionJsx = require('./UserSession.jsx');
+
+var _UserSessionJsx2 = _interopRequireDefault(_UserSessionJsx);
+
+var _ThreadListJsx = require('./ThreadList.jsx');
+
+var _ThreadListJsx2 = _interopRequireDefault(_ThreadListJsx);
+
+var _MessageListJsx = require('./MessageList.jsx');
+
+var _MessageListJsx2 = _interopRequireDefault(_MessageListJsx);
+
+var _MessageComposerJsx = require('./MessageComposer.jsx');
+
+var _MessageComposerJsx2 = _interopRequireDefault(_MessageComposerJsx);
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'Messages',
+
+  getInitialState: function getInitialState() {
+    return { threads: [], currentThread: null, messages: [] };
+  },
+
+  componentDidMount: function componentDidMount() {
+    _storesThreadStore2['default'].addChangeListener(this._onThreadsChange);
+    _storesMessageStore2['default'].addChangeListener(this._onMessagesChange);
+    _actionsThreadActionCreator2['default'].getThreads();
+    _actionsMessageActionCreator2['default'].getMessages(1);
+    _actionsMessageActionCreator2['default'].messageSocket(1);
+  },
+
+  componentWillUnmount: function componentWillUnmount() {
+    _storesThreadStore2['default'].removeChangeListener(this._onThreadsChange);
+    _storesMessageStore2['default'].removeChangeListener(this._onMessagesChange);
+  },
+
+  render: function render() {
+    return _react2['default'].createElement(
+      'div',
+      { className: 'messages' },
+      _react2['default'].createElement(
+        'header',
+        { className: 'header' },
+        _react2['default'].createElement(_UserSessionJsx2['default'], { className: 'right', username: this.props.data.user.username, avatar: this.props.data.user.avatar_thumbnail_url }),
+        _react2['default'].createElement('img', { src: 'images/logo.svg', className: 'logo' }),
+        _react2['default'].createElement(_NavJsx2['default'], { currentPage: 'messages' })
+      ),
+      _react2['default'].createElement(
+        'div',
+        { className: 'dashboard' },
+        _react2['default'].createElement(
+          'aside',
+          null,
+          _react2['default'].createElement(_ThreadListJsx2['default'], { threads: this.state.threads })
+        ),
+        _react2['default'].createElement(
+          'article',
+          { className: 'messages-container' },
+          _react2['default'].createElement(_MessageListJsx2['default'], { messages: this.state.messages, userID: this.props.data.user.id }),
+          _react2['default'].createElement(_MessageComposerJsx2['default'], { thread: this.state.currentThread })
+        )
+      )
+    );
+  },
+
+  _onThreadsChange: function _onThreadsChange() {
+    this.setState({
+      threads: _storesThreadStore2['default'].getList()
+    });
+  },
+
+  _onMessagesChange: function _onMessagesChange() {
+    this.setState({
+      messages: _storesMessageStore2['default'].getMessages()
+    });
+  }
+});
+module.exports = exports['default'];
+
+
+},{"../actions/MessageActionCreator":200,"../actions/ThreadActionCreator":206,"../stores/MessageStore":257,"../stores/ThreadStore":263,"./MessageComposer.jsx":230,"./MessageList.jsx":231,"./Nav.jsx":235,"./ThreadList.jsx":245,"./UserSession.jsx":246,"react":187}],233:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40129,7 +40603,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MatchesActionCreator":199,"../stores/MatchesStore":249,"../utils/formatter":255,"react":187}],228:[function(require,module,exports){
+},{"../actions/MatchesActionCreator":199,"../stores/MatchesStore":256,"../utils/formatter":264,"react":187}],234:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -40191,7 +40665,7 @@ exports["default"] = _reactAddons2["default"].createClass({
 module.exports = exports["default"];
 
 
-},{"react/addons":15}],229:[function(require,module,exports){
+},{"react/addons":15}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40266,7 +40740,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Notifications.jsx":231,"react":187}],230:[function(require,module,exports){
+},{"./Notifications.jsx":237,"react":187}],236:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40318,7 +40792,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"react":187,"react-fontawesome":13}],231:[function(require,module,exports){
+},{"react":187,"react-fontawesome":13}],237:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40571,7 +41045,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/NotificationActionCreator":200,"../stores/NotificationStore":250,"./Breakout.jsx":207,"moment":8,"react":187,"react-fontawesome":13}],232:[function(require,module,exports){
+},{"../actions/NotificationActionCreator":201,"../stores/NotificationStore":258,"./Breakout.jsx":209,"moment":8,"react":187,"react-fontawesome":13}],238:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40724,7 +41198,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":193,"../actions/LightboxActionCreator":196,"../actions/LikeActionCreator":197,"../utils/formatter":255,"./CommentCounter.jsx":211,"./CommentList.jsx":212,"./Likes.jsx":221,"moment":8,"react":187,"react-fontawesome":13}],233:[function(require,module,exports){
+},{"../actions/FlagActionCreator":193,"../actions/LightboxActionCreator":196,"../actions/LikeActionCreator":197,"../utils/formatter":264,"./CommentCounter.jsx":213,"./CommentList.jsx":214,"./Likes.jsx":223,"moment":8,"react":187,"react-fontawesome":13}],239:[function(require,module,exports){
 /*global $ */
 'use strict';
 
@@ -40954,7 +41428,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/PostActionCreator":201,"../stores/PostComposerStore":251,"./Breakout.jsx":207,"react":187,"react-dropzone":12,"react-fontawesome":13}],234:[function(require,module,exports){
+},{"../actions/PostActionCreator":202,"../stores/PostComposerStore":259,"./Breakout.jsx":209,"react":187,"react-dropzone":12,"react-fontawesome":13}],240:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41158,7 +41632,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ProfileActionCreator":202,"../stores/ProfileStore":252,"../utils/formatter":255,"./AvatarEditor.jsx":205,"./LookingForEdit.jsx":223,"./ProfileInfoEditor.jsx":235,"react":187,"react-fontawesome":13}],235:[function(require,module,exports){
+},{"../actions/ProfileActionCreator":203,"../stores/ProfileStore":260,"../utils/formatter":264,"./AvatarEditor.jsx":207,"./LookingForEdit.jsx":225,"./ProfileInfoEditor.jsx":241,"react":187,"react-fontawesome":13}],241:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41333,7 +41807,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../utils/formatter":255,"./DatePicker.jsx":213,"moment":8,"react":187}],236:[function(require,module,exports){
+},{"../utils/formatter":264,"./DatePicker.jsx":215,"moment":8,"react":187}],242:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41563,7 +42037,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":244,"../utils/formatter":255,"./FeedList.jsx":215,"./FlagForm.jsx":216,"./Friender.jsx":217,"./Nav.jsx":229,"./UserSession.jsx":239,"react":187}],237:[function(require,module,exports){
+},{"../actions/FeedActionCreator.js":192,"../stores/FeedStore.js":251,"../utils/formatter":264,"./FeedList.jsx":217,"./FlagForm.jsx":218,"./Friender.jsx":219,"./Nav.jsx":235,"./UserSession.jsx":246,"react":187}],243:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41763,7 +42237,7 @@ exports['default'] = _reactAddons2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/QuestionsActionCreator":203,"../stores/QuestionsStore":253,"./Card.jsx":208,"./Modal.jsx":228,"./UserSession.jsx":239,"jquery":6,"react/addons":15}],238:[function(require,module,exports){
+},{"../actions/QuestionsActionCreator":204,"../stores/QuestionsStore":261,"./Card.jsx":210,"./Modal.jsx":234,"./UserSession.jsx":246,"jquery":6,"react/addons":15}],244:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -41933,7 +42407,64 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/SignUpActionCreator":204,"../stores/SignUpStore":254,"react":187}],239:[function(require,module,exports){
+},{"../actions/SignUpActionCreator":205,"../stores/SignUpStore":262,"react":187}],245:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+exports["default"] = _react2["default"].createClass({
+  displayName: "ThreadList",
+
+  getInitialState: function getInitialState() {
+    return {};
+  },
+
+  render: function render() {
+    var threads = this.props.threads.map(function (thread) {
+      return _react2["default"].createElement(
+        "li",
+        { key: thread.id },
+        thread.thread_user.user.username
+      );
+    });
+
+    return _react2["default"].createElement(
+      "div",
+      { className: "thread-list" },
+      _react2["default"].createElement(
+        "div",
+        { className: "thread-list-header" },
+        _react2["default"].createElement(
+          "h2",
+          null,
+          "Message Threads"
+        ),
+        _react2["default"].createElement(
+          "button",
+          { className: "thread-list-add" },
+          "Start Chat"
+        )
+      ),
+      _react2["default"].createElement(
+        "ul",
+        null,
+        threads
+      )
+    );
+  }
+});
+module.exports = exports["default"];
+
+
+},{"react":187}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42010,7 +42541,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":198,"./Breakout.jsx":207,"react":187,"react-fontawesome":13}],240:[function(require,module,exports){
+},{"../actions/LoginActionCreator":198,"./Breakout.jsx":209,"react":187,"react-fontawesome":13}],247:[function(require,module,exports){
 (function (global){
 /*global data */
 'use strict';
@@ -42053,6 +42584,10 @@ var _componentsMatchesJsx = require('./components/Matches.jsx');
 
 var _componentsMatchesJsx2 = _interopRequireDefault(_componentsMatchesJsx);
 
+var _componentsMessagesJsx = require('./components/Messages.jsx');
+
+var _componentsMessagesJsx2 = _interopRequireDefault(_componentsMessagesJsx);
+
 var _componentsFriendsJsx = require('./components/Friends.jsx');
 
 var _componentsFriendsJsx2 = _interopRequireDefault(_componentsFriendsJsx);
@@ -42089,6 +42624,7 @@ var questions = document.getElementById('questions');
 var profileShow = document.getElementById('profile-show');
 var profileEdit = document.getElementById('profile-edit');
 var matches = document.getElementById('matches');
+var messages = document.getElementById('messages');
 var friends = document.getElementById('friends');
 var post = document.getElementById('post');
 var hashtags = document.getElementById('hashtags');
@@ -42122,6 +42658,10 @@ if (matches !== null) {
   _reactAddons2['default'].render(_reactAddons2['default'].createElement(_componentsMatchesJsx2['default'], { data: data }), matches);
 }
 
+if (messages !== null) {
+  _reactAddons2['default'].render(_reactAddons2['default'].createElement(_componentsMessagesJsx2['default'], { data: data }), messages);
+}
+
 if (friends !== null) {
   _reactAddons2['default'].render(_reactAddons2['default'].createElement(_componentsFriendsJsx2['default'], { data: data }), friends);
 }
@@ -42143,7 +42683,7 @@ Perf.printWasted(Perf.getLastMeasurements());
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./components/Card.jsx":208,"./components/Feed.jsx":214,"./components/Friends.jsx":218,"./components/HashtagSearch.jsx":219,"./components/Login.jsx":222,"./components/Matches.jsx":226,"./components/Post.jsx":232,"./components/ProfileEdit.jsx":234,"./components/ProfileShow.jsx":236,"./components/Questions.jsx":237,"./components/SignUp.jsx":238,"events":2,"jquery":6,"react/addons":15}],241:[function(require,module,exports){
+},{"./components/Card.jsx":210,"./components/Feed.jsx":216,"./components/Friends.jsx":220,"./components/HashtagSearch.jsx":221,"./components/Login.jsx":224,"./components/Matches.jsx":228,"./components/Messages.jsx":232,"./components/Post.jsx":238,"./components/ProfileEdit.jsx":240,"./components/ProfileShow.jsx":242,"./components/Questions.jsx":243,"./components/SignUp.jsx":244,"events":2,"jquery":6,"react/addons":15}],248:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42202,7 +42742,7 @@ exports['default'] = AvatarStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],242:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],249:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42239,7 +42779,7 @@ exports['default'] = (0, _objectAssign2['default'])({}, _events.EventEmitter.pro
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"events":2,"object-assign":9}],243:[function(require,module,exports){
+},{"../Constants":188,"events":2,"object-assign":9}],250:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42347,7 +42887,7 @@ exports['default'] = CommentStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],244:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],251:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42519,7 +43059,7 @@ exports['default'] = FeedStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],245:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],252:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42609,7 +43149,7 @@ exports['default'] = FriendsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],246:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],253:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42689,7 +43229,7 @@ exports['default'] = HashtagStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],247:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],254:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42755,7 +43295,7 @@ exports['default'] = LightboxStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],248:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],255:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42847,7 +43387,7 @@ exports['default'] = LoginStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],249:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],256:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42907,7 +43447,82 @@ exports['default'] = MatchesStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],250:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],257:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _Dispatcher = require('../Dispatcher');
+
+var _Dispatcher2 = _interopRequireDefault(_Dispatcher);
+
+var _Constants = require('../Constants');
+
+var _Constants2 = _interopRequireDefault(_Constants);
+
+var _BaseStore = require('./BaseStore');
+
+var _BaseStore2 = _interopRequireDefault(_BaseStore);
+
+var _objectAssign = require('object-assign');
+
+var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+// data storage
+var _messages = [];
+
+// for some reason, new messages come up twice by default
+// gotta make sure they're all unique
+function uniqueMessages(messages) {
+  var ids = [];
+
+  return messages.filter(function (msg) {
+    if (ids.indexOf(msg.id) === -1) {
+      ids.push(msg.id);
+      return true;
+    }
+  });
+}
+
+// Facebook style store creation.
+var MessageStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
+  // public methods used by Controller-View to operate on data
+  getMessages: function getMessages() {
+    return _messages;
+  },
+
+  // register store with dispatcher, allowing actions to flow through
+  dispatcherIndex: _Dispatcher2['default'].register(function (payload) {
+    var action = payload.action;
+
+    switch (action.type) {
+      case _Constants2['default'].ActionTypes.GET_MESSAGES_SUCCESS:
+        if (action.data) {
+          _messages = uniqueMessages(action.data);
+          MessageStore.emitChange();
+        }
+        break;
+      case _Constants2['default'].ActionTypes.GET_NEW_MESSAGES:
+        if (action.data) {
+          _messages = uniqueMessages(_messages.concat(action.data));
+          MessageStore.emitChange();
+        }
+        break;
+
+      // add more cases for other actionTypes...
+    }
+  })
+});
+
+exports['default'] = MessageStore;
+module.exports = exports['default'];
+
+
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],258:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42988,7 +43603,7 @@ exports['default'] = NotificationStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],251:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],259:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43048,7 +43663,7 @@ exports['default'] = PostComposerStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],252:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],260:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43125,7 +43740,7 @@ exports['default'] = ProfileStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],253:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],261:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43184,7 +43799,7 @@ exports['default'] = QuestionsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],254:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],262:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43262,7 +43877,65 @@ exports['default'] = SignUpStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":188,"../Dispatcher":189,"./BaseStore":242,"object-assign":9}],255:[function(require,module,exports){
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],263:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _Dispatcher = require('../Dispatcher');
+
+var _Dispatcher2 = _interopRequireDefault(_Dispatcher);
+
+var _Constants = require('../Constants');
+
+var _Constants2 = _interopRequireDefault(_Constants);
+
+var _BaseStore = require('./BaseStore');
+
+var _BaseStore2 = _interopRequireDefault(_BaseStore);
+
+var _objectAssign = require('object-assign');
+
+var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+var _threads = [];
+
+// Facebook style store creation.
+var ThreadStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
+  // public methods used by Controller-View to operate on data
+  getList: function getList() {
+    console.log(_threads);
+    return _threads;
+  },
+
+  // register store with dispatcher, allowing actions to flow through
+  dispatcherIndex: _Dispatcher2['default'].register(function (payload) {
+    var action = payload.action;
+
+    switch (action.type) {
+      case _Constants2['default'].ActionTypes.GET_THREADS_SUCCESS:
+        if (action.data) {
+          _threads = action.data.threads.filter(function (thread, i, arr) {
+            return arr.indexOf(thread) === i;
+          });
+          ThreadStore.emitChange();
+        }
+        break;
+
+      // add more cases for other actionTypes...
+    }
+  })
+});
+
+exports['default'] = ThreadStore;
+module.exports = exports['default'];
+
+
+},{"../Constants":188,"../Dispatcher":189,"./BaseStore":249,"object-assign":9}],264:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -43402,4 +44075,4 @@ exports['default'] = {
 module.exports = exports['default'];
 
 
-},{"marked":7,"moment":8,"react":187}]},{},[240]);
+},{"marked":7,"moment":8,"react":187}]},{},[247]);

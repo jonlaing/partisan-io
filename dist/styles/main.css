@@ -3217,6 +3217,56 @@ button.like {
       border: 1px solid #d9d9d9;
       transform: rotate(45deg) translateX(4px) translateY(1px);
       -webkit-transform: rotate(45deg) translateX(4px) translateY(1px); }
+  .breakout.breakout-bottom-left {
+    position: absolute;
+    background: white;
+    padding: 16px;
+    padding-left: 8px;
+    z-index: 2;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 2px; }
+    .breakout.breakout-bottom-left .breakout-arrow {
+      position: absolute;
+      overflow: hidden;
+      height: 11.5px;
+      width: 23px;
+      bottom: -11.5px;
+      left: 16px;
+      top: auto;
+      right: auto; }
+      .breakout.breakout-bottom-left .breakout-arrow div {
+        width: 16px;
+        height: 16px;
+        background: white;
+        border: 1px solid #d9d9d9;
+        transform: rotate(45deg) translateX(-4px) translateY(-9px);
+        -webkit-transform: rotate(45deg) translateX(-4px) translateY(-9px); }
+  .breakout.breakout-bottom-right {
+    position: absolute;
+    background: white;
+    padding: 16px;
+    padding-left: 8px;
+    z-index: 2;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 2px; }
+    .breakout.breakout-bottom-right .breakout-arrow {
+      position: absolute;
+      overflow: hidden;
+      height: 11.5px;
+      width: 23px;
+      bottom: -11.5px;
+      right: 16px;
+      top: auto;
+      left: auto; }
+      .breakout.breakout-bottom-right .breakout-arrow div {
+        width: 16px;
+        height: 16px;
+        background: white;
+        border: 1px solid #d9d9d9;
+        transform: rotate(45deg) translateX(-4px) translateY(-9px);
+        -webkit-transform: rotate(45deg) translateX(-4px) translateY(-9px); }
 
 .avatar-uploader .dropzone {
   display: flex;
@@ -3297,3 +3347,126 @@ button.like {
   margin-bottom: 32px; }
   .matches-search .matches-search-gender input {
     margin-left: 8px; }
+
+.messages {
+  position: fixed;
+  height: 75vh;
+  width: 100%; }
+
+.message-list {
+  position: relative;
+  height: 75vh;
+  overflow: auto;
+  padding: 16px;
+  border: 1px #d9d9d9 solid;
+  border-radius: 2px; }
+  .message-list > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; }
+
+.message {
+  margin: 16px 0;
+  padding-right: 64px;
+  padding-left: 0; }
+  .message .breakout {
+    position: absolute;
+    background: white;
+    padding: 16px;
+    padding-left: 8px;
+    z-index: 2;
+    border: 1px solid #d9d9d9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 2px;
+    position: relative;
+    z-index: 0; }
+    .message .breakout .breakout-arrow {
+      position: absolute;
+      overflow: hidden;
+      height: 11.5px;
+      width: 23px;
+      bottom: -11.5px;
+      left: 16px;
+      top: auto;
+      right: auto; }
+      .message .breakout .breakout-arrow div {
+        width: 16px;
+        height: 16px;
+        background: white;
+        border: 1px solid #d9d9d9;
+        transform: rotate(45deg) translateX(-4px) translateY(-9px);
+        -webkit-transform: rotate(45deg) translateX(-4px) translateY(-9px); }
+    .message .breakout > div {
+      display: flex;
+      display: -webkit-flex;
+      width: 100%; }
+  .message .message-body {
+    width: 100%; }
+  .message .message-timestamp {
+    float: right;
+    color: #979797; }
+  .message .message-avatar {
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    text-align: center;
+    float: none;
+    border-radius: 2px;
+    margin-right: 16px; }
+    .message .message-avatar .user-avatar {
+      height: 32px;
+      object-fit: cover; }
+  .message.message-mine {
+    color: white;
+    padding-left: 64px;
+    padding-right: 0; }
+    .message.message-mine .breakout {
+      position: absolute;
+      background: white;
+      padding: 16px;
+      padding-left: 8px;
+      z-index: 2;
+      border: 1px solid #d9d9d9;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+      border-radius: 2px;
+      border: 0;
+      background: #00d2c3;
+      position: relative;
+      z-index: 0; }
+      .message.message-mine .breakout .breakout-arrow {
+        position: absolute;
+        overflow: hidden;
+        height: 11.5px;
+        width: 23px;
+        bottom: -11.5px;
+        right: 16px;
+        top: auto;
+        left: auto; }
+        .message.message-mine .breakout .breakout-arrow div {
+          width: 16px;
+          height: 16px;
+          background: white;
+          border: 1px solid #d9d9d9;
+          transform: rotate(45deg) translateX(-4px) translateY(-9px);
+          -webkit-transform: rotate(45deg) translateX(-4px) translateY(-9px); }
+      .message.message-mine .breakout .breakout-arrow div {
+        border: 0;
+        background: #00d2c3; }
+    .message.message-mine .message-timestamp {
+      color: #adf1ec; }
+    .message.message-mine .message-avatar {
+      order: 2;
+      -webkit-order: 2;
+      margin-left: 16px;
+      margin-right: 0; }
+
+.message-composer {
+  display: flex;
+  display: -webkit-flex; }
+
+.thread-list .thread-list-header {
+  display: flex;
+  display: -webkit-flex; }
+  .thread-list .thread-list-header h2 {
+    width: 100%;
+    font-size: 16px; }

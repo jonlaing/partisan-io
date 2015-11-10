@@ -5,12 +5,21 @@ export default React.createClass({
     return {};
   },
 
-  componentDidMount() {
-  },
-
   render() {
+    var threads = this.props.threads.map((thread) => {
+      return <li key={thread.id}>{thread.thread_user.user.username}</li>;
+    });
+
     return (
-      <p>Hello, world!</p>
+      <div className="thread-list">
+        <div className="thread-list-header">
+          <h2>Message Threads</h2>
+          <button className="thread-list-add">Start Chat</button>
+        </div>
+        <ul>
+          {threads}
+        </ul>
+      </div>
     );
   }
 });
