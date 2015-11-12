@@ -3,8 +3,9 @@ package models
 import (
 	"errors"
 	"fmt"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
 // Notifier is an interface for records that can produce notifications
@@ -65,6 +66,10 @@ func (n *Notification) GetRecord(db *gorm.DB) (Notifier, error) {
 		var f Friendship
 		err := db.Find(&f, n.RecordID).Error
 		return &f, err
+	case "user_tag":
+		var t UserTag
+		err := db.Find(&t, n.RecordID).Error
+		return &t, err
 	}
 
 	var r Notifier

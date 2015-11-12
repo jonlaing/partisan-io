@@ -17,5 +17,31 @@ export default {
       .fail(function(res) {
         console.log(res);
       });
+  },
+
+  createThread(friendID) {
+    $.ajax({
+      url: Constants.APIROOT + '/messages/threads',
+      method: 'POST',
+      data: { user_id: friendID },
+      dataType: 'json'
+    })
+    .done((res) => {
+      Dispatcher.handleViewAction({
+        type: Constants.ActionTypes.CREATE_THREAD_SUCCESS,
+        thread: res.thread
+      });
+    })
+    .fail(function(res) {
+      console.log(res);
+    });
+  },
+
+  switchThreads(threadID) {
+    Dispatcher.handleViewAction({
+      type: Constants.ActionTypes.SWITCH_THREADS,
+      threadID: threadID
+    });
   }
+
 };

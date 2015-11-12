@@ -136,6 +136,7 @@ func main() {
 		messages.Use(auth.Auth("/login"))
 		{
 			messages.GET("/threads", api.MessageThreadIndex)
+			messages.POST("/threads", api.MessageThreadCreate)
 			messages.GET("/count", api.MessageCount)
 			messages.GET("/threads/:thread_id", api.MessageIndex)
 			messages.POST("/threads/:thread_id", api.MessageCreate)

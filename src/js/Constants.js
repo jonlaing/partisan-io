@@ -67,6 +67,7 @@ export default {
     LIGHTBOX_CLOSE: null,
 
     GET_THREADS_SUCCESS: null,
+    SWITCH_THREADS: null,
     GET_MESSAGES_SUCCESS: null,
     GET_NEW_MESSAGES: null,
     SEND_MESSAGE_SUCCESS: null

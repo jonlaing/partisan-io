@@ -66,6 +66,28 @@ func GetMessageThreadUsers(userID uint64, db *gorm.DB) (mtus []m.MessageThreadUs
 	return
 }
 
+func GetMessageThreadUserIDs(userID uint64, db *gorm.DB) (userIDs []uint64, err error) {
+	threadIDs, err := GetMessageThreadIDs(userID, db)
+	if err != nil {
+		return
+	}
+
+	if len(threadIDs) == 0 {
+		return userIDs, errors.New("No threads found")
+	}
+
+	err = db.Where("user_id != ? AND thread_id IN (?)", userID, threadIDs).Pluck("user_id", &userIDs).Error
+	if err != nil {
+		return
+	}
+
+	if len(userIDs) == 0 {
+		return userIDs, errors.New("No MessageThreadUsers found")
+	}
+
+	return
+}
+
 func GetMessageThreadIDs(userID uint64, db *gorm.DB) (threadIDs []uint64, err error) {
 	err = db.Model(m.MessageThreadUser{}).
 		Where("user_id = ?", userID).
@@ -74,9 +96,9 @@ func GetMessageThreadIDs(userID uint64, db *gorm.DB) (threadIDs []uint64, err er
 	return
 }
 
-func MessageThreadHasUnread(threadID uint64, db *gorm.DB) (bool, error) {
+func MessageThreadHasUnread(userID, threadID uint64, db *gorm.DB) (bool, error) {
 	var count int
-	err := db.Model(m.Message{}).Where("thread_id = ? AND read = ?", threadID, false).Count(&count).Error
+	err := db.Model(m.Message{}).Where("user_id != ? AND thread_id = ? AND read = ?", userID, threadID, false).Count(&count).Error
 
 	return count > 0, err
 }

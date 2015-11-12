@@ -10,6 +10,10 @@ export default React.createClass({
   },
 
   handleAvatarClick(username) {
+    if(this.props.thisUser === true) {
+      return function() {};
+    }
+
     return function() {
       window.location.href = "/profiles/" + username;
     };
@@ -25,7 +29,7 @@ export default React.createClass({
     }
 
     // make sure newlines are respected
-    var text = this.props.message.body.split("\n").map((line) => <span>{line}<br/></span>);
+    var text = this.props.message.body.split("\n").map((line, i) => <span key={i}>{line}<br/></span>);
 
     return (
       <li className={className}>

@@ -10,16 +10,27 @@ export default React.createClass({
   },
 
   handleKeyDown(e) {
+    if(this.props.thread === 0) {
+      e.target.value = "";
+      return;
+    }
+
     if(e.keyCode === _ENTER && !e.shiftKey) {
-      MessageActionCreator.sendMessage(1, e.target.value);
+      e.preventDefault();
+      MessageActionCreator.sendMessage(this.props.thread, e.target.value);
       e.target.value = "";
     }
   },
 
   handleButtonClick() {
     var message = React.findDOMNode(this.refs.message);
-    // MessageActionCreator.sendMessage(this.props.thread, message.value);
-    MessageActionCreator.sendMessage(1, message.value);
+
+    if(this.props.thread === 0) {
+      message.value = "";
+      return;
+    }
+
+    MessageActionCreator.sendMessage(this.props.thread, message.value);
     message.value = "";
   },
 

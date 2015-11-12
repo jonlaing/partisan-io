@@ -4,8 +4,14 @@ import Constants from '../Constants';
 
 import moment from 'moment';
 
+var _messageSocket;
+
 export default {
   getMessages(threadID) {
+    if(threadID === 0) {
+      return;
+    }
+
     $.ajax({
       url: Constants.APIROOT + '/messages/threads/' + threadID,
       method: 'GET',
@@ -22,6 +28,13 @@ export default {
       });
   },
   messageSocket(threadID) {
+    console.log("thread:", threadID);
+    if(threadID === 0) {
+      return;
+    }
+
+    _messageSocket = null;
+
     var domain;
     let url = window.location.href;
 
@@ -33,16 +46,16 @@ export default {
         domain = url.split('/')[0];
     }
 
-    var _socket, sendInterval, reopenInterval;
+    var sendInterval, reopenInterval;
 
     var start = function() {
-      if(!_socket) {
-        _socket = new WebSocket("ws://" + domain + Constants.APIROOT + "/messages/threads/" + threadID + "/socket");
+      if(!_messageSocket) {
+        _messageSocket = new WebSocket("ws://" + domain + Constants.APIROOT + "/messages/threads/" + threadID + "/socket");
       } else {
         return;
       }
 
-      _socket.onmessage = (res) => {
+      _messageSocket.onmessage = (res) => {
         let data = JSON.parse(res.data);
         if(data.messages) {
           Dispatcher.handleViewAction({
@@ -52,30 +65,30 @@ export default {
         }
       };
 
-      _socket.onopen = () => {
+      _messageSocket.onopen = () => {
         window.clearInterval(reopenInterval);
 
         let lastNow = moment(Date.now()).unix();
 
         sendInterval = window.setInterval(() => {
-          if(!_socket || _socket.readyState === 2 || _socket.readyState === 3) {
+          if(!_messageSocket || _messageSocket.readyState === 2 || _messageSocket.readyState === 3) {
             window.clearInterval(sendInterval);
             return;
           }
 
-          _socket.send(lastNow.toString());
+          _messageSocket.send(lastNow.toString());
           lastNow = moment(Date.now()).unix();
         }, 500);
       };
 
-      _socket.onclose = () => {
+      _messageSocket.onclose = () => {
         reopenInterval = window.setInterval(() => {
-          if(!_socket || _socket.readyState === 0 || _socket.readyState === 1) {
+          if(!_messageSocket || _messageSocket.readyState === 0 || _messageSocket.readyState === 1) {
             window.clearInterval(reopenInterval);
             return;
           }
 
-          _socket = null;
+          _messageSocket = null;
           start();
         }, 5000);
       };

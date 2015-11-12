@@ -75,6 +75,8 @@ export default React.createClass({
         return this._likeTemplate(notif);
       case "friendship":
         return this._friendTemplate(notif);
+      case "user_tag":
+        return this._userTagTemplate(notif);
       default:
         break;
     }
@@ -143,6 +145,24 @@ export default React.createClass({
         </span>
       );
     }
+  },
+
+  _userTagTemplate(notif) {
+    console.log(notif);
+    let username = notif.user.username;
+    let route = "/posts/" + notif.record.record_id;
+
+    return (
+      <span className={notif.notification.seen ? "seen" : "unseen" }>
+        {this._avatarTemplate(notif)}
+        <div>
+          <a href={route}>
+            @{username} mentioned you in a post.
+          </a>
+          <small>{moment(notif.notification.created_at).fromNow()}</small>
+        </div>
+      </span>
+    );
   },
 
   _avatarTemplate(notif) {

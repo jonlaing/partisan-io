@@ -47,6 +47,7 @@ export default React.createClass({
       );
     }
 
+    console.log(this.props.data);
     if(this.props.data.image_attachment.id > 0) {
       attachment = (
         <div className="post-attachment">

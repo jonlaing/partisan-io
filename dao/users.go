@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"errors"
 	m "partisan/models"
 
 	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
@@ -12,6 +13,19 @@ type UserIDerSlice interface {
 
 type UserIDer interface {
 	GetUserID() uint64
+}
+
+func GetUsersByIDs(userIDs []uint64, db *gorm.DB) (users []m.User, err error) {
+	err = db.Where("id IN (?)", userIDs).Find(&users).Error
+	if err != nil {
+		return
+	}
+
+	if len(users) == 0 {
+		return users, errors.New("No Users found")
+	}
+
+	return
 }
 
 func GetRelatedUsers(rs UserIDerSlice, db *gorm.DB) (users []m.User, err error) {

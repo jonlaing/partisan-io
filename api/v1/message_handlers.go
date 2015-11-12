@@ -19,7 +19,7 @@ import (
 
 type ThreadResp struct {
 	ThreadUser m.MessageThreadUser `json:"thread_user"`
-	HasUnread  bool                `json:"has_read"`
+	HasUnread  bool                `json:"has_unread"`
 }
 
 func MessageThreadIndex(c *gin.Context) {
@@ -37,16 +37,36 @@ func MessageThreadIndex(c *gin.Context) {
 		return
 	}
 
+	// get friends for which there is no thread
+	var inactiveIDs []uint64
+	friendIDs, err := dao.ConfirmedFriendIDs(user, db)
+	if err == nil {
+		for _, v := range friendIDs {
+			found := false
+			for _, thread := range threads {
+				if thread.UserID == v {
+					found = true
+				}
+			}
+			if !found {
+				inactiveIDs = append(inactiveIDs, v)
+			}
+		}
+	}
+
+	var inactive []m.User
+	inactive, _ = dao.GetUsersByIDs(inactiveIDs, db) // error ignored because it's fine if we have an empty slice here
+
 	var tresps []ThreadResp
 	for _, t := range threads {
 		// Possible N+1 problem, but there shouldn't be so manythreads that it's an issue... maybe...
 		// Not handling error, because the worst that happens is that a thread looks unread when it isn't.
 		// We'll live...
-		hasUnread, _ := dao.MessageThreadHasUnread(t.ThreadID, db)
+		hasUnread, _ := dao.MessageThreadHasUnread(user.ID, t.ThreadID, db)
 		tresps = append(tresps, ThreadResp{t, hasUnread})
 	}
 
-	c.JSON(http.StatusOK, gin.H{"threads": tresps})
+	c.JSON(http.StatusOK, gin.H{"threads": tresps, "inactive": inactive})
 }
 
 func MessageThreadCreate(c *gin.Context) {
@@ -113,7 +133,7 @@ func MessageThreadCreate(c *gin.Context) {
 	db.Create(&mtu1)
 	db.Create(&mtu2)
 
-	c.JSON(http.StatusOK, gin.H{"thread": thread})
+	c.JSON(http.StatusOK, gin.H{"thread": ThreadResp{ThreadUser: mtu2}})
 }
 
 func MessageIndex(c *gin.Context) {
@@ -149,7 +169,9 @@ func MessageIndex(c *gin.Context) {
 		return
 	}
 
-	dao.MarkAllMessagesRead(user.ID, uint64(threadID), db)
+	if err := dao.MarkAllMessagesRead(user.ID, uint64(threadID), db); err != nil {
+		fmt.Println(err)
+	}
 
 	c.JSON(http.StatusOK, gin.H{"messages": msgs})
 }
@@ -199,8 +221,11 @@ func MessageCreate(c *gin.Context) {
 		return
 	}
 
+	// Touch Updated at on thread and thread users
+	// Not handling error here, because it's really not that big a deal
 	thread.UpdatedAt = time.Now()
-	db.Save(&thread) // Not handling error here, because it's really not that big a deal
+	db.Save(&thread)
+	db.Model(m.MessageThreadUser{}).Where("thread_id = ?", thread.ID).Update("updated_at", time.Now())
 
 	c.JSON(http.StatusOK, gin.H{"message": msg})
 }

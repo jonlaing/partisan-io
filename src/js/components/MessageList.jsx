@@ -21,7 +21,8 @@ export default React.createClass({
 
   render() {
     var messages = this.props.messages.map((msg) => {
-      return <Message key={msg.id} message={msg} thisUser={this.props.userID === parseInt(msg.user_id)} />;
+      console.log(msg.thread_id + '-' + msg.id);
+      return <Message key={msg.thread_id + '-' + msg.id} message={msg} thisUser={this.props.userID === parseInt(msg.user_id)} />;
     });
 
     return (

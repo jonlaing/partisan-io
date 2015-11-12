@@ -1,12 +1,21 @@
 .thread-list {
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-  .thread-list-header {
-    display: flex;
-    display: -webkit-flex;
+  li {
+    @include clearfix();
+    margin: $line-height;
+    cursor: pointer;
 
-    h2 {
-      width: 100%;
-      font-size: $line-height;
+    &.thread-unread {
+      font-weight: bold;
     }
+  }
+
+  .thread-avatar {
+    @include avatar($line-height * 1.5);
   }
 }

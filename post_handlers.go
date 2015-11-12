@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // PostShow shows a post
@@ -34,11 +35,11 @@ func PostShow(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "post", gin.H{
 		"data": gin.H{
-			"post":       post,
-			"post_user":  pUser,
-			"user":       user,
-			"attachment": attachment,
-			"like_count": likeCount,
+			"post":             post,
+			"post_user":        pUser,
+			"user":             user,
+			"image_attachment": attachment,
+			"like_count":       likeCount,
 		},
 	})
 }

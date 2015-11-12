@@ -36901,6 +36901,7 @@ exports['default'] = {
     LIGHTBOX_CLOSE: null,
 
     GET_THREADS_SUCCESS: null,
+    SWITCH_THREADS: null,
     GET_MESSAGES_SUCCESS: null,
     GET_NEW_MESSAGES: null,
     SEND_MESSAGE_SUCCESS: null
@@ -37627,8 +37628,14 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _messageSocket;
+
 exports['default'] = {
   getMessages: function getMessages(threadID) {
+    if (threadID === 0) {
+      return;
+    }
+
     $.ajax({
       url: _Constants2['default'].APIROOT + '/messages/threads/' + threadID,
       method: 'GET',
@@ -37643,6 +37650,13 @@ exports['default'] = {
     });
   },
   messageSocket: function messageSocket(threadID) {
+    console.log("thread:", threadID);
+    if (threadID === 0) {
+      return;
+    }
+
+    _messageSocket = null;
+
     var domain;
     var url = window.location.href;
 
@@ -37653,16 +37667,16 @@ exports['default'] = {
       domain = url.split('/')[0];
     }
 
-    var _socket, sendInterval, reopenInterval;
+    var sendInterval, reopenInterval;
 
     var start = function start() {
-      if (!_socket) {
-        _socket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/messages/threads/" + threadID + "/socket");
+      if (!_messageSocket) {
+        _messageSocket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/messages/threads/" + threadID + "/socket");
       } else {
         return;
       }
 
-      _socket.onmessage = function (res) {
+      _messageSocket.onmessage = function (res) {
         var data = JSON.parse(res.data);
         if (data.messages) {
           _Dispatcher2['default'].handleViewAction({
@@ -37672,30 +37686,30 @@ exports['default'] = {
         }
       };
 
-      _socket.onopen = function () {
+      _messageSocket.onopen = function () {
         window.clearInterval(reopenInterval);
 
         var lastNow = (0, _moment2['default'])(Date.now()).unix();
 
         sendInterval = window.setInterval(function () {
-          if (!_socket || _socket.readyState === 2 || _socket.readyState === 3) {
+          if (!_messageSocket || _messageSocket.readyState === 2 || _messageSocket.readyState === 3) {
             window.clearInterval(sendInterval);
             return;
           }
 
-          _socket.send(lastNow.toString());
+          _messageSocket.send(lastNow.toString());
           lastNow = (0, _moment2['default'])(Date.now()).unix();
         }, 500);
       };
 
-      _socket.onclose = function () {
+      _messageSocket.onclose = function () {
         reopenInterval = window.setInterval(function () {
-          if (!_socket || _socket.readyState === 0 || _socket.readyState === 1) {
+          if (!_messageSocket || _messageSocket.readyState === 0 || _messageSocket.readyState === 1) {
             window.clearInterval(reopenInterval);
             return;
           }
 
-          _socket = null;
+          _messageSocket = null;
           start();
         }, 5000);
       };
@@ -38127,7 +38141,31 @@ exports['default'] = {
     }).fail(function (res) {
       console.log(res);
     });
+  },
+
+  createThread: function createThread(friendID) {
+    $.ajax({
+      url: _Constants2['default'].APIROOT + '/messages/threads',
+      method: 'POST',
+      data: { user_id: friendID },
+      dataType: 'json'
+    }).done(function (res) {
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.CREATE_THREAD_SUCCESS,
+        thread: res.thread
+      });
+    }).fail(function (res) {
+      console.log(res);
+    });
+  },
+
+  switchThreads: function switchThreads(threadID) {
+    _Dispatcher2['default'].handleViewAction({
+      type: _Constants2['default'].ActionTypes.SWITCH_THREADS,
+      threadID: threadID
+    });
   }
+
 };
 module.exports = exports['default'];
 
@@ -40173,6 +40211,10 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleAvatarClick: function handleAvatarClick(username) {
+    if (this.props.thisUser === true) {
+      return function () {};
+    }
+
     return function () {
       window.location.href = "/profiles/" + username;
     };
@@ -40187,10 +40229,10 @@ exports['default'] = _react2['default'].createClass({
     }
 
     // make sure newlines are respected
-    var text = this.props.message.body.split("\n").map(function (line) {
+    var text = this.props.message.body.split("\n").map(function (line, i) {
       return _react2['default'].createElement(
         'span',
-        null,
+        { key: i },
         line,
         _react2['default'].createElement('br', null)
       );
@@ -40251,16 +40293,27 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleKeyDown: function handleKeyDown(e) {
+    if (this.props.thread === 0) {
+      e.target.value = "";
+      return;
+    }
+
     if (e.keyCode === _ENTER && !e.shiftKey) {
-      _actionsMessageActionCreator2['default'].sendMessage(1, e.target.value);
+      e.preventDefault();
+      _actionsMessageActionCreator2['default'].sendMessage(this.props.thread, e.target.value);
       e.target.value = "";
     }
   },
 
   handleButtonClick: function handleButtonClick() {
     var message = _react2['default'].findDOMNode(this.refs.message);
-    // MessageActionCreator.sendMessage(this.props.thread, message.value);
-    _actionsMessageActionCreator2['default'].sendMessage(1, message.value);
+
+    if (this.props.thread === 0) {
+      message.value = "";
+      return;
+    }
+
+    _actionsMessageActionCreator2['default'].sendMessage(this.props.thread, message.value);
     message.value = "";
   },
 
@@ -40322,7 +40375,8 @@ exports['default'] = _react2['default'].createClass({
     var _this = this;
 
     var messages = this.props.messages.map(function (msg) {
-      return _react2['default'].createElement(_MessageJsx2['default'], { key: msg.id, message: msg, thisUser: _this.props.userID === parseInt(msg.user_id) });
+      console.log(msg.thread_id + '-' + msg.id);
+      return _react2['default'].createElement(_MessageJsx2['default'], { key: msg.thread_id + '-' + msg.id, message: msg, thisUser: _this.props.userID === parseInt(msg.user_id) });
     });
 
     return _react2['default'].createElement(
@@ -40398,20 +40452,31 @@ exports['default'] = _react2['default'].createClass({
   displayName: 'Messages',
 
   getInitialState: function getInitialState() {
-    return { threads: [], currentThread: null, messages: [] };
+    return { threads: [], inactiveThreads: [], currentThread: 0, messages: [] };
   },
 
   componentDidMount: function componentDidMount() {
     _storesThreadStore2['default'].addChangeListener(this._onThreadsChange);
     _storesMessageStore2['default'].addChangeListener(this._onMessagesChange);
     _actionsThreadActionCreator2['default'].getThreads();
-    _actionsMessageActionCreator2['default'].getMessages(1);
-    _actionsMessageActionCreator2['default'].messageSocket(1);
   },
 
   componentWillUnmount: function componentWillUnmount() {
     _storesThreadStore2['default'].removeChangeListener(this._onThreadsChange);
     _storesMessageStore2['default'].removeChangeListener(this._onMessagesChange);
+  },
+
+  componentDidUpdate: function componentDidUpdate(_, prevState) {
+    if (prevState.currentThread !== this.state.currentThread) {
+      _actionsMessageActionCreator2['default'].getMessages(this.state.currentThread);
+      _actionsMessageActionCreator2['default'].messageSocket(this.state.currentThread);
+      return;
+    }
+
+    // if no thread is set, set one
+    if (this.state.currentThread === 0 && this.state.threads.length > 0) {
+      this.setState({ currentThread: this.state.threads[0].thread_user.thread_id });
+    }
   },
 
   render: function render() {
@@ -40431,7 +40496,7 @@ exports['default'] = _react2['default'].createClass({
         _react2['default'].createElement(
           'aside',
           null,
-          _react2['default'].createElement(_ThreadListJsx2['default'], { threads: this.state.threads })
+          _react2['default'].createElement(_ThreadListJsx2['default'], { threads: this.state.threads, inactive: this.state.inactiveThreads })
         ),
         _react2['default'].createElement(
           'article',
@@ -40445,7 +40510,9 @@ exports['default'] = _react2['default'].createClass({
 
   _onThreadsChange: function _onThreadsChange() {
     this.setState({
-      threads: _storesThreadStore2['default'].getList()
+      threads: _storesThreadStore2['default'].getList(),
+      inactiveThreads: _storesThreadStore2['default'].getInactive(),
+      currentThread: _storesThreadStore2['default'].getCurrentThread()
     });
   },
 
@@ -40732,6 +40799,15 @@ exports['default'] = _react2['default'].createClass({
           'li',
           null,
           _react2['default'].createElement(_NotificationsJsx2['default'], null)
+        ),
+        _react2['default'].createElement(
+          'li',
+          null,
+          _react2['default'].createElement(
+            'a',
+            { href: '/messages/', className: this.props.currentPage === "messages" ? "active" : "" },
+            'Messages'
+          )
         )
       )
     );
@@ -40906,6 +40982,8 @@ exports['default'] = _react2['default'].createClass({
         return this._likeTemplate(notif);
       case "friendship":
         return this._friendTemplate(notif);
+      case "user_tag":
+        return this._userTagTemplate(notif);
       default:
         break;
     }
@@ -41014,6 +41092,34 @@ exports['default'] = _react2['default'].createClass({
         )
       );
     }
+  },
+
+  _userTagTemplate: function _userTagTemplate(notif) {
+    console.log(notif);
+    var username = notif.user.username;
+    var route = "/posts/" + notif.record.record_id;
+
+    return _react2['default'].createElement(
+      'span',
+      { className: notif.notification.seen ? "seen" : "unseen" },
+      this._avatarTemplate(notif),
+      _react2['default'].createElement(
+        'div',
+        null,
+        _react2['default'].createElement(
+          'a',
+          { href: route },
+          '@',
+          username,
+          ' mentioned you in a post.'
+        ),
+        _react2['default'].createElement(
+          'small',
+          null,
+          (0, _moment2['default'])(notif.notification.created_at).fromNow()
+        )
+      )
+    );
   },
 
   _avatarTemplate: function _avatarTemplate(notif) {
@@ -41129,6 +41235,7 @@ exports['default'] = _react2['default'].createClass({
       );
     }
 
+    console.log(this.props.data);
     if (this.props.data.image_attachment.id > 0) {
       attachment = _react2['default'].createElement(
         'div',
@@ -42408,63 +42515,113 @@ module.exports = exports['default'];
 
 
 },{"../actions/SignUpActionCreator":205,"../stores/SignUpStore":262,"react":187}],245:[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-exports["default"] = _react2["default"].createClass({
-  displayName: "ThreadList",
+var _actionsThreadActionCreator = require('../actions/ThreadActionCreator');
+
+var _actionsThreadActionCreator2 = _interopRequireDefault(_actionsThreadActionCreator);
+
+exports['default'] = _react2['default'].createClass({
+  displayName: 'ThreadList',
 
   getInitialState: function getInitialState() {
-    return {};
+    return { filter: "" };
+  },
+
+  handleUsernameChange: function handleUsernameChange(e) {
+    this.setState({ filter: e.target.value });
+  },
+
+  handleThreadSwitch: function handleThreadSwitch(threadID) {
+    return function () {
+      _actionsThreadActionCreator2['default'].switchThreads(threadID);
+    };
+  },
+
+  handleThreadCreate: function handleThreadCreate(friendID) {
+    return function () {
+      _actionsThreadActionCreator2['default'].createThread(friendID);
+    };
+  },
+
+  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.threads !== this.props.threads || nextState.filter !== this.state.filter;
   },
 
   render: function render() {
+    var _this = this;
+
     var threads = this.props.threads.map(function (thread) {
-      return _react2["default"].createElement(
-        "li",
-        { key: thread.id },
-        thread.thread_user.user.username
-      );
+      if (thread.thread_user.user.username.includes(_this.state.filter)) {
+        var t = thread.thread_user;
+        console.log(thread);
+        return _react2['default'].createElement(
+          'li',
+          { key: t.thread_id, className: thread.has_unread ? "thread-unread" : "", onClick: _this.handleThreadSwitch(t.thread_id) },
+          _react2['default'].createElement(
+            'div',
+            { className: 'thread-avatar' },
+            _react2['default'].createElement('img', { src: t.user.avatar_thumbnail_url, className: 'user-avatar' })
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
+            t.user.username
+          )
+        );
+      }
     });
 
-    return _react2["default"].createElement(
-      "div",
-      { className: "thread-list" },
-      _react2["default"].createElement(
-        "div",
-        { className: "thread-list-header" },
-        _react2["default"].createElement(
-          "h2",
-          null,
-          "Message Threads"
-        ),
-        _react2["default"].createElement(
-          "button",
-          { className: "thread-list-add" },
-          "Start Chat"
-        )
+    var inactive = this.props.inactive.map(function (user) {
+      if (user.username.includes(_this.state.filter)) {
+        return _react2['default'].createElement(
+          'li',
+          { key: user.id, onClick: _this.handleThreadCreate(user.id) },
+          _react2['default'].createElement(
+            'div',
+            { className: 'thread-avatar' },
+            _react2['default'].createElement('img', { src: user.avatar_thumbnail_url, className: 'user-avatar' })
+          ),
+          _react2['default'].createElement(
+            'div',
+            null,
+            user.username
+          )
+        );
+      }
+    });
+
+    return _react2['default'].createElement(
+      'div',
+      { className: 'thread-list' },
+      _react2['default'].createElement(
+        'div',
+        { className: 'thread-list-header' },
+        _react2['default'].createElement('input', { type: 'text', placeholder: 'Search for users', onChange: this.handleUsernameChange })
       ),
-      _react2["default"].createElement(
-        "ul",
+      _react2['default'].createElement(
+        'ul',
         null,
-        threads
+        threads,
+        inactive
       )
     );
   }
 });
-module.exports = exports["default"];
+module.exports = exports['default'];
 
 
-},{"react":187}],246:[function(require,module,exports){
+},{"../actions/ThreadActionCreator":206,"react":187}],246:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42667,6 +42824,8 @@ if (friends !== null) {
 }
 
 if (post !== null) {
+  var pData = data;
+  pData.user = data.post_user;
   _reactAddons2['default'].render(_reactAddons2['default'].createElement(
     _componentsCardJsx2['default'],
     null,
@@ -43903,13 +44062,22 @@ var _objectAssign = require('object-assign');
 var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
 var _threads = [];
+var _inactive = [];
+var _currentThread = 0;
 
 // Facebook style store creation.
 var ThreadStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
   // public methods used by Controller-View to operate on data
   getList: function getList() {
-    console.log(_threads);
     return _threads;
+  },
+
+  getInactive: function getInactive() {
+    return _inactive;
+  },
+
+  getCurrentThread: function getCurrentThread() {
+    return _currentThread;
   },
 
   // register store with dispatcher, allowing actions to flow through
@@ -43921,6 +44089,33 @@ var ThreadStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
         if (action.data) {
           _threads = action.data.threads.filter(function (thread, i, arr) {
             return arr.indexOf(thread) === i;
+          });
+          _inactive = action.data.inactive.filter(function (user, i, arr) {
+            return arr.indexOf(user) === i;
+          });
+          ThreadStore.emitChange();
+        }
+        break;
+      case _Constants2['default'].ActionTypes.CREATE_THREAD_SUCCESS:
+        if (action.thread) {
+          _inactive = _inactive.filter(function (user) {
+            return user.id !== action.thread.thread_user.user_id;
+          });
+
+          _threads = _threads.push(action.thread);
+
+          _currentThread = action.thread.thread_user.thread_id;
+          ThreadStore.emitChange();
+        }
+        break;
+      case _Constants2['default'].ActionTypes.SWITCH_THREADS:
+        if (action.threadID) {
+          _currentThread = action.threadID;
+          _threads = _threads.map(function (thread) {
+            if (thread.thread_user.thread_id === action.threadID) {
+              thread.has_unread = false;
+            }
+            return thread;
           });
           ThreadStore.emitChange();
         }

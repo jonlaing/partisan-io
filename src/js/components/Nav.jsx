@@ -22,6 +22,9 @@ export default React.createClass({
           <li>
             <Notifications />
           </li>
+          <li>
+            <a href="/messages/" className={ this.props.currentPage === "messages" ? "active" : "" }>Messages</a>
+          </li>
         </ul>
       </div>
     );

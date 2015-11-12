@@ -13,20 +13,31 @@ import MessageComposer from './MessageComposer.jsx';
 
 export default React.createClass({
   getInitialState() {
-    return {threads: [], currentThread: null, messages: []};
+    return {threads: [], inactiveThreads: [], currentThread: 0, messages: []};
   },
 
   componentDidMount() {
     ThreadStore.addChangeListener(this._onThreadsChange);
     MessageStore.addChangeListener(this._onMessagesChange);
     ThreadActionCreator.getThreads();
-    MessageActionCreator.getMessages(1);
-    MessageActionCreator.messageSocket(1);
   },
 
   componentWillUnmount() {
     ThreadStore.removeChangeListener(this._onThreadsChange);
     MessageStore.removeChangeListener(this._onMessagesChange);
+  },
+
+  componentDidUpdate(_, prevState) {
+    if(prevState.currentThread !== this.state.currentThread) {
+      MessageActionCreator.getMessages(this.state.currentThread);
+      MessageActionCreator.messageSocket(this.state.currentThread);
+      return;
+    }
+
+    // if no thread is set, set one
+    if(this.state.currentThread === 0 && this.state.threads.length > 0) {
+      this.setState({currentThread: this.state.threads[0].thread_user.thread_id});
+    }
   },
 
   render() {
@@ -40,7 +51,7 @@ export default React.createClass({
 
         <div className="dashboard">
           <aside>
-            <ThreadList threads={this.state.threads} />
+            <ThreadList threads={this.state.threads} inactive={this.state.inactiveThreads}/>
           </aside>
           <article className="messages-container">
             <MessageList messages={this.state.messages} userID={this.props.data.user.id} />
@@ -53,7 +64,9 @@ export default React.createClass({
 
   _onThreadsChange() {
     this.setState({
-      threads: ThreadStore.getList()
+      threads: ThreadStore.getList(),
+      inactiveThreads: ThreadStore.getInactive(),
+      currentThread: ThreadStore.getCurrentThread()
     });
   },
 

@@ -75,6 +75,8 @@ if(friends !== null) {
 }
 
 if(post !== null) {
+  let pData = data;
+  pData.user = data.post_user;
   React.render(<Card><Post data={data} defaultShowComments={true}/></Card>, post);
 }
 
