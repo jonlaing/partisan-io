@@ -40596,7 +40596,7 @@ exports['default'] = _react2['default'].createClass({
         _react2['default'].createElement(
           'aside',
           null,
-          _react2['default'].createElement(_ThreadListJsx2['default'], { threads: this.state.threads, inactive: this.state.inactiveThreads })
+          _react2['default'].createElement(_ThreadListJsx2['default'], { threads: this.state.threads, inactive: this.state.inactiveThreads, currentThread: this.state.currentThread })
         ),
         _react2['default'].createElement(
           'article',
@@ -42654,7 +42654,7 @@ exports['default'] = _react2['default'].createClass({
   },
 
   shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.threads !== this.props.threads || nextState.filter !== this.state.filter;
+    return nextProps.threads !== this.props.threads || nextProps.currentThread !== this.props.currentThread || nextState.filter !== this.state.filter;
   },
 
   render: function render() {
@@ -42663,10 +42663,12 @@ exports['default'] = _react2['default'].createClass({
     var threads = this.props.threads.map(function (thread) {
       if (thread.thread_user.user.username.includes(_this.state.filter)) {
         var t = thread.thread_user;
-        console.log(thread);
+        var className = t.thread_id === _this.props.currentThread ? "thread-selected" : "";
+        className += thread.has_unread ? "thread-unread" : "";
+
         return _react2['default'].createElement(
           'li',
-          { key: t.thread_id, className: thread.has_unread ? "thread-unread" : "", onClick: _this.handleThreadSwitch(t.thread_id) },
+          { key: t.thread_id, className: className, onClick: _this.handleThreadSwitch(t.thread_id) },
           _react2['default'].createElement(
             'div',
             { className: 'thread-avatar' },

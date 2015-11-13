@@ -1,17 +1,45 @@
 .thread-list {
+  height: 75vh;
+  overflow-y: auto;
+
+  .thread-list-header {
+    input {
+      padding: $line-height/2;
+    }
+  }
+
   ul {
     margin: 0;
     padding: 0;
+    margin-top: $line-height;
     list-style: none;
   }
 
   li {
     @include clearfix();
-    margin: $line-height;
+    @include rounded-corners();
+    padding: $line-height;
     cursor: pointer;
+    border: 2px solid $lighter-grey;
+    border-width: 0 0 0 2px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: $action-color;
+      background-color: $light-grey;
+    }
 
     &.thread-unread {
       font-weight: bold;
+    }
+
+    &.thread-selected {
+      border-color: white;
+      background: white;
+
+      &:hover {
+        border-color: $action-color;
+      }
     }
   }
 

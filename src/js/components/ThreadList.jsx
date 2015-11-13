@@ -24,16 +24,20 @@ export default React.createClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.threads !== this.props.threads || nextState.filter !== this.state.filter;
+    return nextProps.threads !== this.props.threads ||
+      nextProps.currentThread !== this.props.currentThread ||
+      nextState.filter !== this.state.filter;
   },
 
   render() {
     var threads = this.props.threads.map((thread) => {
       if(thread.thread_user.user.username.includes(this.state.filter)) {
         let t = thread.thread_user;
-        console.log(thread);
+        let className = t.thread_id === this.props.currentThread ? "thread-selected" : "";
+        className += thread.has_unread ? "thread-unread" : "";
+
         return (
-          <li key={t.thread_id} className={thread.has_unread ? "thread-unread" : ""} onClick={this.handleThreadSwitch(t.thread_id)}>
+          <li key={t.thread_id} className={className} onClick={this.handleThreadSwitch(t.thread_id)}>
             <div className="thread-avatar">
               <img src={t.user.avatar_thumbnail_url} className="user-avatar" />
             </div>

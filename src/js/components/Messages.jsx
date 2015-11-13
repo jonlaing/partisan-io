@@ -51,7 +51,7 @@ export default React.createClass({
 
         <div className="dashboard">
           <aside>
-            <ThreadList threads={this.state.threads} inactive={this.state.inactiveThreads}/>
+            <ThreadList threads={this.state.threads} inactive={this.state.inactiveThreads} currentThread={this.state.currentThread}/>
           </aside>
           <article className="messages-container">
             <MessageList messages={this.state.messages} userID={this.props.data.user.id} />

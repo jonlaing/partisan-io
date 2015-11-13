@@ -3481,31 +3481,47 @@ button.like {
   margin-left: 8px;
   text-align: center; }
 
-.thread-list ul {
-  margin: 0;
-  padding: 0;
-  list-style: none; }
-
-.thread-list li {
-  margin: 16px;
-  cursor: pointer; }
-  .thread-list li:after {
-    visibility: hidden;
-    display: block;
-    font-size: 0;
-    content: " ";
-    clear: both;
-    height: 0; }
-  .thread-list li.thread-unread {
-    font-weight: bold; }
-
-.thread-list .thread-avatar {
-  width: 24px;
-  height: 24px;
-  overflow: hidden;
-  text-align: center;
-  margin-right: 16px;
-  float: left; }
-  .thread-list .thread-avatar .user-avatar {
+.thread-list {
+  height: 75vh;
+  overflow-y: auto; }
+  .thread-list .thread-list-header input {
+    padding: 8px; }
+  .thread-list ul {
+    margin: 0;
+    padding: 0;
+    margin-top: 16px;
+    list-style: none; }
+  .thread-list li {
+    border-radius: 2px;
+    padding: 16px;
+    cursor: pointer;
+    border: 2px solid #f2f2f2;
+    border-width: 0 0 0 2px;
+    transition: all 0.3s ease; }
+    .thread-list li:after {
+      visibility: hidden;
+      display: block;
+      font-size: 0;
+      content: " ";
+      clear: both;
+      height: 0; }
+    .thread-list li:hover {
+      border-color: #d215b3;
+      background-color: #d9d9d9; }
+    .thread-list li.thread-unread {
+      font-weight: bold; }
+    .thread-list li.thread-selected {
+      border-color: white;
+      background: white; }
+      .thread-list li.thread-selected:hover {
+        border-color: #d215b3; }
+  .thread-list .thread-avatar {
+    width: 24px;
     height: 24px;
-    object-fit: cover; }
+    overflow: hidden;
+    text-align: center;
+    margin-right: 16px;
+    float: left; }
+    .thread-list .thread-avatar .user-avatar {
+      height: 24px;
+      object-fit: cover; }
