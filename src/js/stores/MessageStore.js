@@ -5,6 +5,7 @@ import assign from 'object-assign';
 
 // data storage
 let _messages = [];
+let _count = 0;
 
 // for some reason, new messages come up twice by default
 // gotta make sure they're all unique
@@ -26,6 +27,10 @@ const MessageStore = assign({}, BaseStore, {
     return _messages;
   },
 
+  getCount() {
+    return _count;
+  },
+
   // register store with dispatcher, allowing actions to flow through
   dispatcherIndex: Dispatcher.register(function(payload) {
     let action = payload.action;
@@ -40,6 +45,12 @@ const MessageStore = assign({}, BaseStore, {
       case Constants.ActionTypes.GET_NEW_MESSAGES:
         if (action.data) {
           _messages = uniqueMessages(_messages.concat(action.data));
+          MessageStore.emitChange();
+        }
+        break;
+      case Constants.ActionTypes.GET_MESSAGE_COUNT:
+        if (action.count !== undefined) {
+          _count = action.count;
           MessageStore.emitChange();
         }
         break;

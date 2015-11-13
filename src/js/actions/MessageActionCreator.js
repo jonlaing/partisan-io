@@ -27,8 +27,8 @@ export default {
         console.log(res);
       });
   },
+
   messageSocket(threadID) {
-    console.log("thread:", threadID);
     if(threadID === 0) {
       return;
     }
@@ -95,8 +95,8 @@ export default {
     };
 
     start();
-
   },
+
   sendMessage(threadID, text) {
     $.ajax({
       url: Constants.APIROOT + '/messages/threads/' + threadID,
@@ -115,5 +115,35 @@ export default {
       .fail(function(res) {
         console.log(res);
       });
+  },
+
+  getMessageCount() {
+    var domain;
+    let url = window.location.href;
+
+    //find & remove protocol (http, ftp, etc.) and get domain
+    if (url.indexOf("://") > -1) {
+        domain = url.split('/')[2];
+    }
+    else {
+        domain = url.split('/')[0];
+    }
+
+    var _socket = new WebSocket("ws://" + domain + Constants.APIROOT + "/messages/count");
+
+    _socket.onmessage = (res) => {
+      let data = JSON.parse(res.data);
+      Dispatcher.handleViewAction({
+        type: Constants.ActionTypes.GET_MESSAGE_COUNT,
+        count: data.count
+      });
+    };
+
+    _socket.onopen = () => {
+      _socket.send(0); // grab it once off the bat
+      window.setInterval(() => {
+        _socket.send(0);
+      }, 5000);
+    };
   }
 };

@@ -31,11 +31,7 @@ func MessageThreadIndex(c *gin.Context) {
 		return
 	}
 
-	threads, err := dao.GetMessageThreadUsers(user.ID, db)
-	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
-	}
+	threads, _ := dao.GetMessageThreadUsers(user.ID, db)
 
 	// get friends for which there is no thread
 	var inactiveIDs []uint64

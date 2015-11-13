@@ -11,7 +11,7 @@
     display: inline-block;
     margin: 0 $line-height*1.5;
 
-    > a, .notification-counter > a {
+    > a, .notification-counter > a, .message-counter > a {
       color: $grey;
       padding: 0 $line-height/2 $line-height/2;
       border: 4px solid white;

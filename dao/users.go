@@ -16,6 +16,10 @@ type UserIDer interface {
 }
 
 func GetUsersByIDs(userIDs []uint64, db *gorm.DB) (users []m.User, err error) {
+	if len(userIDs) == 0 {
+		return users, errors.New("Cannot search emtpy list of IDs")
+	}
+
 	err = db.Where("id IN (?)", userIDs).Find(&users).Error
 	if err != nil {
 		return

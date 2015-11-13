@@ -70,7 +70,8 @@ export default {
     SWITCH_THREADS: null,
     GET_MESSAGES_SUCCESS: null,
     GET_NEW_MESSAGES: null,
-    SEND_MESSAGE_SUCCESS: null
+    SEND_MESSAGE_SUCCESS: null,
+    GET_MESSAGE_COUNT: null
   }),
 
   ActionSources: keyMirror({

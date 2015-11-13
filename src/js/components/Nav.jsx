@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Notifications from './Notifications.jsx';
+import MessageCount from './MessageCount.jsx';
 
 export default React.createClass({
   render() {
@@ -23,7 +24,7 @@ export default React.createClass({
             <Notifications />
           </li>
           <li>
-            <a href="/messages/" className={ this.props.currentPage === "messages" ? "active" : "" }>Messages</a>
+            <MessageCount />
           </li>
         </ul>
       </div>

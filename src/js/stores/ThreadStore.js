@@ -29,12 +29,18 @@ const ThreadStore = assign({}, BaseStore, {
     switch(action.type) {
       case Constants.ActionTypes.GET_THREADS_SUCCESS:
         if (action.data) {
-          _threads = action.data.threads.filter((thread, i, arr) => {
-            return arr.indexOf(thread) === i;
-          });
-          _inactive = action.data.inactive.filter((user, i, arr) => {
-            return arr.indexOf(user) === i;
-          });
+          if(action.data.threads !== null) {
+            _threads = action.data.threads.filter((thread, i, arr) => {
+              return arr.indexOf(thread) === i;
+            });
+          }
+
+          if(action.data.inactive !== null) {
+            _inactive = action.data.inactive.filter((user, i, arr) => {
+              return arr.indexOf(user) === i;
+            });
+          }
+
           ThreadStore.emitChange();
         }
         break;
