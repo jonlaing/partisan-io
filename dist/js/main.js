@@ -44301,8 +44301,9 @@ function _tagify(content) {
   if (tags !== null) {
     tags.forEach(function (tag) {
       // make sure this isn't an email
-      if (tag.match(/\./) === null) {
-        newContent = newContent.replace(tag, '<a href="/profiles/' + tag.substring(1) + '">' + tag + '</a>');
+      if (tag.match(/\.[a-zA-Z]/) === null) {
+        var t = tag.substring(1).replace(".", "");
+        newContent = newContent.replace(tag, '<a href="/profiles/' + t + '">' + tag + '</a>');
       }
     });
   }

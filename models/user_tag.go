@@ -1,9 +1,10 @@
 package models
 
 import (
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"regexp"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
 // UserTag is a relational model between a user and a piece of content.
@@ -41,9 +42,9 @@ func FindUserTags(r UserTagger, db *gorm.DB) (tags []UserTag) {
 	}
 
 	for _, match := range matches {
-		// This regex searches for emails. Really the `.` is all we need to determine
-		// that a tag is an illegal username, and we'll just skip it.
-		if ok, _ := regexp.Match("\\.", []byte(match[0])); ok {
+		// This regex searches for emails. Really the `.` and a character after is all
+		// we need to determine that a tag is an illegal username, and we'll just skip it.
+		if ok, _ := regexp.Match("\\.[a-zA-Z]", []byte(match[0])); ok {
 			continue
 		}
 
