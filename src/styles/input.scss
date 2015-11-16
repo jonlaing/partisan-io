@@ -40,3 +40,23 @@ input[type="text"], input[type="password"], input[type="number"], textarea {
 .form-input {
   margin-bottom: $line-height;
 }
+
+.search {
+  display: flex;
+  display: -webkit-flex;
+  align-items: stretch;
+  -webkit-align-items: stretch;
+
+  &:before {
+    font: normal normal normal 14px/1 FontAwesome;
+    color: white;
+    content: "\f002";
+    background: $action-color;
+    display: table-cell;
+    padding: $line-height/2;
+    border-radius: 2px 0 0 2px;
+  }
+
+  > input[type="text"] {
+  }
+}

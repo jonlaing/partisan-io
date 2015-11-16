@@ -15,9 +15,6 @@ export default React.createClass({
             <a href="/matches/" className={ this.props.currentPage === "matches" ? "active" : "" }>Matches</a>
           </li>
           <li>
-            <a href="/questions/" className={ this.props.currentPage === "questions" ? "active" : "" }>Questions</a>
-          </li>
-          <li>
             <a href="/friends/" className={ this.props.currentPage === "friends" ? "active" : "" }>Friends</a>
           </li>
           <li>

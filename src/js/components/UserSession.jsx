@@ -29,7 +29,10 @@ export default React.createClass({
         <Breakout className="usersession-dropdown" show={this.state.show}>
           <ul>
             <li>
-              <a href="javascript:void(0)" onClick={this.handleLogout}>Logout</a>
+              <a href="/questions/"><Icon name="refresh" /> Retake the Quiz</a>
+            </li>
+            <li>
+              <a href="javascript:void(0)" onClick={this.handleLogout}><Icon name="power-off"/> Logout</a>
             </li>
           </ul>
         </Breakout>

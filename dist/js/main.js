@@ -39345,17 +39345,28 @@ var _NoFriendsJsx = require('./NoFriends.jsx');
 
 var _NoFriendsJsx2 = _interopRequireDefault(_NoFriendsJsx);
 
+var _MiniMatcherJsx = require('./MiniMatcher.jsx');
+
+var _MiniMatcherJsx2 = _interopRequireDefault(_MiniMatcherJsx);
+
 exports['default'] = _react2['default'].createClass({
   displayName: 'Friends',
 
   getInitialState: function getInitialState() {
-    return { friendships: [] };
+    return {
+      friendships: [],
+      filter: ""
+    };
   },
 
   handleFriendClick: function handleFriendClick(username) {
     return function () {
       window.location.href = '/profiles/' + username;
     };
+  },
+
+  handleSearchChange: function handleSearchChange(e) {
+    this.setState({ filter: e.target.value });
   },
 
   componentDidMount: function componentDidMount() {
@@ -39368,11 +39379,15 @@ exports['default'] = _react2['default'].createClass({
   },
 
   render: function render() {
+    var _this = this;
+
     var noFriends;
 
     var self = this;
 
-    var friendlist = this.state.friendships.map(function (friendship, i) {
+    var friendlist = this.state.friendships.filter(function (f) {
+      return f.user.username.includes(_this.state.filter);
+    }).map(function (friendship, i) {
       return _react2['default'].createElement(
         'li',
         { key: i, onClick: self.handleFriendClick(friendship.user.username) },
@@ -39398,19 +39413,24 @@ exports['default'] = _react2['default'].createClass({
         'div',
         { className: 'dashboard' },
         _react2['default'].createElement(
-          'aside',
-          null,
-          'Blah'
-        ),
-        _react2['default'].createElement(
           'article',
           { className: 'friends-container' },
+          _react2['default'].createElement(
+            'div',
+            { className: 'friends-search search' },
+            _react2['default'].createElement('input', { type: 'text', placeholder: 'Search for friends…', onChange: this.handleSearchChange })
+          ),
           _react2['default'].createElement(
             'ul',
             { className: 'friendlist' },
             friendlist
           ),
           noFriends
+        ),
+        _react2['default'].createElement(
+          'aside',
+          null,
+          _react2['default'].createElement(_MiniMatcherJsx2['default'], null)
         )
       )
     );
@@ -39424,7 +39444,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":253,"./Match.jsx":226,"./Nav.jsx":236,"./NoFriends.jsx":237,"./UserSession.jsx":247,"react":187}],221:[function(require,module,exports){
+},{"../actions/FriendsActionCreator":194,"../stores/FriendsStore":253,"./Match.jsx":226,"./MiniMatcher.jsx":234,"./Nav.jsx":236,"./NoFriends.jsx":237,"./UserSession.jsx":247,"react":187}],221:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40886,15 +40906,6 @@ exports['default'] = _react2['default'].createClass({
           null,
           _react2['default'].createElement(
             'a',
-            { href: '/questions/', className: this.props.currentPage === "questions" ? "active" : "" },
-            'Questions'
-          )
-        ),
-        _react2['default'].createElement(
-          'li',
-          null,
-          _react2['default'].createElement(
-            'a',
             { href: '/friends/', className: this.props.currentPage === "friends" ? "active" : "" },
             'Friends'
           )
@@ -42301,6 +42312,11 @@ exports['default'] = _reactAddons2['default'].createClass({
     _actionsQuestionsActionCreator2['default'].answerQuestion(this.state.questions[last], false);
   },
 
+  handleSkip: function handleSkip() {
+    (0, _jquery2['default'])('.card').addClass('skip');
+    _actionsQuestionsActionCreator2['default'].getQuestion();
+  },
+
   handleModalClose: function handleModalClose() {
     this.setState({ showModal: false });
   },
@@ -42357,6 +42373,11 @@ exports['default'] = _reactAddons2['default'].createClass({
         ),
         _reactAddons2['default'].createElement(
           'button',
+          { className: 'button skip', onClick: this.handleSkip },
+          'Skip'
+        ),
+        _reactAddons2['default'].createElement(
+          'button',
           { className: 'button agree', onClick: this.handleAgree },
           'Agree'
         )
@@ -42367,7 +42388,7 @@ exports['default'] = _reactAddons2['default'].createClass({
         _reactAddons2['default'].createElement(
           'h2',
           null,
-          'Answer Questions'
+          'Take the Quiz'
         ),
         _reactAddons2['default'].createElement(
           'div',
@@ -42376,11 +42397,15 @@ exports['default'] = _reactAddons2['default'].createClass({
           _reactAddons2['default'].createElement(
             'strong',
             null,
-            '20 questions'
+            '20 prompts'
           ),
-          '. This is how we determine',
+          '. Mark whether you agree or disagree',
           _reactAddons2['default'].createElement('br', null),
-          'your beliefs and match you up with similar people.'
+          'with the statment. This is how we determine your beliefs and match you up with people',
+          _reactAddons2['default'].createElement('br', null),
+          'who share your beliefs. If you\'re not sure whether you agree or disagree, or don\'t understand the',
+          _reactAddons2['default'].createElement('br', null),
+          'prompt, click “Skip” and we\'ll find a different prompt.'
         ),
         _reactAddons2['default'].createElement('br', null),
         _reactAddons2['default'].createElement('br', null),
@@ -42787,8 +42812,19 @@ exports['default'] = _react2['default'].createClass({
             null,
             _react2['default'].createElement(
               'a',
+              { href: '/questions/' },
+              _react2['default'].createElement(_reactFontawesome2['default'], { name: 'refresh' }),
+              ' Retake the Quiz'
+            )
+          ),
+          _react2['default'].createElement(
+            'li',
+            null,
+            _react2['default'].createElement(
+              'a',
               { href: 'javascript:void(0)', onClick: this.handleLogout },
-              'Logout'
+              _react2['default'].createElement(_reactFontawesome2['default'], { name: 'power-off' }),
+              ' Logout'
             )
           )
         )

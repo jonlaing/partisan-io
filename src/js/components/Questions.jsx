@@ -25,6 +25,11 @@ export default React.createClass({
     QuestionsActionCreator.answerQuestion(this.state.questions[last], false);
   },
 
+  handleSkip() {
+    $('.card').addClass('skip');
+    QuestionsActionCreator.getQuestion();
+  },
+
   handleModalClose() {
     this.setState({showModal: false});
   },
@@ -60,11 +65,12 @@ export default React.createClass({
         </div>
         <div className="question-actions">
           <button className="button disagree" onClick={this.handleDisagree}>Disagree</button>
+          <button className="button skip" onClick={this.handleSkip}>Skip</button>
           <button className="button agree" onClick={this.handleAgree}>Agree</button>
         </div>
         <Modal show={this.state.showModal} onCloseClick={this.handleModalClose} >
-          <h2>Answer Questions</h2>
-          <div>You&apos;re about to be presented with <strong>20 questions</strong>. This is how we determine<br/>your beliefs and match you up with similar people.</div>
+          <h2>Take the Quiz</h2>
+          <div>You&apos;re about to be presented with <strong>20 prompts</strong>. Mark whether you agree or disagree<br/>with the statment. This is how we determine your beliefs and match you up with people<br/>who share your beliefs. If you're not sure whether you agree or disagree, or don't understand the<br/>prompt, click &ldquo;Skip&rdquo; and we'll find a different prompt.</div>
           <br/>
           <br/>
           <div className="text-center">

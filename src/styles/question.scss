@@ -48,6 +48,11 @@
         background: $success;
       }
 
+      &.skip {
+        background: $light-grey;
+        color: $action-color;
+      }
+
       &:first-child {
         margin-right: $line-height;
       }
@@ -92,6 +97,11 @@
       transform: translateX(-1000px) rotate(-45deg);
       -webkit-transform: translateX(-1000px) rotate(-45deg);
       background: $danger;
+    }
+
+    &.skip {
+      transform: translateY(-1000px);
+      -webkit-transform: translateY(-1000px);
     }
 
     opacity: 0;

@@ -7,16 +7,24 @@ import UserSession from './UserSession.jsx';
 import Nav from './Nav.jsx';
 import Match from './Match.jsx';
 import NoFriends from './NoFriends.jsx';
+import MiniMatcher from './MiniMatcher.jsx';
 
 export default React.createClass({
   getInitialState() {
-    return { friendships: [] };
+    return { 
+      friendships: [],
+      filter : ""
+    };
   },
 
   handleFriendClick(username) {
     return () => {
       window.location.href = '/profiles/' + username;
     };
+  },
+
+  handleSearchChange(e) {
+    this.setState({filter: e.target.value});
   },
 
   componentDidMount() {
@@ -33,7 +41,7 @@ export default React.createClass({
 
     var self = this;
 
-    var friendlist = this.state.friendships.map((friendship, i) => {
+    var friendlist = this.state.friendships.filter((f) => f.user.username.includes(this.state.filter)).map((friendship, i) => {
       return (
         <li key={i} onClick={self.handleFriendClick(friendship.user.username)}>
           <Match user={friendship.user} match={friendship.match} />
@@ -54,13 +62,18 @@ export default React.createClass({
         </header>
 
         <div className="dashboard">
-          <aside>Blah</aside>
           <article className="friends-container">
+            <div className="friends-search search">
+              <input type="text" placeholder="Search for friends…" onChange={this.handleSearchChange} />
+            </div>
             <ul className="friendlist">
               {friendlist}
             </ul>
             {noFriends}
           </article>
+          <aside>
+            <MiniMatcher />
+          </aside>
         </div>
       </div>
     );

@@ -2110,6 +2110,20 @@ input[type="text"], input[type="password"], input[type="number"], textarea {
 .form-input {
   margin-bottom: 16px; }
 
+.search {
+  display: flex;
+  display: -webkit-flex;
+  align-items: stretch;
+  -webkit-align-items: stretch; }
+  .search:before {
+    font: normal normal normal 14px/1 FontAwesome;
+    color: white;
+    content: "\f002";
+    background: #d215b3;
+    display: table-cell;
+    padding: 8px;
+    border-radius: 2px 0 0 2px; }
+
 * {
   -webkit-box-sizing: border-box;
   /* Safari/Chrome, other WebKit */
@@ -2427,7 +2441,8 @@ header.header {
     border: 1px solid #d9d9d9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 2px;
-    margin-top: 8px; }
+    margin-top: 8px;
+    right: 0; }
     .usersession .usersession-dropdown .breakout-arrow {
       position: absolute;
       overflow: hidden;
@@ -2450,6 +2465,8 @@ header.header {
       list-style: none; }
     .usersession .usersession-dropdown li {
       padding: 8px; }
+      .usersession .usersession-dropdown li > a {
+        white-space: nowrap; }
 
 body {
   background: #f2f2f2; }
@@ -2537,6 +2554,9 @@ html, body {
         background: #ff002e; }
       .question .question-actions .button.agree {
         background: #00cb6c; }
+      .question .question-actions .button.skip {
+        background: #d9d9d9;
+        color: #d215b3; }
       .question .question-actions .button:first-child {
         margin-right: 16px; }
       .question .question-actions .button:last-child {
@@ -2568,6 +2588,9 @@ html, body {
       transform: translateX(-1000px) rotate(-45deg);
       -webkit-transform: translateX(-1000px) rotate(-45deg);
       background: #ff002e; }
+    .question-body-leave.question-body-leave-active.skip {
+      transform: translateY(-1000px);
+      -webkit-transform: translateY(-1000px); }
 
 .commentlist {
   position: relative;
@@ -3176,6 +3199,8 @@ button.like {
 
 .friendlist {
   list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   display: -webkit-flex;
   flex-wrap: wrap;
@@ -3191,6 +3216,13 @@ button.like {
   border-radius: 2px; }
   .friends .friends-none .button {
     margin-top: 16px; }
+
+.friends .friends-search {
+  padding: 16px; }
+  .friends .friends-search > input {
+    width: 50%;
+    font-size: 16px;
+    padding: 4px; }
 
 .breakout {
   position: absolute;
