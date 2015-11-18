@@ -5,17 +5,13 @@ import assign from 'object-assign';
 
 // data storage
 let _questions = [];
-
-// add private functions to modify data
-function addQuestion(question) {
-  _questions.push(question);
-}
+let _index = 0;
 
 // Facebook style store creation.
 const QuestionsStore = assign({}, BaseStore, {
   // public methods used by Controller-View to operate on data
-  getLast() {
-    return _questions[_questions.length - 1];
+  getQuestion() {
+    return _questions[_index];
   },
 
   // register store with dispatcher, allowing actions to flow through
@@ -23,10 +19,12 @@ const QuestionsStore = assign({}, BaseStore, {
     let action = payload.action;
 
     switch(action.type) {
-      case Constants.ActionTypes.GET_QUESTION_SUCCESS:
-        let question = action.data;
-        // TODO: check for unique
-        addQuestion(question);
+      case Constants.ActionTypes.GET_QUESTIONS_SUCCESS:
+        _questions = action.data;
+        QuestionsStore.emitChange();
+        break;
+      case Constants.ActionTypes.QUESTION_ANSWERED_SUCCESS:
+        _index += 1;
         QuestionsStore.emitChange();
         break;
     }

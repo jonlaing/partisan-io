@@ -26,8 +26,9 @@ export default {
     USERNAME_NOT_UNIQUE: null,
     USERNAME_BLANK: null,
 
-    GET_QUESTION_SUCESS: null,
-    GET_QUESTION_FAIL: null,
+    GET_QUESTIONS_SUCESS: null,
+    GET_QUESTIONS_FAIL: null,
+    QUESTION_ANSWERED_SUCCESS: null,
 
     LIKE_SUCCESS: null,
     LIKE_FAIL: null,

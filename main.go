@@ -83,7 +83,7 @@ func main() {
 		questions := r.Group(v1Root + "/questions")
 		questions.Use(auth.Auth("/login"))
 		{
-			questions.GET("/", QuestionShow)
+			questions.GET("/", QuestionIndex)
 		}
 
 		answers := r.Group(v1Root + "/answers")

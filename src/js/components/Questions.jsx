@@ -10,7 +10,7 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 export default React.createClass({
   getInitialState() {
-    return { questions: [], questionsAnswered: 0, showModal: true};
+    return { set: -1, questions: [], questionsAnswered: 0, showModal: true};
   },
 
   handleAgree() {
@@ -25,18 +25,13 @@ export default React.createClass({
     QuestionsActionCreator.answerQuestion(this.state.questions[last], false);
   },
 
-  handleSkip() {
-    $('.card').addClass('skip');
-    QuestionsActionCreator.getQuestion();
-  },
-
   handleModalClose() {
     this.setState({showModal: false});
   },
 
   componentDidMount() {
     QuestionsStore.addChangeListener(this._onChange);
-    QuestionsActionCreator.getQuestion();
+    QuestionsActionCreator.getQuestions();
   },
 
   componentWillUnmount() {
@@ -65,12 +60,11 @@ export default React.createClass({
         </div>
         <div className="question-actions">
           <button className="button disagree" onClick={this.handleDisagree}>Disagree</button>
-          <button className="button skip" onClick={this.handleSkip}>Skip</button>
           <button className="button agree" onClick={this.handleAgree}>Agree</button>
         </div>
         <Modal show={this.state.showModal} onCloseClick={this.handleModalClose} >
           <h2>Take the Quiz</h2>
-          <div>You&apos;re about to be presented with <strong>20 prompts</strong>. Mark whether you agree or disagree<br/>with the statment. This is how we determine your beliefs and match you up with people<br/>who share your beliefs. If you're not sure whether you agree or disagree, or don't understand the<br/>prompt, click &ldquo;Skip&rdquo; and we'll find a different prompt.</div>
+          <div>You&apos;re about to be presented with <strong>20 prompts</strong>. Mark whether you agree or disagree<br/>with the statment. This is how we determine your beliefs and match you up with people<br/>who share your beliefs.</div>
           <br/>
           <br/>
           <div className="text-center">
@@ -99,7 +93,7 @@ export default React.createClass({
   },
 
   _onChange() {
-    let question = QuestionsStore.getLast();
+    let question = QuestionsStore.getQuestion();
     let answered = this.state.questionsAnswered + 1;
 
 

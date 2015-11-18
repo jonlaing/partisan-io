@@ -2,7 +2,7 @@ import Dispatcher from '../Dispatcher';
 import Constants from '../Constants';
 
 export default {
-  getQuestion() {
+  getQuestions() {
     $.ajax({
       url: Constants.APIROOT + '/questions',
       method: 'GET',
@@ -10,22 +10,20 @@ export default {
     })
       .done(function(data) {
         Dispatcher.handleViewAction({
-          type: Constants.ActionTypes.GET_QUESTION_SUCCESS,
+          type: Constants.ActionTypes.GET_QUESTIONS_SUCCESS,
           data: data
         });
       })
       .fail(function(res) {
         let data = res;
         Dispatcher.handleViewAction({
-          type: Constants.ActionTypes.GET_QUESTION_FAIL,
+          type: Constants.ActionTypes.GET_QUESTIONS_FAIL,
           data: data
         });
       });
   },
 
   answerQuestion(question, agree) {
-    let self = this;
-
     $.ajax({
       url: Constants.APIROOT + '/answers',
       data: JSON.stringify({
@@ -36,7 +34,9 @@ export default {
       dataType: 'json'
     })
       .done(function() {
-        self.getQuestion();
+        Dispatcher.handleViewAction({
+          type: Constants.ActionTypes.QUESTION_ANSWERED_SUCCESS
+        });
       })
       .fail(function(res) {
         console.log(res);

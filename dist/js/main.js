@@ -36860,8 +36860,9 @@ exports['default'] = {
     USERNAME_NOT_UNIQUE: null,
     USERNAME_BLANK: null,
 
-    GET_QUESTION_SUCESS: null,
-    GET_QUESTION_FAIL: null,
+    GET_QUESTIONS_SUCESS: null,
+    GET_QUESTIONS_FAIL: null,
+    QUESTION_ANSWERED_SUCCESS: null,
 
     LIKE_SUCCESS: null,
     LIKE_FAIL: null,
@@ -38030,28 +38031,26 @@ var _Constants = require('../Constants');
 var _Constants2 = _interopRequireDefault(_Constants);
 
 exports['default'] = {
-  getQuestion: function getQuestion() {
+  getQuestions: function getQuestions() {
     $.ajax({
       url: _Constants2['default'].APIROOT + '/questions',
       method: 'GET',
       dataType: 'json'
     }).done(function (data) {
       _Dispatcher2['default'].handleViewAction({
-        type: _Constants2['default'].ActionTypes.GET_QUESTION_SUCCESS,
+        type: _Constants2['default'].ActionTypes.GET_QUESTIONS_SUCCESS,
         data: data
       });
     }).fail(function (res) {
       var data = res;
       _Dispatcher2['default'].handleViewAction({
-        type: _Constants2['default'].ActionTypes.GET_QUESTION_FAIL,
+        type: _Constants2['default'].ActionTypes.GET_QUESTIONS_FAIL,
         data: data
       });
     });
   },
 
   answerQuestion: function answerQuestion(question, agree) {
-    var self = this;
-
     $.ajax({
       url: _Constants2['default'].APIROOT + '/answers',
       data: JSON.stringify({
@@ -38061,7 +38060,9 @@ exports['default'] = {
       method: 'PATCH',
       dataType: 'json'
     }).done(function () {
-      self.getQuestion();
+      _Dispatcher2['default'].handleViewAction({
+        type: _Constants2['default'].ActionTypes.QUESTION_ANSWERED_SUCCESS
+      });
     }).fail(function (res) {
       console.log(res);
     });
@@ -42297,7 +42298,7 @@ exports['default'] = _reactAddons2['default'].createClass({
   displayName: 'Questions',
 
   getInitialState: function getInitialState() {
-    return { questions: [], questionsAnswered: 0, showModal: true };
+    return { set: -1, questions: [], questionsAnswered: 0, showModal: true };
   },
 
   handleAgree: function handleAgree() {
@@ -42312,18 +42313,13 @@ exports['default'] = _reactAddons2['default'].createClass({
     _actionsQuestionsActionCreator2['default'].answerQuestion(this.state.questions[last], false);
   },
 
-  handleSkip: function handleSkip() {
-    (0, _jquery2['default'])('.card').addClass('skip');
-    _actionsQuestionsActionCreator2['default'].getQuestion();
-  },
-
   handleModalClose: function handleModalClose() {
     this.setState({ showModal: false });
   },
 
   componentDidMount: function componentDidMount() {
     _storesQuestionsStore2['default'].addChangeListener(this._onChange);
-    _actionsQuestionsActionCreator2['default'].getQuestion();
+    _actionsQuestionsActionCreator2['default'].getQuestions();
   },
 
   componentWillUnmount: function componentWillUnmount() {
@@ -42373,11 +42369,6 @@ exports['default'] = _reactAddons2['default'].createClass({
         ),
         _reactAddons2['default'].createElement(
           'button',
-          { className: 'button skip', onClick: this.handleSkip },
-          'Skip'
-        ),
-        _reactAddons2['default'].createElement(
-          'button',
           { className: 'button agree', onClick: this.handleAgree },
           'Agree'
         )
@@ -42403,9 +42394,7 @@ exports['default'] = _reactAddons2['default'].createClass({
           _reactAddons2['default'].createElement('br', null),
           'with the statment. This is how we determine your beliefs and match you up with people',
           _reactAddons2['default'].createElement('br', null),
-          'who share your beliefs. If you\'re not sure whether you agree or disagree, or don\'t understand the',
-          _reactAddons2['default'].createElement('br', null),
-          'prompt, click “Skip” and we\'ll find a different prompt.'
+          'who share your beliefs.'
         ),
         _reactAddons2['default'].createElement('br', null),
         _reactAddons2['default'].createElement('br', null),
@@ -42446,7 +42435,7 @@ exports['default'] = _reactAddons2['default'].createClass({
   },
 
   _onChange: function _onChange() {
-    var question = _storesQuestionsStore2['default'].getLast();
+    var question = _storesQuestionsStore2['default'].getQuestion();
     var answered = this.state.questionsAnswered + 1;
 
     if (this._maxQuestions() > -1 && answered > this._maxQuestions()) {
@@ -44074,17 +44063,13 @@ var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
 // data storage
 var _questions = [];
-
-// add private functions to modify data
-function addQuestion(question) {
-  _questions.push(question);
-}
+var _index = 0;
 
 // Facebook style store creation.
 var QuestionsStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
   // public methods used by Controller-View to operate on data
-  getLast: function getLast() {
-    return _questions[_questions.length - 1];
+  getQuestion: function getQuestion() {
+    return _questions[_index];
   },
 
   // register store with dispatcher, allowing actions to flow through
@@ -44092,10 +44077,12 @@ var QuestionsStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], 
     var action = payload.action;
 
     switch (action.type) {
-      case _Constants2['default'].ActionTypes.GET_QUESTION_SUCCESS:
-        var question = action.data;
-        // TODO: check for unique
-        addQuestion(question);
+      case _Constants2['default'].ActionTypes.GET_QUESTIONS_SUCCESS:
+        _questions = action.data;
+        QuestionsStore.emitChange();
+        break;
+      case _Constants2['default'].ActionTypes.QUESTION_ANSWERED_SUCCESS:
+        _index += 1;
         QuestionsStore.emitChange();
         break;
     }
