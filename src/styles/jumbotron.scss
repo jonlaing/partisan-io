@@ -9,6 +9,25 @@
     color: white;
     margin-bottom: -$line-height*6;
 
+    .button.button-lg {
+      font-size: $line-height*1.5;
+      background: $secondary-color;
+      border: 1px solid white;
+      font-weight: 100;
+      box-shadow: none;
+      padding: $line-height;
+      cursor: pointer;
+      margin-bottom: $line-height*2;
+
+      &:hover {
+        background: rgba(255,255,255,0.25);
+      }
+    }
+
+    h1 {
+      color: darken($secondary-color, 25%);
+    }
+
     h2 {
       font-weight: 100;
       font-size: 64px;

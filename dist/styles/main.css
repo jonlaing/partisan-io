@@ -2176,6 +2176,9 @@ header.header {
   .dashboard.dashboard-3col > article {
     width: 50vw; }
 
+.footer {
+  margin: 64px 0; }
+
 .clearfix:after {
   visibility: hidden;
   display: block;
@@ -3110,6 +3113,19 @@ button.like {
   padding: 8px 0 128px;
   color: white;
   margin-bottom: -96px; }
+  .jumbotron.jumbotron-main .button.button-lg {
+    font-size: 24px;
+    background: #00d2c3;
+    border: 1px solid white;
+    font-weight: 100;
+    box-shadow: none;
+    padding: 16px;
+    cursor: pointer;
+    margin-bottom: 32px; }
+    .jumbotron.jumbotron-main .button.button-lg:hover {
+      background: rgba(255, 255, 255, 0.25); }
+  .jumbotron.jumbotron-main h1 {
+    color: #00524d; }
   .jumbotron.jumbotron-main h2 {
     font-weight: 100;
     font-size: 64px;
@@ -3557,3 +3573,45 @@ button.like {
     .thread-list .thread-avatar .user-avatar {
       height: 24px;
       object-fit: cover; }
+
+.front-ticker {
+  margin-bottom: 48px;
+  display: flex;
+  display: -webkit-flex;
+  justify-content: center;
+  -webkit-justify-content: center; }
+  .front-ticker > h3:first-child {
+    margin-right: 16px; }
+  .front-ticker .front-ticker-tick {
+    width: 200px; }
+
+.front-ticker-tick {
+  position: relative; }
+  .front-ticker-tick h3 {
+    white-space: nowrap;
+    position: absolute;
+    left: 0; }
+
+.front-ticker-text-enter {
+  position: absolute;
+  left: 0;
+  transform: translateY(100px);
+  -webkit-transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease; }
+  .front-ticker-text-enter.front-ticker-text-enter-active {
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+    opacity: 1; }
+
+.front-ticker-text-leave {
+  position: absolute;
+  left: 0;
+  transform: translateY(0);
+  -webkit-transform: translateY(0);
+  opacity: 1;
+  transition: all 0.3s ease; }
+  .front-ticker-text-leave.front-ticker-text-leave-active {
+    transform: translateY(-100px);
+    -webkit-transform: translateY(-100px);
+    opacity: 0; }

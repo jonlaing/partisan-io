@@ -22,6 +22,7 @@ import ProfileEdit from './components/ProfileEdit.jsx';
 import Post from './components/Post.jsx';
 import Card from './components/Card.jsx';
 import HashtagSearch from './components/HashtagSearch.jsx';
+import FrontTicker from './components/FrontTicker.jsx';
 
 // optionally attack DOM elements to React
 let login = document.getElementById('login');
@@ -35,6 +36,7 @@ let messages = document.getElementById('messages');
 let friends = document.getElementById('friends');
 let post = document.getElementById('post');
 let hashtags = document.getElementById('hashtags');
+let frontTicker = document.getElementById('front-ticker');
 
 // for static login page
 if(login !== null) {
@@ -82,6 +84,10 @@ if(post !== null) {
 
 if(hashtags !== null) {
   React.render(<HashtagSearch defaultSearch={data.search} />, hashtags);
+}
+
+if(frontTicker !== null) {
+  React.render(<FrontTicker />, frontTicker);
 }
 
 Perf.stop();

@@ -62,6 +62,10 @@ header.header {
   }
 }
 
+.footer {
+  margin: $line-height*4 0;
+}
+
 .clearfix {
   @include clearfix();
 }
