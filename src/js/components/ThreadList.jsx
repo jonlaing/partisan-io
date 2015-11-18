@@ -1,5 +1,7 @@
 import React from 'react';
 
+import formatter from '../utils/formatter';
+
 import ThreadActionCreator from '../actions/ThreadActionCreator';
 
 export default React.createClass({
@@ -39,7 +41,7 @@ export default React.createClass({
         return (
           <li key={t.thread_id} className={className} onClick={this.handleThreadSwitch(t.thread_id)}>
             <div className="thread-avatar">
-              <img src={t.user.avatar_thumbnail_url} className="user-avatar" />
+              <img src={formatter.avatarUrl(t.user.avatar_thumbnail_url)} className="user-avatar" />
             </div>
             <div>
               {t.user.username}

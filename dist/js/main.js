@@ -40251,6 +40251,10 @@ var _moment = require('moment');
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _utilsFormatter = require('../utils/formatter');
+
+var _utilsFormatter2 = _interopRequireDefault(_utilsFormatter);
+
 var _BreakoutJsx = require('./Breakout.jsx');
 
 var _BreakoutJsx2 = _interopRequireDefault(_BreakoutJsx);
@@ -40299,7 +40303,7 @@ exports['default'] = _react2['default'].createClass({
         _react2['default'].createElement(
           'div',
           { className: 'message-avatar' },
-          _react2['default'].createElement('img', { src: this.props.message.user.avatar_thumbnail_url, className: 'user-avatar', onClick: this.handleAvatarClick(this.props.message.user.username) })
+          _react2['default'].createElement('img', { src: _utilsFormatter2['default'].avatarUrl(this.props.message.user.avatar_thumbnail_url), className: 'user-avatar', onClick: this.handleAvatarClick(this.props.message.user.username) })
         ),
         _react2['default'].createElement(
           'div',
@@ -40318,7 +40322,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Breakout.jsx":209,"moment":8,"react":187}],230:[function(require,module,exports){
+},{"../utils/formatter":265,"./Breakout.jsx":209,"moment":8,"react":187}],230:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -42640,6 +42644,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _utilsFormatter = require('../utils/formatter');
+
+var _utilsFormatter2 = _interopRequireDefault(_utilsFormatter);
+
 var _actionsThreadActionCreator = require('../actions/ThreadActionCreator');
 
 var _actionsThreadActionCreator2 = _interopRequireDefault(_actionsThreadActionCreator);
@@ -42686,7 +42694,7 @@ exports['default'] = _react2['default'].createClass({
           _react2['default'].createElement(
             'div',
             { className: 'thread-avatar' },
-            _react2['default'].createElement('img', { src: t.user.avatar_thumbnail_url, className: 'user-avatar' })
+            _react2['default'].createElement('img', { src: _utilsFormatter2['default'].avatarUrl(t.user.avatar_thumbnail_url), className: 'user-avatar' })
           ),
           _react2['default'].createElement(
             'div',
@@ -42736,7 +42744,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ThreadActionCreator":206,"react":187}],247:[function(require,module,exports){
+},{"../actions/ThreadActionCreator":206,"../utils/formatter":265,"react":187}],247:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
