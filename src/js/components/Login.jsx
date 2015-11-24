@@ -1,9 +1,9 @@
 /*global $ */
-import React from 'react/addons';
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 import LoginActionCreator from '../actions/LoginActionCreator';
 import LoginStore from '../stores/LoginStore';
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 function getStateFromStore() {
   return LoginStore.getLoginState();
@@ -47,7 +47,7 @@ export default React.createClass({
     return (
       <div className="login">
         <h4>Login to Partisan.IO</h4>
-        <ReactCSSTransitionGroup transitionName="login-error">
+        <ReactCSSTransitionGroup transitionName="login-error" transitionEnterTimeout={1000} transitionLeaveTimeout={1000}>
           {error}
         </ReactCSSTransitionGroup>
         <form onSubmit={this.handleLogin}>

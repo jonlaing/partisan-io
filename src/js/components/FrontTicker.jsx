@@ -1,6 +1,5 @@
-import React from 'react/addons';
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var _timer;
 
@@ -32,14 +31,19 @@ export default React.createClass({
   },
 
   componentDidMount() {
-    _timer = window.setInterval(() => {
-      let i = Math.floor(Math.random() * _fullList.length);
-      this.setState({current: [_fullList[i]]});
-    }, 2000);
+    _timer = window.setInterval(this._cycle, 2000);
   },
 
   componentWillUnmount() {
     window.clearInterval(_timer);
+  },
+
+  onWindowBlur() {
+    window.clearInterval(_timer);
+  },
+
+  onWindowFocus() {
+    _timer = window.setInterval(this._cycle, 2000);
   },
 
   render() {
@@ -51,11 +55,20 @@ export default React.createClass({
       <div className="front-ticker">
         <h3>Partisan is for:</h3>
         <div className="front-ticker-tick">
-          <ReactCSSTransitionGroup transitionName="front-ticker-text">
+          <ReactCSSTransitionGroup transitionName="front-ticker-text" transitionEnterTimeout={2000} transitionLeaveTimeout={2000}>
             {text}
           </ReactCSSTransitionGroup>
         </div>
       </div>
     );
+  },
+
+  _cycle() {
+      let i = Math.floor(Math.random() * _fullList.length);
+      if(_fullList[i] === this.state.current[0]) {
+        return this._cycle();
+      }
+
+      this.setState({current: [_fullList[i]]});
   }
 });

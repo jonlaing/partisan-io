@@ -1,12 +1,13 @@
 /*global data */
-import React from 'react/addons';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Perf from 'react-addons-perf';
 import jQuery from 'jquery';
 
 import Events from 'events';
 Events.EventEmitter.prototype._maxListeners = 100;
 
 global.$ = jQuery;
-var Perf = React.addons.Perf;
 
 Perf.start();
 
@@ -40,54 +41,54 @@ let frontTicker = document.getElementById('front-ticker');
 
 // for static login page
 if(login !== null) {
-  React.render(<Login />, login);
+  ReactDOM.render(<Login />, login);
 }
 
 if(signUp !== null) {
-  React.render(<SignUp />, signUp);
+  ReactDOM.render(<SignUp />, signUp);
 }
 
 if(feed !== null) {
-  React.render(<Feed data={data} />, feed);
+  ReactDOM.render(<Feed data={data} />, feed);
 }
 
 
 if(questions !== null) {
-  React.render(<Questions data={data}/>, questions);
+  ReactDOM.render(<Questions data={data}/>, questions);
 }
 
 if(profileShow !== null) {
-  React.render(<ProfileShow user={data.user} match={data.match} profile={data.profile} currentUser={data.current_user} />, profileShow);
+  ReactDOM.render(<ProfileShow user={data.user} match={data.match} profile={data.profile} currentUser={data.current_user} />, profileShow);
 }
 
 if(profileEdit !== null) {
-  React.render(<ProfileEdit data={data} />, profileEdit);
+  ReactDOM.render(<ProfileEdit data={data} />, profileEdit);
 }
 
 if(matches !== null) {
-  React.render(<Matches data={data} />, matches);
+  ReactDOM.render(<Matches data={data} />, matches);
 }
 
 if(messages !== null) {
-  React.render(<Messages data={data} />, messages);
+  ReactDOM.render(<Messages data={data} />, messages);
 }
 
 if(friends !== null) {
-  React.render(<Friends data={data} />, friends);
+  ReactDOM.render(<Friends data={data} />, friends);
 }
 
 if(post !== null) {
   let pData = data;
   pData.user = data.post_user;
-  React.render(<Card><Post data={data} defaultShowComments={true}/></Card>, post);
+  ReactDOM.render(<Card><Post data={data} defaultShowComments={true}/></Card>, post);
 }
 
 if(hashtags !== null) {
-  React.render(<HashtagSearch defaultSearch={data.search} />, hashtags);
+  ReactDOM.render(<HashtagSearch defaultSearch={data.search} />, hashtags);
 }
 
 if(frontTicker !== null) {
-  React.render(<FrontTicker />, frontTicker);
+  ReactDOM.render(<FrontTicker />, frontTicker);
 }
 
 Perf.stop();

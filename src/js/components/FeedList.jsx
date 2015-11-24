@@ -1,9 +1,8 @@
-import React from 'react/addons';
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import Card from './Card.jsx';
 import Post from './Post.jsx';
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 export default React.createClass({
   render() {
@@ -21,7 +20,7 @@ export default React.createClass({
 
     return (
       <div>
-        <ReactCSSTransitionGroup transitionName="feed">
+        <ReactCSSTransitionGroup transitionName="feed" transitionEnterTimeout={1000} transitionLeaveTimeout={1000}>
           {cards}
         </ReactCSSTransitionGroup>
       </div>

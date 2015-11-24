@@ -1,4 +1,5 @@
-import React from 'react/addons';
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import CommentsActionCreator from '../actions/CommentsActionCreator';
 import CommentStore from '../stores/CommentStore';
@@ -6,7 +7,6 @@ import CommentStore from '../stores/CommentStore';
 import Comment from './Comment.jsx';
 import CommentComposer from './CommentComposer.jsx';
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 // when we go to a page with a comment hash, scroll to it, but only once
 var _scrolled = false;
@@ -54,7 +54,7 @@ export default React.createClass({
             &nbsp;
           </div>
         </div>
-        <ReactCSSTransitionGroup transitionName="commentlist-item" component="ul">
+        <ReactCSSTransitionGroup transitionName="commentlist-item" component="ul" transitionEnterTimeout={1000} transitionLeaveTimeout={1000}>
           {comments}
         </ReactCSSTransitionGroup>
         <CommentComposer id={this.props.id} />

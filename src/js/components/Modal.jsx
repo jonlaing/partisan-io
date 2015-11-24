@@ -1,6 +1,5 @@
-import React from 'react/addons';
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 export default React.createClass({
   handleClose() {
@@ -27,7 +26,7 @@ export default React.createClass({
 
     return (
       <div>
-        <ReactCSSTransitionGroup transitionName="modal-container">
+        <ReactCSSTransitionGroup transitionName="modal-container" transitionEnterTimeout={1000} transitionLeaveTimeout={1000}>
           {modal}
         </ReactCSSTransitionGroup>
       </div>

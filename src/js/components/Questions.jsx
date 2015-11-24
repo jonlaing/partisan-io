@@ -1,12 +1,12 @@
-import React from 'react/addons';
+/*global $ */
+import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 import QuestionsActionCreator from '../actions/QuestionsActionCreator';
 import QuestionsStore from '../stores/QuestionsStore';
 import Card from './Card.jsx';
 import UserSession from './UserSession.jsx';
 import Modal from './Modal.jsx';
-import $ from 'jquery';
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 export default React.createClass({
   getInitialState() {
@@ -53,7 +53,7 @@ export default React.createClass({
         </div>
         <div className="question-container">
           <div className="question-body">
-            <ReactCSSTransitionGroup transitionName="question-body">
+            <ReactCSSTransitionGroup transitionName="question-body" transitionEnterTimeout={1000} transitionLeaveTimeout={1000}>
               {cards}
             </ReactCSSTransitionGroup>
           </div>
