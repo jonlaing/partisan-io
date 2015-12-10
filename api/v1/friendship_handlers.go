@@ -28,8 +28,7 @@ func FriendshipIndex(c *gin.Context) {
 
 	friends, err := dao.ConfirmedFriends(user, db)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	var friendships []FriendResp
@@ -54,14 +53,12 @@ func FriendshipShow(c *gin.Context) {
 	fID := c.Param("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	var friendship m.Friendship
 	if friendship, err = dao.GetFriendship(user, friendID, db); err != nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("Couldn't find friendship between User: %d and Friend: %d", user.ID, friendID))
-		return
+		return handleError(err, c)
 	}
 
 	c.JSON(http.StatusOK, friendship)
@@ -76,8 +73,7 @@ func FriendshipCreate(c *gin.Context) {
 	fID := c.PostForm("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	f := m.Friendship{
@@ -89,8 +85,7 @@ func FriendshipCreate(c *gin.Context) {
 	}
 
 	if err := db.Create(&f).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	m.NewNotification(&f, user.ID, db)
@@ -107,22 +102,19 @@ func FriendshipConfirm(c *gin.Context) {
 	fID := c.PostForm("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	var f m.Friendship
 	// only the friend can confirm, so we put friendID in the user slot and userID in the friend slot
 	if err := db.Where("friend_id = ? AND user_id = ?", user.ID, friendID).First(&f).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
 
 	f.Confirmed = true
 
 	if err := db.Save(&f).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	m.NewNotification(&f, user.ID, db)
@@ -139,8 +131,7 @@ func FriendshipDestroy(c *gin.Context) {
 	fID := c.Param("friend_id")
 	friendID, err := strconv.ParseUint(fID, 10, 64)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	// We have to look for two possible friendships
@@ -149,15 +140,13 @@ func FriendshipDestroy(c *gin.Context) {
 
 	if err := db.Find(&f1, user.ID).Error; err == nil {
 		if err := db.Delete(&f1).Error; err != nil {
-			c.AbortWithError(http.StatusNotAcceptable, err)
-			return
+			return handleError(&ErrDBDelete{err}, c)
 		}
 	}
 
 	if err := db.Find(&f2, friendID).Error; err == nil {
 		if err := db.Delete(&f2).Error; err != nil {
-			c.AbortWithError(http.StatusNotFound, err)
-			return
+			return handleError(&ErrDBNotFound{err}, c)
 		}
 	}
 

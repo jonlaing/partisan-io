@@ -3,10 +3,11 @@ package v1
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // LikeCount shows the like count for a particular record
@@ -16,7 +17,7 @@ func LikeCount(c *gin.Context) {
 	user, _ := auth.CurrentUser(c)
 	rID, rType, err := getRecord(c)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		return handleError(err, c)
 	}
 
 	var count int
@@ -41,7 +42,7 @@ func LikeCreate(c *gin.Context) {
 
 	rID, rType, err := getRecord(c)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		return handleError(err, c)
 	}
 
 	like = m.Like{
@@ -65,8 +66,7 @@ func LikeCreate(c *gin.Context) {
 	if userCount < 1 {
 		// create a like record
 		if err := db.Create(&like).Error; err != nil {
-			c.AbortWithError(http.StatusNotAcceptable, err)
-			return
+			return handleError(&ErrDBInsert{err}, c)
 		}
 		m.NewNotification(&like, user.ID, db)
 		// return the old count + 1

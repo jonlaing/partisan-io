@@ -7,9 +7,10 @@ import (
 	"strconv"
 
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 )
 
+// getRecord looks in the `GET` params for a post or comment ID.
+// i.e. `/api/v1/(post|comment)/:record_id`
 func getRecord(c *gin.Context) (rID uint64, rType string, err error) {
 	url := c.Request.RequestURI
 	re := regexp.MustCompile("(post|comment)")
@@ -18,22 +19,17 @@ func getRecord(c *gin.Context) (rID uint64, rType string, err error) {
 	recordID, ok := c.Params.Get("record_id")
 	if ok {
 		rID, err = strconv.ParseUint(recordID, 10, 64)
-		return rID, rType, err
-	}
-
-	return rID, rType, fmt.Errorf("Couldn't parse Params: %v", err)
-}
-
-func findMatchingPostUser(post m.Post, users []m.User) (m.User, bool) {
-	for _, user := range users {
-		if user.ID == post.UserID {
-			return user, true
+		if err != nil {
+			return rID, rType, &ErrParseID{err}
 		}
+
+		return rID, rType, nil
 	}
-	return m.User{}, false
+
+	return rID, rType, &ErrParseID{fmt.Errorf("Couldn't parse Params: %v", url)}
 }
 
-func fineMatchingPostLikes(post m.Post, likes []m.RecordLikes) (int, bool, bool) {
+func findMatchingPostLikes(post m.Post, likes []m.RecordLikes) (int, bool, bool) {
 	for _, like := range likes {
 		if like.RecordID == post.ID {
 			return like.Count, like.UserCount == 1, true
@@ -49,26 +45,6 @@ func findMatchingCommentCount(post m.Post, comments []PostComments) (int, bool) 
 		}
 	}
 	return 0, false
-}
-
-func getPostComments(postIDs []uint64, db *gorm.DB) ([]PostComments, error) {
-	var comments []PostComments
-
-	rows, err := db.Raw("SELECT count(*), post_id FROM \"comments\"  WHERE (post_id IN (?)) group by post_id", postIDs).Rows()
-	defer rows.Close()
-	if err != nil {
-		return []PostComments{}, err
-	}
-
-	for rows.Next() {
-		var count int
-		var rID uint64
-
-		rows.Scan(&count, &rID)
-		comments = append(comments, PostComments{Count: count, RecordID: rID})
-	}
-
-	return comments, nil
 }
 
 func getPage(c *gin.Context) int {

@@ -62,7 +62,7 @@ func collectPostResponses(posts []m.Post, users []m.User, attachments []m.ImageA
 	pr = make(map[uint64]PostResponse, len(posts))
 
 	for _, post := range posts {
-		user, _ := findMatchingPostUser(post, users)
+		user, _ := GetMatchingUser(&post, users)
 		attachment, _ := findRelatedPostAttachment(post, attachments)
 		likeCount, liked, _ := findMatchingPostLikes(post, likes)
 		commentCount, _ := findMatchingPostCommentCount(post, comments)

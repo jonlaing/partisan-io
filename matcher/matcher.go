@@ -36,7 +36,7 @@ func (p *PoliticalMap) Add(aMap []int, agree bool) error {
 
 	for k, v := range aMap {
 		if v > 16 {
-			return fmt.Errorf("Answer map coordinate out of range at %d! Must be 16 or less. Was %d", k, v)
+			return &ErrOutOfRange{k, v}
 		}
 
 		p[v] += sign
@@ -114,7 +114,7 @@ func (p *PoliticalMap) Scan(src interface{}) error {
 		var err error
 		p[i], err = strconv.Atoi(val)
 		if err != nil {
-			return err
+			return ErrScan{val}
 		}
 	}
 
@@ -170,4 +170,13 @@ type ErrScan struct {
 
 func (e ErrScan) Error() string {
 	return fmt.Sprintf("partisan/matcher: Can't scan values: %v", e.Val)
+}
+
+type ErrOutOfRange struct {
+	Index int
+	Val   int
+}
+
+func (e *ErrOutOfRange) Error() string {
+	return fmt.Sprintf("partisan/matcher: Answer map coordinate out of range at %d! Must be 16 or less. Was %d", e.Index, e.Val)
 }

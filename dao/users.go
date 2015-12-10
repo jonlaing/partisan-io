@@ -35,6 +35,10 @@ func GetUsersByIDs(userIDs []uint64, db *gorm.DB) (users []m.User, err error) {
 func GetRelatedUsers(rs UserIDerSlice, db *gorm.DB) (users []m.User, err error) {
 	userIDs := rs.GetUserIDs()
 	err = db.Where("id IN (?)", userIDs).Find(&users).Error
+	if err != nil {
+		return users, &ErrNotFound{err}
+	}
+
 	return
 }
 

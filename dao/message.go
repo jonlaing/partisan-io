@@ -29,7 +29,7 @@ func MessageUnreadCount(userID uint64, db *gorm.DB) (count int, err error) {
 func GetMessages(threadID uint64, db *gorm.DB) (msgs []m.Message, err error) {
 	err = db.Where("thread_id = ?", threadID).Limit(200).Order("created_at DESC").Find(&msgs).Error
 	if err != nil {
-		return
+		return msgs, &ErrNotFound{err}
 	}
 
 	// If nothing was found, just return

@@ -19,6 +19,12 @@ const (
 	hmacKeyPath = "keys/hmac.key"
 )
 
+type ErrNoUser struct{}
+
+func (err *ErrNoUser) Error() string {
+	return "User ID not set"
+}
+
 var hmacKey []byte
 
 func init() {
@@ -123,7 +129,7 @@ func Logout(c *gin.Context) {
 func CurrentUser(c *gin.Context) (m.User, error) {
 	user, ok := c.Get("user")
 	if !ok {
-		return user.(m.User), fmt.Errorf("User ID not set")
+		return user.(m.User), &ErrNoUser{}
 	}
 
 	return user.(m.User), nil

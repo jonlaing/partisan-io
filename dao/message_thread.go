@@ -19,6 +19,10 @@ func (e *MessageThreadUnreciprocated) Error() string {
 // GetMessageThread will get the message or throw an error if nothing is found
 func GetMessageThread(threadID uint64, db *gorm.DB) (thread m.MessageThread, err error) {
 	err = db.Where("id = ?", threadID).First(&thread).Error
+	if err != nil {
+		return thread, &ErrNotFound{err}
+	}
+
 	return
 }
 
@@ -106,7 +110,11 @@ func MessageThreadHasUnread(userID, threadID uint64, db *gorm.DB) (bool, error) 
 func MessageThreadHasUser(userID, threadID uint64, db *gorm.DB) (bool, error) {
 	var count int
 	err := db.Model(m.MessageThreadUser{}).Where("thread_id = ? AND user_id = ?", threadID, userID).Count(&count).Error
-	return count > 0, err
+	if err != nil {
+		return false, &ErrThreadNotFound{err}
+	}
+
+	return count > 0, nil
 }
 
 func GetMessageThreadByUsers(userID, toID uint64, db *gorm.DB) (thread m.MessageThread, err error) {

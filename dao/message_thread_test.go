@@ -89,7 +89,7 @@ func TestMessageThreadHasUnread(t *testing.T) {
 	defer db.Delete(&mtu1)
 	defer db.Delete(&mtu2)
 
-	unread, err := MessageThreadHasUnread(1, &db)
+	unread, err := MessageThreadHasUnread(2, 1, &db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -98,7 +98,7 @@ func TestMessageThreadHasUnread(t *testing.T) {
 		t.Error("Shouldn't have any unread messages")
 	}
 
-	unread, err = MessageThreadHasUnread(2, &db)
+	unread, err = MessageThreadHasUnread(2, 2, &db)
 	if err != nil {
 		t.Error(err)
 	}

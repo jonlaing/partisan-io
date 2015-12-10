@@ -39,23 +39,6 @@ func TestGetRelatedPosts(t *testing.T) {
 	db.Delete(&posts)
 }
 
-func TestFindMatchingPostUser(t *testing.T) {
-	post := m.Post{UserID: 5}
-	var users []m.User
-	for i := 0; i <= 10; i++ {
-		users = append(users, m.User{ID: uint64(i)})
-	}
-
-	u, ok := findMatchingPostUser(post, users)
-	if !ok {
-		t.Fail()
-	}
-
-	if u.ID != post.UserID {
-		t.Fail()
-	}
-}
-
 func TestFindMatchingPostLikes(t *testing.T) {
 	post := m.Post{ID: 5}
 	var rls []RecordLikes

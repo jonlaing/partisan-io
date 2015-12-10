@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
@@ -21,24 +20,24 @@ type PostResponse struct {
 	CommentCount int               `json:"comment_count"`
 }
 
-// PostsIndex display all posts
-func PostsIndex(c *gin.Context) {
-	db := db.GetDB(c)
+// // PostsIndex display all posts
+// func PostsIndex(c *gin.Context) {
+// 	db := db.GetDB(c)
 
-	userID, ok := c.Get("user_id")
-	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
-		return
-	}
+// 	userID, ok := c.Get("user_id")
+// 	if !ok {
+// 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
+// 		return
+// 	}
 
-	posts := []m.Post{}
-	if err := db.Where("user_id = ?", userID).Find(&posts).Error; err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+// 	posts := []m.Post{}
+// 	if err := db.Where("user_id = ?", userID).Find(&posts).Error; err != nil {
+// 		c.AbortWithError(http.StatusBadRequest, err)
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, posts)
-}
+// 	c.JSON(http.StatusOK, posts)
+// }
 
 // PostsCreate create a post
 func PostsCreate(c *gin.Context) {
@@ -46,8 +45,7 @@ func PostsCreate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	postBody := c.Request.FormValue("body")
@@ -59,8 +57,7 @@ func PostsCreate(c *gin.Context) {
 		UpdatedAt: time.Now(),
 	}
 	if err := db.Create(&post).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	m.FindAndCreateHashtags(&post, db)
@@ -76,8 +73,7 @@ func PostsCreate(c *gin.Context) {
 	if err := m.AttachImage(c, &postRes); err != nil {
 		// only errs with catostrophic failure,
 		// silently fails if no attachment is present
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(err, c)
 	}
 
 	// Create feed item
@@ -92,8 +88,7 @@ func PostsCreate(c *gin.Context) {
 	}
 
 	if err := db.Create(&feedItem).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	c.JSON(http.StatusOK, feedItem)
@@ -145,16 +140,14 @@ func PostsUpdate(c *gin.Context) {
 
 	userID, ok := c.Get("user_id")
 	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
-		return
+		return handleError(&ErrNoUserID{}, c)
 	}
 
 	post := m.Post{}
 	id := c.Params.ByName("id")
 
 	if err := db.First(&post, id).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err})
 	}
 
 	if post.UserID != userID.(uint64) {
@@ -163,13 +156,11 @@ func PostsUpdate(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&post); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
+		return handleError(&ErrBinding{err}, c)
 	}
 
 	if err := db.Save(&post).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	c.JSON(http.StatusOK, post)
@@ -188,16 +179,14 @@ func PostsDestroy(c *gin.Context) {
 
 	userID, ok := c.Get("user_id")
 	if !ok {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("User ID not set"))
-		return
+		return handleError(&ErrNoUserID{}, c)
 	}
 
 	post := m.Post{}
 	id := c.Params.ByName("id")
 
 	if err := db.First(&post, id).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
 
 	if post.UserID != userID.(uint64) {
@@ -206,8 +195,7 @@ func PostsDestroy(c *gin.Context) {
 	}
 
 	if err := db.Delete(&post).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBDelete{err}, c)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})

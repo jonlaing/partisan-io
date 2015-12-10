@@ -60,6 +60,9 @@ func GetMatches(user m.User, gender string, minAge, maxAge int, radius float64, 
 	}
 
 	err = query.Limit(24).Offset(offset).Find(&users).Error
+	if err != nil {
+		return users, &ErrNoMatches{err}
+	}
 
 	return
 }

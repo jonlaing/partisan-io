@@ -29,7 +29,7 @@ func FriendIDs(u m.User, confirmed bool, db *gorm.DB) ([]uint64, error) {
 	var friendships []m.Friendship
 	err := db.Where("(user_id = ? OR friend_id = ?) AND confirmed = ?", u.ID, u.ID, confirmed).Find(&friendships).Error
 	if err != nil {
-		return []uint64{}, err
+		return []uint64{}, &ErrNotFound{err}
 	}
 
 	for _, f := range friendships {
@@ -42,7 +42,7 @@ func FriendIDs(u m.User, confirmed bool, db *gorm.DB) ([]uint64, error) {
 		}
 	}
 
-	return friendIDs, err
+	return friendIDs, nil
 }
 
 // ConfirmedFriendIDs returns all IDs of User's confirmed friends
@@ -57,7 +57,9 @@ func GetFriendship(u m.User, fID uint64, db *gorm.DB) (m.Friendship, error) {
 		return f1, nil
 	}
 
-	err := db.Where("user_id = ? AND friend_id = ?", fID, u.ID).First(&f2).Error
+	if err := db.Where("user_id = ? AND friend_id = ?", fID, u.ID).First(&f2).Error; err != nil {
+		return f2, &ErrNoFriendship{u.ID, fID}
+	}
 
-	return f2, err
+	return f2, nil
 }

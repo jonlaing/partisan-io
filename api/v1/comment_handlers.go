@@ -2,12 +2,13 @@ package v1
 
 import (
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
 	"strconv"
 	"time"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // CommentResp is the format for JSON responses
@@ -35,9 +36,9 @@ func CommentsIndex(c *gin.Context) {
 	user, _ := auth.CurrentUser(c)
 
 	if err := db.Where("post_id = ?", pID).Find(&comments).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
+
 	if len(comments) == 0 {
 		c.JSON(http.StatusOK, gin.H{"comments": resp})
 		return
@@ -98,15 +99,13 @@ func CommentsCreate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	postIDString := c.Request.FormValue("post_id")
 	postID, err := strconv.ParseUint(postIDString, 10, 64)
 	if err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	comment := m.Comment{
@@ -118,8 +117,7 @@ func CommentsCreate(c *gin.Context) {
 	}
 
 	if err := db.Create(&comment).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	m.FindAndCreateHashtags(&comment, db)
@@ -139,10 +137,7 @@ func CommentsCreate(c *gin.Context) {
 	// Doing it this way because we don't know if a user will try
 	// to attach an image. This way we can fail elegantly
 	if err = m.AttachImage(c, &commentResp); err != nil {
-		// only errs with catostrophic failure,
-		// silently fails if no attachment is present
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(err, c)
 	}
 
 	// Create feed item

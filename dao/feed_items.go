@@ -12,7 +12,7 @@ func GetFeedByUserIDs(currentUserID uint64, userIDs []uint64, page int, db *gorm
 
 	// TODO: limit feed so a particular record only comes up once
 	if err = db.Where("user_id IN (?) AND action = ?", userIDs, "post").Order("created_at desc").Limit(25).Offset(offset).Find(&feedItems).Error; err != nil {
-		return
+		return feedItems, &ErrNotFound{err}
 	}
 
 	records, _ := GetRelatedPostReponse(currentUserID, m.FeedItems(feedItems), db)
@@ -20,7 +20,7 @@ func GetFeedByUserIDs(currentUserID uint64, userIDs []uint64, page int, db *gorm
 		feedItems[i].Record = records[feedItems[i].RecordID]
 	}
 
-	return
+	return feedItems, nil
 }
 
 func GetFeedByUserIDsAfter(currentUserID uint64, userIDs []uint64, after time.Time, db *gorm.DB) (feedItems []m.FeedItem, err error) {

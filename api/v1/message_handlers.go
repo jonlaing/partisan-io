@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -27,8 +26,7 @@ func MessageThreadIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	threads, _ := dao.GetMessageThreadUsers(user.ID, db)
@@ -70,27 +68,23 @@ func MessageThreadCreate(c *gin.Context) {
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	uID := c.Request.FormValue("user_id")
 	if len(uID) == 0 {
-		c.AbortWithError(http.StatusNotAcceptable, errors.New("No userID specified"))
-		return
+		return handleError(&ErrNoUserID{}, c)
 	}
 
 	userID, err := strconv.Atoi(uID)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	// can only start a thread with friends
 	_, err = dao.GetFriendship(currentUser, uint64(userID), db)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	thread, err := dao.GetMessageThreadByUsers(currentUser.ID, uint64(userID), db)
@@ -119,8 +113,7 @@ func MessageThreadCreate(c *gin.Context) {
 
 	thread = m.MessageThread{}
 	if err := db.Create(&thread).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	mtu1 := m.MessageThreadUser{UserID: currentUser.ID, ThreadID: thread.ID}
@@ -137,32 +130,27 @@ func MessageIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	tID := c.Param("thread_id")
 	if len(tID) == 0 {
-		c.AbortWithError(http.StatusNotAcceptable, errors.New("No thread specified"))
-		return
+		return handleError(&ErrNoThreadID{}, c)
 	}
 
 	threadID, err := strconv.Atoi(tID)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	if hasUser, err := dao.MessageThreadHasUser(user.ID, uint64(threadID), db); err != nil || !hasUser {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	// will also attach m.User to each m.Message
 	msgs, err := dao.GetMessages(uint64(threadID), db)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	if err := dao.MarkAllMessagesRead(user.ID, uint64(threadID), db); err != nil {
@@ -176,31 +164,26 @@ func MessageCreate(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	tID := c.Param("thread_id")
 	if len(tID) == 0 {
-		c.AbortWithError(http.StatusNotAcceptable, errors.New("No thread specified"))
-		return
+		return handleError(&ErrNoThreadID{}, c)
 	}
 
 	threadID, err := strconv.Atoi(tID)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	thread, err := dao.GetMessageThread(uint64(threadID), db)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	if hasUser, err := dao.MessageThreadHasUser(user.ID, thread.ID, db); err != nil || !hasUser {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	msg := m.Message{
@@ -213,8 +196,7 @@ func MessageCreate(c *gin.Context) {
 	}
 
 	if err := db.Create(&msg).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	// Touch Updated at on thread and thread users
@@ -230,8 +212,7 @@ func MessageCount(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
@@ -251,25 +232,21 @@ func MessageSocket(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	tID := c.Param("thread_id")
 	if len(tID) == 0 {
-		c.AbortWithError(http.StatusNotAcceptable, errors.New("No thread specified"))
-		return
+		return handleError(&ErrNoThreadID{}, c)
 	}
 
 	threadID, err := strconv.Atoi(tID)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrParseID{err}, c)
 	}
 
 	if hasUser, err := dao.MessageThreadHasUser(user.ID, uint64(threadID), db); err != nil || !hasUser {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)

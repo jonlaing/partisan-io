@@ -30,15 +30,13 @@ func NotificationsIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	var notifs, readNotifs []m.Notification
 	var unreadCount int
 	if err := db.Where("target_user_id = ? AND seen = ?", user.ID, false).Order("created_at desc").Find(&notifs).Count(&unreadCount).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
 
 	if unreadCount < 10 {
@@ -84,8 +82,7 @@ func NotificationsCount(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
@@ -108,8 +105,7 @@ func NotificationsRead(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	db.Where("target_user_id = ?", user.ID).Update("seen", true)

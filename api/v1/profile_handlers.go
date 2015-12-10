@@ -2,12 +2,13 @@ package v1
 
 import (
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	"partisan/matcher"
 	m "partisan/models"
 	"strconv"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // ProfileResp is the JSON response for a show
@@ -40,27 +41,23 @@ func ProfileShow(c *gin.Context) {
 	if len(userID) == 0 {
 		user, err = auth.CurrentUser(c)
 		if err != nil {
-			c.AbortWithError(http.StatusUnauthorized, err)
-			return
+			return handleError(err, c)
 		}
 	} else {
 		if err := db.First(&user, userID).Error; err != nil {
-			c.AbortWithError(http.StatusNotFound, err)
-			return
+			return handleError(&ErrDBNotFound{err}, c)
 		}
 
 		var err error
 		currentUser, err = auth.CurrentUser(c)
 		if err != nil {
-			c.AbortWithError(http.StatusUnauthorized, err)
-			return
+			return handleError(err, c)
 		}
 	}
 
 	profile := m.Profile{}
 	if err := db.Where("user_id = ?", user.ID).First(&profile).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
 
 	resp := ProfileResp{
@@ -83,14 +80,12 @@ func ProfileUpdate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	var profile m.Profile
 	if err := db.Where("user_id = ?", user.ID).Find(&profile).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
 
 	// Update looking for
@@ -103,8 +98,7 @@ func ProfileUpdate(c *gin.Context) {
 	profile.Summary = c.DefaultPostForm("summary", profile.Summary)
 
 	if err := db.Save(&profile).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	c.JSON(http.StatusOK, profile)

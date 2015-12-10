@@ -24,8 +24,7 @@ func UserCreate(c *gin.Context) {
 
 	var user m.User
 	if err := c.Bind(&user); err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrBinding{err}, c)
 	}
 
 	user.CreatedAt = time.Now()
@@ -58,23 +57,20 @@ func UserCreate(c *gin.Context) {
 	// Validation checks out, create the user
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(err, c)
 	}
 
 	user.PasswordHash = hash
 
 	if err := db.Create(&user).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	profile := m.Profile{
 		UserID: user.ID,
 	}
 	if err := db.Create(&profile).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	// if err := emailer.SendWelcomeEmail(user.Username, user.Email); err != nil {
@@ -92,8 +88,7 @@ func UserCreate(c *gin.Context) {
 func UserShow(c *gin.Context) {
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	c.JSON(http.StatusOK, currentUser)
@@ -105,8 +100,7 @@ func UserUpdate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	user.Gender = c.DefaultPostForm("gender", user.Gender)
@@ -126,8 +120,7 @@ func UserUpdate(c *gin.Context) {
 	}
 
 	if err := db.Save(&user).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	c.JSON(http.StatusOK, user)
@@ -139,22 +132,17 @@ func UserMatch(c *gin.Context) {
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	mUser := m.User{} // User to match
 	userID := c.Params.ByName("user_id")
 
 	if err := db.First(&mUser, userID).Error; err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
-	match, err := matcher.Match(currentUser.PoliticalMap, mUser.PoliticalMap)
-	if err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-	}
+	match, _ := matcher.Match(currentUser.PoliticalMap, mUser.PoliticalMap)
 
 	c.JSON(http.StatusOK, gin.H{"match": match})
 }
@@ -165,14 +153,12 @@ func UserAvatarUpload(c *gin.Context) {
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(err, c)
 	}
 
 	tmpFile, _, err := c.Request.FormFile("avatar")
 	if err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		return handleError(&ErrNoFile{err}, c)
 	}
 	defer tmpFile.Close()
 
@@ -181,32 +167,27 @@ func UserAvatarUpload(c *gin.Context) {
 	// Save the full-size
 	var fullPath string
 	if err := processor.Resize(1500); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(err, c)
 	}
 	fullPath, err = processor.Save("/localfiles/img")
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(err, c)
 	}
 	currentUser.AvatarURL = fullPath
 
 	// Save the thumbnail
 	var thumbPath string
 	if err := processor.Thumbnail(250); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(err, c)
 	}
 	thumbPath, err = processor.Save("/localfiles/img/thumb")
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(err, c)
 	}
 	currentUser.AvatarThumbnailURL = thumbPath
 
 	if err := db.Save(&currentUser).Error; err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+		return handleError(&ErrDBInsert{err}, c)
 	}
 
 	c.JSON(http.StatusOK, currentUser)
@@ -235,16 +216,14 @@ func UsernameSuggest(c *gin.Context) {
 
 	u, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	username := c.Query("tag")
 
 	friendIDs, err := dao.FriendIDs(u, true, db)
 	if err != nil || len(friendIDs) == 0 {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
 
 	var suggestions []string

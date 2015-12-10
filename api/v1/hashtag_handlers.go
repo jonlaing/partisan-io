@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
+	"partisan/dao"
 	"partisan/db"
 	m "partisan/models"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // HashtagShow shows a list of Posts (and Comments) that contain a particular hashtag
@@ -28,8 +30,7 @@ func HashtagShow(c *gin.Context) {
 		Order("created_at DESC").
 		Pluck("record_id", &postIDs).Error; err != nil {
 
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
 
 	var posts []m.Post
@@ -39,8 +40,7 @@ func HashtagShow(c *gin.Context) {
 			postUserIDs = append(postUserIDs, post.UserID)
 		}
 	} else {
-		c.AbortWithError(http.StatusNotFound, err)
-		return
+		return handleError(&ErrDBNotFound{err}, c)
 	}
 
 	var users []m.User
@@ -54,16 +54,16 @@ func HashtagShow(c *gin.Context) {
 		fmt.Println(err)
 	}
 
-	postComments, err := getPostComments(postIDs, db)
+	postComments, err := dao.GetRelatedCommentsByIDs(postIDs, db)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	var resp []PostResponse
 	for _, post := range posts {
-		user, _ := findMatchingPostUser(post, users)
+		User, _ := dao.GetMatchingUser(post, users)
 		attachment, _ := m.GetAttachment(post.ID, attachments)
-		likeCount, liked, _ := fineMatchingPostLikes(post, postLikes)
+		likeCount, liked, _ := findMatchingPostLikes(post, postLikes)
 		commentCount, _ := findMatchingCommentCount(post, postComments)
 
 		resp = append(resp, PostResponse{

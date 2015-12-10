@@ -1,12 +1,13 @@
 package v1
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 // AnswersUpdate updates the coordinates of user based on question answers
@@ -15,25 +16,22 @@ func AnswersUpdate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
-		return
+		return handleError(err, c)
 	}
 
 	a := m.Answer{}
 
 	if err := c.BindJSON(&a); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
+		return handleError(&ErrBinding{err}, c)
 	}
 
 	if len(a.Map) == 0 {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("Answer doesn't have map. Probably an error in binding"))
-		return
+		return handleError(&ErrBinding{errors.New("Answer doesn't have map. Probably an error in binding")}, c)
 	}
 
 	err = user.PoliticalMap.Add(a.Map, a.Agree)
 	if err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
+		return handleError(err, c)
 	}
 
 	x, y := user.PoliticalMap.Center()
@@ -41,8 +39,7 @@ func AnswersUpdate(c *gin.Context) {
 	user.CenterY = y
 
 	if err := db.Save(&user).Error; err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+		handleError(&ErrDBInsert{err}, c)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "updated"})

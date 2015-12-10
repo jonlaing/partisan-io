@@ -3,11 +3,12 @@ package v1
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
+
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
 )
 
 // LoginHandler Handle logging in
@@ -15,7 +16,7 @@ func LoginHandler(c *gin.Context) {
 	// There's some potential for functions in here to panic, so I'm trying to recover
 	defer func() {
 		if r := recover(); r != nil {
-			c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("%v", r))
+			return handleError(fmt.Errorf("%v", r), c)
 		}
 	}()
 
@@ -27,13 +28,11 @@ func LoginHandler(c *gin.Context) {
 	user := m.User{}
 
 	if err := db.Where(m.User{Email: email}).First(&user).Error; err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user"))
-		return
+		return handleError(&ErrUserNotFound{}, c)
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password)); err != nil {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Password didn't match"))
-		return
+		return handleError(&ErrPasswordMatch{}, c)
 	}
 
 	// user.APIKey = uuid.NewRandom().String()
