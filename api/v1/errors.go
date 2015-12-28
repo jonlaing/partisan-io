@@ -7,7 +7,7 @@ import (
 	"partisan/matcher"
 	"partisan/questions"
 
-	"github.com/gin-gonic/gin"
+	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
 func handleError(err error, c *gin.Context) {
@@ -46,27 +46,83 @@ type ErrBasic struct {
 }
 
 func (e *ErrBasic) Error() string {
+	if e == nil {
+		return ""
+	}
+
 	return e.Err.Error()
 }
 
 type ErrBinding struct {
-	ErrBasic
+	Err error
+}
+
+func (e *ErrBinding) Error() string {
+	if e == nil {
+		return ""
+	}
+
+	return e.Err.Error()
 }
 
 type ErrDBInsert struct {
-	ErrBasic
+	Err error
+}
+
+func (e *ErrDBInsert) Error() string {
+	if e == nil {
+		return ""
+	}
+
+	return e.Err.Error()
 }
 
 type ErrDBDelete struct {
-	ErrBasic
+	Err error
+}
+
+func (e *ErrDBDelete) Error() string {
+	if e == nil {
+		return ""
+	}
+
+	return e.Err.Error()
 }
 
 type ErrDBNotFound struct {
-	ErrBasic
+	Err error
+}
+
+func (e *ErrDBNotFound) Error() string {
+	if e == nil {
+		return ""
+	}
+
+	return e.Err.Error()
 }
 
 type ErrParseID struct {
-	ErrBasic
+	Err error
+}
+
+func (e *ErrParseID) Error() string {
+	if e == nil {
+		return ""
+	}
+
+	return e.Err.Error()
+}
+
+type ErrNoFile struct {
+	Err error
+}
+
+func (e *ErrNoFile) Error() string {
+	if e == nil {
+		return ""
+	}
+
+	return e.Err.Error()
 }
 
 type ErrUserNotFound struct{}
@@ -91,8 +147,4 @@ type ErrNoThreadID struct{}
 
 func (e *ErrNoThreadID) Error() string {
 	return "No Thread ID specified"
-}
-
-type ErrNoFile struct {
-	ErrBasic
 }

@@ -29,21 +29,24 @@ func FeedIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	page := getPage(c)
 
 	friendIDs, err := dao.ConfirmedFriendIDs(user, db)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	friendIDs = append(friendIDs, user.ID)
 
 	feedItems, err := dao.GetFeedByUserIDs(user.ID, friendIDs, page, db)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"feed_items": feedItems})
@@ -54,13 +57,15 @@ func FeedShow(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	uID := c.Param("user_id")
 	userID, err := strconv.Atoi(uID)
 	if err != nil {
-		return handleError(&ErrParseID{err}, c)
+		handleError(&ErrParseID{err}, c)
+		return
 	}
 
 	page := getPage(c)
@@ -77,12 +82,14 @@ func FeedSocket(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	friendIDs, err := dao.ConfirmedFriendIDs(user, db)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	friendIDs = append(friendIDs, user.ID)

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"fmt"
+	"partisan/dao"
 	m "partisan/models"
 	"regexp"
 	"strconv"
@@ -38,7 +39,7 @@ func findMatchingPostLikes(post m.Post, likes []m.RecordLikes) (int, bool, bool)
 	return 0, false, false
 }
 
-func findMatchingCommentCount(post m.Post, comments []PostComments) (int, bool) {
+func findMatchingCommentCount(post m.Post, comments []dao.PostComments) (int, bool) {
 	for _, comment := range comments {
 		if comment.RecordID == post.ID {
 			return comment.Count, true

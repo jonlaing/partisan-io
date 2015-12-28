@@ -45,7 +45,8 @@ func PostsCreate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	postBody := c.Request.FormValue("body")
@@ -57,7 +58,8 @@ func PostsCreate(c *gin.Context) {
 		UpdatedAt: time.Now(),
 	}
 	if err := db.Create(&post).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	m.FindAndCreateHashtags(&post, db)
@@ -73,7 +75,8 @@ func PostsCreate(c *gin.Context) {
 	if err := m.AttachImage(c, &postRes); err != nil {
 		// only errs with catostrophic failure,
 		// silently fails if no attachment is present
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	// Create feed item
@@ -88,7 +91,8 @@ func PostsCreate(c *gin.Context) {
 	}
 
 	if err := db.Create(&feedItem).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, feedItem)
@@ -140,14 +144,16 @@ func PostsUpdate(c *gin.Context) {
 
 	userID, ok := c.Get("user_id")
 	if !ok {
-		return handleError(&ErrNoUserID{}, c)
+		handleError(&ErrNoUserID{}, c)
+		return
 	}
 
 	post := m.Post{}
 	id := c.Params.ByName("id")
 
 	if err := db.First(&post, id).Error; err != nil {
-		return handleError(&ErrDBNotFound{err})
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	if post.UserID != userID.(uint64) {
@@ -156,11 +162,13 @@ func PostsUpdate(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&post); err != nil {
-		return handleError(&ErrBinding{err}, c)
+		handleError(&ErrBinding{err}, c)
+		return
 	}
 
 	if err := db.Save(&post).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, post)
@@ -179,14 +187,16 @@ func PostsDestroy(c *gin.Context) {
 
 	userID, ok := c.Get("user_id")
 	if !ok {
-		return handleError(&ErrNoUserID{}, c)
+		handleError(&ErrNoUserID{}, c)
+		return
 	}
 
 	post := m.Post{}
 	id := c.Params.ByName("id")
 
 	if err := db.First(&post, id).Error; err != nil {
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	if post.UserID != userID.(uint64) {
@@ -195,7 +205,8 @@ func PostsDestroy(c *gin.Context) {
 	}
 
 	if err := db.Delete(&post).Error; err != nil {
-		return handleError(&ErrDBDelete{err}, c)
+		handleError(&ErrDBDelete{err}, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})

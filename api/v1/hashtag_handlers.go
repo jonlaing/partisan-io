@@ -30,7 +30,8 @@ func HashtagShow(c *gin.Context) {
 		Order("created_at DESC").
 		Pluck("record_id", &postIDs).Error; err != nil {
 
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	var posts []m.Post
@@ -40,7 +41,8 @@ func HashtagShow(c *gin.Context) {
 			postUserIDs = append(postUserIDs, post.UserID)
 		}
 	} else {
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	var users []m.User
@@ -61,7 +63,7 @@ func HashtagShow(c *gin.Context) {
 
 	var resp []PostResponse
 	for _, post := range posts {
-		User, _ := dao.GetMatchingUser(post, users)
+		user, _ := dao.GetMatchingUser(&post, users)
 		attachment, _ := m.GetAttachment(post.ID, attachments)
 		likeCount, liked, _ := findMatchingPostLikes(post, postLikes)
 		commentCount, _ := findMatchingCommentCount(post, postComments)

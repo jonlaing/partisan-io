@@ -16,11 +16,13 @@ func ImageAttachmentIndex(c *gin.Context) {
 
 	rID, rType, err := getRecord(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	if err := db.Where("record_type = ? AND record_id = ?", rType, rID).Find(&attachments).Error; err != nil {
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, attachments)

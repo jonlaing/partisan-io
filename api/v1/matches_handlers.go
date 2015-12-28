@@ -48,7 +48,8 @@ func MatchesIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	page := getPage(c)
@@ -57,7 +58,8 @@ func MatchesIndex(c *gin.Context) {
 	distance := c.DefaultQuery("distance", "25")
 	radius, err := convertMilesToDegrees(distance)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	// Gender
@@ -77,7 +79,8 @@ func MatchesIndex(c *gin.Context) {
 
 	users, err := dao.GetMatches(user, gender, minAge, maxAge, radius, page, db)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	var matches MatchCollectionResp

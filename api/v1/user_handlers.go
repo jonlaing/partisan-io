@@ -24,7 +24,8 @@ func UserCreate(c *gin.Context) {
 
 	var user m.User
 	if err := c.Bind(&user); err != nil {
-		return handleError(&ErrBinding{err}, c)
+		handleError(&ErrBinding{err}, c)
+		return
 	}
 
 	user.CreatedAt = time.Now()
@@ -57,20 +58,23 @@ func UserCreate(c *gin.Context) {
 	// Validation checks out, create the user
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	user.PasswordHash = hash
 
 	if err := db.Create(&user).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	profile := m.Profile{
 		UserID: user.ID,
 	}
 	if err := db.Create(&profile).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	// if err := emailer.SendWelcomeEmail(user.Username, user.Email); err != nil {
@@ -88,7 +92,8 @@ func UserCreate(c *gin.Context) {
 func UserShow(c *gin.Context) {
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, currentUser)
@@ -100,7 +105,8 @@ func UserUpdate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	user.Gender = c.DefaultPostForm("gender", user.Gender)
@@ -120,7 +126,8 @@ func UserUpdate(c *gin.Context) {
 	}
 
 	if err := db.Save(&user).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, user)
@@ -132,14 +139,16 @@ func UserMatch(c *gin.Context) {
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	mUser := m.User{} // User to match
 	userID := c.Params.ByName("user_id")
 
 	if err := db.First(&mUser, userID).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	match, _ := matcher.Match(currentUser.PoliticalMap, mUser.PoliticalMap)
@@ -153,12 +162,14 @@ func UserAvatarUpload(c *gin.Context) {
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	tmpFile, _, err := c.Request.FormFile("avatar")
 	if err != nil {
-		return handleError(&ErrNoFile{err}, c)
+		handleError(&ErrNoFile{err}, c)
+		return
 	}
 	defer tmpFile.Close()
 
@@ -167,27 +178,32 @@ func UserAvatarUpload(c *gin.Context) {
 	// Save the full-size
 	var fullPath string
 	if err := processor.Resize(1500); err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 	fullPath, err = processor.Save("/localfiles/img")
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 	currentUser.AvatarURL = fullPath
 
 	// Save the thumbnail
 	var thumbPath string
 	if err := processor.Thumbnail(250); err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 	thumbPath, err = processor.Save("/localfiles/img/thumb")
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 	currentUser.AvatarThumbnailURL = thumbPath
 
 	if err := db.Save(&currentUser).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, currentUser)
@@ -216,14 +232,16 @@ func UsernameSuggest(c *gin.Context) {
 
 	u, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	username := c.Query("tag")
 
 	friendIDs, err := dao.FriendIDs(u, true, db)
 	if err != nil || len(friendIDs) == 0 {
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	var suggestions []string

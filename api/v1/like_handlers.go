@@ -17,7 +17,8 @@ func LikeCount(c *gin.Context) {
 	user, _ := auth.CurrentUser(c)
 	rID, rType, err := getRecord(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	var count int
@@ -42,7 +43,8 @@ func LikeCreate(c *gin.Context) {
 
 	rID, rType, err := getRecord(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	like = m.Like{
@@ -66,7 +68,8 @@ func LikeCreate(c *gin.Context) {
 	if userCount < 1 {
 		// create a like record
 		if err := db.Create(&like).Error; err != nil {
-			return handleError(&ErrDBInsert{err}, c)
+			handleError(&ErrDBInsert{err}, c)
+			return
 		}
 		m.NewNotification(&like, user.ID, db)
 		// return the old count + 1

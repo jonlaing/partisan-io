@@ -83,7 +83,7 @@ func main() {
 		questions := r.Group(v1Root + "/questions")
 		questions.Use(auth.Auth("/login"))
 		{
-			questions.GET("/", QuestionIndex)
+			questions.GET("/", api.QuestionIndex)
 		}
 
 		answers := r.Group(v1Root + "/answers")
@@ -95,7 +95,7 @@ func main() {
 		posts := r.Group(v1Root + "/posts")
 		posts.Use(auth.Auth("/login"))
 		{
-			posts.GET("/", api.PostsIndex)
+			// posts.GET("/", api.PostsIndex)
 			posts.POST("/", api.PostsCreate)
 			// posts.GET("/:id", api.PostsShow)
 			posts.PATCH("/:id", api.PostsUpdate)

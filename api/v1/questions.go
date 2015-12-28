@@ -1,4 +1,4 @@
-package main
+package v1
 
 import (
 	"net/http"
@@ -9,13 +9,13 @@ import (
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 )
 
-var questions q.QuestionSets
+var questionSets q.QuestionSets
 
 func init() {
-	questions = q.QuestionSets{
+	questionSets = q.QuestionSets{
 		q.QuestionSet{
 			// Initial
-			ValidSet: func(x, y int) { return x == 0 && y == 0 },
+			ValidSet: func(x, y int) bool { return x == 0 && y == 0 },
 			Questions: q.Questions{
 				q.Question{
 					// ProCapital
@@ -41,7 +41,7 @@ func init() {
 		},
 		q.QuestionSet{
 			// Initial
-			ValidSet: func(x, y int) { return x == 0 && y == 0 },
+			ValidSet: func(x, y int) bool { return x == 0 && y == 0 },
 			Questions: q.Questions{
 				q.Question{
 					// Right-Wing
@@ -67,7 +67,7 @@ func init() {
 		},
 		q.QuestionSet{
 			// Left-Wing
-			ValidSet: func(x, y int) { return x < 0 },
+			ValidSet: func(x, y int) bool { return x < 0 },
 			Mask:     []int{0, 1, 4, 5, 8, 9, 12, 13},
 			Questions: q.Questions{
 				q.Question{
@@ -94,7 +94,7 @@ func init() {
 		},
 		q.QuestionSet{
 			// Right-Wing
-			ValidSet: func(x, y int) { return x > 0 },
+			ValidSet: func(x, y int) bool { return x > 0 },
 			Mask:     []int{2, 3, 6, 7, 10, 11, 14, 15},
 			Questions: q.Questions{
 				q.Question{
@@ -225,9 +225,10 @@ func QuestionIndex(c *gin.Context) {
 		return
 	}
 
-	set, err := questions.NextSet(user.CenterX, user.CenterY)
+	set, err := questionSets.NextSet(user.CenterX, user.CenterY)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, set)

@@ -26,7 +26,8 @@ func MessageThreadIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	threads, _ := dao.GetMessageThreadUsers(user.ID, db)
@@ -68,23 +69,27 @@ func MessageThreadCreate(c *gin.Context) {
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	uID := c.Request.FormValue("user_id")
 	if len(uID) == 0 {
-		return handleError(&ErrNoUserID{}, c)
+		handleError(&ErrNoUserID{}, c)
+		return
 	}
 
 	userID, err := strconv.Atoi(uID)
 	if err != nil {
-		return handleError(&ErrParseID{err}, c)
+		handleError(&ErrParseID{err}, c)
+		return
 	}
 
 	// can only start a thread with friends
 	_, err = dao.GetFriendship(currentUser, uint64(userID), db)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	thread, err := dao.GetMessageThreadByUsers(currentUser.ID, uint64(userID), db)
@@ -113,7 +118,8 @@ func MessageThreadCreate(c *gin.Context) {
 
 	thread = m.MessageThread{}
 	if err := db.Create(&thread).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	mtu1 := m.MessageThreadUser{UserID: currentUser.ID, ThreadID: thread.ID}
@@ -130,27 +136,32 @@ func MessageIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	tID := c.Param("thread_id")
 	if len(tID) == 0 {
-		return handleError(&ErrNoThreadID{}, c)
+		handleError(&ErrNoThreadID{}, c)
+		return
 	}
 
 	threadID, err := strconv.Atoi(tID)
 	if err != nil {
-		return handleError(&ErrParseID{err}, c)
+		handleError(&ErrParseID{err}, c)
+		return
 	}
 
 	if hasUser, err := dao.MessageThreadHasUser(user.ID, uint64(threadID), db); err != nil || !hasUser {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	// will also attach m.User to each m.Message
 	msgs, err := dao.GetMessages(uint64(threadID), db)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	if err := dao.MarkAllMessagesRead(user.ID, uint64(threadID), db); err != nil {
@@ -164,26 +175,31 @@ func MessageCreate(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	tID := c.Param("thread_id")
 	if len(tID) == 0 {
-		return handleError(&ErrNoThreadID{}, c)
+		handleError(&ErrNoThreadID{}, c)
+		return
 	}
 
 	threadID, err := strconv.Atoi(tID)
 	if err != nil {
-		return handleError(&ErrParseID{err}, c)
+		handleError(&ErrParseID{err}, c)
+		return
 	}
 
 	thread, err := dao.GetMessageThread(uint64(threadID), db)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	if hasUser, err := dao.MessageThreadHasUser(user.ID, thread.ID, db); err != nil || !hasUser {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	msg := m.Message{
@@ -196,7 +212,8 @@ func MessageCreate(c *gin.Context) {
 	}
 
 	if err := db.Create(&msg).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	// Touch Updated at on thread and thread users
@@ -212,7 +229,8 @@ func MessageCount(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
@@ -232,21 +250,25 @@ func MessageSocket(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	tID := c.Param("thread_id")
 	if len(tID) == 0 {
-		return handleError(&ErrNoThreadID{}, c)
+		handleError(&ErrNoThreadID{}, c)
+		return
 	}
 
 	threadID, err := strconv.Atoi(tID)
 	if err != nil {
-		return handleError(&ErrParseID{err}, c)
+		handleError(&ErrParseID{err}, c)
+		return
 	}
 
 	if hasUser, err := dao.MessageThreadHasUser(user.ID, uint64(threadID), db); err != nil || !hasUser {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)

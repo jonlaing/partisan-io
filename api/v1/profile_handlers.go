@@ -41,23 +41,27 @@ func ProfileShow(c *gin.Context) {
 	if len(userID) == 0 {
 		user, err = auth.CurrentUser(c)
 		if err != nil {
-			return handleError(err, c)
+			handleError(err, c)
+			return
 		}
 	} else {
 		if err := db.First(&user, userID).Error; err != nil {
-			return handleError(&ErrDBNotFound{err}, c)
+			handleError(&ErrDBNotFound{err}, c)
+			return
 		}
 
 		var err error
 		currentUser, err = auth.CurrentUser(c)
 		if err != nil {
-			return handleError(err, c)
+			handleError(err, c)
+			return
 		}
 	}
 
 	profile := m.Profile{}
 	if err := db.Where("user_id = ?", user.ID).First(&profile).Error; err != nil {
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	resp := ProfileResp{
@@ -80,12 +84,14 @@ func ProfileUpdate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	var profile m.Profile
 	if err := db.Where("user_id = ?", user.ID).Find(&profile).Error; err != nil {
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	// Update looking for
@@ -98,7 +104,8 @@ func ProfileUpdate(c *gin.Context) {
 	profile.Summary = c.DefaultPostForm("summary", profile.Summary)
 
 	if err := db.Save(&profile).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, profile)

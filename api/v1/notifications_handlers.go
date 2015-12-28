@@ -30,13 +30,15 @@ func NotificationsIndex(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	var notifs, readNotifs []m.Notification
 	var unreadCount int
 	if err := db.Where("target_user_id = ? AND seen = ?", user.ID, false).Order("created_at desc").Find(&notifs).Count(&unreadCount).Error; err != nil {
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	if unreadCount < 10 {
@@ -82,7 +84,8 @@ func NotificationsCount(c *gin.Context) {
 	db := db.GetDB(c)
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)
@@ -105,7 +108,8 @@ func NotificationsRead(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	db.Where("target_user_id = ?", user.ID).Update("seen", true)

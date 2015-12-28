@@ -36,7 +36,8 @@ func CommentsIndex(c *gin.Context) {
 	user, _ := auth.CurrentUser(c)
 
 	if err := db.Where("post_id = ?", pID).Find(&comments).Error; err != nil {
-		return handleError(&ErrDBNotFound{err}, c)
+		handleError(&ErrDBNotFound{err}, c)
+		return
 	}
 
 	if len(comments) == 0 {
@@ -99,13 +100,15 @@ func CommentsCreate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	postIDString := c.Request.FormValue("post_id")
 	postID, err := strconv.ParseUint(postIDString, 10, 64)
 	if err != nil {
-		return handleError(&ErrParseID{err}, c)
+		handleError(&ErrParseID{err}, c)
+		return
 	}
 
 	comment := m.Comment{
@@ -117,7 +120,8 @@ func CommentsCreate(c *gin.Context) {
 	}
 
 	if err := db.Create(&comment).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	m.FindAndCreateHashtags(&comment, db)
@@ -137,7 +141,8 @@ func CommentsCreate(c *gin.Context) {
 	// Doing it this way because we don't know if a user will try
 	// to attach an image. This way we can fail elegantly
 	if err = m.AttachImage(c, &commentResp); err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	// Create feed item

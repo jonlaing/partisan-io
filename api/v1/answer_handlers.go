@@ -16,22 +16,26 @@ func AnswersUpdate(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	a := m.Answer{}
 
 	if err := c.BindJSON(&a); err != nil {
-		return handleError(&ErrBinding{err}, c)
+		handleError(&ErrBinding{err}, c)
+		return
 	}
 
 	if len(a.Map) == 0 {
-		return handleError(&ErrBinding{errors.New("Answer doesn't have map. Probably an error in binding")}, c)
+		handleError(&ErrBinding{errors.New("Answer doesn't have map. Probably an error in binding")}, c)
+		return
 	}
 
 	err = user.PoliticalMap.Add(a.Map, a.Agree)
 	if err != nil {
-		return handleError(err, c)
+		handleError(err, c)
+		return
 	}
 
 	x, y := user.PoliticalMap.Center()

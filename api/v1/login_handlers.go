@@ -16,7 +16,8 @@ func LoginHandler(c *gin.Context) {
 	// There's some potential for functions in here to panic, so I'm trying to recover
 	defer func() {
 		if r := recover(); r != nil {
-			return handleError(fmt.Errorf("%v", r), c)
+			handleError(fmt.Errorf("%v", r), c)
+			return
 		}
 	}()
 
@@ -28,11 +29,13 @@ func LoginHandler(c *gin.Context) {
 	user := m.User{}
 
 	if err := db.Where(m.User{Email: email}).First(&user).Error; err != nil {
-		return handleError(&ErrUserNotFound{}, c)
+		handleError(&ErrUserNotFound{}, c)
+		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password)); err != nil {
-		return handleError(&ErrPasswordMatch{}, c)
+		handleError(&ErrPasswordMatch{}, c)
+		return
 	}
 
 	// user.APIKey = uuid.NewRandom().String()

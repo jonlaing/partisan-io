@@ -18,7 +18,8 @@ func FlagCreate(c *gin.Context) {
 
 	var flag m.Flag
 	if err := c.BindJSON(&flag); err != nil {
-		return handleError(&ErrBinding{err}, c)
+		handleError(&ErrBinding{err}, c)
+		return
 	}
 
 	flag.UserID = user.ID
@@ -26,7 +27,8 @@ func FlagCreate(c *gin.Context) {
 	flag.UpdatedAt = time.Now()
 
 	if err := db.Save(&flag).Error; err != nil {
-		return handleError(&ErrDBInsert{err}, c)
+		handleError(&ErrDBInsert{err}, c)
+		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "flagged"})
