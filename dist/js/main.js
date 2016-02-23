@@ -34781,7 +34781,7 @@ exports['default'] = {
     USERNAME_NOT_UNIQUE: null,
     USERNAME_BLANK: null,
 
-    GET_QUESTIONS_SUCESS: null,
+    GET_QUESTIONS_SUCCESS: null,
     GET_QUESTIONS_FAIL: null,
     QUESTION_ANSWERED_SUCCESS: null,
 
@@ -40433,7 +40433,7 @@ exports['default'] = _react2['default'].createClass({
   },
 
   _cardTemplate: function _cardTemplate(q) {
-    if (q.prompt === undefined) {
+    if (q === undefined || q.prompt === undefined) {
       return '';
     }
 
@@ -40458,6 +40458,8 @@ exports['default'] = _react2['default'].createClass({
   _onChange: function _onChange() {
     var question = _storesQuestionsStore2['default'].getQuestion();
     var answered = this.state.questionsAnswered + 1;
+
+    console.log(question);
 
     if (this._maxQuestions() > -1 && answered > this._maxQuestions()) {
       window.location.href = "/feed";
@@ -42102,14 +42104,21 @@ var _objectAssign = require('object-assign');
 
 var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
+var _actionsQuestionsActionCreator = require('../actions/QuestionsActionCreator');
+
+var _actionsQuestionsActionCreator2 = _interopRequireDefault(_actionsQuestionsActionCreator);
+
 // data storage
 var _questions = [];
 var _index = 0;
+
+var maxQuestions = 20;
 
 // Facebook style store creation.
 var QuestionsStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], {
   // public methods used by Controller-View to operate on data
   getQuestion: function getQuestion() {
+    console.log("questions:", _questions);
     return _questions[_index];
   },
 
@@ -42119,12 +42128,21 @@ var QuestionsStore = (0, _objectAssign2['default'])({}, _BaseStore2['default'], 
 
     switch (action.type) {
       case _Constants2['default'].ActionTypes.GET_QUESTIONS_SUCCESS:
-        _questions = action.data;
+        _questions = _questions.concat(action.data.questions);
         QuestionsStore.emitChange();
         break;
       case _Constants2['default'].ActionTypes.QUESTION_ANSWERED_SUCCESS:
         _index += 1;
-        QuestionsStore.emitChange();
+
+        // if we're answered a multiple of 4, then we need new questions
+        // otherwise emit the change
+        if (_index % 4 === 0 && _index !== maxQuestions) {
+          console.log("getting new questions");
+          _actionsQuestionsActionCreator2['default'].getQuestions();
+        } else {
+          console.log("index:", _index);
+          QuestionsStore.emitChange();
+        }
         break;
     }
   })
@@ -42134,7 +42152,7 @@ exports['default'] = QuestionsStore;
 module.exports = exports['default'];
 
 
-},{"../Constants":180,"../Dispatcher":181,"./BaseStore":243,"object-assign":9}],256:[function(require,module,exports){
+},{"../Constants":180,"../Dispatcher":181,"../actions/QuestionsActionCreator":196,"./BaseStore":243,"object-assign":9}],256:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

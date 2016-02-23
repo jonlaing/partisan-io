@@ -68,7 +68,7 @@ func init() {
 		q.QuestionSet{
 			// Left-Wing
 			ValidSet: func(x, y int) bool { return x < 0 },
-			Mask:     []int{0, 1, 4, 5, 8, 9, 12, 13},
+			// Mask:     []int{0, 1, 4, 5, 8, 9, 12, 13},
 			Questions: q.Questions{
 				q.Question{
 					// Far-Left
@@ -95,7 +95,7 @@ func init() {
 		q.QuestionSet{
 			// Right-Wing
 			ValidSet: func(x, y int) bool { return x > 0 },
-			Mask:     []int{2, 3, 6, 7, 10, 11, 14, 15},
+			// Mask:     []int{2, 3, 6, 7, 10, 11, 14, 15},
 			Questions: q.Questions{
 				q.Question{
 					// Far-Right
@@ -119,6 +119,12 @@ func init() {
 				},
 			},
 		},
+		// q.QuestionSet{
+		// 	// Libertarian Socialist
+		// 	ValidSet: func(x, y int) bool { return x < -25 && y < -25 },
+		// 	Questions: q.Questions{
+		// 		q.Question{
+		// 			Prompt: "Wo
 		// q.QuestionSet{
 		// 		Question{
 		// 			// Right-Wing

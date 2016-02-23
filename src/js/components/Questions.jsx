@@ -76,7 +76,7 @@ export default React.createClass({
   },
 
   _cardTemplate(q) {
-    if(q.prompt === undefined) {
+    if(q === undefined || q.prompt === undefined) {
       return '';
     }
 
@@ -96,6 +96,7 @@ export default React.createClass({
     let question = QuestionsStore.getQuestion();
     let answered = this.state.questionsAnswered + 1;
 
+    console.log(question);
 
     if(this._maxQuestions() > -1 && answered > this._maxQuestions()) {
       window.location.href = "/feed";
