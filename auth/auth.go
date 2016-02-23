@@ -58,8 +58,7 @@ func Auth(redirectPath string) gin.HandlerFunc {
 		sess := sessions.Default(c)
 		tokn, okTok := c.Request.Header["X-Auth-Token"]
 
-		var userID uint64
-		// var apiKey string
+		var userID int // i know, i know, but trying to cast all of these things to something sensible was killing me
 
 		if okTok {
 			token, err := jwt.Parse(tokn[0], func(token *jwt.Token) (interface{}, error) {
@@ -72,27 +71,29 @@ func Auth(redirectPath string) gin.HandlerFunc {
 			})
 
 			if err != nil {
-				c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Problems making token"))
+				c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Problems parsing token"))
 				return
 			}
 
-			userID, _ = strconv.ParseUint(fmt.Sprintf("%d", token.Claims["user_id"]), 10, 0)
-			// apiKey = fmt.Sprintf("%s", token.Claims["api_key"])
+			userID, err = strconv.Atoi(fmt.Sprintf("%.f", token.Claims["user_id"]))
+			if err != nil {
+				c.AbortWithError(http.StatusUnauthorized, err)
+				return
+			}
 		} else {
 			if sess.Get("user_id") == nil {
 				c.Redirect(http.StatusFound, redirectPath)
 				return
 			}
 
-			userID, _ = strconv.ParseUint(fmt.Sprintf("%d", sess.Get("user_id")), 10, 0)
-			// apiKey = fmt.Sprintf("%s", sess.Get("api_key"))
+			userID, _ = strconv.Atoi(fmt.Sprintf("%d", sess.Get("user_id")))
 		}
 
 		// Check this is the right user with correct API key
 		db := db.GetDB(c)
 		user := m.User{}
 		if err := db.First(&user, userID).Error; err != nil {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user"))
+			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Couldn't find user: %d", userID))
 			return
 		}
 
@@ -108,12 +109,16 @@ func Login(user m.User, c *gin.Context) (string, error) {
 	// Set some claims
 	token.Claims["user_id"] = user.ID
 	token.Claims["api_key"] = user.APIKey
+	fmt.Println(user.ID)
+
 	// Sign and get the complete encoded token as a string
 	tokenString, err := token.SignedString(hmacKey)
 
 	sess := sessions.Default(c)
 	sess.Set("user_id", user.ID)
 	sess.Save()
+
+	fmt.Println(tokenString)
 
 	return tokenString, err
 }

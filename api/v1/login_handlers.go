@@ -11,6 +11,11 @@ import (
 	"partisan/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
 )
 
+type loginFields struct {
+	Email    string
+	Password string
+}
+
 // LoginHandler Handle logging in
 func LoginHandler(c *gin.Context) {
 	// There's some potential for functions in here to panic, so I'm trying to recover
@@ -23,17 +28,21 @@ func LoginHandler(c *gin.Context) {
 
 	db := db.GetDB(c)
 
-	email := c.Request.PostFormValue("email")
-	password := c.Request.PostFormValue("password")
+	var login loginFields
+
+	if err := c.BindJSON(&login); err != nil {
+		login.Email = c.Request.PostFormValue("email")
+		login.Password = c.Request.PostFormValue("password")
+	}
 
 	user := m.User{}
 
-	if err := db.Where(m.User{Email: email}).First(&user).Error; err != nil {
+	if err := db.Where(m.User{Email: login.Email}).First(&user).Error; err != nil {
 		handleError(&ErrUserNotFound{}, c)
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(login.Password)); err != nil {
 		handleError(&ErrPasswordMatch{}, c)
 		return
 	}

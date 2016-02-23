@@ -97,7 +97,7 @@ func main() {
 		{
 			// posts.GET("/", api.PostsIndex)
 			posts.POST("/", api.PostsCreate)
-			// posts.GET("/:id", api.PostsShow)
+			posts.GET("/:record_id", api.PostsShow)
 			posts.PATCH("/:id", api.PostsUpdate)
 			posts.DELETE("/:id", api.PostsDestroy)
 			posts.GET("/:record_id/likes", api.LikeCount)

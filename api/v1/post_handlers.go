@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
@@ -48,6 +49,8 @@ func PostsCreate(c *gin.Context) {
 		handleError(err, c)
 		return
 	}
+
+	fmt.Println("user ID for post:", user.ID)
 
 	postBody := c.Request.FormValue("body")
 
@@ -98,38 +101,27 @@ func PostsCreate(c *gin.Context) {
 	c.JSON(http.StatusOK, feedItem)
 }
 
-// // PostsShow show a post
-// func PostsShow(c *gin.Context) {
-// 	db, err := db.InitDB()
-// 	if err != nil {
-// 		c.AbortWithError(http.StatusInternalServerError, err)
-// 		return
-// 	}
-// 	defer db.Close()
+// PostsShow show a post
+func PostsShow(c *gin.Context) {
+	db := db.GetDB(c)
 
-// 	post := m.Post{
-// 		ID:        123,
-// 		Body:      "this is how we do it! (uhuh)",
-// 		CreatedAt: time.Now(),
-// 		UpdatedAt: time.Now(),
-// 	}
-// 	user := m.User{
-// 		Username: "Franny_Frumpernickle",
-// 	}
-// 	// id := c.Params.ByName("id")
+	id := c.Params.ByName("record_id")
 
-// 	// if err := db.First(&post, id).Related(&user).Error; err != nil {
-// 	// 	c.AbortWithError(http.StatusNotFound, err)
-// 	// 	return
-// 	// }
+	var post m.Post
+	var user m.User
 
-// 	resp := PostResponse{
-// 		Post: post,
-// 		User: user,
-// 	}
+	if err := db.First(&post, id).Related(&user).Error; err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
 
-// 	c.JSON(http.StatusOK, resp)
-// }
+	resp := PostResponse{
+		Post: post,
+		User: user,
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
 
 // PostsUpdate update a post
 func PostsUpdate(c *gin.Context) {
