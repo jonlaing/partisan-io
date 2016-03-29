@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import MessageActionCreator from '../actions/MessageActionCreator';
 
@@ -23,7 +24,7 @@ export default React.createClass({
   },
 
   handleButtonClick() {
-    var message = React.findDOMNode(this.refs.message);
+    var message = ReactDOM.findDOMNode(this.refs.message);
 
     if(this.props.thread === 0) {
       message.value = "";

@@ -36491,6 +36491,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _reactFontawesome = require('react-fontawesome');
 
 var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
@@ -36507,14 +36511,14 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleSubmit: function handleSubmit() {
-    var body = $(_react2['default'].findDOMNode(this.refs.comment));
+    var body = $(_reactDom2['default'].findDOMNode(this.refs.comment));
     _actionsCommentsActionCreator2['default'].create(this.props.id, body.val(), this.state.attachments);
     body.val('');
   },
 
   handlePhoto: function handlePhoto() {
     // this.setState({showImageUploader: true});
-    $(_react2['default'].findDOMNode(this.refs.file)).click();
+    $(_reactDom2['default'].findDOMNode(this.refs.file)).click();
   },
 
   handleDrop: function handleDrop(files) {
@@ -36523,7 +36527,7 @@ exports['default'] = _react2['default'].createClass({
 
   handleImageCancel: function handleImageCancel() {
     this.setState({ attachments: [], showImageUploader: false });
-    _react2['default'].findDOMNode(this.refs.file).value = null;
+    _reactDom2['default'].findDOMNode(this.refs.file).value = null;
   },
 
   handleFileChange: function handleFileChange(e) {
@@ -36596,7 +36600,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/CommentsActionCreator":183,"react":179,"react-fontawesome":16}],205:[function(require,module,exports){
+},{"../actions/CommentsActionCreator":183,"react":179,"react-dom":14,"react-fontawesome":16}],205:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -37067,6 +37071,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _reactRadio = require('react-radio');
 
 var _reactRadio2 = _interopRequireDefault(_reactRadio);
@@ -37097,7 +37105,7 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleSubmit: function handleSubmit() {
-    var message = $(_react2['default'].findDOMNode(this.refs.message)).val();
+    var message = $(_reactDom2['default'].findDOMNode(this.refs.message)).val();
     _actionsFlagActionCreator2['default'].submitReport(this.props.id, this.props.type, parseInt(this.state.reason), message);
   },
 
@@ -37142,7 +37150,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/FlagActionCreator":185,"./Modal.jsx":228,"react":179,"react-radio":17}],211:[function(require,module,exports){
+},{"../actions/FlagActionCreator":185,"./Modal.jsx":228,"react":179,"react-dom":14,"react-radio":17}],211:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -37669,6 +37677,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _reactAddonsCssTransitionGroup = require('react-addons-css-transition-group');
 
 var _reactAddonsCssTransitionGroup2 = _interopRequireDefault(_reactAddonsCssTransitionGroup);
@@ -37694,8 +37706,8 @@ exports['default'] = _react2['default'].createClass({
 
   handleLogin: function handleLogin(e) {
     e.preventDefault();
-    var email = $(_react2['default'].findDOMNode(this.refs.email)).val();
-    var password = $(_react2['default'].findDOMNode(this.refs.password)).val();
+    var email = $(_reactDom2['default'].findDOMNode(this.refs.email)).val();
+    var password = $(_reactDom2['default'].findDOMNode(this.refs.password)).val();
     _actionsLoginActionCreator2['default'].login(email, password);
   },
 
@@ -37776,7 +37788,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/LoginActionCreator":190,"../stores/LoginStore":249,"react":179,"react-addons-css-transition-group":11}],218:[function(require,module,exports){
+},{"../actions/LoginActionCreator":190,"../stores/LoginStore":249,"react":179,"react-addons-css-transition-group":11,"react-dom":14}],218:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38351,6 +38363,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _actionsMessageActionCreator = require('../actions/MessageActionCreator');
 
 var _actionsMessageActionCreator2 = _interopRequireDefault(_actionsMessageActionCreator);
@@ -38378,7 +38394,7 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleButtonClick: function handleButtonClick() {
-    var message = _react2['default'].findDOMNode(this.refs.message);
+    var message = _reactDom2['default'].findDOMNode(this.refs.message);
 
     if (this.props.thread === 0) {
       message.value = "";
@@ -38407,7 +38423,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/MessageActionCreator":192,"react":179}],224:[function(require,module,exports){
+},{"../actions/MessageActionCreator":192,"react":179,"react-dom":14}],224:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -38490,6 +38506,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _MessageJsx = require('./Message.jsx');
 
 var _MessageJsx2 = _interopRequireDefault(_MessageJsx);
@@ -38532,7 +38552,7 @@ exports['default'] = _react2['default'].createClass({
   },
 
   _scroll: function _scroll() {
-    var list = $(_react2['default'].findDOMNode(this.refs.list));
+    var list = $(_reactDom2['default'].findDOMNode(this.refs.list));
     var height = list.find("ul").outerHeight();
     list.scrollTop(height);
   }
@@ -38540,7 +38560,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"./Message.jsx":222,"react":179}],226:[function(require,module,exports){
+},{"./Message.jsx":222,"react":179,"react-dom":14}],226:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39452,6 +39472,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _reactDropzone = require('react-dropzone');
 
 var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
@@ -39485,7 +39509,7 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleCreate: function handleCreate() {
-    var body = $(_react2['default'].findDOMNode(this.refs.body));
+    var body = $(_reactDom2['default'].findDOMNode(this.refs.body));
 
     if (body.val().length > 0 || this.state.attachments.length > 0) {
       _actionsPostActionCreator2['default'].createPost(body.val(), this.state.attachments);
@@ -39497,12 +39521,12 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleFocus: function handleFocus() {
-    var body = $(_react2['default'].findDOMNode(this.refs.body));
+    var body = $(_reactDom2['default'].findDOMNode(this.refs.body));
     body.addClass('focus');
   },
 
   handleBlur: function handleBlur() {
-    var body = $(_react2['default'].findDOMNode(this.refs.body));
+    var body = $(_reactDom2['default'].findDOMNode(this.refs.body));
     body.removeClass('focus');
   },
 
@@ -39668,7 +39692,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/PostActionCreator":194,"../stores/PostComposerStore":253,"./Breakout.jsx":201,"react":179,"react-dropzone":15,"react-fontawesome":16}],234:[function(require,module,exports){
+},{"../actions/PostActionCreator":194,"../stores/PostComposerStore":253,"./Breakout.jsx":201,"react":179,"react-dom":14,"react-dropzone":15,"react-fontawesome":16}],234:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -39680,6 +39704,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
 
 var _reactFontawesome = require('react-fontawesome');
 
@@ -39749,7 +39777,7 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleSummarySubmit: function handleSummarySubmit() {
-    var summary = $(_react2['default'].findDOMNode(this.refs.summary)).val();
+    var summary = $(_reactDom2['default'].findDOMNode(this.refs.summary)).val();
 
     this.setState({ editSummary: false });
     _actionsProfileActionCreator2['default'].updateSummary(summary);
@@ -39872,7 +39900,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/ProfileActionCreator":195,"../stores/ProfileStore":254,"../utils/formatter":258,"./AvatarEditor.jsx":199,"./LookingForEdit.jsx":218,"./ProfileInfoEditor.jsx":235,"react":179,"react-fontawesome":16}],235:[function(require,module,exports){
+},{"../actions/ProfileActionCreator":195,"../stores/ProfileStore":254,"../utils/formatter":258,"./AvatarEditor.jsx":199,"./LookingForEdit.jsx":218,"./ProfileInfoEditor.jsx":235,"react":179,"react-dom":14,"react-fontawesome":16}],235:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -40493,6 +40521,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
 var _actionsSignUpActionCreator = require('../actions/SignUpActionCreator');
 
 var _actionsSignUpActionCreator2 = _interopRequireDefault(_actionsSignUpActionCreator);
@@ -40509,11 +40541,11 @@ exports['default'] = _react2['default'].createClass({
   },
 
   handleSubmit: function handleSubmit() {
-    var email = $(_react2['default'].findDOMNode(this.refs.email)).val();
-    var username = $(_react2['default'].findDOMNode(this.refs.username)).val();
-    var postalCode = $(_react2['default'].findDOMNode(this.refs.postalCode)).val();
-    var password = $(_react2['default'].findDOMNode(this.refs.password)).val();
-    var passwordConfirm = $(_react2['default'].findDOMNode(this.refs.passwordConfirm)).val();
+    var email = $(_reactDom2['default'].findDOMNode(this.refs.email)).val();
+    var username = $(_reactDom2['default'].findDOMNode(this.refs.username)).val();
+    var postalCode = $(_reactDom2['default'].findDOMNode(this.refs.postalCode)).val();
+    var password = $(_reactDom2['default'].findDOMNode(this.refs.password)).val();
+    var passwordConfirm = $(_reactDom2['default'].findDOMNode(this.refs.passwordConfirm)).val();
 
     var user = {
       email: email,
@@ -40650,7 +40682,7 @@ exports['default'] = _react2['default'].createClass({
 module.exports = exports['default'];
 
 
-},{"../actions/SignUpActionCreator":197,"../stores/SignUpStore":256,"react":179}],239:[function(require,module,exports){
+},{"../actions/SignUpActionCreator":197,"../stores/SignUpStore":256,"react":179,"react-dom":14}],239:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

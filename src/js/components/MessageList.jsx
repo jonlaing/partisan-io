@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import Message from './Message.jsx';
 
@@ -34,7 +35,7 @@ export default React.createClass({
   },
 
   _scroll() {
-    let list = $(React.findDOMNode(this.refs.list));
+    let list = $(ReactDOM.findDOMNode(this.refs.list));
     let height = list.find("ul").outerHeight();
     list.scrollTop(height);
   }

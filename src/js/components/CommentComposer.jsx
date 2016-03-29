@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import Icon from 'react-fontawesome';
 
@@ -10,14 +11,14 @@ export default React.createClass({
   },
 
   handleSubmit() {
-    let body = $(React.findDOMNode(this.refs.comment));
+    let body = $(ReactDOM.findDOMNode(this.refs.comment));
     CommentsActionCreator.create(this.props.id, body.val(), this.state.attachments);
     body.val('');
   },
 
   handlePhoto() {
     // this.setState({showImageUploader: true});
-    $(React.findDOMNode(this.refs.file)).click();
+    $(ReactDOM.findDOMNode(this.refs.file)).click();
   },
 
   handleDrop(files) {
@@ -26,7 +27,7 @@ export default React.createClass({
 
   handleImageCancel() {
     this.setState({attachments: [], showImageUploader: false});
-    React.findDOMNode(this.refs.file).value = null;
+    ReactDOM.findDOMNode(this.refs.file).value = null;
   },
 
   handleFileChange(e) {

@@ -1,5 +1,6 @@
 /*global $ */
 import React from 'react';
+import ReactDOM from 'react-dom';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import LoginActionCreator from '../actions/LoginActionCreator';
@@ -16,8 +17,8 @@ export default React.createClass({
 
   handleLogin(e) {
     e.preventDefault();
-    let email = $(React.findDOMNode(this.refs.email)).val();
-    let password = $(React.findDOMNode(this.refs.password)).val();
+    let email = $(ReactDOM.findDOMNode(this.refs.email)).val();
+    let password = $(ReactDOM.findDOMNode(this.refs.password)).val();
     LoginActionCreator.login(email, password);
   },
 

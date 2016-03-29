@@ -41,6 +41,12 @@ func FeedIndex(c *gin.Context) {
 		return
 	}
 
+	if len(friendIDs) < 1 {
+		// no friends, no feed
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
 	friendIDs = append(friendIDs, user.ID)
 
 	feedItems, err := dao.GetFeedByUserIDs(user.ID, friendIDs, page, db)

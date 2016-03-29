@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import RadioGroup from 'react-radio';
 
 import FlagActionCreator from '../actions/FlagActionCreator';
@@ -26,7 +27,7 @@ export default React.createClass({
   },
 
   handleSubmit() {
-    let message = $(React.findDOMNode(this.refs.message)).val();
+    let message = $(ReactDOM.findDOMNode(this.refs.message)).val();
     FlagActionCreator.submitReport(this.props.id, this.props.type, parseInt(this.state.reason), message);
   },
 

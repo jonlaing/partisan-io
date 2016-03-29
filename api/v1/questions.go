@@ -95,7 +95,7 @@ func init() {
 		q.QuestionSet{
 			// Right-Wing
 			ValidSet: func(x, y int) bool { return x > 0 },
-			// Mask:     []int{2, 3, 6, 7, 10, 11, 14, 15},
+			Mask:     []int{2, 3, 6, 7, 10, 11, 14, 15},
 			Questions: q.Questions{
 				q.Question{
 					// Far-Right
@@ -119,12 +119,33 @@ func init() {
 				},
 			},
 		},
-		// q.QuestionSet{
-		// 	// Libertarian Socialist
-		// 	ValidSet: func(x, y int) bool { return x < -25 && y < -25 },
-		// 	Questions: q.Questions{
-		// 		q.Question{
-		// 			Prompt: "Wo
+		q.QuestionSet{
+			// Libertarian Socialist
+			ValidSet: func(x, y int) bool { return x < -15 && y < -15 },
+			Mask:     []int{8, 9, 12, 13},
+			Questions: q.Questions{
+				q.Question{
+					// Far-Left
+					Prompt: "Work should be abolished.",
+					Map:    []int{8, 12},
+				},
+				q.Question{
+					// Middle-Left
+					Prompt: "The workplace is the primary arena of struggle against the excesses of capitalism.",
+					Map:    []int{9, 13},
+				},
+				q.Question{
+					// Anti-organization
+					Prompt: "Large organizations are inherently authoritarian.",
+					Map:    []int{12, 13},
+				},
+				q.Question{
+					// Pro-organization
+					Prompt: "It may be necessary to negotiate with capitalists and politicians in furthering political goals.",
+					Map:    []int{8, 9},
+				},
+			},
+		},
 		// q.QuestionSet{
 		// 		Question{
 		// 			// Right-Wing

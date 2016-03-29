@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import Icon from 'react-fontawesome';
 
@@ -50,7 +51,7 @@ export default React.createClass({
   },
 
   handleSummarySubmit() {
-    let summary = $(React.findDOMNode(this.refs.summary)).val();
+    let summary = $(ReactDOM.findDOMNode(this.refs.summary)).val();
 
     this.setState({editSummary: false});
     ProfileActionCreator.updateSummary(summary);

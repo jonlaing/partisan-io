@@ -1,5 +1,6 @@
 /*global $ */
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Dropzone from 'react-dropzone';
 
 import Icon from 'react-fontawesome';
@@ -20,7 +21,7 @@ export default React.createClass({
   },
 
   handleCreate() {
-    let body = $(React.findDOMNode(this.refs.body));
+    let body = $(ReactDOM.findDOMNode(this.refs.body));
 
     if(body.val().length > 0 || this.state.attachments.length > 0) {
       PostActionCreator.createPost(body.val(), this.state.attachments);
@@ -32,12 +33,12 @@ export default React.createClass({
   },
 
   handleFocus() {
-    let body = $(React.findDOMNode(this.refs.body));
+    let body = $(ReactDOM.findDOMNode(this.refs.body));
     body.addClass('focus');
   },
 
   handleBlur() {
-    let body = $(React.findDOMNode(this.refs.body));
+    let body = $(ReactDOM.findDOMNode(this.refs.body));
     body.removeClass('focus');
   },
 
