@@ -97,6 +97,13 @@ func TestMatching(t *testing.T) {
 		0, 0, 0, 1,
 	}
 
+	p4 := PoliticalMap{
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+	}
+
 	m, err := Match(p1, p1)
 	if err != nil {
 		t.Error(err)
@@ -122,6 +129,11 @@ func TestMatching(t *testing.T) {
 
 	if m != 0.0 {
 		t.Error("Match incorrect:", m)
+	}
+
+	m, err = Match(p4, p4)
+	if err == nil {
+		t.Error("Should have thrown error")
 	}
 }
 

@@ -2,6 +2,7 @@ package matcher
 
 import (
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -102,6 +103,18 @@ func (p *PoliticalMap) Center() (int, int) {
 	return 0, 0
 }
 
+// IsEmpty will check for empty poltical maps. These cause big problems
+// when trying to match
+func (p *PoliticalMap) IsEmpty() bool {
+	for _, v := range p {
+		if v > 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Scan satisfies sql.Scanner interface
 func (p *PoliticalMap) Scan(src interface{}) error {
 	str, ok := src.([]byte)
@@ -150,6 +163,10 @@ func Match(p1, p2 PoliticalMap) (float64, error) {
 		if p1[i] != 0 && p2[i] != 0 {
 			matchPoints += p1[i] + p2[i] // add points of intersecting subquadrants
 		}
+	}
+
+	if totalPoints < 1 {
+		return 0.0, errors.New("No maps between users")
 	}
 
 	return float64(matchPoints) / float64(totalPoints), nil

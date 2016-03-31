@@ -85,14 +85,34 @@ func MatchesIndex(c *gin.Context) {
 
 	var matches MatchCollectionResp
 	for _, u := range users {
-		match, _ := matcher.Match(user.PoliticalMap, u.PoliticalMap)
-		match = float64(int(match*1000)) / 10
-		matches = append(matches, MatchResp{User: u, Match: match})
+		match, err := matcher.Match(user.PoliticalMap, u.PoliticalMap)
+		// The only error that can happen here is if neither user has a map, just ignore
+		if err == nil {
+			match = float64(int(match*1000)) / 10
+			matches = append(matches, MatchResp{User: u, Match: match})
+		}
 	}
 
 	sort.Sort(sort.Reverse(matches))
 
 	c.JSON(http.StatusOK, matches)
+}
+
+// UserHasMap will return a 200 if a user has a valid map,
+// otherwise will return a 404
+func UserHasMap(c *gin.Context) {
+	user, err := auth.CurrentUser(c)
+	if err != nil {
+		handleError(err, c)
+		return
+	}
+
+	if user.PoliticalMap.IsEmpty() {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	c.Status(http.OK)
 }
 
 // converts miles from the context params (string) into coordinate degrees
