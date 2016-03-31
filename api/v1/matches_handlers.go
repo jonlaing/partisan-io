@@ -112,7 +112,7 @@ func UserHasMap(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.OK)
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // converts miles from the context params (string) into coordinate degrees
