@@ -10,8 +10,8 @@ import (
 // User the user model
 type User struct {
 	ID                 uint64               `form:"id" json:"id" gorm:"primary_key"`
-	Username           string               `form:"username" json:"username" sql:"not null,unique" binding:"required"`
-	Email              string               `form:"email" json:"email" sql:"not null,unique" binding:"required"`
+	Username           string               `form:"username" json:"username" sql:"not null;unique_index" binding:"required"`
+	Email              string               `form:"email" json:"email" sql:"not null;unique_index" binding:"required"`
 	Gender             string               `form:"gender" json:"gender"`
 	Birthdate          time.Time            `form:"birthdate" json:"birthdate"`
 	AvatarURL          string               `form:"avatar_url" json:"avatar_url"`

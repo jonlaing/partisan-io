@@ -44,7 +44,6 @@ export default React.createClass({
   handleBirthdateChange() {
     let date = this.refs.birthdate.getDate();
     this.setState({editBirthdate: false});
-    console.log(date);
     this.props.onBirthdateFinish(date);
   },
 

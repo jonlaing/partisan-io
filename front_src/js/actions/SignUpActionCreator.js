@@ -8,7 +8,6 @@ export default {
       data: {
         email: user.email,
         username: user.username,
-        full_name: user.fullName,
         postal_code: user.postalCode,
         password: user.password,
         password_confirm: user.passwordConfirm

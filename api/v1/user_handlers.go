@@ -50,6 +50,17 @@ func UserCreate(c *gin.Context) {
 		validationErrs["postal_code"] = fmt.Sprintf("Error validating postal code. %s", err.Error())
 	}
 
+	// check for non unique user
+	var uniqueUserTest m.User
+	db.Where("email = ?", user.Email).Or("username = ?", user.Username).Find(&uniqueUserTest)
+	if uniqueUserTest.Email == user.Email {
+		validationErrs["email"] = "Email is already in use"
+	}
+
+	if uniqueUserTest.Username == user.Username {
+		validationErrs["username"] = "Username already in use"
+	}
+
 	if len(validationErrs) > 0 {
 		c.JSON(http.StatusNotAcceptable, validationErrs)
 		return
@@ -83,9 +94,9 @@ func UserCreate(c *gin.Context) {
 
 	fmt.Println("WARN: EMAILS ARE NOT SENDING")
 
-	auth.Login(user, c)
+	token, _ := auth.Login(user, c)
 
-	c.JSON(http.StatusCreated, user)
+	c.JSON(http.StatusCreated, gin.H{"token": token, "user": user, "api_key": user.APIKey})
 }
 
 // UserShow shows shit about the current user
@@ -175,8 +186,10 @@ func UserAvatarUpload(c *gin.Context) {
 
 	processor := imager.ImageProcessor{File: tmpFile}
 
-	// Save the full-size
+	// channels to process images on different threads
 	var fullPath string
+	var thumbPath string
+
 	if err := processor.Resize(1500); err != nil {
 		handleError(err, c)
 		return
@@ -186,10 +199,8 @@ func UserAvatarUpload(c *gin.Context) {
 		handleError(err, c)
 		return
 	}
-	currentUser.AvatarURL = fullPath
 
 	// Save the thumbnail
-	var thumbPath string
 	if err := processor.Thumbnail(250); err != nil {
 		handleError(err, c)
 		return
@@ -199,6 +210,8 @@ func UserAvatarUpload(c *gin.Context) {
 		handleError(err, c)
 		return
 	}
+
+	currentUser.AvatarURL = fullPath
 	currentUser.AvatarThumbnailURL = thumbPath
 
 	if err := db.Save(&currentUser).Error; err != nil {

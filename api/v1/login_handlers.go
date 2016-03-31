@@ -42,6 +42,8 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("trying to login")
+	fmt.Println(login.Password)
 	if err := bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(login.Password)); err != nil {
 		handleError(&ErrPasswordMatch{}, c)
 		return

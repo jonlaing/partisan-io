@@ -6,10 +6,10 @@ export default {
   login(email, password) {
     $.ajax({
       url: Constants.APIROOT + '/login',
-      data: {
+      data: JSON.stringify({
         email: email,
         password: password
-      },
+      }),
       method: 'POST',
       dataType: 'json'
     })

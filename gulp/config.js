@@ -1,5 +1,5 @@
-var dest = './dist';
-var src = './src';
+var dest = './front_dist';
+var src = './front_src';
 var gutil = require('gulp-util');
 
 module.exports = {
@@ -31,11 +31,11 @@ module.exports = {
     debug: gutil.env.type === 'dev'
   },
   html: {
-    src: 'src/*.html',
+    src: 'font-src/*.html',
     dest: dest
   },
   fonts: {
-    src: 'src/fonts/*.{ttf,woff,woff2,eot,svg}',
+    src: 'front-src/fonts/*.{ttf,woff,woff2,eot,svg}',
     dest: dest + '/fonts'
   },
   icons: {
@@ -51,7 +51,7 @@ module.exports = {
     dest: dest + '/styles/skeleton'
   },
   watch: {
-    src: 'src/**/*.*',
+    src: 'front-src/**/*.*',
     tasks: ['build']
   }
 };

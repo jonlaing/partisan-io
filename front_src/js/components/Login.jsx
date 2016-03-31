@@ -15,6 +15,7 @@ export default React.createClass({
     return {error: "", success: false };
   },
 
+
   handleLogin(e) {
     e.preventDefault();
     let email = $(ReactDOM.findDOMNode(this.refs.email)).val();

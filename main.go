@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	api "partisan/api/v1"
@@ -24,7 +25,18 @@ func main() {
 	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
 	r.Use(sessions.Sessions("partisan-io", store))
 	r.Use(db.DB())
-	// r.Use(gin.BasicAuth(gin.Accounts{
+	// recover from panics with a 500
+	r.Use(func(c *gin.Context) {
+		defer func() {
+			if r := recover(); r != nil {
+				c.AbortWithStatus(http.StatusInternalServerError)
+				fmt.Println(r)
+			}
+		}()
+
+		c.Next()
+	})
+	// r.Us (gin.BasicAuth(gin.Accounts{
 	// 	"partisan-basic": "antistate123",
 	// }))
 
@@ -169,7 +181,7 @@ func main() {
 	r.GET("/signup", SignUp)
 
 	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))
-	r.Use(static.Serve("/", static.LocalFile("dist", false)))
+	r.Use(static.Serve("/", static.LocalFile("front_dist", false)))
 
 	// homepage
 	r.GET("/", func(c *gin.Context) {
@@ -180,7 +192,7 @@ func main() {
 			return
 		}
 
-		c.File("dist/index.html")
+		c.File("front-dist/index.html")
 	})
 
 	// DON'T DO THIS IN PROD!!!

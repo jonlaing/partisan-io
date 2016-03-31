@@ -192,8 +192,8 @@ func calcResizeDimensions(bounds image.Point, minBound int) (width, height int) 
 
 // FileName generates a random filename plus extension
 func (i *ImageProcessor) FileName() (string, error) {
-	if i.filenameString != "" {
-		return i.filenameString, nil
+	if len(i.filenameString) > 0 {
+		return i.filenameString, nil // only do this once
 	}
 
 	if err := i.detectFileType(); err != nil {
@@ -217,11 +217,11 @@ func (i *ImageProcessor) FileName() (string, error) {
 }
 
 func (i *ImageProcessor) detectFileType() error {
-	i.File.Seek(0, 0)
-
-	if i.fileType != "" {
-		return nil
+	if len(i.fileType) > 0 {
+		return nil // don't do this more than once
 	}
+
+	i.File.Seek(0, 0)
 
 	buf := make([]byte, 512) // why 512 bytes ? see http://golang.org/pkg/net/http/#DetectContentType
 	_, err := i.File.Read(buf)
@@ -237,6 +237,10 @@ func (i *ImageProcessor) detectFileType() error {
 }
 
 func (i *ImageProcessor) decode() (err error) {
+	if i.origImage != nil {
+		return // only decode once
+	}
+
 	i.origImage, _, err = image.Decode(i.File)
 	return
 }
