@@ -15,7 +15,7 @@
 
 .fa {
   display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
+  font: normal normal normal 14px / 1 FontAwesome;
   font-size: inherit;
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
@@ -3125,7 +3125,7 @@ button.like {
     .jumbotron.jumbotron-main .button.button-lg:hover {
       background: rgba(255, 255, 255, 0.25); }
   .jumbotron.jumbotron-main h1 {
-    color: #00524d; }
+    color: #00534d; }
   .jumbotron.jumbotron-main h2 {
     font-weight: 100;
     font-size: 64px;

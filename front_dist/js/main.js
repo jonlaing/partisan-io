@@ -507,7 +507,7 @@ exports['default'] = {
     }).done(function (res) {
       _Dispatcher2['default'].handleViewAction({
         type: _Constants2['default'].ActionTypes.GET_FRIENDSHIPS_SUCCESS,
-        data: res
+        data: res.friendships
       });
     }).fail(function (res) {
       console.log(res);
@@ -2652,14 +2652,17 @@ var _reactAddonsCssTransitionGroup2 = _interopRequireDefault(_reactAddonsCssTran
 
 var _timer;
 
-var _fullList = ["liberals", "conservatives", "anarchists", "communists", "libertarians", "Democrats", "Republicans", "socialists", "progressives", "marxists", "activists", "conspiracy theorists", "feminists", "traditionalists", "radicals", "patriots", "everyone!"];
+var _fullList = ["liberals", "conservatives", "anarchists", "communists", "libertarians", "Democrats", "Republicans", "socialists", "progressives", "marxists", "activists", "conspiracy theorists", "feminists", "traditionalists", "radicals", "patriots"];
+
+var _list = _scramble(_fullList);
 
 exports['default'] = _react2['default'].createClass({
   displayName: 'FrontTicker',
 
   getInitialState: function getInitialState() {
     return {
-      current: [_fullList[0]]
+      current: [_list[0]],
+      index: 0
     };
   },
 
@@ -2711,14 +2714,39 @@ exports['default'] = _react2['default'].createClass({
   },
 
   _cycle: function _cycle() {
-    var i = Math.floor(Math.random() * _fullList.length);
-    if (_fullList[i] === this.state.current[0]) {
-      return this._cycle();
+    var index = this.state.index + 1;
+    if (index === _list.length) {
+      _list = _scramble(_fullList);
+      index = 0;
     }
 
-    this.setState({ current: [_fullList[i]] });
+    this.setState({ current: [_list[index]], index: index });
   }
 });
+
+function _scramble(arr) {
+  var array = arr;
+  var currentIndex = array.length,
+      temporaryValue,
+      randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex !== 0) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  array.push("everyone!"); // always make sure "everyone" is at the end
+
+  return array;
+}
 module.exports = exports['default'];
 
 
