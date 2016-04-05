@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var Database gorm.DB
+var Database *gorm.DB
 
 func init() {
 	var err error
@@ -34,7 +34,7 @@ func DB() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("db", &Database)
+		c.Set("db", Database)
 	}
 }
 
