@@ -193,7 +193,7 @@ func main() {
 			return
 		}
 
-		c.File("front-dist/index.html")
+		c.File("front_dist/index.html")
 	})
 
 	// DON'T DO THIS IN PROD!!!
