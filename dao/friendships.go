@@ -14,7 +14,9 @@ func Friends(u m.User, confirmed bool, db *gorm.DB) ([]m.User, error) {
 	}
 
 	users := []m.User{}
-	db.Where(friendIDs).Order("username asc").Find(&users)
+	if len(friendIDs) > 0 {
+		db.Where(friendIDs).Order("username asc").Find(&users)
+	}
 	return users, nil
 }
 

@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
@@ -50,8 +49,6 @@ func PostsCreate(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("user ID for post:", user.ID)
-
 	postBody := c.Request.FormValue("body")
 
 	post := m.Post{
@@ -98,7 +95,7 @@ func PostsCreate(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, feedItem)
+	c.JSON(http.StatusCreated, gin.H{"feed_item": feedItem})
 }
 
 // PostsShow show a post

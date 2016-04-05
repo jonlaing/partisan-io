@@ -8,6 +8,7 @@ import (
 	"partisan/auth"
 	"partisan/db"
 	m "partisan/models"
+	"time"
 
 	"partisan/Godeps/_workspace/src/github.com/DeanThompson/ginpprof"
 	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/renders/multitemplate"
@@ -217,7 +218,15 @@ func main() {
 
 	ginpprof.Wrapper(r)
 
-	r.Run(":" + os.Getenv("PORT"))
+	// r.Run(":" + os.Getenv("PORT"))
+	s := &http.Server{
+		Addr:           ":" + os.Getenv("PORT"),
+		Handler:        r,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   3 * time.Minute,
+		MaxHeaderBytes: 1 << 20,
+	}
+	s.ListenAndServe()
 }
 
 func createMyRender() multitemplate.Render {

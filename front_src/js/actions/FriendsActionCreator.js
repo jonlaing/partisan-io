@@ -11,7 +11,7 @@ export default {
       .done(function(res) {
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.GET_FRIENDSHIPS_SUCCESS,
-          data: res
+          data: res.friendships
         });
       })
       .fail(function(res) {

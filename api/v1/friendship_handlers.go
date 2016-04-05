@@ -42,7 +42,7 @@ func FriendshipIndex(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, friendships)
+	c.JSON(http.StatusOK, gin.H{"friendships": friendships})
 }
 
 // FriendshipShow shows a friendship
