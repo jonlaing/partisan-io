@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // Friendship is a joining table between two users who are friends. For each

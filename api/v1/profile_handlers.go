@@ -8,7 +8,7 @@ import (
 	m "partisan/models"
 	"strconv"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // ProfileResp is the JSON response for a show

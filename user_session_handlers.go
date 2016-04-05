@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/contrib/sessions"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"gin-gonic/contrib/sessions"
+	"gin-gonic/gin"
 )
 
 // Login shows the login screen

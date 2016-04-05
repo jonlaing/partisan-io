@@ -7,8 +7,8 @@ import (
 	"partisan/db"
 	m "partisan/models"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type loginFields struct {

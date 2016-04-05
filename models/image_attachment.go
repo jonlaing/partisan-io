@@ -6,7 +6,7 @@ import (
 	"partisan/imager"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // ImageAttachment is used to attach images to a Post (or something else, when we have it)

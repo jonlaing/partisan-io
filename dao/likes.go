@@ -3,7 +3,7 @@ package dao
 import (
 	"fmt"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // RecordLikes stores like data for ease

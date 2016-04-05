@@ -2,10 +2,11 @@ package models
 
 import (
 	"fmt"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 // Hashtag is attached to posts and comments via Taxonomy

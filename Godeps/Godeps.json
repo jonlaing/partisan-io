@@ -1,6 +1,6 @@
 {
 	"ImportPath": "partisan",
-	"GoVersion": "go1.5",
+	"GoVersion": "go1.6",
 	"Packages": [
 		"./..."
 	],

@@ -4,7 +4,7 @@ import (
 	"partisan/matcher"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/jasonmoo/geo"
+	"github.com/jasonmoo/geo"
 )
 
 // User the user model

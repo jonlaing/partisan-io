@@ -3,7 +3,7 @@ package dao
 import (
 	m "partisan/models"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // PostComments stores like data for ease

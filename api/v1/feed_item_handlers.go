@@ -11,10 +11,10 @@ import (
 	"strconv"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/gorilla/websocket"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/gorilla/websocket"
+	"github.com/jinzhu/gorm"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // PostComments stores like data for ease

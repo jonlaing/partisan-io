@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 var testDB gorm.DB

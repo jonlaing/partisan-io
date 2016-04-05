@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/db"
 	m "partisan/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 // LikeShow redirects to the post of the comment and the inline anchor

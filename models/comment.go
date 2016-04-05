@@ -1,8 +1,9 @@
 package models
 
 import (
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 // Comment is for blah

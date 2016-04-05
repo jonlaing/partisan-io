@@ -6,7 +6,7 @@ import (
 	"partisan/auth"
 	q "partisan/questions"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 var questionSets q.QuestionSets

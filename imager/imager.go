@@ -12,11 +12,11 @@ import (
 	"net/http"
 	"os"
 
-	"partisan/Godeps/_workspace/src/github.com/mitchellh/goamz/aws"
-	"partisan/Godeps/_workspace/src/github.com/mitchellh/goamz/s3"
+	"github.com/mitchellh/goamz/aws"
+	"github.com/mitchellh/goamz/s3"
 
-	"partisan/Godeps/_workspace/src/github.com/nfnt/resize"
-	"partisan/Godeps/_workspace/src/github.com/oliamb/cutter"
+	"github.com/nfnt/resize"
+	"github.com/oliamb/cutter"
 )
 
 var imgExt = map[string]string{

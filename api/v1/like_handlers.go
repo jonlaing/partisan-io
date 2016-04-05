@@ -7,7 +7,7 @@ import (
 	"partisan/db"
 	m "partisan/models"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // LikeCount shows the like count for a particular record

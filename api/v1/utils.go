@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // getRecord looks in the `GET` params for a post or comment ID.

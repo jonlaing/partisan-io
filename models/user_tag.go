@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // UserTag is a relational model between a user and a piece of content.

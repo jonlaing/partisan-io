@@ -11,9 +11,9 @@ import (
 	"strconv"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/github.com/gorilla/websocket"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	"github.com/jinzhu/gorm"
 )
 
 type ThreadResp struct {

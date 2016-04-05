@@ -5,7 +5,7 @@ import (
 	"fmt"
 	m "partisan/models"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 type MessageThreadUnreciprocated struct {

@@ -7,7 +7,7 @@ import (
 
 	m "partisan/models"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 func MessageUnreadCount(userID uint64, db *gorm.DB) (count int, err error) {

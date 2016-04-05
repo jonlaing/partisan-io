@@ -7,7 +7,7 @@ import (
 	"partisan/matcher"
 	"partisan/questions"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 func handleError(err error, c *gin.Context) {

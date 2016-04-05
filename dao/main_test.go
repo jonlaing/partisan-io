@@ -6,7 +6,7 @@ import (
 
 	m "partisan/models"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 var db gorm.DB

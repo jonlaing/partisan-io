@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // CommentResp is the format for JSON responses

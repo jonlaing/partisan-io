@@ -2,8 +2,9 @@ package main
 
 import (
 	"net/http"
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
 	"partisan/auth"
+
+	"github.com/gin-gonic/gin"
 )
 
 // QuestionsIndex shows the question screen

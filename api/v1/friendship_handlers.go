@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 // FriendResp is the JSON schema we respond with

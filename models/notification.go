@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // Notifier is an interface for records that can produce notifications

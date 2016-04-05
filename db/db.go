@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"os"
 
-	"partisan/Godeps/_workspace/src/github.com/gin-gonic/gin"
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
-	_ "partisan/Godeps/_workspace/src/github.com/lib/pq"
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	_ "github.com/lib/pq"
 )
 
 var Database gorm.DB

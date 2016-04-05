@@ -4,7 +4,7 @@ import (
 	m "partisan/models"
 	"time"
 
-	"partisan/Godeps/_workspace/src/github.com/jinzhu/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 func GetFeedByUserIDs(currentUserID uint64, userIDs []uint64, page int, db *gorm.DB) (feedItems []m.FeedItem, err error) {
