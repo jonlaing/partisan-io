@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"gin-gonic/contrib/sessions"
-	"gin-gonic/gin"
+	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 // Login shows the login screen
