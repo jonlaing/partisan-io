@@ -78,13 +78,11 @@ func MatchesIndex(c *gin.Context) {
 		maxAge = -1
 	}
 
-	db.LogMode(true)
 	users, err := dao.GetMatches(user, gender, minAge, maxAge, radius, page, db)
 	if err != nil {
 		handleError(err, c)
 		return
 	}
-	db.LogMode(false)
 
 	fmt.Println(users)
 
