@@ -17,7 +17,7 @@ func TestGetFeedByUserIDs(t *testing.T) {
 	}
 	defer db.Delete(&items)
 
-	fs, err := GetFeedByUserIDs(uint64(1), userIDs, 1, &db)
+	fs, err := GetFeedByUserIDs(uint64(1), userIDs, 1, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -50,7 +50,7 @@ func TestGetFeedByUserIDsPage2(t *testing.T) {
 	}
 	defer db.Delete(&items)
 
-	fs, err := GetFeedByUserIDs(uint64(1), userIDs, 2, &db)
+	fs, err := GetFeedByUserIDs(uint64(1), userIDs, 2, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -88,7 +88,7 @@ func TestGetFeedByUserIDsAfter(t *testing.T) {
 	defer db.Delete(&items)
 
 	after := time.Now().AddDate(0, 0, -1)
-	fs, err := GetFeedByUserIDsAfter(uint64(1), userIDs, after, &db)
+	fs, err := GetFeedByUserIDsAfter(uint64(1), userIDs, after, db)
 	if err != nil {
 		t.Error(err)
 	}

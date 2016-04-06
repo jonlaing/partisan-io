@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestGetRelatedLikes(t *testing.T) {
+func TestGetMultipleRelatedLikes(t *testing.T) {
 	var posts m.Posts
 	var likes []m.Like
 	var idList []uint64
@@ -18,10 +18,11 @@ func TestGetRelatedLikes(t *testing.T) {
 			likes = append(likes, like)
 		}
 	}
+	defer db.Delete(&likes)
 
-	rls, err := GetRelatedLikes(uint64(1), posts, &db)
+	rls, err := GetMultipleRelatedLikes(uint64(1), posts, db)
 	if err != nil {
-		t.Error("Error getting related comment counts from posts:", err)
+		t.Error("Error getting related like counts from posts:", err)
 		return
 	}
 
@@ -40,6 +41,32 @@ func TestGetRelatedLikes(t *testing.T) {
 			t.Error("Couldn't find id:", rl.RecordID, "in", idList, "with count of 5:", rl.Count)
 		}
 	}
+}
 
-	db.Delete(&likes)
+func TestGetRelatedLikes(t *testing.T) {
+	post := m.Post{ID: 1}
+	var likes []m.Like
+
+	for i := 0; i <= 10; i++ {
+		like := m.Like{UserID: uint64(i), RecordID: 1, RecordType: "post"}
+		db.Create(&like)
+		likes = append(likes, like)
+	}
+	defer db.Delete(&likes)
+
+	c, l, err := GetRelatedLikes(1, &post, db)
+	if err != nil {
+		t.Error("Error getting related likes for post:", err)
+		return
+	}
+
+	if c < 10 {
+		t.Error("Expected 10 likes, got:", c)
+		return
+	}
+
+	if !l {
+		t.Error("Expected to have liked post")
+		return
+	}
 }

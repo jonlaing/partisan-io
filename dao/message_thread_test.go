@@ -10,12 +10,12 @@ func TestGetMessageThread(t *testing.T) {
 	db.Create(&thread)
 	defer db.Delete(&thread)
 
-	_, err := GetMessageThread(1, &db)
+	_, err := GetMessageThread(1, db)
 	if err != nil {
 		t.Error(err)
 	}
 
-	_, err = GetMessageThread(2, &db)
+	_, err = GetMessageThread(2, db)
 	if err == nil {
 		t.Error("Expected an error")
 	}
@@ -38,7 +38,7 @@ func TestGetMessageThreads(t *testing.T) {
 	defer db.Delete(&mtus)
 	defer db.Delete(&threads)
 
-	ts, err := GetMessageThreads(u.ID, &db)
+	ts, err := GetMessageThreads(u.ID, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -65,7 +65,7 @@ func TestGetMessageThreadIDs(t *testing.T) {
 	defer db.Delete(&mtus)
 	defer db.Delete(&threads)
 
-	ts, err := GetMessageThreadIDs(u.ID, &db)
+	ts, err := GetMessageThreadIDs(u.ID, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -89,7 +89,7 @@ func TestMessageThreadHasUnread(t *testing.T) {
 	defer db.Delete(&mtu1)
 	defer db.Delete(&mtu2)
 
-	unread, err := MessageThreadHasUnread(2, 1, &db)
+	unread, err := MessageThreadHasUnread(2, 1, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -98,7 +98,7 @@ func TestMessageThreadHasUnread(t *testing.T) {
 		t.Error("Shouldn't have any unread messages")
 	}
 
-	unread, err = MessageThreadHasUnread(2, 2, &db)
+	unread, err = MessageThreadHasUnread(2, 2, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -122,7 +122,7 @@ func TestMessageThreadHasUser(t *testing.T) {
 	defer db.Delete(&mtu1)
 	defer db.Delete(&mtu2)
 
-	hasUser, err := MessageThreadHasUser(1, 1, &db)
+	hasUser, err := MessageThreadHasUser(1, 1, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -131,7 +131,7 @@ func TestMessageThreadHasUser(t *testing.T) {
 		t.Error("Expected user in thread 1")
 	}
 
-	hasUser, err = MessageThreadHasUser(1, 2, &db)
+	hasUser, err = MessageThreadHasUser(1, 2, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -158,17 +158,17 @@ func TestMessageThreadByUsers(t *testing.T) {
 	defer db.Delete(&mtu2)
 	defer db.Delete(&mtu3)
 
-	_, err := GetMessageThreadByUsers(1, 2, &db)
+	_, err := GetMessageThreadByUsers(1, 2, db)
 	if err != nil {
 		t.Error(err)
 	}
 
-	th, err := GetMessageThreadByUsers(3, 4, &db)
+	th, err := GetMessageThreadByUsers(3, 4, db)
 	if err == nil {
 		t.Error("Expected an error:", th)
 	}
 
-	th, err = GetMessageThreadByUsers(2, 3, &db)
+	th, err = GetMessageThreadByUsers(2, 3, db)
 	if err == nil {
 		t.Error("Expected an error:", th)
 	}

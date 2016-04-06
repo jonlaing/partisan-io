@@ -16,55 +16,88 @@ const (
 func GetMatches(user m.User, gender string, minAge, maxAge int, radius float64, page int, db *gorm.DB) (users []m.User, err error) {
 	offset := (page - 1) * 24
 
-	minLat, maxLat, minLong, maxLong, err := geoBounds(user.Latitude, user.Longitude, radius)
-	if err != nil {
-		return users, err
-	}
-
-	// MATCH BOUNDS
-	minX := user.CenterX - centerBounds
-	maxX := user.CenterX + centerBounds
-	minY := user.CenterY - centerBounds
-	maxY := user.CenterY + centerBounds
-
-	query := db.Where("id != ?", user.ID)
-	query = query.Where("latitude > ? AND latitude < ?", minLat, maxLat)
-	query = query.Where("longitude > ? AND longitude < ?", minLong, maxLong)
-	query = query.Where("center_x > ? AND center_x < ?", minX, maxX)
-	query = query.Where("center_y > ? AND center_y < ?", minY, maxY)
-
-	// make sure you can't overload on gender
-	if len(gender) > 0 && len(gender) < 256 {
-		query = query.Where("gender ILIKE ?", "%"+gender+"%")
-	}
-
-	if minAge > -1 {
-		year := strconv.Itoa(time.Now().Year() - minAge)
-		yearParse, err := time.Parse("2006", year)
-		if err == nil {
-			query = query.Where("birthdate < ?::date", yearParse)
-		}
-	}
-
-	if maxAge > -1 {
-		year := strconv.Itoa(time.Now().Year() - maxAge)
-		yearParse, err := time.Parse("2006", year)
-		if err == nil {
-			query = query.Where("birthdate > ?::date", yearParse)
-		}
-	}
-
-	friendIDs, _ := ConfirmedFriendIDs(user, db)
-	if len(friendIDs) > 0 {
-		query = query.Where("id NOT IN (?)", friendIDs)
-	}
-
-	err = query.Limit(24).Offset(offset).Find(&users).Error
+	err = db.Where("id != ?", user.ID).Scopes(
+		inBounds(user),
+		inGeoRadius(user.Latitude, user.Longitude, radius),
+		withGender(gender),
+		withAgeRange(minAge, maxAge),
+		noFriends(user),
+	).Limit(24).Offset(offset).Find(&users).Error
 	if err != nil {
 		return users, &ErrNoMatches{err}
 	}
 
 	return
+}
+
+func inBounds(user m.User) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		// MATCH BOUNDS
+		minX := user.CenterX - centerBounds
+		maxX := user.CenterX + centerBounds
+		minY := user.CenterY - centerBounds
+		maxY := user.CenterY + centerBounds
+
+		return db.Where("centerx > ? AND centerx < ?", minX, maxX).
+			Where("centery > ? AND centery < ?", minY, maxY)
+	}
+}
+
+func inGeoRadius(lat, long, rad float64) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		minLat, maxLat, minLong, maxLong, err := geoBounds(lat, long, rad)
+		if err != nil {
+			return db
+		}
+
+		return db.Where("latitude > ? AND latitude < ?", minLat, maxLat).
+			Where("longitude > ? AND longitude < ?", minLong, maxLong)
+	}
+}
+
+func withGender(gender string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		// make sure you can't overload on gender
+		if len(gender) > 0 && len(gender) < 256 {
+			return db.Where("gender ILIKE ?", "%"+gender+"%")
+		}
+
+		return db
+	}
+}
+
+func withAgeRange(minAge, maxAge int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if minAge > -1 {
+			year := strconv.Itoa(time.Now().Year() - minAge)
+			yearParse, err := time.Parse("2006", year)
+			if err == nil {
+				db = db.Where("birthdate < ?", yearParse.Format("2006-01-02"))
+			}
+		}
+
+		if maxAge > -1 {
+			year := strconv.Itoa(time.Now().Year() - maxAge)
+			yearParse, err := time.Parse("2006", year)
+			if err == nil {
+				db = db.Where("birthdate > ?", yearParse.Format("2006-01-02"))
+			}
+		}
+
+		return db
+	}
+}
+
+func noFriends(user m.User) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		dbClone := db.New() // Since we're in a scope, we need a fresh db so as not to apply the scope to ConfirmedFriends
+		friendIDs, _ := ConfirmedFriendIDs(user, dbClone)
+		if len(friendIDs) > 0 {
+			return db.Where("id NOT IN (?)", friendIDs)
+		}
+
+		return db
+	}
 }
 
 func geoBounds(lat, long, rad float64) (minLat, maxLat, minLong, maxLong float64, err error) {

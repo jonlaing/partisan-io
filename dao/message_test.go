@@ -36,7 +36,7 @@ func TestMessageUnreadCount(t *testing.T) {
 	defer db.Delete(&mtus)
 	defer db.Delete(&threads)
 
-	c, err := MessageUnreadCount(u.ID, &db)
+	c, err := MessageUnreadCount(u.ID, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,7 +64,7 @@ func TestGetMessages(t *testing.T) {
 	defer db.Delete(&msgs)
 	defer db.Delete(&mtus)
 
-	ms, err := GetMessages(thread.ID, &db)
+	ms, err := GetMessages(thread.ID, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -73,7 +73,7 @@ func TestGetMessages(t *testing.T) {
 		t.Error("Expected 5, got:", len(ms))
 	}
 
-	ms, err = GetMessages(2, &db)
+	ms, err = GetMessages(2, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -103,7 +103,7 @@ func TestGetMessagesAfter(t *testing.T) {
 	defer db.Delete(&mtus)
 
 	after := time.Now().AddDate(0, 0, -1)
-	ms, err := GetMessagesAfter(1, after, &db)
+	ms, err := GetMessagesAfter(1, after, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -112,7 +112,7 @@ func TestGetMessagesAfter(t *testing.T) {
 		t.Error("Expected 5, got:", len(ms))
 	}
 
-	ms, err = GetMessages(2, &db)
+	ms, err = GetMessages(2, db)
 	if err != nil {
 		t.Error(err)
 	}

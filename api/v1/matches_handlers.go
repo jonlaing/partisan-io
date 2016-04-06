@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"math"
 	"net/http"
 	"partisan/auth"
@@ -77,11 +78,15 @@ func MatchesIndex(c *gin.Context) {
 		maxAge = -1
 	}
 
+	db.LogMode(true)
 	users, err := dao.GetMatches(user, gender, minAge, maxAge, radius, page, db)
 	if err != nil {
 		handleError(err, c)
 		return
 	}
+	db.LogMode(false)
+
+	fmt.Println(users)
 
 	var matches MatchCollectionResp
 	for _, u := range users {

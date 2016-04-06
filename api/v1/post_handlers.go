@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 	"partisan/auth"
+	"partisan/dao"
 	"partisan/db"
 	m "partisan/models"
 	"time"
@@ -115,6 +116,11 @@ func PostsShow(c *gin.Context) {
 	resp := PostResponse{
 		Post: post,
 		User: user,
+	}
+
+	attachments, err := dao.GetRelatedAttachments(&post, db)
+	if err == nil && len(attachments) > 0 {
+		resp.Attachment = attachments[0] // for now we're only doing one attachment
 	}
 
 	c.JSON(http.StatusOK, resp)

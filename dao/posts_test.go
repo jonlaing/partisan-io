@@ -14,7 +14,7 @@ func TestGetRelatedPosts(t *testing.T) {
 		db.Create(&m.Post{ID: uint64(i)})
 	}
 
-	posts, err := GetRelatedPosts(feedItems, &db)
+	posts, err := GetRelatedPosts(feedItems, db)
 	if err != nil {
 		t.Error("Error getting related posts from feed items:", err)
 		return

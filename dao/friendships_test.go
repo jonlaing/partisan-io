@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	m "partisan/models"
 	"testing"
 )
@@ -10,7 +11,9 @@ func TestFriends(t *testing.T) {
 	var fships []m.Friendship
 	var fs []m.User
 	for i := 2; i < 12; i++ {
-		f := m.User{ID: uint64(i)}
+		email := fmt.Sprintf("user%d@email.com", i)
+		un := fmt.Sprintf("user%d", i)
+		f := m.User{ID: uint64(i), Email: email, Username: un}
 		ship := m.Friendship{UserID: u.ID, FriendID: f.ID, Confirmed: true}
 		db.Create(&f)
 		db.Create(&ship)
@@ -20,7 +23,7 @@ func TestFriends(t *testing.T) {
 	defer db.Delete(&fships)
 	defer db.Delete(&fs)
 
-	friends, err := Friends(u, true, &db)
+	friends, err := Friends(u, true, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -47,8 +50,10 @@ func TestConfirmedFriends(t *testing.T) {
 	var fships []m.Friendship
 	var fs []m.User
 	for i := 2; i < 12; i++ {
+		email := fmt.Sprintf("user%d@email.com", i)
+		un := fmt.Sprintf("user%d", i)
 		confirmed := i%2 == 0
-		f := m.User{ID: uint64(i)}
+		f := m.User{ID: uint64(i), Email: email, Username: un}
 		ship := m.Friendship{UserID: u.ID, FriendID: f.ID, Confirmed: confirmed}
 		db.Create(&f)
 		db.Create(&ship)
@@ -60,7 +65,7 @@ func TestConfirmedFriends(t *testing.T) {
 	defer db.Delete(&fships)
 	defer db.Delete(&fs)
 
-	friends, err := ConfirmedFriends(u, &db)
+	friends, err := ConfirmedFriends(u, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -88,7 +93,9 @@ func TestFriendIDs(t *testing.T) {
 	var fs []m.User
 	var idList []uint64
 	for i := 2; i < 12; i++ {
-		f := m.User{ID: uint64(i)}
+		email := fmt.Sprintf("user%d@email.com", i)
+		un := fmt.Sprintf("user%d", i)
+		f := m.User{ID: uint64(i), Email: email, Username: un}
 		ship := m.Friendship{UserID: u.ID, FriendID: f.ID, Confirmed: true}
 		db.Create(&f)
 		db.Create(&ship)
@@ -99,7 +106,7 @@ func TestFriendIDs(t *testing.T) {
 	defer db.Delete(&fships)
 	defer db.Delete(&fs)
 
-	friendIDs, err := FriendIDs(u, true, &db)
+	friendIDs, err := FriendIDs(u, true, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -127,8 +134,10 @@ func TestConfirmedFriendIDs(t *testing.T) {
 	var fs []m.User
 	var idList []uint64
 	for i := 2; i < 12; i++ {
+		email := fmt.Sprintf("user%d@email.com", i)
+		un := fmt.Sprintf("user%d", i)
 		confirmed := i%2 == 0
-		f := m.User{ID: uint64(i)}
+		f := m.User{ID: uint64(i), Email: email, Username: un}
 		ship := m.Friendship{UserID: u.ID, FriendID: f.ID, Confirmed: confirmed}
 		db.Create(&f)
 		db.Create(&ship)
@@ -141,7 +150,7 @@ func TestConfirmedFriendIDs(t *testing.T) {
 	defer db.Delete(&fships)
 	defer db.Delete(&fs)
 
-	friendIDs, err := ConfirmedFriendIDs(u, &db)
+	friendIDs, err := ConfirmedFriendIDs(u, db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -170,7 +179,7 @@ func TestGetFriendship(t *testing.T) {
 	db.Create(&fs1)
 	defer db.Delete(&fs1)
 
-	fs, err := GetFriendship(u1, uint64(2), &db)
+	fs, err := GetFriendship(u1, uint64(2), db)
 	if err != nil {
 		t.Error(err)
 	}
@@ -189,7 +198,7 @@ func TestGetFriendship(t *testing.T) {
 	db.Create(&fs2)
 	defer db.Delete(&fs2)
 
-	fs, err = GetFriendship(u2, uint64(4), &db)
+	fs, err = GetFriendship(u2, uint64(4), db)
 	if err != nil {
 		t.Error(err)
 	}

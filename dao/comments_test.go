@@ -19,7 +19,7 @@ func TestGetRelatedComments(t *testing.T) {
 		}
 	}
 
-	pcs, err := GetRelatedComments(posts, &db)
+	pcs, err := GetRelatedComments(posts, db)
 	if err != nil {
 		t.Error("Error getting related comment counts from posts:", err)
 		return

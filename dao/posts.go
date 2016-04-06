@@ -44,12 +44,12 @@ func GetRelatedPostReponse(currentUserID uint64, rs PostIDer, db *gorm.DB) (resp
 		return
 	}
 
-	attachments, err := GetRelatedAttachments(ps, db)
+	attachments, err := GetMultipleRelatedAttachments(ps, db)
 	if err != nil {
 		return
 	}
 
-	postLikes, _ := GetRelatedLikes(currentUserID, ps, db)
+	postLikes, _ := GetMultipleRelatedLikes(currentUserID, ps, db)
 
 	postComments, _ := GetRelatedComments(ps, db)
 
