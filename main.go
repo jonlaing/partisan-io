@@ -156,6 +156,8 @@ func main() {
 			messages.GET("/threads/:thread_id/socket", api.MessageSocket)
 		}
 
+		r.GET(v1Root+"/socket_ticket", auth.Auth("/login"), api.SocketTicketCreate)
+
 		r.GET(v1Root+"/hashtags", auth.Auth("/login"), api.HashtagShow)
 
 		r.POST(v1Root+"/flag", auth.Auth("/login"), api.FlagCreate)
@@ -214,6 +216,7 @@ func main() {
 		&m.Message{},
 		&m.MessageThread{},
 		&m.MessageThreadUser{},
+		&m.SocketTicket{},
 	)
 
 	ginpprof.Wrapper(r)

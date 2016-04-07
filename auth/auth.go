@@ -83,6 +83,13 @@ func Auth(redirectPath string) gin.HandlerFunc {
 			}
 		} else {
 			if sess.Get("user_id") == nil {
+				// check if there's a key in the request, and if so check if that route is
+				// whitelisted to use keys. Should only be used for sockets that talk to mobile
+				if len(c.Query("key")) > 0 && allowedWithKey(c) {
+					c.Next()
+					return
+				}
+
 				c.Redirect(http.StatusFound, redirectPath)
 				return
 			}
@@ -132,11 +139,30 @@ func Logout(c *gin.Context) {
 }
 
 // CurrentUser gets the current user from the session
-func CurrentUser(c *gin.Context) (m.User, error) {
+func CurrentUser(c *gin.Context) (u m.User, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = &ErrNoUser{}
+		}
+	}()
+
 	user, ok := c.Get("user")
 	if !ok {
-		return user.(m.User), &ErrNoUser{}
+		return m.User{}, &ErrNoUser{}
 	}
 
-	return user.(m.User), nil
+	u = user.(m.User)
+
+	return
+}
+
+func allowedWithKey(c *gin.Context) bool {
+	allowed := []string{"partisan/api/v1.NotificationsCount"}
+	for _, v := range allowed {
+		if c.HandlerName() == v {
+			return true
+		}
+	}
+
+	return false
 }

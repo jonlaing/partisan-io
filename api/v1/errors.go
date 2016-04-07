@@ -22,6 +22,8 @@ func handleError(err error, c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, err)
 	case *ErrParseID:
 		c.AbortWithError(http.StatusNotAcceptable, err)
+	case *ErrNoSocketKey:
+		c.AbortWithError(http.StatusNotAcceptable, err)
 	case *ErrUserNotFound, *ErrPasswordMatch:
 		c.AbortWithError(http.StatusUnauthorized, err)
 	case *auth.ErrNoUser:
@@ -147,4 +149,10 @@ type ErrNoThreadID struct{}
 
 func (e *ErrNoThreadID) Error() string {
 	return "No Thread ID specified"
+}
+
+type ErrNoSocketKey struct{}
+
+func (e *ErrNoSocketKey) Error() string {
+	return "No Socket Ticket Key was provided in the GET parameters"
 }
