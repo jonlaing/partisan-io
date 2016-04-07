@@ -16,6 +16,11 @@ type ProfileResp struct {
 	Profile m.Profile `json:"profile"`
 	User    m.User    `json:"user"`
 	Match   float64   `json:"match"`
+
+	// Me indicates if this is the current user's profile.
+	// Mobile doesn't have the userID easily accesible, so
+	// the check there is useful mostly in mobile
+	Me bool `json:"me"`
 }
 
 const (
@@ -67,6 +72,7 @@ func ProfileShow(c *gin.Context) {
 	resp := ProfileResp{
 		Profile: profile,
 		User:    user,
+		Me:      user.ID == currentUser.ID,
 	}
 
 	// If this is not the current user, do the match
