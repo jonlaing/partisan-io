@@ -73,11 +73,11 @@ func NotificationsIndex(c *gin.Context) {
 
 		db.Model(m.Notification{}).Where("target_user_id = ?", user.ID).Update("seen", true)
 
-		c.JSON(http.StatusOK, resp)
+		c.JSON(http.StatusOK, gin.H{"notifications": resp})
 		return
 	}
 
-	c.JSON(http.StatusOK, []NotifResp{})
+	c.JSON(http.StatusOK, gin.H{"notifications": []NotifResp{}})
 }
 
 // NotificationsCount returns the number of unread notifications

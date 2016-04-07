@@ -25,6 +25,8 @@ func SocketTicketCreate(c *gin.Context) {
 			c.JSON(http.StatusOK, ticket)
 			return
 		}
+
+		db.Delete(&ticket) // if it's not valid, get rid of it and create a new one
 	}
 
 	ticket, err = m.NewSocketTicket(user.ID)

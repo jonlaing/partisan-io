@@ -15,7 +15,7 @@ export default {
         console.log(res);
         Dispatcher.handleViewAction({
           type: Constants.ActionTypes.GET_NOTIFICATIONS_SUCCESS,
-          data: res
+          data: res.notifications
         });
       })
       .fail(function(res) {

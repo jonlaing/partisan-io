@@ -975,7 +975,7 @@ exports['default'] = {
       console.log(res);
       _Dispatcher2['default'].handleViewAction({
         type: _Constants2['default'].ActionTypes.GET_NOTIFICATIONS_SUCCESS,
-        data: res
+        data: res.notifications
       });
     }).fail(function (res) {
       console.log(res);

@@ -8,11 +8,11 @@ import (
 
 // Like is polymorphic
 type Like struct {
-	ID         uint64 `gorm:"primary_key"`
-	UserID     uint64
-	RecordID   uint64
-	RecordType string
-	IsDislike  bool // so that we can use the same table for both likes and dislikes, not currently in use
+	ID         uint64 `json:"id" gorm:"primary_key"`
+	UserID     uint64 `json:"user_id"`
+	RecordID   uint64 `json:"record_id"`
+	RecordType string `json:"record_type"`
+	IsDislike  bool   `json:"-"` // so that we can use the same table for both likes and dislikes, not currently in use
 }
 
 // RecordLikes stores like data for ease
