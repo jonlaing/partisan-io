@@ -123,6 +123,12 @@ func PostsShow(c *gin.Context) {
 		resp.Attachment = attachments[0] // for now we're only doing one attachment
 	}
 
+	count, liked, err := dao.GetRelatedLikes(user.ID, &post, db)
+	if err == nil {
+		resp.LikeCount = count
+		resp.Liked = liked
+	}
+
 	c.JSON(http.StatusOK, resp)
 }
 
