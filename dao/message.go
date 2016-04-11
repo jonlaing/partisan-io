@@ -11,7 +11,8 @@ import (
 )
 
 func MessageUnreadCount(userID uint64, db *gorm.DB) (count int, err error) {
-	threadIDs, err := GetMessageThreadIDs(userID, db)
+	mtDAO := MessageThreadDAO{db}
+	threadIDs, err := mtDAO.GetIDs(userID)
 	if err != nil {
 		return
 	}
@@ -75,7 +76,7 @@ func GetMessagesAfter(threadID uint64, after time.Time, db *gorm.DB) (msgs []m.M
 }
 
 func MarkAllMessagesRead(userID, threadID uint64, db *gorm.DB) error {
-	return db.Model(m.Message{}).Where("user_id != ? AND thread_id = ?", userID, threadID).Updates(map[string]interface{}{"read": true}).Error
+	return db.Table("messages").Where("user_id != ? AND thread_id = ?", userID, threadID).UpdateColumn("read", true).Error
 }
 
 func collectMessageUsers(msgs []m.Message, users []m.User) {

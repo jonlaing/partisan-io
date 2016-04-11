@@ -58,3 +58,11 @@ func (e *ErrThreadNotFound) Error() string {
 
 	return ""
 }
+
+type MessageThreadUnreciprocated struct {
+	ThreadID uint64
+}
+
+func (e *MessageThreadUnreciprocated) Error() string {
+	return fmt.Sprintf("Need at least two MessageThreadUsers for Thread: %d", e.ThreadID)
+}

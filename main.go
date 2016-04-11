@@ -31,7 +31,7 @@ func main() {
 		defer func() {
 			if r := recover(); r != nil {
 				c.AbortWithStatus(http.StatusInternalServerError)
-				fmt.Println(r)
+				fmt.Println("Recovered Panic (main.go):", r)
 			}
 		}()
 

@@ -1,5 +1,7 @@
 package questions
 
+import "math/rand"
+
 // Question holds questions to guage a user's political leanings
 type Question struct {
 	Prompt string `json:"prompt"`
@@ -34,10 +36,17 @@ func (qs QuestionSet) InMask(n int) bool {
 type QuestionSets []QuestionSet
 
 func (qss QuestionSets) NextSet(x, y int) (QuestionSet, error) {
+	var validSets []QuestionSet
+
 	for _, qs := range qss {
 		if qs.ValidSet(x, y) {
-			return qs, nil
+			validSets = append(validSets, qs)
 		}
+	}
+
+	// once you get a list of valid sets, choose one at random
+	if l := len(validSets); l > 0 {
+		return validSets[rand.Intn(l)], nil // Intn chooses from [0, n-1] (i.e. Intn(1) is always 0)
 	}
 
 	return QuestionSet{}, &ErrNoneValid{}

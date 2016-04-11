@@ -10,14 +10,20 @@ func TestGetMessageThread(t *testing.T) {
 	db.Create(&thread)
 	defer db.Delete(&thread)
 
-	_, err := GetMessageThread(1, db)
+	mtDAO := MessageThreadDAO{db}
+
+	_, err := mtDAO.Get(1)
 	if err != nil {
 		t.Error(err)
 	}
 
-	_, err = GetMessageThread(2, db)
+	_, err = mtDAO.Get(2)
 	if err == nil {
 		t.Error("Expected an error")
+	}
+
+	if _, ok := err.(*ErrThreadNotFound); !ok {
+		t.Error("Expected ErrThreadNotFound, but got:", err)
 	}
 }
 
@@ -38,7 +44,9 @@ func TestGetMessageThreads(t *testing.T) {
 	defer db.Delete(&mtus)
 	defer db.Delete(&threads)
 
-	ts, err := GetMessageThreads(u.ID, db)
+	mtDAO := MessageThreadDAO{db}
+
+	ts, err := mtDAO.List(u.ID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -65,7 +73,9 @@ func TestGetMessageThreadIDs(t *testing.T) {
 	defer db.Delete(&mtus)
 	defer db.Delete(&threads)
 
-	ts, err := GetMessageThreadIDs(u.ID, db)
+	mtDAO := MessageThreadDAO{db}
+
+	ts, err := mtDAO.GetIDs(u.ID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -89,7 +99,9 @@ func TestMessageThreadHasUnread(t *testing.T) {
 	defer db.Delete(&mtu1)
 	defer db.Delete(&mtu2)
 
-	unread, err := MessageThreadHasUnread(2, 1, db)
+	mtDAO := MessageThreadDAO{db}
+
+	unread, err := mtDAO.HasUnread(2, 1)
 	if err != nil {
 		t.Error(err)
 	}
@@ -98,7 +110,7 @@ func TestMessageThreadHasUnread(t *testing.T) {
 		t.Error("Shouldn't have any unread messages")
 	}
 
-	unread, err = MessageThreadHasUnread(2, 2, db)
+	unread, err = mtDAO.HasUnread(2, 2)
 	if err != nil {
 		t.Error(err)
 	}
@@ -122,7 +134,9 @@ func TestMessageThreadHasUser(t *testing.T) {
 	defer db.Delete(&mtu1)
 	defer db.Delete(&mtu2)
 
-	hasUser, err := MessageThreadHasUser(1, 1, db)
+	mtDAO := MessageThreadDAO{db}
+
+	hasUser, err := mtDAO.HasUser(1, 1)
 	if err != nil {
 		t.Error(err)
 	}
@@ -131,7 +145,7 @@ func TestMessageThreadHasUser(t *testing.T) {
 		t.Error("Expected user in thread 1")
 	}
 
-	hasUser, err = MessageThreadHasUser(1, 2, db)
+	hasUser, err = mtDAO.HasUser(1, 2)
 	if err != nil {
 		t.Error(err)
 	}
@@ -158,17 +172,19 @@ func TestMessageThreadByUsers(t *testing.T) {
 	defer db.Delete(&mtu2)
 	defer db.Delete(&mtu3)
 
-	_, err := GetMessageThreadByUsers(1, 2, db)
+	mtDAO := MessageThreadDAO{db}
+
+	_, err := mtDAO.GetByUsers(1, 2)
 	if err != nil {
 		t.Error(err)
 	}
 
-	th, err := GetMessageThreadByUsers(3, 4, db)
+	th, err := mtDAO.GetByUsers(3, 4)
 	if err == nil {
 		t.Error("Expected an error:", th)
 	}
 
-	th, err = GetMessageThreadByUsers(2, 3, db)
+	th, err = mtDAO.GetByUsers(2, 3)
 	if err == nil {
 		t.Error("Expected an error:", th)
 	}

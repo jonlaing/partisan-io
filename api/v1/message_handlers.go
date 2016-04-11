@@ -17,12 +17,14 @@ import (
 )
 
 type ThreadResp struct {
-	ThreadUser m.MessageThreadUser `json:"thread_user"`
-	HasUnread  bool                `json:"has_unread"`
+	ThreadUser  m.MessageThreadUser `json:"thread_user"`
+	LastMessage m.Message           `json:"last_message"`
+	HasUnread   bool                `json:"has_unread"`
 }
 
 func MessageThreadIndex(c *gin.Context) {
 	db := db.GetDB(c)
+	mtDAO := dao.MessageThreadDAO{db}
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
@@ -30,7 +32,7 @@ func MessageThreadIndex(c *gin.Context) {
 		return
 	}
 
-	threads, _ := dao.GetMessageThreadUsers(user.ID, db)
+	threads, _ := mtDAO.GetMessageThreadUsers(user.ID)
 
 	// get friends for which there is no thread
 	var inactiveIDs []uint64
@@ -57,8 +59,9 @@ func MessageThreadIndex(c *gin.Context) {
 		// Possible N+1 problem, but there shouldn't be so manythreads that it's an issue... maybe...
 		// Not handling error, because the worst that happens is that a thread looks unread when it isn't.
 		// We'll live...
-		hasUnread, _ := dao.MessageThreadHasUnread(user.ID, t.ThreadID, db)
-		tresps = append(tresps, ThreadResp{t, hasUnread})
+		hasUnread, _ := mtDAO.HasUnread(user.ID, t.ThreadID)
+		lastMessage, _ := mtDAO.LastMessage(t.ThreadID)
+		tresps = append(tresps, ThreadResp{t, lastMessage, hasUnread})
 	}
 
 	c.JSON(http.StatusOK, gin.H{"threads": tresps, "inactive": inactive})
@@ -66,6 +69,7 @@ func MessageThreadIndex(c *gin.Context) {
 
 func MessageThreadCreate(c *gin.Context) {
 	db := db.GetDB(c)
+	mtDAO := dao.MessageThreadDAO{db}
 
 	currentUser, err := auth.CurrentUser(c)
 	if err != nil {
@@ -88,11 +92,12 @@ func MessageThreadCreate(c *gin.Context) {
 	// can only start a thread with friends
 	_, err = dao.GetFriendship(currentUser, uint64(userID), db)
 	if err != nil {
+		fmt.Println("couldn't get friendship")
 		handleError(err, c)
 		return
 	}
 
-	thread, err := dao.GetMessageThreadByUsers(currentUser.ID, uint64(userID), db)
+	thread, err := mtDAO.GetByUsers(currentUser.ID, uint64(userID))
 	if err == nil {
 		// Apparently, this thread already exists
 		c.JSON(http.StatusOK, gin.H{"thread": thread})
@@ -110,10 +115,12 @@ func MessageThreadCreate(c *gin.Context) {
 				db.Create(m.MessageThreadUser{ThreadID: thread.ID, UserID: currentUser.ID})
 			}
 		}
-	} else {
-		// unknown error
-		c.AbortWithError(http.StatusNotAcceptable, err)
-		return
+	} else if _, ok := err.(*dao.ErrThreadNotFound); !ok {
+		if err != gorm.ErrRecordNotFound {
+			// if something happened other than not finding a thread, respond with error
+			c.AbortWithError(http.StatusNotAcceptable, err)
+			return
+		}
 	}
 
 	thread = m.MessageThread{}
@@ -133,6 +140,7 @@ func MessageThreadCreate(c *gin.Context) {
 
 func MessageIndex(c *gin.Context) {
 	db := db.GetDB(c)
+	mtDAO := dao.MessageThreadDAO{db}
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
@@ -152,7 +160,7 @@ func MessageIndex(c *gin.Context) {
 		return
 	}
 
-	if hasUser, err := dao.MessageThreadHasUser(user.ID, uint64(threadID), db); err != nil || !hasUser {
+	if hasUser, err := mtDAO.HasUser(user.ID, uint64(threadID)); err != nil || !hasUser {
 		handleError(err, c)
 		return
 	}
@@ -173,6 +181,7 @@ func MessageIndex(c *gin.Context) {
 
 func MessageCreate(c *gin.Context) {
 	db := db.GetDB(c)
+	mtDAO := dao.MessageThreadDAO{db}
 	user, err := auth.CurrentUser(c)
 	if err != nil {
 		handleError(err, c)
@@ -191,13 +200,13 @@ func MessageCreate(c *gin.Context) {
 		return
 	}
 
-	thread, err := dao.GetMessageThread(uint64(threadID), db)
+	thread, err := mtDAO.Get(uint64(threadID))
 	if err != nil {
 		handleError(err, c)
 		return
 	}
 
-	if hasUser, err := dao.MessageThreadHasUser(user.ID, thread.ID, db); err != nil || !hasUser {
+	if hasUser, err := mtDAO.HasUser(user.ID, thread.ID); err != nil || !hasUser {
 		handleError(err, c)
 		return
 	}
@@ -248,6 +257,8 @@ func MessageCount(c *gin.Context) {
 
 func MessageSocket(c *gin.Context) {
 	db := db.GetDB(c)
+	mtDAO := dao.MessageThreadDAO{db}
+
 	user, err := auth.CurrentUser(c)
 	if err != nil {
 		handleError(err, c)
@@ -266,7 +277,7 @@ func MessageSocket(c *gin.Context) {
 		return
 	}
 
-	if hasUser, err := dao.MessageThreadHasUser(user.ID, uint64(threadID), db); err != nil || !hasUser {
+	if hasUser, err := mtDAO.HasUser(user.ID, uint64(threadID)); err != nil || !hasUser {
 		handleError(err, c)
 		return
 	}
@@ -356,7 +367,10 @@ func messageWriteLoop(userID, threadID uint64, db *gorm.DB, c *websocket.Conn, r
 				return
 			}
 
-			dao.MarkAllMessagesRead(userID, uint64(threadID), db)
+			err = dao.MarkAllMessagesRead(userID, uint64(threadID), db)
+			if err != nil {
+				fmt.Println("Error marking messages read:", userID, threadID, err)
+			}
 		case <-quit:
 			return // kill the loop
 		}

@@ -146,3 +146,9 @@ func TestCollectMessageUsers(t *testing.T) {
 		}
 	}
 }
+
+func TestMarkAllRead(t *testing.T) {
+	// haven't really fleshed this one out, just making sure
+	// I don't get weird panics
+	MarkAllMessagesRead(1, 1, db)
+}
