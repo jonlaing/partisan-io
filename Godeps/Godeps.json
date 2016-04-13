@@ -118,6 +118,10 @@
 			"Rev": "4d93a29130b1b6aba503e2aa8b50f516213ea80e"
 		},
 		{
+			"ImportPath": "github.com/nu7hatch/gouuid",
+			"Rev": "179d4d0c4d8d407a32af483c2354df1d2c91e6c3"
+		},
+		{
 			"ImportPath": "github.com/oliamb/cutter",
 			"Comment": "v0.2.0-7-g6bb2691",
 			"Rev": "6bb26911f52436bb5c63667f9aaa2d1826b2df9e"
