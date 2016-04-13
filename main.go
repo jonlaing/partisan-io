@@ -231,7 +231,8 @@ func main() {
 		WriteTimeout:   3 * time.Minute,
 		MaxHeaderBytes: 1 << 20,
 	}
-	s.ListenAndServeTLS("cert.pem", "key.pem")
+	// s.ListenAndServeTLS("cert.pem", "key.pem")
+	s.ListenAndServe()
 }
 
 func createMyRender() multitemplate.Render {
