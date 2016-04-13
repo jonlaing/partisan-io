@@ -117,7 +117,6 @@ func Login(user m.User, c *gin.Context) (string, error) {
 	// Set some claims
 	token.Claims["user_id"] = user.ID
 	token.Claims["api_key"] = user.APIKey
-	fmt.Println(user.ID)
 
 	// Sign and get the complete encoded token as a string
 	tokenString, err := token.SignedString(hmacKey)
@@ -125,8 +124,6 @@ func Login(user m.User, c *gin.Context) (string, error) {
 	sess := sessions.Default(c)
 	sess.Set("user_id", user.ID)
 	sess.Save()
-
-	fmt.Println(tokenString)
 
 	return tokenString, err
 }

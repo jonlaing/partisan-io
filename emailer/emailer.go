@@ -26,7 +26,6 @@ func SendEmail(to, subject, body string) error {
 	m.From = config.From
 	m.To = []string{to}
 
-	fmt.Println(string(m.Bytes()))
 	return email.Send("smtp.gmail.com:587", smtp.PlainAuth("", config.From, config.Password, "smtp.gmail.com"), m)
 }
 

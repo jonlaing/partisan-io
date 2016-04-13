@@ -1,7 +1,7 @@
 package models
 
 import (
-	"fmt"
+	"partisan/logger"
 	"regexp"
 	"strings"
 	"time"
@@ -64,7 +64,7 @@ func FindAndCreateHashtags(r Hashtagger, db *gorm.DB) {
 	hashtags := ExtractTags(r.GetContent())
 	for _, hashtag := range hashtags {
 		if err := CreateHashtag(r, hashtag, db); err != nil {
-			fmt.Println(err)
+			logger.Error.Println(err)
 		}
 	}
 }

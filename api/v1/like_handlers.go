@@ -1,10 +1,10 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/logger"
 	m "partisan/models"
 
 	"github.com/gin-gonic/gin"
@@ -76,10 +76,10 @@ func LikeCreate(c *gin.Context) {
 		c.JSON(http.StatusCreated, gin.H{"record_type": rType, "record_id": rID, "like_count": count + 1, "liked": true})
 	} else {
 		if err := db.Where("record_type = ? AND record_id = ? AND user_id = ?", rType, rID, user.ID).Delete(m.Like{}).Error; err != nil {
-			fmt.Println("problem deleting like:", err)
+			logger.Error.Println("problem deleting like:", err)
 		}
 		if err := db.Where("record_type = ? AND record_id = ? AND user_id = ?", rType, rID, user.ID).Delete(m.Notification{}).Error; err != nil {
-			fmt.Println("problem deleting notificatino:", err)
+			logger.Error.Println("problem deleting notificatino:", err)
 		}
 		c.JSON(http.StatusCreated, gin.H{"record_type": rType, "record_id": rID, "like_count": count - 1, "liked": false})
 	}

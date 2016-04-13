@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	api "partisan/api/v1"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/logger"
 	m "partisan/models"
 	"time"
 
@@ -31,7 +31,7 @@ func main() {
 		defer func() {
 			if r := recover(); r != nil {
 				c.AbortWithStatus(http.StatusInternalServerError)
-				fmt.Println("Recovered Panic (main.go):", r)
+				logger.Error.Println("Recovered Panic (main.go):", r)
 			}
 		}()
 

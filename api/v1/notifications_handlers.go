@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/logger"
 	m "partisan/models"
 
 	"github.com/gin-gonic/gin"
@@ -63,7 +64,7 @@ func NotificationsIndex(c *gin.Context) {
 					var r interface{}
 					r, err := n.GetRecord(db)
 					if err != nil {
-						fmt.Println(err)
+						logger.Error.Println(err)
 					}
 					resp = append(resp, NotifResp{Notification: n, User: u, Record: r})
 				}

@@ -7,6 +7,7 @@ import (
 	"partisan/auth"
 	"partisan/dao"
 	"partisan/db"
+	"partisan/logger"
 	m "partisan/models"
 	"strconv"
 	"time"
@@ -92,7 +93,7 @@ func MessageThreadCreate(c *gin.Context) {
 	// can only start a thread with friends
 	_, err = dao.GetFriendship(currentUser, uint64(userID), db)
 	if err != nil {
-		fmt.Println("couldn't get friendship")
+		logger.Error.Println("couldn't get friendship")
 		handleError(err, c)
 		return
 	}
@@ -173,7 +174,7 @@ func MessageIndex(c *gin.Context) {
 	}
 
 	if err := dao.MarkAllMessagesRead(user.ID, uint64(threadID), db); err != nil {
-		fmt.Println(err)
+		logger.Error.Println(err)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"messages": msgs})
@@ -340,12 +341,12 @@ func messageReadLoop(c *websocket.Conn, send chan string, quit chan bool) {
 		}
 
 		if sMsgType == websocket.BinaryMessage {
-			fmt.Println("MessageSocket message shouldn't be a binary")
+			logger.Error.Println("MessageSocket message shouldn't be a binary")
 		}
 
 		stamp, err := ioutil.ReadAll(r)
 		if err != nil {
-			fmt.Println("couldn't read timestamp", r)
+			logger.Warning.Println("couldn't read timestamp", r)
 		}
 
 		send <- string(stamp)
@@ -358,7 +359,7 @@ func messageWriteLoop(userID, threadID uint64, db *gorm.DB, c *websocket.Conn, r
 		case stamp := <-received:
 			sec, err := strconv.Atoi(stamp)
 			if err != nil {
-				fmt.Println("bad timestamp:", string(stamp))
+				logger.Error.Println("bad timestamp:", string(stamp))
 			}
 
 			after := time.Unix(int64(sec), int64(0))
@@ -374,7 +375,7 @@ func messageWriteLoop(userID, threadID uint64, db *gorm.DB, c *websocket.Conn, r
 
 			err = dao.MarkAllMessagesRead(userID, uint64(threadID), db)
 			if err != nil {
-				fmt.Println("Error marking messages read:", userID, threadID, err)
+				logger.Error.Println("Error marking messages read:", userID, threadID, err)
 			}
 		case <-quit:
 			return // kill the loop

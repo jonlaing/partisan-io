@@ -7,6 +7,7 @@ import (
 	"partisan/auth"
 	"partisan/dao"
 	"partisan/db"
+	"partisan/logger"
 	m "partisan/models"
 	"strconv"
 	"time"
@@ -123,12 +124,12 @@ func feedReadLoop(c *websocket.Conn, send chan string, quit chan bool) {
 		}
 
 		if msgType == websocket.BinaryMessage {
-			fmt.Println("FeedSocket message shouldn't be a binary")
+			logger.Warning.Println("FeedSocket message shouldn't be a binary")
 		}
 
 		stamp, err := ioutil.ReadAll(r)
 		if err != nil {
-			fmt.Println("couldn't read timestamp", r)
+			logger.Error.Println("couldn't read timestamp", r)
 		}
 
 		send <- string(stamp)
@@ -141,7 +142,7 @@ func feedWriteLoop(userID uint64, friendIDs []uint64, db *gorm.DB, c *websocket.
 		case stamp := <-received:
 			sec, err := strconv.Atoi(stamp)
 			if err != nil {
-				fmt.Println("bad timestamp:", string(stamp))
+				logger.Error.Println("bad timestamp:", string(stamp))
 			}
 
 			after := time.Unix(int64(sec), int64(0))

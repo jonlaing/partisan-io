@@ -1,11 +1,11 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
 	"partisan/auth"
 	"partisan/dao"
 	"partisan/db"
+	"partisan/logger"
 	"partisan/matcher"
 	m "partisan/models"
 	"strconv"
@@ -35,7 +35,7 @@ func FriendshipIndex(c *gin.Context) {
 	var friendships []FriendResp
 	for _, f := range friends {
 		if match, err := matcher.Match(user.PoliticalMap, f.PoliticalMap); err != nil {
-			fmt.Println(err)
+			logger.Error.Println(err)
 		} else {
 			match = float64(int(match*1000)) / 10
 			friendships = append(friendships, FriendResp{User: f, Match: match})

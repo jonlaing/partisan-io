@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"math"
 	"net/http"
 	"partisan/auth"
@@ -83,8 +82,6 @@ func MatchesIndex(c *gin.Context) {
 		handleError(err, c)
 		return
 	}
-
-	fmt.Println(users)
 
 	var matches MatchCollectionResp
 	for _, u := range users {

@@ -1,12 +1,12 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"partisan/auth"
 	"partisan/dao"
 	"partisan/db"
+	"partisan/logger"
 	m "partisan/models"
 
 	"github.com/gin-gonic/gin"
@@ -53,12 +53,12 @@ func HashtagShow(c *gin.Context) {
 
 	postLikes, err := m.GetLikes(user.ID, "post", postIDs, db)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error.Println(err)
 	}
 
 	postComments, err := dao.GetRelatedCommentsByIDs(postIDs, db)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error.Println(err)
 	}
 
 	var resp []PostResponse

@@ -7,6 +7,7 @@ import (
 	"partisan/dao"
 	"partisan/db"
 	"partisan/imager"
+	"partisan/logger"
 	"partisan/matcher"
 	m "partisan/models"
 	"regexp"
@@ -89,10 +90,10 @@ func UserCreate(c *gin.Context) {
 	}
 
 	// if err := emailer.SendWelcomeEmail(user.Username, user.Email); err != nil {
-	// 	fmt.Println(err)
+	// 	logger.Error.Println(err)
 	// }
 
-	fmt.Println("WARN: EMAILS ARE NOT SENDING")
+	logger.Warning.Println("EMAILS ARE NOT SENDING")
 
 	token, _ := auth.Login(user, c)
 
@@ -126,7 +127,7 @@ func UserUpdate(c *gin.Context) {
 	if birthdate != "" {
 		user.Birthdate, err = time.Parse("2006-01-02", birthdate)
 		if err != nil {
-			fmt.Println(err)
+			logger.Error.Println(err)
 		}
 	}
 

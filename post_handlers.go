@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/logger"
 	m "partisan/models"
 
 	"github.com/gin-gonic/gin"
@@ -30,7 +30,7 @@ func PostShow(c *gin.Context) {
 
 	likeCount := 0
 	if err := db.Model(m.Like{}).Where("record_type = ? AND record_id = ?", "posts", post.ID).Count(&likeCount).Error; err != nil {
-		fmt.Println(err)
+		logger.Error.Println(err)
 	}
 
 	c.HTML(http.StatusOK, "post", gin.H{

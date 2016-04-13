@@ -11,6 +11,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"partisan/logger"
 
 	"github.com/mitchellh/goamz/aws"
 	"github.com/mitchellh/goamz/s3"
@@ -65,7 +66,7 @@ func (i *ImageProcessor) Thumbnail(size int) (err error) {
 func (i *ImageProcessor) Save(path string) (string, error) {
 	newPath, err := i.saveS3(path)
 	if err != nil {
-		fmt.Println(err)
+		logger.Error.Println(err)
 	} else {
 		return newPath, nil
 	}
