@@ -157,7 +157,10 @@ func CurrentUser(c *gin.Context) (u m.User, err error) {
 }
 
 func allowedWithKey(c *gin.Context) bool {
-	allowed := []string{"partisan/api/v1.NotificationsCount"}
+	allowed := []string{
+		"partisan/api/v1.NotificationsCount",
+		"partisan/api/v1.MessageSocket",
+	}
 	for _, v := range allowed {
 		if c.HandlerName() == v {
 			return true

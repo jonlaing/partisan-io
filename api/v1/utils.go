@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 // getRecord looks in the `GET` params for a post or comment ID.
@@ -55,4 +56,25 @@ func getPage(c *gin.Context) int {
 	}
 
 	return page
+}
+
+func getUserByTicket(c *gin.Context, db *gorm.DB) (user m.User, err error) {
+	key := c.Query("key")
+	if len(key) < 1 {
+		err = &ErrNoSocketKey{}
+		return
+	}
+
+	var ticket m.SocketTicket
+	if err = db.Where("key = ?", key).Find(&ticket).Error; err != nil {
+		err = &dao.ErrNotFound{err}
+		return
+	}
+
+	if err = db.Where("id = ?", ticket.UserID).Find(&user).Error; err != nil {
+		err = &dao.ErrNotFound{err}
+		return
+	}
+
+	return
 }

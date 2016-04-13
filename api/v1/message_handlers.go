@@ -261,8 +261,13 @@ func MessageSocket(c *gin.Context) {
 
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		handleError(err, c)
-		return
+		// probably screwed up because it's coming from mobile
+		// and you can't send a token with WebSocket API
+		user, err = getUserByTicket(c, db)
+		if err != nil {
+			handleError(err, c)
+			return
+		}
 	}
 
 	tID := c.Param("thread_id")

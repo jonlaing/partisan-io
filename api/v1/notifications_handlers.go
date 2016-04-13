@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"partisan/auth"
-	"partisan/dao"
 	"partisan/db"
 	m "partisan/models"
 
@@ -88,20 +87,9 @@ func NotificationsCount(c *gin.Context) {
 	if err != nil {
 		// probably screwed up because it's coming from mobile
 		// and you can't send a token with WebSocket API
-		key := c.Query("key")
-		if len(key) < 1 {
-			handleError(&ErrNoSocketKey{}, c)
-			return
-		}
-
-		var ticket m.SocketTicket
-		if err := db.Where("key = ?", key).Find(&ticket).Error; err != nil {
-			handleError(&dao.ErrNotFound{err}, c)
-			return
-		}
-
-		if err := db.Where("id = ?", ticket.UserID).Find(&user).Error; err != nil {
-			handleError(&dao.ErrNotFound{err}, c)
+		user, err = getUserByTicket(c, db)
+		if err != nil {
+			handleError(err, c)
 			return
 		}
 	}
