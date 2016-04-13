@@ -397,7 +397,7 @@ exports['default'] = {
       domain = url.split('/')[0];
     }
 
-    var _socket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/feed/socket");
+    var _socket = new WebSocket("wss://" + domain + _Constants2['default'].APIROOT + "/feed/socket");
 
     _socket.onmessage = function (res) {
       var data = JSON.parse(res.data);
@@ -850,7 +850,7 @@ exports['default'] = {
 
     var start = function start() {
       if (!_messageSocket) {
-        _messageSocket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/messages/threads/" + threadID + "/socket");
+        _messageSocket = new WebSocket("wss://" + domain + _Constants2['default'].APIROOT + "/messages/threads/" + threadID + "/socket");
       } else {
         return;
       }
@@ -926,7 +926,7 @@ exports['default'] = {
       domain = url.split('/')[0];
     }
 
-    var _socket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/messages/count");
+    var _socket = new WebSocket("wss://" + domain + _Constants2['default'].APIROOT + "/messages/count");
 
     _socket.onmessage = function (res) {
       var data = JSON.parse(res.data);
@@ -993,7 +993,7 @@ exports['default'] = {
       domain = url.split('/')[0];
     }
 
-    var _socket = new WebSocket("ws://" + domain + _Constants2['default'].APIROOT + "/notifications/count");
+    var _socket = new WebSocket("wss://" + domain + _Constants2['default'].APIROOT + "/notifications/count");
 
     _socket.onmessage = function (res) {
       var data = JSON.parse(res.data);

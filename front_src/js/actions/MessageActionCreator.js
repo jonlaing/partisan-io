@@ -50,7 +50,7 @@ export default {
 
     var start = function() {
       if(!_messageSocket) {
-        _messageSocket = new WebSocket("ws://" + domain + Constants.APIROOT + "/messages/threads/" + threadID + "/socket");
+        _messageSocket = new WebSocket("wss://" + domain + Constants.APIROOT + "/messages/threads/" + threadID + "/socket");
       } else {
         return;
       }
@@ -129,7 +129,7 @@ export default {
         domain = url.split('/')[0];
     }
 
-    var _socket = new WebSocket("ws://" + domain + Constants.APIROOT + "/messages/count");
+    var _socket = new WebSocket("wss://" + domain + Constants.APIROOT + "/messages/count");
 
     _socket.onmessage = (res) => {
       let data = JSON.parse(res.data);

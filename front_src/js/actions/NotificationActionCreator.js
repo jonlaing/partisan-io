@@ -35,7 +35,7 @@ export default {
         domain = url.split('/')[0];
     }
 
-    var _socket = new WebSocket("ws://" + domain + Constants.APIROOT + "/notifications/count");
+    var _socket = new WebSocket("wss://" + domain + Constants.APIROOT + "/notifications/count");
 
     _socket.onmessage = (res) => {
       let data = JSON.parse(res.data);

@@ -93,7 +93,7 @@ export default {
         domain = url.split('/')[0];
     }
 
-    var _socket = new WebSocket("ws://" + domain + Constants.APIROOT + "/feed/socket");
+    var _socket = new WebSocket("wss://" + domain + Constants.APIROOT + "/feed/socket");
 
     _socket.onmessage = (res) => {
       let data = JSON.parse(res.data);
