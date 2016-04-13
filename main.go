@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
 	api "partisan/api/v1"
@@ -19,6 +20,7 @@ import (
 
 func init() {
 	api.ConfigureEmailer(emailConfig)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
 func main() {
