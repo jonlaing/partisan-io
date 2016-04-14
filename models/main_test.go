@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-var testDB gorm.DB
+var testDB *gorm.DB
 
 func init() {
 	var err error

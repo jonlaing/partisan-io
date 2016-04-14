@@ -24,7 +24,7 @@ func TestNewCreateHashtag(t *testing.T) {
 	testDB.Model(&Hashtag{}).Count(&preHCount)
 	testDB.Model(&Taxonomy{}).Count(&preTCount)
 
-	if err := CreateHashtag(&htagger, "blah", &testDB); err != nil {
+	if err := CreateHashtag(&htagger, "blah", testDB); err != nil {
 		t.Error(err)
 	} else {
 		var nowHCount, nowTCount int
@@ -48,13 +48,13 @@ func TestExistingCreateHashtag(t *testing.T) {
 	htagger1 := Post{ID: 5}
 	htagger2 := Post{ID: 6}
 
-	CreateHashtag(&htagger1, "blah", &testDB) // create it ahead of time
+	CreateHashtag(&htagger1, "blah", testDB) // create it ahead of time
 
 	var preHCount, preTCount int
 	testDB.Model(&Hashtag{}).Count(&preHCount)
 	testDB.Model(&Taxonomy{}).Count(&preTCount)
 
-	if err := CreateHashtag(&htagger2, "blah", &testDB); err != nil {
+	if err := CreateHashtag(&htagger2, "blah", testDB); err != nil {
 		t.Error(err)
 	} else {
 		var nowHCount, nowTCount int

@@ -7,6 +7,20 @@ import (
 	"github.com/jasonmoo/geo"
 )
 
+const (
+	// UTBasic is a basic user
+	UTBasic = iota
+	// UTAdvertiser is an advertiser
+	UTAdvertiser
+	// UTAdmin is an admin
+	UTAdmin
+)
+
+// UserIDer is an interface for anything that can be owned by a user
+type UserIDer interface {
+	GetUserID() uint64
+}
+
 // User the user model
 type User struct {
 	ID                 uint64               `form:"id" json:"id" gorm:"primary_key"`
@@ -30,6 +44,7 @@ type User struct {
 	PasswordHash       []byte               `json:"-"`
 	Password           string               `form:"password" json:"password" sql:"-" binding:"required"`
 	PasswordConfirm    string               `form:"password_confirm" json:"password_confirm" sql:"-" binding:"required"`
+	Type               int                  `json:"-"`
 }
 
 // GetLocation finds the latitude/longitude by postal code
@@ -44,4 +59,15 @@ func (u *User) GetLocation() error {
 	u.Longitude = address.Lng
 
 	return nil
+}
+
+// CanDelete determines whether a user is allowed to delete a record
+func (u *User) CanDelete(r UserIDer) bool {
+	if u.Type == UTAdmin {
+		// admins can always delete or modify
+		return true
+	}
+
+	// otherwise they can only delete if it's theirs
+	return r.GetUserID() == u.ID
 }

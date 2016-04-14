@@ -27,7 +27,7 @@ func TestLikeGetRecordUserID(t *testing.T) {
 
 	l := Like{RecordType: "post", RecordID: 5}
 
-	if id, err := l.GetRecordUserID(&testDB); err != nil {
+	if id, err := l.GetRecordUserID(testDB); err != nil {
 		t.Error(err)
 	} else {
 		if id != 6 {

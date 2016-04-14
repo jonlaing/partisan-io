@@ -42,7 +42,7 @@ func TestCommentGetRecordUserID(t *testing.T) {
 
 	c := Comment{PostID: 5}
 
-	if id, err := c.GetRecordUserID(&testDB); err != nil {
+	if id, err := c.GetRecordUserID(testDB); err != nil {
 		t.Error(err)
 	} else {
 		if id != 7 {
