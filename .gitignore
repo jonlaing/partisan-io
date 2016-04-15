@@ -7,3 +7,8 @@ localfiles
 partisan
 *.heap
 Dockerfile
+www_partisan_io.ca-bundle
+www_partisan_io.crt
+www_partisan_io.key
+server.csr
+server.key

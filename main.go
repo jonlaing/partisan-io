@@ -28,6 +28,7 @@ func main() {
 	store := sessions.NewCookieStore([]byte("aoisahdfasodsaoih1289y3sopa0912"))
 	r.Use(sessions.Sessions("partisan-io", store))
 	r.Use(db.DB())
+	r.Use(ForceSSL)
 	// recover from panics with a 500
 	r.Use(func(c *gin.Context) {
 		defer func() {
@@ -231,7 +232,6 @@ func main() {
 		WriteTimeout:   3 * time.Minute,
 		MaxHeaderBytes: 1 << 20,
 	}
-	// s.ListenAndServeTLS("cert.pem", "key.pem")
 	s.ListenAndServe()
 }
 
