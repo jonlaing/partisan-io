@@ -5,6 +5,7 @@ import (
 	"partisan/auth"
 	"partisan/dao"
 	"partisan/db"
+	"partisan/logger"
 	m "partisan/models"
 	"time"
 
@@ -103,6 +104,12 @@ func PostsCreate(c *gin.Context) {
 func PostsShow(c *gin.Context) {
 	db := db.GetDB(c)
 
+	currentUser, err := auth.CurrentUser(c)
+	if err != nil {
+		handleError(err, c)
+		return
+	}
+
 	id := c.Params.ByName("record_id")
 
 	var post m.Post
@@ -123,10 +130,12 @@ func PostsShow(c *gin.Context) {
 		resp.Attachment = attachments[0] // for now we're only doing one attachment
 	}
 
-	count, liked, err := dao.GetRelatedLikes(user.ID, &post, db)
+	count, liked, err := dao.GetRelatedLikes(currentUser.ID, &post, db)
 	if err == nil {
 		resp.LikeCount = count
 		resp.Liked = liked
+	} else {
+		logger.Warning.Println("something went wrong with getting likes:", err)
 	}
 
 	c.JSON(http.StatusOK, resp)
