@@ -42,6 +42,11 @@ func (i *ImageProcessor) Resize(maxWidth uint) (err error) {
 		return err
 	}
 
+	if i.origImage.Bounds().Max.X <= int(maxWidth) {
+		i.Image = i.origImage
+		return nil // don't bother resizing if it's already the right size
+	}
+
 	i.Image = resize.Resize(maxWidth, 0, i.origImage, resize.Bicubic)
 	if err != nil {
 		return err

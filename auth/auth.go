@@ -59,7 +59,7 @@ func Auth(redirectPath string) gin.HandlerFunc {
 		sess := sessions.Default(c)
 		tokn, okTok := c.Request.Header["X-Auth-Token"]
 
-		var userID int // i know, i know, but trying to cast all of these things to something sensible was killing me
+		var userID int
 
 		if okTok {
 			token, err := jwt.Parse(tokn[0], func(token *jwt.Token) (interface{}, error) {
