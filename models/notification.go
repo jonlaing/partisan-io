@@ -62,7 +62,7 @@ func (n *Notification) GetRecord(db *gorm.DB) (Notifier, error) {
 		var c Comment
 		err := db.Find(&c, n.RecordID).Error
 		return &c, err
-	case "friendships":
+	case "friendship":
 		var f Friendship
 		err := db.Find(&f, n.RecordID).Error
 		return &f, err
@@ -73,5 +73,5 @@ func (n *Notification) GetRecord(db *gorm.DB) (Notifier, error) {
 	}
 
 	var r Notifier
-	return r, errors.New("Couldn't find record, possibly unsupported record type")
+	return r, errors.New(fmt.Sprintln("Couldn't find record, possibly unsupported record type:", n.RecordType))
 }
