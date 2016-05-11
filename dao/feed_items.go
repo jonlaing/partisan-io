@@ -11,7 +11,13 @@ func GetFeedByUserIDs(currentUserID uint64, userIDs []uint64, page int, db *gorm
 	offset := (page - 1) * 25
 
 	// TODO: limit feed so a particular record only comes up once
-	if err = db.Where("user_id IN (?) AND action = ?", userIDs, "post").Order("created_at desc").Limit(25).Offset(offset).Find(&feedItems).Error; err != nil {
+	if err = db.Joins("left join flags on flags.record_id = feed_items.record_id").
+		Where("feed_items.user_id IN (?) AND feed_items.action = ?", userIDs, "post").
+		Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
+		Order("feed_items.created_at desc").
+		Limit(25).
+		Offset(offset).
+		Find(&feedItems).Error; err != nil {
 		return feedItems, &ErrNotFound{err}
 	}
 
