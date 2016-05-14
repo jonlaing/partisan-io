@@ -31,11 +31,11 @@ module.exports = {
     debug: gutil.env.type === 'dev'
   },
   html: {
-    src: 'font-src/*.html',
+    src: 'front_src/*.html',
     dest: dest
   },
   fonts: {
-    src: 'front-src/fonts/*.{ttf,woff,woff2,eot,svg}',
+    src: 'front_src/fonts/*.{ttf,woff,woff2,eot,svg}',
     dest: dest + '/fonts'
   },
   icons: {
@@ -51,7 +51,7 @@ module.exports = {
     dest: dest + '/styles/skeleton'
   },
   watch: {
-    src: 'front-src/**/*.*',
+    src: 'front_src/**/*.*',
     tasks: ['build']
   }
 };

@@ -54,7 +54,7 @@ func main() {
 		r.GET(v1Root+"/logout", api.LogoutHandler)
 
 		feed := r.Group(v1Root + "/feed")
-		feed.Use(auth.Auth("/login"))
+		feed.Use(auth.Auth())
 		{
 			feed.GET("/", api.FeedIndex)
 			feed.GET("/socket", api.FeedSocket)
@@ -62,11 +62,11 @@ func main() {
 		}
 
 		users := r.Group(v1Root + "/users")
-		users.Use(auth.Auth("/login"))
+		users.Use(auth.Auth())
 		{
 			r.POST(v1Root+"/users", api.UserCreate)
 			r.GET(v1Root+"/user/check_unique", api.UserCheckUnique)
-			r.GET(v1Root+"/username_suggest", auth.Auth("/login"), api.UsernameSuggest)
+			r.GET(v1Root+"/username_suggest", auth.Auth(), api.UsernameSuggest)
 			users.GET("/", api.UserShow) // Show Current User
 			users.PATCH("/", api.UserUpdate)
 			users.GET("/:user_id/match", api.UserMatch)
@@ -74,20 +74,20 @@ func main() {
 		}
 
 		profiles := r.Group(v1Root + "/profiles")
-		profiles.Use(auth.Auth("/login"))
+		profiles.Use(auth.Auth())
 		{
 			profiles.GET("/", api.ProfileShow)         // Show Current User's profile
 			profiles.GET("/:user_id", api.ProfileShow) // Show Other User's profile
 		}
 
 		profile := r.Group(v1Root + "/profile")
-		profile.Use(auth.Auth("/login"))
+		profile.Use(auth.Auth())
 		{
 			profile.PATCH("/", api.ProfileUpdate) // Update Current User's profile
 		}
 
 		friends := r.Group(v1Root + "/friendships")
-		friends.Use(auth.Auth("/login"))
+		friends.Use(auth.Auth())
 		{
 			friends.GET("/", api.FriendshipIndex)
 			friends.POST("/", api.FriendshipCreate)
@@ -97,19 +97,19 @@ func main() {
 		}
 
 		questions := r.Group(v1Root + "/questions")
-		questions.Use(auth.Auth("/login"))
+		questions.Use(auth.Auth())
 		{
 			questions.GET("/", api.QuestionIndex)
 		}
 
 		answers := r.Group(v1Root + "/answers")
-		answers.Use(auth.Auth("/login"))
+		answers.Use(auth.Auth())
 		{
 			answers.PATCH("/", api.AnswersUpdate)
 		}
 
 		posts := r.Group(v1Root + "/posts")
-		posts.Use(auth.Auth("/login"))
+		posts.Use(auth.Auth())
 		{
 			// posts.GET("/", api.PostsIndex)
 			posts.POST("/", api.PostsCreate)
@@ -127,7 +127,7 @@ func main() {
 		}
 
 		comments := r.Group(v1Root + "/comments")
-		comments.Use(auth.Auth("/login"))
+		comments.Use(auth.Auth())
 		{
 			comments.POST("/", api.CommentsCreate)
 			comments.GET("/:record_id/likes", api.LikeCount)
@@ -135,13 +135,13 @@ func main() {
 		}
 
 		matches := r.Group(v1Root + "/matches")
-		matches.Use(auth.Auth("/login"))
+		matches.Use(auth.Auth())
 		{
 			matches.GET("/", api.MatchesIndex)
 		}
 
 		notifications := r.Group(v1Root + "/notifications")
-		notifications.Use(auth.Auth("/login"))
+		notifications.Use(auth.Auth())
 		{
 			notifications.GET("/", api.NotificationsIndex)
 			notifications.PATCH("/", api.NotificationsRead)
@@ -149,7 +149,7 @@ func main() {
 		}
 
 		messages := r.Group(v1Root + "/messages")
-		messages.Use(auth.Auth("/login"))
+		messages.Use(auth.Auth())
 		{
 			messages.GET("/threads", api.MessageThreadIndex)
 			messages.POST("/threads", api.MessageThreadCreate)
@@ -159,32 +159,33 @@ func main() {
 			messages.GET("/threads/:thread_id/socket", api.MessageSocket)
 		}
 
-		r.GET(v1Root+"/socket_ticket", auth.Auth("/login"), api.SocketTicketCreate)
+		r.GET(v1Root+"/socket_ticket", auth.Auth(), api.SocketTicketCreate)
 
-		r.GET(v1Root+"/hashtags", auth.Auth("/login"), api.HashtagShow)
+		r.GET(v1Root+"/hashtags", auth.Auth(), api.HashtagShow)
 
-		r.POST(v1Root+"/flag", auth.Auth("/login"), api.FlagCreate)
+		r.POST(v1Root+"/flag", auth.Auth(), api.FlagCreate)
 
 	}
 
 	// HTML
 	r.HTMLRender = createMyRender()
 
-	r.GET("/profiles/:username", auth.Auth("/login"), ProfileShow)
-	r.GET("/feed", auth.Auth("/login"), FeedIndex)
-	r.GET("/profile", auth.Auth("/login"), ProfileEdit)
-	r.GET("/questions", auth.Auth("/login"), QuestionsIndex)
-	r.GET("/matches", auth.Auth("/login"), MatchesIndex)
-	r.GET("/friends", auth.Auth("/login"), FriendsIndex)
-	r.GET("/messages", auth.Auth("/login"), MessagesIndex)
-	r.GET("/comments/:record_id", auth.Auth("/login"), CommentShow)
-	r.GET("/likes/:record_id", auth.Auth("/login"), LikeShow)
-	r.GET("/posts/:record_id", auth.Auth("/login"), PostShow)
+	r.GET("/profiles/:username", auth.Auth(), ProfileShow)
+	r.GET("/feed", auth.Auth(), FeedIndex)
+	r.GET("/profile", auth.Auth(), ProfileEdit)
+	r.GET("/questions", auth.Auth(), QuestionsIndex)
+	r.GET("/matches", auth.Auth(), MatchesIndex)
+	r.GET("/friends", auth.Auth(), FriendsIndex)
+	r.GET("/messages", auth.Auth(), MessagesIndex)
+	r.GET("/comments/:record_id", auth.Auth(), CommentShow)
+	r.GET("/likes/:record_id", auth.Auth(), LikeShow)
+	r.GET("/posts/:record_id", auth.Auth(), PostShow)
 
-	r.GET("/hashtags", auth.Auth("/login"), HashtagShow)
+	r.GET("/hashtags", auth.Auth(), HashtagShow)
 
-	r.GET("/login", Login)
-	r.GET("/signup", SignUp)
+	// no login on website anymore, mobile-only
+	// r.GET("/login", Login)
+	// r.GET("/signup", SignUp)
 
 	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))
 	r.Use(static.Serve("/", static.LocalFile("front_dist", false)))

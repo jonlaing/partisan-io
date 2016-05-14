@@ -54,7 +54,7 @@ type LoginJSON struct {
 var store = sessions.NewCookieStore(securecookie.GenerateRandomKey(16))
 
 // Auth is the authentication middleware
-func Auth(redirectPath string) gin.HandlerFunc {
+func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sess := sessions.Default(c)
 		tokn, okTok := c.Request.Header["X-Auth-Token"]
@@ -90,7 +90,7 @@ func Auth(redirectPath string) gin.HandlerFunc {
 					return
 				}
 
-				c.Redirect(http.StatusFound, redirectPath)
+				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
 
