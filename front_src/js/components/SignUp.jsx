@@ -10,18 +10,8 @@ export default React.createClass({
 
   handleSubmit() {
     let email = $(ReactDOM.findDOMNode(this.refs.email)).val();
-    let username = $(ReactDOM.findDOMNode(this.refs.username)).val();
-    let postalCode = $(ReactDOM.findDOMNode(this.refs.postalCode)).val();
-    let password = $(ReactDOM.findDOMNode(this.refs.password)).val();
-    let passwordConfirm = $(ReactDOM.findDOMNode(this.refs.passwordConfirm)).val();
 
-    let user = {
-      email: email,
-      username: username,
-      postalCode: postalCode,
-      password: password,
-      passwordConfirm: passwordConfirm
-    };
+    let user = { email: email };
 
     SignUpActionCreator.signUp(user);
   },

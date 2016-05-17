@@ -1,16 +1,16 @@
-package user
+package users
 
 import "github.com/jinzhu/gorm"
 
 type UserIDerSlice interface {
-	GetUserIDs() []uint64
+	GetUserIDs() []string
 }
 
 type UserIDer interface {
-	GetUserID() uint64
+	GetUserID() string
 }
 
-func GetByID(id uint64, db *gorm.DB) (u User, err error) {
+func GetByID(id string, db *gorm.DB) (u User, err error) {
 	err = db.Where("id = ?", id).Find(&u).Error
 	return u, err
 }
@@ -44,7 +44,7 @@ func GetRelated(r UserIDer, us []User) (User, bool) {
 	return User{}, false
 }
 
-func ListByIDs(ids []uint64, db *gorm.DB) (us []User, err error) {
+func ListByIDs(ids []string, db *gorm.DB) (us []User, err error) {
 	err = db.Where("id IN (?)", ids).Find(&us).Error
 	return
 }

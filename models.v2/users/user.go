@@ -1,11 +1,14 @@
-package user
+package users
 
 import (
+	"mime/multipart"
+	"partisan/imager"
 	"partisan/matcher"
 	"regexp"
 	"time"
 
 	"github.com/jasonmoo/geo"
+	"github.com/jinzhu/gorm"
 	"github.com/nu7hatch/gouuid"
 
 	models "partisan/models.v2"
@@ -13,9 +16,24 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// LookingFor is a bitfield for determining what sort of
+// interaction the user is looking for
+type LookingFor int
+
+const (
+	// LNone is the zero value
+	LNone LookingFor = 0
+	// LFriends - the user is looking for friends
+	LFriends LookingFor = 1 << iota
+	// LLove - the user is looking for love
+	LLove
+	// LEnemies - the user is looking for enemies
+	LEnemies
+)
+
 // User the user model
 type User struct {
-	ID                 uint64               `json:"id" gorm:"primary_key"`
+	ID                 string               `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
 	Username           string               `json:"username" sql:"not null;unique_index" binding:"required"`
 	Email              string               `json:"email" sql:"not null;unique_index" binding:"required"`
 	Gender             string               `json:"gender"`
@@ -29,28 +47,31 @@ type User struct {
 	Location           string               `json:"location"`
 	Longitude          float64              `json:"-"`
 	Latitude           float64              `json:"-"`
+	LookingFor         LookingFor           `json:"looking_for"`
+	Summary            string               `json:"summary"`
 	CreatedAt          time.Time            `json:"created_at"`
 	UpdatedAt          time.Time            `json:"updated_at"`
-	APIKey             string               `json:"-"`
+	APIKey             string               `json:"-" sql:"type:uuid;default:uuid_generate_v4()"`
 	APIKeyExp          time.Time            `json:"-"`
 	PasswordHash       []byte               `json:"-"`
-	Type               int                  `json:"-"`
 }
 
 // CreatorBinding is a struct for fields neeeded to create a user via JSON Binding
 type CreatorBinding struct {
 	Username        string `json:"username" binding:"required"`
 	Email           string `json:"email" binding:"required"`
-	PostalCode      string `json:"postal_code"`
-	Password        string `json:"password"`
-	PasswordConfirm string `json:"-"`
+	PostalCode      string `json:"postal_code" binding:"required"`
+	Password        string `json:"password" binding:"required"`
+	PasswordConfirm string `json:"password_confirm" binding:"required"`
 }
 
 // UpdaterBinding is a struct for fields neeeded to update a user via JSON Binding
 type UpdaterBinding struct {
-	Gender     string    `json:"gender"`
-	Birthdate  time.Time `json:"birthdate"`
-	PostalCode string    `json:"-"`
+	Gender     string     `json:"gender"`
+	Birthdate  time.Time  `json:"birthdate"`
+	LookingFor LookingFor `json:"looking_for"`
+	Summary    string     `json:"summary"`
+	PostalCode string     `json:"postal_code"`
 }
 
 // New initializes a new User based on the CreatorBinding. Performs Validation and generates location and password.
@@ -61,7 +82,7 @@ func New(b CreatorBinding) (u User, errs models.ValidationErrors) {
 	u.Email = b.Email
 	u.PostalCode = b.PostalCode
 	u.CreatedAt = time.Now()
-	u.UpdatedAt = time.Now()
+	u.UpdatedAt = u.CreatedAt
 
 	if err := u.GeneratePasswordHash(b.Password, b.PasswordConfirm); err != nil {
 		errs["password"] = err
@@ -84,9 +105,26 @@ func New(b CreatorBinding) (u User, errs models.ValidationErrors) {
 func (u *User) Update(b UpdaterBinding) (errs models.ValidationErrors) {
 	errs = make(models.ValidationErrors)
 
-	u.Gender = b.Gender
-	u.Birthdate = b.Birthdate
-	u.PostalCode = b.PostalCode
+	if b.Gender != "" {
+		u.Gender = b.Gender
+	}
+
+	if !b.Birthdate.IsZero() {
+		u.Birthdate = b.Birthdate
+	}
+
+	if b.PostalCode != "" {
+		u.PostalCode = b.PostalCode
+	}
+
+	if b.LookingFor != LNone {
+		u.LookingFor = b.LookingFor
+	}
+
+	if b.Summary != "" {
+		u.Summary = b.Summary
+	}
+
 	u.UpdatedAt = time.Now()
 
 	if err := u.GetLocation(); err != nil {
@@ -156,15 +194,53 @@ func (u *User) UpdateAPIKey() error {
 
 // ValidateAPIKey checks if an APIKey exists, and if it's expired
 func (u *User) ValidateAPIKey() error {
-	if u.APIKey == "" {
+	if u.APIKey == new(uuid.UUID).String() || u.APIKey == "" {
 		return ErrNoAPIKey
 	}
 
-	// If more than a week has past since the User's last activity, then
+	// If more than a week has passed since the User's last activity, then
 	// this key is expired
 	if time.Now().After(u.APIKeyExp) {
 		return ErrAPIKeyExpired
 	}
+
+	return nil
+}
+
+func (u *User) DestroyAPIKey() {
+	u.APIKey = new(uuid.UUID).String()
+	u.APIKeyExp = time.Time{}
+}
+
+// CheckPassword checks the provided password with the password hash, returns an error if they don't match
+func (u User) CheckPassword(pw string) error {
+	return bcrypt.CompareHashAndPassword(u.PasswordHash, []byte(pw))
+}
+
+func (u *User) AttachAvatar(f multipart.File, db *gorm.DB) error {
+	processor := imager.ImageProcessor{File: f}
+
+	var fullPath, thumbPath string
+
+	if err := processor.Resize(1500); err != nil {
+		return err
+	}
+	fullPath, err := processor.Save("/localfiles/img")
+	if err != nil {
+		return err
+	}
+
+	// Save the thumbnail
+	if err := processor.Thumbnail(250); err != nil {
+		return err
+	}
+	thumbPath, err = processor.Save("/localfiles/img/thumb")
+	if err != nil {
+		return err
+	}
+
+	u.AvatarURL = fullPath
+	u.AvatarThumbnailURL = thumbPath
 
 	return nil
 }

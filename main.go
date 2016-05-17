@@ -4,12 +4,15 @@ import (
 	"log"
 	"net/http"
 	"os"
-	api "partisan/api/v1"
+	apiV1 "partisan/api/v1"
+	apiV2 "partisan/api/v2"
 	"partisan/auth"
 	"partisan/db"
 	"partisan/logger"
-	m "partisan/models"
+	m "partisan/models" // V1 models
 	"time"
+
+	"partisan/models.v2/users"
 
 	"github.com/DeanThompson/ginpprof"
 	"github.com/gin-gonic/contrib/renders/multitemplate"
@@ -19,7 +22,7 @@ import (
 )
 
 func init() {
-	api.ConfigureEmailer(emailConfig)
+	apiV1.ConfigureEmailer(emailConfig)
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
@@ -49,122 +52,141 @@ func main() {
 	// V1
 	{
 
-		r.POST(v1Root+"/login", api.LoginHandler)
-		r.DELETE(v1Root+"/logout", api.LogoutHandler)
-		r.GET(v1Root+"/logout", api.LogoutHandler)
+		// allow users to pre sign up before the app is released
+		r.POST(v1Root+"/presignup", apiV1.PreSignUpCreate)
+
+		r.POST(v1Root+"/login", apiV1.LoginHandler)
+		r.DELETE(v1Root+"/logout", apiV1.LogoutHandler)
+		r.GET(v1Root+"/logout", apiV1.LogoutHandler)
 
 		feed := r.Group(v1Root + "/feed")
 		feed.Use(auth.Auth())
 		{
-			feed.GET("/", api.FeedIndex)
-			feed.GET("/socket", api.FeedSocket)
-			feed.GET("/show/:user_id", api.FeedShow)
+			feed.GET("/", apiV1.FeedIndex)
+			feed.GET("/socket", apiV1.FeedSocket)
+			feed.GET("/show/:user_id", apiV1.FeedShow)
 		}
 
+		// DEPRECATED!!!!!!!!!!!
 		users := r.Group(v1Root + "/users")
+		users.Use(deprecated(v2Root + "/users"))
 		users.Use(auth.Auth())
 		{
-			r.POST(v1Root+"/users", api.UserCreate)
-			r.GET(v1Root+"/user/check_unique", api.UserCheckUnique)
-			r.GET(v1Root+"/username_suggest", auth.Auth(), api.UsernameSuggest)
-			users.GET("/", api.UserShow) // Show Current User
-			users.PATCH("/", api.UserUpdate)
-			users.GET("/:user_id/match", api.UserMatch)
-			users.POST("/avatar_upload", api.UserAvatarUpload)
+			r.POST(v1Root+"/users", apiV1.UserCreate)
+			r.GET(v1Root+"/user/check_unique", apiV1.UserCheckUnique)
+			r.GET(v1Root+"/username_suggest", auth.Auth(), apiV1.UsernameSuggest)
+			users.GET("/", apiV1.UserShow) // Show Current User
+			users.PATCH("/", apiV1.UserUpdate)
+			users.GET("/:user_id/match", apiV1.UserMatch)
+			users.POST("/avatar_upload", apiV1.UserAvatarUpload)
 		}
 
 		profiles := r.Group(v1Root + "/profiles")
 		profiles.Use(auth.Auth())
 		{
-			profiles.GET("/", api.ProfileShow)         // Show Current User's profile
-			profiles.GET("/:user_id", api.ProfileShow) // Show Other User's profile
+			profiles.GET("/", apiV1.ProfileShow)         // Show Current User's profile
+			profiles.GET("/:user_id", apiV1.ProfileShow) // Show Other User's profile
 		}
 
 		profile := r.Group(v1Root + "/profile")
 		profile.Use(auth.Auth())
 		{
-			profile.PATCH("/", api.ProfileUpdate) // Update Current User's profile
+			profile.PATCH("/", apiV1.ProfileUpdate) // Update Current User's profile
 		}
 
 		friends := r.Group(v1Root + "/friendships")
 		friends.Use(auth.Auth())
 		{
-			friends.GET("/", api.FriendshipIndex)
-			friends.POST("/", api.FriendshipCreate)
-			friends.GET("/:friend_id", api.FriendshipShow)
-			friends.PATCH("/", api.FriendshipConfirm)
-			friends.DELETE("/", api.FriendshipDestroy)
+			friends.GET("/", apiV1.FriendshipIndex)
+			friends.POST("/", apiV1.FriendshipCreate)
+			friends.GET("/:friend_id", apiV1.FriendshipShow)
+			friends.PATCH("/", apiV1.FriendshipConfirm)
+			friends.DELETE("/", apiV1.FriendshipDestroy)
 		}
 
 		questions := r.Group(v1Root + "/questions")
 		questions.Use(auth.Auth())
 		{
-			questions.GET("/", api.QuestionIndex)
+			questions.GET("/", apiV1.QuestionIndex)
 		}
 
 		answers := r.Group(v1Root + "/answers")
 		answers.Use(auth.Auth())
 		{
-			answers.PATCH("/", api.AnswersUpdate)
+			answers.PATCH("/", apiV1.AnswersUpdate)
 		}
 
 		posts := r.Group(v1Root + "/posts")
 		posts.Use(auth.Auth())
 		{
-			// posts.GET("/", api.PostsIndex)
-			posts.POST("/", api.PostsCreate)
-			posts.GET("/:record_id", api.PostsShow)
-			posts.PATCH("/:id", api.PostsUpdate)
-			posts.DELETE("/:id", api.PostsDestroy)
-			posts.GET("/:record_id/likes", api.LikeCount)
-			posts.POST("/:record_id/likes", api.LikeCreate)
+			// posts.GET("/", apiV1.PostsIndex)
+			posts.POST("/", apiV1.PostsCreate)
+			posts.GET("/:record_id", apiV1.PostsShow)
+			posts.PATCH("/:id", apiV1.PostsUpdate)
+			posts.DELETE("/:id", apiV1.PostsDestroy)
+			posts.GET("/:record_id/likes", apiV1.LikeCount)
+			posts.POST("/:record_id/likes", apiV1.LikeCreate)
 
-			posts.GET("/:record_id/comments", api.CommentsIndex)
-			posts.GET("/:record_id/comments/count", api.CommentsCount)
+			posts.GET("/:record_id/comments", apiV1.CommentsIndex)
+			posts.GET("/:record_id/comments/count", apiV1.CommentsCount)
 
-			posts.GET("/:record_id/attachments", api.ImageAttachmentIndex)
-			// posts.POST("/:record_id/attachments", api.ImageAttachmentCreate)
+			posts.GET("/:record_id/attachments", apiV1.ImageAttachmentIndex)
+			// posts.POST("/:record_id/attachments", apiV1.ImageAttachmentCreate)
 		}
 
 		comments := r.Group(v1Root + "/comments")
 		comments.Use(auth.Auth())
 		{
-			comments.POST("/", api.CommentsCreate)
-			comments.GET("/:record_id/likes", api.LikeCount)
-			comments.POST("/:record_id/likes", api.LikeCreate)
+			comments.POST("/", apiV1.CommentsCreate)
+			comments.GET("/:record_id/likes", apiV1.LikeCount)
+			comments.POST("/:record_id/likes", apiV1.LikeCreate)
 		}
 
 		matches := r.Group(v1Root + "/matches")
 		matches.Use(auth.Auth())
 		{
-			matches.GET("/", api.MatchesIndex)
+			matches.GET("/", apiV1.MatchesIndex)
 		}
 
 		notifications := r.Group(v1Root + "/notifications")
 		notifications.Use(auth.Auth())
 		{
-			notifications.GET("/", api.NotificationsIndex)
-			notifications.PATCH("/", api.NotificationsRead)
-			notifications.GET("/count", api.NotificationsCount)
+			notifications.GET("/", apiV1.NotificationsIndex)
+			notifications.PATCH("/", apiV1.NotificationsRead)
+			notifications.GET("/count", apiV1.NotificationsCount)
 		}
 
 		messages := r.Group(v1Root + "/messages")
 		messages.Use(auth.Auth())
 		{
-			messages.GET("/threads", api.MessageThreadIndex)
-			messages.POST("/threads", api.MessageThreadCreate)
-			messages.GET("/count", api.MessageCount)
-			messages.GET("/threads/:thread_id", api.MessageIndex)
-			messages.POST("/threads/:thread_id", api.MessageCreate)
-			messages.GET("/threads/:thread_id/socket", api.MessageSocket)
+			messages.GET("/threads", apiV1.MessageThreadIndex)
+			messages.POST("/threads", apiV1.MessageThreadCreate)
+			messages.GET("/count", apiV1.MessageCount)
+			messages.GET("/threads/:thread_id", apiV1.MessageIndex)
+			messages.POST("/threads/:thread_id", apiV1.MessageCreate)
+			messages.GET("/threads/:thread_id/socket", apiV1.MessageSocket)
 		}
 
-		r.GET(v1Root+"/socket_ticket", auth.Auth(), api.SocketTicketCreate)
+		r.GET(v1Root+"/socket_ticket", auth.Auth(), apiV1.SocketTicketCreate)
 
-		r.GET(v1Root+"/hashtags", auth.Auth(), api.HashtagShow)
+		r.GET(v1Root+"/hashtags", auth.Auth(), apiV1.HashtagShow)
 
-		r.POST(v1Root+"/flag", auth.Auth(), api.FlagCreate)
+		r.POST(v1Root+"/flag", auth.Auth(), apiV1.FlagCreate)
 
+	}
+
+	// V2
+	v2Root := "api/v2"
+	{
+		users := r.Group(v2Root + "/users")
+		users.Use(auth.Auth())
+		{
+			r.POST(v2Root+"/users", apiV2.UserCreate)
+			r.GET(v2Root+"/username_suggest", auth.Auth(), apiV2.UsernameSuggest)
+			users.GET("/", apiV2.UserShow) // Show Current User
+			users.PATCH("/", apiV2.UserUpdate)
+			users.POST("/avatar_upload", apiV2.UserAvatarUpload)
+		}
 	}
 
 	// HTML
@@ -205,7 +227,7 @@ func main() {
 	// DON'T DO THIS IN PROD!!!
 	db.Database.AutoMigrate(
 		&m.Post{},
-		&m.User{},
+		&users.User{},
 		&m.Friendship{},
 		&m.FeedItem{},
 		&m.Like{},
@@ -254,4 +276,15 @@ func createMyRender() multitemplate.Render {
 	r.AddFromFiles("signup", base, root+"/sign-up.html")
 
 	return r
+}
+
+func deprecated(newPath string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if newPath != "" {
+			c.AbortWithError(http.StatusBadRequest, fmt.Errorln("This endpoint is deprecated. Please see:", newPath))
+			return
+		}
+
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorln("This endpoint is deprecated."))
+	}
 }

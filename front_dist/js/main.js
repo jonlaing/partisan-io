@@ -5824,18 +5824,8 @@ exports['default'] = _react2['default'].createClass({
 
   handleSubmit: function handleSubmit() {
     var email = $(_reactDom2['default'].findDOMNode(this.refs.email)).val();
-    var username = $(_reactDom2['default'].findDOMNode(this.refs.username)).val();
-    var postalCode = $(_reactDom2['default'].findDOMNode(this.refs.postalCode)).val();
-    var password = $(_reactDom2['default'].findDOMNode(this.refs.password)).val();
-    var passwordConfirm = $(_reactDom2['default'].findDOMNode(this.refs.passwordConfirm)).val();
 
-    var user = {
-      email: email,
-      username: username,
-      postalCode: postalCode,
-      password: password,
-      passwordConfirm: passwordConfirm
-    };
+    var user = { email: email };
 
     _actionsSignUpActionCreator2['default'].signUp(user);
   },

@@ -24,6 +24,10 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	if err := Database.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";").Error; err != nil {
+		panic(err)
+	}
 }
 
 // DB is middleware to get the database
