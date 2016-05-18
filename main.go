@@ -187,6 +187,24 @@ func main() {
 			users.PATCH("/", apiV2.UserUpdate)
 			users.POST("/avatar_upload", apiV2.UserAvatarUpload)
 		}
+
+		// posts := r.Group(v2Root + "/posts")
+		// posts.Use(auth.Auth())
+		// {
+		// 	posts.GET("/", apiV2.PostsIndex)
+		// 	posts.POST("/", apiV2.PostsCreate)
+		// 	posts.GET("/:record_id", apiV2.PostsShow)
+		// 	posts.PATCH("/:id", apiV2.PostsUpdate)
+		// 	posts.DELETE("/:id", apiV2.PostsDestroy)
+		// 	posts.GET("/:record_id/likes", apiV2.LikeCount)
+		// 	posts.POST("/:record_id/likes", apiV2.LikeCreate)
+
+		// 	posts.GET("/:record_id/comments", apiV2.CommentsIndex)
+		// 	posts.GET("/:record_id/comments/count", apiV2.CommentsCount)
+
+		// 	posts.GET("/:record_id/attachments", apiV2.ImageAttachmentIndex)
+		// 	// posts.POST("/:record_id/attachments", apiV1.ImageAttachmentCreate)
+		// }
 	}
 
 	// HTML

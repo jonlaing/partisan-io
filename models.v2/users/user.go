@@ -2,13 +2,13 @@ package users
 
 import (
 	"mime/multipart"
+	"os"
 	"partisan/imager"
 	"partisan/matcher"
 	"regexp"
 	"time"
 
 	"github.com/jasonmoo/geo"
-	"github.com/jinzhu/gorm"
 	"github.com/nu7hatch/gouuid"
 
 	models "partisan/models.v2"
@@ -217,15 +217,26 @@ func (u User) CheckPassword(pw string) error {
 	return bcrypt.CompareHashAndPassword(u.PasswordHash, []byte(pw))
 }
 
-func (u *User) AttachAvatar(f multipart.File, db *gorm.DB) error {
-	processor := imager.ImageProcessor{File: f}
-
+func (u *User) AttachAvatar(f multipart.File) error {
+	var err error
 	var fullPath, thumbPath string
+	isS3 := false
+
+	if len(os.Getenv("AWS_ACCESS_KEY_ID")) > 0 {
+		isS3 = true
+	}
+
+	processor := imager.ImageProcessor{File: f}
 
 	if err := processor.Resize(1500); err != nil {
 		return err
 	}
-	fullPath, err := processor.Save("/localfiles/img")
+
+	if isS3 {
+		fullPath, err = processor.Save("/img")
+	} else {
+		fullPath, err = processor.Save("/localfiles/img")
+	}
 	if err != nil {
 		return err
 	}
@@ -234,7 +245,12 @@ func (u *User) AttachAvatar(f multipart.File, db *gorm.DB) error {
 	if err := processor.Thumbnail(250); err != nil {
 		return err
 	}
-	thumbPath, err = processor.Save("/localfiles/img/thumb")
+
+	if isS3 {
+		thumbPath, err = processor.Save("/img/thumb")
+	} else {
+		thumbPath, err = processor.Save("/localfiles/img/thumb")
+	}
 	if err != nil {
 		return err
 	}
