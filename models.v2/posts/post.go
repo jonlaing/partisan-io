@@ -37,11 +37,10 @@ type Posts []Post
 
 // CreatorBinding is a struct to use for binding JSON requests to a new Post.
 type CreatorBinding struct {
-	UserID     string     `json:"user_id" binding:"required"`
-	ParentType ParentType `json:"parent_type" binding:"required"`
-	ParentID   string     `json:"parent_id" binding:"required"`
-	Body       string     `json:"body"`
-	Action     Action     `json:"action" binding:"required"`
+	ParentType ParentType `form:"parent_type" json:"parent_type" binding:"required"`
+	ParentID   string     `form:"parent_id" json:"parent_id" binding:"required"`
+	Body       string     `form:"body" json:"body"`
+	Action     Action     `form:"action" json:"action" binding:"required"`
 }
 
 // UpdaterBinding is a struct to use for binding JSON requests to update a Post.
@@ -52,8 +51,7 @@ type UpdaterBinding struct {
 // New uses a CreatorBinding to initialize a new Post and validate it. It does not
 // save the Post to the database. This should always be used rather than creating a
 // Post manually from user input.
-func New(b CreatorBinding) (p Post, errs models.ValidationErrors) {
-	p.UserID = b.UserID
+func New(userID string, b CreatorBinding) (p Post, errs models.ValidationErrors) {
 	if b.ParentID != "" {
 		p.ParentID.String = b.ParentID
 		p.ParentID.Valid = true
@@ -63,6 +61,7 @@ func New(b CreatorBinding) (p Post, errs models.ValidationErrors) {
 		p.Body = b.Body
 	}
 
+	p.UserID = userID
 	p.Action = b.Action
 	p.CreatedAt = time.Now()
 	p.UpdatedAt = time.Now()
@@ -109,12 +108,12 @@ func (p Post) Validate() models.ValidationErrors {
 	errs := make(models.ValidationErrors)
 
 	if _, err := uuid.ParseHex(p.UserID); err != nil {
-		errs["user_id"] = ErrUUIDFormat
+		errs["user_id"] = models.ErrUUIDFormat
 	}
 
 	if p.ParentID.Valid {
 		if _, err := uuid.ParseHex(p.ParentID.String); err != nil {
-			errs["parent_id"] = ErrUUIDFormat
+			errs["parent_id"] = models.ErrUUIDFormat
 		}
 	}
 
