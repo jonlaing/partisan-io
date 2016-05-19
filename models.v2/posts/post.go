@@ -81,6 +81,8 @@ func (p *Post) Update(userID string, b UpdaterBinding) models.ValidationErrors {
 	if p.Action != ALike {
 		p.Body = b.Body
 	}
+	p.UpdatedAt = time.Now()
+
 	errs := p.Validate()
 
 	if !p.CanUpdate(userID) {

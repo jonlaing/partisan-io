@@ -115,6 +115,16 @@ func (p *Post) GetLikeCount(userID string, db *gorm.DB) error {
 	return err
 }
 
+func (p *Post) GetComments(userID string, db *gorm.DB) (cs Posts, err error) {
+	err = db.Where("parent_id = ?", p.ID).
+		Where("action = ?", AComment).
+		Find(&c).Error
+
+	cs.GetRelations(userID, db)
+
+	return
+}
+
 func (p *Post) GetCommentCount(db *gorm.DB) error {
 	return db.Table("posts").
 		Where("parent_id = ?", p.ID).
