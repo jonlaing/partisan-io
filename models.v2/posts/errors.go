@@ -13,4 +13,5 @@ var (
 	ErrScanAction     = errors.New("Could not scan action")
 	ErrScanParentType = errors.New("Could not scan parent type")
 	ErrParentQuery    = errors.New("Cannot get this post's parent in this way. This only works for comments and likes")
+	ErrCannotUpdate   = errors.New("You do not have the permissions to update this record")
 )

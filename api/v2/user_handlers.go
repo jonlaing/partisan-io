@@ -93,7 +93,7 @@ func UserAvatarUpload(c *gin.Context) {
 	}
 	defer tmpFile.Close()
 
-	if err := user.AttachAvatar(tmpFile, db); err != nil {
+	if err := user.AttachAvatar(tmpFile); err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}

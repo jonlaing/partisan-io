@@ -5,39 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
-
-	"partisan/models.v2/users"
 )
-
-func TestMain(m *testing.M) {
-	defer testDB.Exec("DELETE FROM users;")
-
-	uBinding := users.CreatorBinding{
-		Username:        "user",
-		Email:           "user@email.com",
-		PostalCode:      "11233",
-		Password:        "password",
-		PasswordConfirm: "password",
-	}
-
-	testUser, errs := users.New(uBinding)
-	if len(errs) > 0 {
-		panic(errs)
-	}
-
-	testUser.GenAPIKey()
-
-	if err := testDB.Save(&testUser).Error; err != nil {
-		panic(err)
-	}
-
-	testRouter.POST("/users", UserCreate)
-	testRouter.GET("/users", login(&testUser), UserShow) // Show Current User
-	testRouter.PATCH("/users", login(&testUser), UserUpdate)
-	// TODO: test this one...
-	// testRouter.POST("/users/avatar_upload", login(&testUser), UserAvatarUpload)
-	m.Run()
-}
 
 type userHandlerTestCase struct {
 	method         string

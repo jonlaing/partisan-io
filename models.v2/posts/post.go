@@ -37,32 +37,35 @@ type Posts []Post
 
 // CreatorBinding is a struct to use for binding JSON requests to a new Post.
 type CreatorBinding struct {
-	ParentType ParentType `form:"parent_type" json:"parent_type" binding:"required"`
-	ParentID   string     `form:"parent_id" json:"parent_id" binding:"required"`
-	Body       string     `form:"body" json:"body"`
-	Action     Action     `form:"action" json:"action" binding:"required"`
+	ParentType string `form:"parent_type" json:"parent_type"`
+	ParentID   string `form:"parent_id" json:"parent_id"`
+	Body       string `form:"body" json:"body"`
+	Action     string `form:"action" json:"action" binding:"required"`
 }
 
 // UpdaterBinding is a struct to use for binding JSON requests to update a Post.
 type UpdaterBinding struct {
-	Body string `json:"body"`
+	Body string `json:"body" binding:"required"`
 }
 
 // New uses a CreatorBinding to initialize a new Post and validate it. It does not
 // save the Post to the database. This should always be used rather than creating a
 // Post manually from user input.
 func New(userID string, b CreatorBinding) (p Post, errs models.ValidationErrors) {
+	action := Action(b.Action)
+	parentType := ParentType(b.ParentType)
+
 	if b.ParentID != "" {
 		p.ParentID.String = b.ParentID
 		p.ParentID.Valid = true
-		p.ParentType = b.ParentType
+		p.ParentType = parentType
 	}
-	if b.Action != ALike {
+	if action != ALike {
 		p.Body = b.Body
 	}
 
 	p.UserID = userID
-	p.Action = b.Action
+	p.Action = action
 	p.CreatedAt = time.Now()
 	p.UpdatedAt = time.Now()
 
@@ -74,11 +77,23 @@ func New(userID string, b CreatorBinding) (p Post, errs models.ValidationErrors)
 // Update uses am UpdaterBinding to update an existing Post and validate it.
 // It does not save the Post to the databse. This should always be used rather
 // than updating a Post manually from user input.
-func (p *Post) Update(b UpdaterBinding) models.ValidationErrors {
+func (p *Post) Update(userID string, b UpdaterBinding) models.ValidationErrors {
 	if p.Action != ALike {
 		p.Body = b.Body
 	}
-	return p.Validate()
+	errs := p.Validate()
+
+	if !p.CanUpdate(userID) {
+		errs["unauthorized"] = ErrCannotUpdate
+	}
+
+	return errs
+}
+
+// CanUpdate is a helper function to determine wheter a user should be able to
+// update a Post
+func (p Post) CanUpdate(userID string) bool {
+	return userID == p.UserID
 }
 
 // CanDelete is a helper function to determine wheter a user should be able to

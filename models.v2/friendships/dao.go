@@ -21,7 +21,7 @@ func GetIDsByUserID(userID string, db *gorm.DB) (uuids []string, err error) {
 		return
 	}
 
-	uuids = append(fids, uids...)
+	uuids = removeDuplicates(append(fids, uids...))
 	return
 }
 
@@ -44,6 +44,18 @@ func GetConfirmedIDsByUserID(userID string, db *gorm.DB) (uuids []string, err er
 		return
 	}
 
-	uuids = append(fids, uids...)
+	uuids = removeDuplicates(append(fids, uids...))
+	return
+}
+
+func removeDuplicates(in []string) (out []string) {
+	found := make(map[string]bool)
+	for _, s := range in {
+		if _, ok := found[s]; !ok {
+			found[s] = true
+			out = append(out, s)
+		}
+	}
+
 	return
 }
