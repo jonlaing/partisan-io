@@ -10,7 +10,9 @@ import (
 
 func GetByID(id string, userID string, db *gorm.DB) (p Post, err error) {
 	err = db.Where("id = ?", id).Find(&p).Error
-	p.GetCommentCount(db)
+	if p.Action == APost {
+		p.GetCommentCount(db)
+	}
 	p.GetLikeCount(userID, db)
 	return
 }

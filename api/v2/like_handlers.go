@@ -20,7 +20,7 @@ func LikeCreate(c *gin.Context) {
 		return
 	}
 
-	id := c.Params("record_id")
+	id := c.Param("record_id")
 	post, err := posts.GetByID(id, user.ID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
@@ -33,16 +33,13 @@ func LikeCreate(c *gin.Context) {
 		return
 	}
 
-	// If this is a new like, create it
-	var binding CreatorBinding
-	if err := c.BindJSON(&binding); err != nil {
-		c.AbortWithError(http.StatusNotAcceptable)
-		return
+	// If this is a new like, create it. Really don't need too much from
+	// the user, so build the binding manually
+	binding := posts.CreatorBinding{
+		Action:     string(posts.ALike),
+		ParentType: string(post.PostParentType()),
+		ParentID:   post.ID,
 	}
-
-	binding.Action = string(posts.ALike)
-	binding.ParentType = string(post.PostParentType())
-	binding.ParentID = post.ID
 
 	like, errs := posts.New(user.ID, binding)
 	if len(errs) > 0 {
@@ -58,19 +55,19 @@ func LikeCreate(c *gin.Context) {
 	post.LikeCount++
 	post.Liked = true
 
-	c.JSON(http.StatusOK, gin.H{string(post.Action): post})
+	c.JSON(http.StatusCreated, gin.H{string(post.Action): post})
 }
 
 func deleteLike(post *posts.Post, userID string, c *gin.Context, db *gorm.DB) {
-	like, err := post.GetLikeByUserID(user.ID, db)
+	like, err := post.GetLikeByUserID(userID, db)
 	if err != nil {
-		c.AbortWithError(http.StatusNotAcceptable)
+		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
 
-	if post.CanDelete(user.ID, db) {
-		if err := db.Delete(&post).Error; err != nil {
-			c.AbortWithError(http.StatusNotAcceptable)
+	if like.CanDelete(userID, db) {
+		if err := db.Delete(&like).Error; err != nil {
+			c.AbortWithError(http.StatusNotAcceptable, err)
 			return
 		}
 

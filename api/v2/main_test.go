@@ -21,6 +21,7 @@ var testDB *gorm.DB
 var testRouter *gin.Engine
 var userCount = 0
 var testPostID, unownedTestPostID string
+var testLikePostID string
 
 func init() {
 	var err error
@@ -45,6 +46,7 @@ func TestMain(m *testing.M) {
 	defer testDB.Exec("DELETE FROM posts;")
 	initUserTests()
 	testPostID, unownedTestPostID = initPostTests()
+	testLikePostID = initLikeTests()
 	m.Run()
 }
 
@@ -168,4 +170,26 @@ func initPostTests() (string, string) {
 	testRouter.DELETE("/posts/:record_id", login(&user), PostDestroy)
 
 	return testPost.ID, unownedPost.ID
+}
+
+func initLikeTests() string {
+	user := createTestUser()
+
+	pBinding := posts.CreatorBinding{
+		Body:   "my post",
+		Action: posts.APost,
+	}
+
+	testLikePost, errs := posts.New(user.ID, pBinding)
+	if len(errs) > 0 {
+		panic(errs)
+	}
+
+	if err := testDB.Save(&testLikePost).Error; err != nil {
+		panic(err)
+	}
+
+	testRouter.POST("/posts/:record_id/like", login(&user), LikeCreate)
+
+	return testLikePost.ID
 }

@@ -44,8 +44,14 @@ func PostIndex(c *gin.Context) {
 func PostShow(c *gin.Context) {
 	db := db.GetDB(c)
 
+	user, err := auth.CurrentUser(c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
 	id := c.Param("record_id")
-	post, err := posts.GetByID(id, db)
+	post, err := posts.GetByID(id, user.ID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -95,7 +101,7 @@ func PostUpdate(c *gin.Context) {
 	}
 
 	id := c.Param("record_id")
-	post, err := posts.GetByID(id, db)
+	post, err := posts.GetByID(id, user.ID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -133,7 +139,7 @@ func PostDestroy(c *gin.Context) {
 	}
 
 	id := c.Param("record_id")
-	post, err := posts.GetByID(id, db)
+	post, err := posts.GetByID(id, user.ID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
