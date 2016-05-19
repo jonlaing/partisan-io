@@ -90,6 +90,18 @@ func (p *Post) Update(userID string, b UpdaterBinding) models.ValidationErrors {
 	return errs
 }
 
+// PostParentType satisfies the Parenter interface
+func (p *Post) PostParentType() ParentType {
+	switch p.Action {
+	case APost:
+		return PTPost
+	case AComment:
+		return PTComment
+	default:
+		return ParentType("") // should fail in validation anyway
+	}
+}
+
 // CanUpdate is a helper function to determine wheter a user should be able to
 // update a Post
 func (p Post) CanUpdate(userID string) bool {

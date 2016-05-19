@@ -92,7 +92,7 @@ func TestGetByID(t *testing.T) {
 		return
 	}
 
-	post, err := GetByID(id, testdb)
+	post, err := GetByID(id, userID, testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return
@@ -193,6 +193,45 @@ func TestGetChildren(t *testing.T) {
 
 	if !foundLike {
 		t.Error("Expected to find like:", like.ID, "in list")
+	}
+}
+
+func TestGetLikeByUserID(t *testing.T) {
+	l, err := p.GetLikeByUserID(userID, testdb)
+	if err != nil {
+		t.Error("Unexpected error")
+	}
+
+	if l.ID != like.ID {
+		t.Error("Expected likes to match")
+	}
+}
+
+func TestGetLikeCount(t *testing.T) {
+	err := p.GetLikeCount(userID, testdb)
+	if err != nil {
+		t.Error("Unexpected error")
+	}
+
+	if p.LikeCount != 1 {
+		t.Error("Expected like count to be 1, got:", p.LikeCount)
+	}
+
+	if !p.Liked {
+		t.Error("Expected post to be liked")
+	}
+
+	err = comment.GetLikeCount(userID, testdb)
+	if err != nil {
+		t.Error("Unexpected error")
+	}
+
+	if comment.LikeCount != 0 {
+		t.Error("Expected like count to be 0, got:", comment.LikeCount)
+	}
+
+	if comment.Liked {
+		t.Error("Expected comment not to be liked")
 	}
 }
 

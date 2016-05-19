@@ -8,8 +8,10 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func GetByID(id string, db *gorm.DB) (p Post, err error) {
+func GetByID(id string, userID string, db *gorm.DB) (p Post, err error) {
 	err = db.Where("id = ?", id).Find(&p).Error
+	p.GetCommentCount(db)
+	p.GetLikeCount(userID, db)
 	return
 }
 
@@ -84,10 +86,37 @@ func (p Post) GetChildren(currentUserID string, db *gorm.DB) (c Posts, err error
 	return
 }
 
+func (p *Post) GetLikeByUserID(userID string, db *gorm.DB) (l Post, err error) {
+	err = db.Where("parent_id = ?", p.ID).
+		Where("user_id = ?", userID).
+		Where("action = ?", ALike).
+		Find(&l).Error
+
+	return
+}
+
+func (p *Post) GetLikeCount(userID string, db *gorm.DB) error {
+	var likes []Post
+	err := db.Table("posts").
+		Where("parent_id = ?", p.ID).
+		Where("action = ?", ALike).
+		Find(&likes).Error
+
+	p.LikeCount = len(likes)
+
+	for _, l := range likes {
+		if l.UserID == userID {
+			p.Liked = true
+		}
+	}
+
+	return err
+}
+
 func (p *Post) GetCommentCount(db *gorm.DB) error {
 	return db.Table("posts").
 		Where("parent_id = ?", p.ID).
-		Where("action = ?", PTComment).
+		Where("action = ?", AComment).
 		Count(&p.CommentCount).Error
 }
 

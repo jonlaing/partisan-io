@@ -2,6 +2,11 @@ package posts
 
 import "database/sql/driver"
 
+// Parenter is an interface for objects that can be parents of posts
+type Parenter interface {
+	PostParentType() ParentType
+}
+
 type Action string
 
 const (

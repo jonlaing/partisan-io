@@ -21,12 +21,12 @@ var tests = []validationTest{
 	{
 		post:           Post{UserID: "not a uuid", Action: APost},
 		errorLength:    1,
-		errorsExpected: models.ValidationErrors{"user_id": ErrUUIDFormat},
+		errorsExpected: models.ValidationErrors{"user_id": models.ErrUUIDFormat},
 	},
 	{
 		post:           Post{UserID: testuuid.String(), ParentID: sql.NullString{"not a uuid", true}, ParentType: PTPost, Action: AComment},
 		errorLength:    1,
-		errorsExpected: models.ValidationErrors{"parent_id": ErrUUIDFormat},
+		errorsExpected: models.ValidationErrors{"parent_id": models.ErrUUIDFormat},
 	},
 	{
 		post:           Post{UserID: testuuid.String(), ParentID: sql.NullString{testuuid.String(), true}, Action: APost, ParentType: PTPost},
