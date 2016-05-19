@@ -76,7 +76,7 @@ func CommentCreate(c *gin.Context) {
 	binding.ParentType = string(post.PostParentType())
 	binding.Action = string(posts.AComment)
 
-	comment, errs := posts.New(&binding)
+	comment, errs := posts.New(user.ID, binding)
 	if len(errs) > 0 {
 		c.AbortWithError(http.StatusNotAcceptable, errs)
 		return

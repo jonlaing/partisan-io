@@ -118,7 +118,7 @@ func (p *Post) GetLikeCount(userID string, db *gorm.DB) error {
 func (p *Post) GetComments(userID string, db *gorm.DB) (cs Posts, err error) {
 	err = db.Where("parent_id = ?", p.ID).
 		Where("action = ?", AComment).
-		Find(&c).Error
+		Find(&cs).Error
 
 	cs.GetRelations(userID, db)
 

@@ -22,6 +22,7 @@ var testRouter *gin.Engine
 var userCount = 0
 var testPostID, unownedTestPostID string
 var testLikePostID string
+var testCommentPostID, testCommentID string
 
 func init() {
 	var err error
@@ -47,6 +48,7 @@ func TestMain(m *testing.M) {
 	initUserTests()
 	testPostID, unownedTestPostID = initPostTests()
 	testLikePostID = initLikeTests()
+	testCommentPostID, testCommentID = initCommentTests()
 	m.Run()
 }
 
@@ -192,4 +194,43 @@ func initLikeTests() string {
 	testRouter.POST("/posts/:record_id/like", login(&user), LikeCreate)
 
 	return testLikePost.ID
+}
+
+func initCommentTests() (string, string) {
+	user := createTestUser()
+
+	pBinding := posts.CreatorBinding{
+		Body:   "my post",
+		Action: posts.APost,
+	}
+
+	testPost, errs := posts.New(user.ID, pBinding)
+	if len(errs) > 0 {
+		panic(errs)
+	}
+
+	if err := testDB.Save(&testPost).Error; err != nil {
+		panic(err)
+	}
+
+	cBinding := posts.CreatorBinding{
+		ParentID:   testPost.ID,
+		ParentType: string(testPost.PostParentType()),
+		Body:       "a comment",
+		Action:     posts.AComment,
+	}
+
+	comment, errs := posts.New(user.ID, cBinding)
+	if len(errs) > 0 {
+		panic(errs)
+	}
+
+	if err := testDB.Save(&comment).Error; err != nil {
+		panic(err)
+	}
+
+	testRouter.GET("/posts/:record_id/comments", login(&user), CommentIndex)
+	testRouter.POST("/posts/:record_id/comments", login(&user), CommentCreate)
+
+	return testPost.ID, comment.ID
 }
