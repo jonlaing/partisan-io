@@ -2,9 +2,38 @@ package friendships
 
 import "github.com/jinzhu/gorm"
 
-func GetByUserID(userID string, db *gorm.DB) (fs []Friendship, err error) {
+func ListByUserID(userID string, db *gorm.DB) (fs Friendships, err error) {
 	err = db.Where("user_id = ? OR friend_id = ?", userID, userID).Find(&fs).Error
+	// don't collect the users here because we do that in the handler
 	return
+}
+
+func GetByUserIDs(userID, friendID string, db *gorm.DB) (f Friendship, err error) {
+	if err = db.Where("user_id = ? AND friend_id = ?", userID, friendID).Find(&f).Error; err != nil {
+		// if you don't find it the first way, try the other way
+		if err = db.Where("user_id = ? AND friend_id = ?", friendID, userID).Find(&f).Error; err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+func Exists(userID, friendID string, db *gorm.DB) bool {
+	var count int
+	if err := db.Table("friendships").
+		Where("user_id = ? AND friend_id = ?", userID, friendID).
+		Count(&count).Error; err == nil && count > 0 {
+		return true
+	}
+
+	if err := db.Table("friendships").
+		Where("user_id = ? AND friend_id = ?", friendID, userID).
+		Count(&count).Error; err == nil && count > 0 {
+		return true
+	}
+
+	return false
 }
 
 func GetIDsByUserID(userID string, db *gorm.DB) (uuids []string, err error) {
@@ -25,8 +54,9 @@ func GetIDsByUserID(userID string, db *gorm.DB) (uuids []string, err error) {
 	return
 }
 
-func GetConfirmedByUserID(userID string, db *gorm.DB) (fs []Friendship, err error) {
+func GetConfirmedByUserID(userID string, db *gorm.DB) (fs Friendships, err error) {
 	err = db.Where("user_id = ? OR friend_id = ?", userID, userID).Where("confirmed = ?", true).Find(&fs).Error
+
 	return
 }
 
