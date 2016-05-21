@@ -7,6 +7,7 @@ import (
 	"github.com/nu7hatch/gouuid"
 
 	models "partisan/models.v2"
+	"partisan/models.v2/notifications"
 	"partisan/models.v2/users"
 )
 
@@ -67,22 +68,22 @@ func (f Friendship) Validate() (errs models.ValidationErrors) {
 	return errs
 }
 
-func (f Friendship) CanDelete(userID) bool {
+func (f Friendship) CanDelete(userID string) bool {
 	return f.UserID == userID || f.FriendID == userID
 }
 
 func (f Friendship) GetID() sql.NullString {
 	if f.Confirmed {
-		return sql.NullString{f.ToID, true}
+		return sql.NullString{f.FriendID, true}
 	}
 
 	return sql.NullString{f.UserID, true}
 }
 
 func (f Friendship) GetAction() string {
-	if Confirmed {
-		return string(AFriendAccept)
+	if f.Confirmed {
+		return string(notifications.AFriendAccept)
 	}
 
-	return string(AFriendRequest)
+	return string(notifications.AFriendRequest)
 }

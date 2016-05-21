@@ -89,7 +89,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetByUserID(t *testing.T) {
-	fs, err := GetByUserID(userID, testdb)
+	fs, err := ListByUserID(userID, testdb)
 	if err != nil {
 		t.Error("Unexpected error")
 	}

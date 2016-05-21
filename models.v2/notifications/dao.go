@@ -25,7 +25,7 @@ func (ns *Notifications) CollectUsers(db *gorm.DB) {
 
 	for i := range notifs {
 		for _, u := range us {
-			if u.ID == notifs[i] {
+			if u.ID == notifs[i].UserID {
 				notifs[i].User = u
 			}
 		}

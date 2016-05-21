@@ -37,7 +37,7 @@ func New(userID, toID string, r Notifier) (n Notification, errs models.Validatio
 		RecordID:  r.GetID(),
 		Action:    Action(r.GetAction()),
 		CreatedAt: time.Now(),
-		UpdatedAt: r.CreatedAt,
+		UpdatedAt: time.Now(),
 	}
 
 	errs = n.Validate()
@@ -47,15 +47,15 @@ func New(userID, toID string, r Notifier) (n Notification, errs models.Validatio
 func (n *Notification) Validate() (errs models.ValidationErrors) {
 	errs = make(models.ValidationErrors)
 
-	if _, err := uuid.ParseHex(f.UserID); err != nil {
+	if _, err := uuid.ParseHex(n.UserID); err != nil {
 		errs["user_id"] = models.ErrUUIDFormat
 	}
 
-	if _, err := uuid.ParseHex(f.ToID); err != nil {
+	if _, err := uuid.ParseHex(n.ToID); err != nil {
 		errs["to_id"] = models.ErrUUIDFormat
 	}
 
-	if f.UserID == f.ToID {
+	if n.UserID == n.ToID {
 		errs["user_id"] = ErrNotifySelf
 	}
 
