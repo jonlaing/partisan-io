@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/nu7hatch/gouuid"
+	"partisan/models.v2/friendships"
 	"partisan/models.v2/posts"
 	"partisan/models.v2/users"
 )
@@ -23,6 +24,7 @@ var userCount = 0
 var testPostID, unownedTestPostID string
 var testLikePostID string
 var testCommentPostID, testCommentID string
+var testFriendID, testUnconfirmedID, testUnfriendedID string
 
 func init() {
 	var err error
@@ -36,7 +38,7 @@ func init() {
 		panic(err)
 	}
 
-	testDB.AutoMigrate(users.User{})
+	testDB.AutoMigrate(users.User{}, posts.Post{}, friendships.Friendship{})
 
 	testRouter = gin.Default()
 	testRouter.Use(addTestDB())
@@ -45,10 +47,12 @@ func init() {
 func TestMain(m *testing.M) {
 	defer testDB.Exec("DELETE FROM users;")
 	defer testDB.Exec("DELETE FROM posts;")
+	defer testDB.Exec("DELETE FROM friendships;")
 	initUserTests()
 	testPostID, unownedTestPostID = initPostTests()
 	testLikePostID = initLikeTests()
 	testCommentPostID, testCommentID = initCommentTests()
+	testFriendID, testUnconfirmedID, testUnfriendedID = initFriendshipTests()
 	m.Run()
 }
 
@@ -233,4 +237,47 @@ func initCommentTests() (string, string) {
 	testRouter.POST("/posts/:record_id/comments", login(&user), CommentCreate)
 
 	return testPost.ID, comment.ID
+}
+
+func initFriendshipTests() (string, string, string) {
+	user := createTestUser()  // Me
+	user2 := createTestUser() // Friended
+	user3 := createTestUser() // Unconfirmed
+	user4 := createTestUser() // Unfriended
+
+	fBinding := friendships.CreatorBinding{
+		FriendID: user2.ID,
+	}
+
+	testFriendship1, errs := friendships.New(user.ID, fBinding)
+	if len(errs) > 0 {
+		panic(errs)
+	}
+
+	testFriendship1.Confirmed = true
+
+	if err := testDB.Save(&testFriendship1).Error; err != nil {
+		panic(err)
+	}
+
+	f2Binding := friendships.CreatorBinding{
+		FriendID: user.ID,
+	}
+
+	testFriendship2, errs := friendships.New(user3.ID, f2Binding)
+	if len(errs) > 0 {
+		panic(errs)
+	}
+
+	if err := testDB.Save(&testFriendship2).Error; err != nil {
+		panic(err)
+	}
+
+	testRouter.GET("/friendships", login(&user), FriendshipIndex)
+	testRouter.GET("/friendships/:user_id", login(&user), FriendshipShow)
+	testRouter.POST("/friendships", login(&user), FriendshipCreate)
+	testRouter.PATCH("/friendships/:user_id", login(&user), FriendshipUpdate)
+	testRouter.DELETE("/friendships/:user_id", login(&user), FriendshipDestroy)
+
+	return user2.ID, user3.ID, user4.ID
 }

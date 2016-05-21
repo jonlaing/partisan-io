@@ -22,7 +22,7 @@ func FriendshipIndex(c *gin.Context) {
 		return
 	}
 
-	fs, err := friendships.GetByUserID(user.ID, db)
+	fs, err := friendships.ListByUserID(user.ID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
@@ -35,15 +35,35 @@ func FriendshipIndex(c *gin.Context) {
 		return
 	}
 
-	collectUsers(userID, &fs, friends)
+	collectUsers(user, &fs, friends)
 
 	c.JSON(http.StatusOK, gin.H{"friendships": fs})
+}
+
+func FriendshipShow(c *gin.Context) {
+	db := db.GetDB(c)
+
+	user, err := auth.CurrentUser(c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	friendID := c.Param("user_id")
+
+	f, err := friendships.GetByUserIDs(user.ID, friendID, db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"friendship": f})
 }
 
 func FriendshipCreate(c *gin.Context) {
 	db := db.GetDB(c)
 
-	user, err := auth.CreateUser(c)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
@@ -60,9 +80,9 @@ func FriendshipCreate(c *gin.Context) {
 		return
 	}
 
-	f, err := friendships.New(user.ID, binding)
-	if err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
+	f, errs := friendships.New(user.ID, binding)
+	if len(errs) > 0 {
+		c.AbortWithError(http.StatusNotAcceptable, errs)
 		return
 	}
 
@@ -76,19 +96,19 @@ func FriendshipCreate(c *gin.Context) {
 		db.Save(&n)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"friendship": f})
+	c.JSON(http.StatusCreated, gin.H{"friendship": f})
 }
 
 func FriendshipUpdate(c *gin.Context) {
 	db := db.GetDB(c)
 
-	user, err := auth.CreateUser(c)
+	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 
-	friendID := c.Param("record_id")
+	friendID := c.Param("user_id")
 
 	f, err := friendships.GetByUserIDs(user.ID, friendID, db)
 	if err != nil {
@@ -102,8 +122,8 @@ func FriendshipUpdate(c *gin.Context) {
 		return
 	}
 
-	if err := f.Update(binding); err != nil {
-		c.AbortWithError(http.StatusNotAcceptable, err)
+	if errs := f.Update(binding); len(errs) > 0 {
+		c.AbortWithError(http.StatusNotAcceptable, errs)
 		return
 	}
 
@@ -129,7 +149,7 @@ func FriendshipDestroy(c *gin.Context) {
 		return
 	}
 
-	friendID := c.Param("record_id")
+	friendID := c.Param("user_id")
 
 	f, err := friendships.GetByUserIDs(user.ID, friendID, db)
 	if err != nil {
@@ -138,7 +158,7 @@ func FriendshipDestroy(c *gin.Context) {
 	}
 
 	if !f.CanDelete(user.ID) {
-		c.AborthWithError(http.StatusUnauthorized, err)
+		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 
@@ -150,7 +170,7 @@ func FriendshipDestroy(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
 }
 
-func collectUserIDs(userID string, fs []Friendship) (ids []string) {
+func collectUserIDs(userID string, fs friendships.Friendships) (ids []string) {
 	for _, f := range fs {
 		if f.UserID == userID {
 			ids = append(ids, f.FriendID)
@@ -165,18 +185,18 @@ func collectUserIDs(userID string, fs []Friendship) (ids []string) {
 }
 
 func collectUsers(user users.User, fs *friendships.Friendships, friends []users.User) {
-	friendships := []Frienship(*fs)
+	xfs := []friendships.Friendship(*fs)
 
-	for i := range friendships {
+	for i := range xfs {
 		for _, friend := range friends {
-			if friendhips[i].UserID == friend.ID || friendhips[i].FriendID == friend.ID {
-				friendhips[i].User = friend
+			if xfs[i].UserID == friend.ID || xfs[i].FriendID == friend.ID {
+				xfs[i].Friend = friend
 				if match, err := matcher.Match(user.PoliticalMap, friend.PoliticalMap); err == nil {
-					friendhips[i].Match = float64(int(match*1000)) / 10
+					xfs[i].Match = float64(int(match*1000)) / 10
 				}
 			}
 		}
 	}
 
-	*fs = Friendships(friendships)
+	*fs = friendships.Friendships(xfs)
 }
