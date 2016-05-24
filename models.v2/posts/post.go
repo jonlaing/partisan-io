@@ -32,6 +32,21 @@ type Post struct {
 	Attachments  []attachments.Attachment `json:"attachments" sql:"-"`
 }
 
+// GetType satisfies hashtags/Hashtagger
+func (p Post) GetType() string {
+	return "post"
+}
+
+// GetID satisfies hashtags/Hashtagger
+func (p Post) GetID() string {
+	return p.ID
+}
+
+// GetContent satisfies hashtags/Hashtagger
+func (p Post) GetContent() string {
+	return p.Body
+}
+
 // Posts is a list type of post
 type Posts []Post
 

@@ -6,6 +6,7 @@ import (
 	"partisan/db"
 
 	"partisan/models.v2/friendships"
+	"partisan/models.v2/hashtags"
 	"partisan/models.v2/posts"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,7 @@ func PostIndex(c *gin.Context) {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
-	friendIDs, err := friendships.GetConfirmedIDsByUserID(user.ID, db)
+	friendIDs, err := friendships.ListConfirmedIDsByUserID(user.ID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
@@ -88,6 +89,8 @@ func PostCreate(c *gin.Context) {
 		return
 	}
 
+	hashtags.FindAndCreate(post, db)
+
 	c.JSON(http.StatusCreated, gin.H{"post": post})
 }
 
@@ -125,6 +128,8 @@ func PostUpdate(c *gin.Context) {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
+
+	hashtags.FindAndCreate(post, db)
 
 	c.JSON(http.StatusOK, gin.H{"post": post})
 }
