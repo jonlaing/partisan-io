@@ -1,4 +1,6 @@
-package models
+package answers
+
+import "errors"
 
 // Answer is an answer to a question, included are the coordinates
 // of the question, and whether or not the user agreed
@@ -8,3 +10,5 @@ type Answer struct {
 	Map   []int `json:"map" form:"map"` // defined in matcher.go
 	Agree bool  `json:"agree" form:"agree"`
 }
+
+var ErrMap = errors.New("Answer doesn't have map. Probably an error in binding")

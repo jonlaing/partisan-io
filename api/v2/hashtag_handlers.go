@@ -26,7 +26,7 @@ func HashtagShow(c *gin.Context) {
 	page := getPage(c)
 
 	hashtagSearches := hashtags.ExtractTags(search)
-	posts, err := hashtags.ListPostsByHashtags(user.ID, hashtagSearches, page*25, db)
+	posts, err := hashtags.ListPostsByHashtags(hashtagSearches, user.ID, page*25, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

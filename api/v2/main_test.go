@@ -53,6 +53,7 @@ func TestMain(m *testing.M) {
 	testLikePostID = initLikeTests()
 	testCommentPostID, testCommentID = initCommentTests()
 	testFriendID, testUnconfirmedID, testUnfriendedID = initFriendshipTests()
+	initAnswerTests()
 	m.Run()
 }
 
@@ -280,4 +281,9 @@ func initFriendshipTests() (string, string, string) {
 	testRouter.DELETE("/friendships/:user_id", login(&user), FriendshipDestroy)
 
 	return user2.ID, user3.ID, user4.ID
+}
+
+func initAnswerTests() {
+	user := createTestUser()
+	testRouter.PATCH("/answers", login(&user), AnswersUpdate)
 }
