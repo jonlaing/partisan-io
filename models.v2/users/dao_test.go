@@ -12,7 +12,7 @@ import (
 	"github.com/nu7hatch/gouuid"
 )
 
-var db *gorm.DB
+var testdb *gorm.DB
 var u User
 var id, apiKey string
 var exp time.Time
@@ -26,16 +26,16 @@ func (u *useridslicer) GetUserIDs() []string {
 func init() {
 	var err error
 	connString := fmt.Sprintf("user=%s dbname=%s password=%s sslmode=disable", os.Getenv("DB_TEST_USER"), os.Getenv("DB_TEST_NAME"), os.Getenv("DB_TEST_PW"))
-	db, err = gorm.Open("postgres", connString)
+	testdb, err = gorm.Open("postgres", connString)
 	if err != nil {
 		panic(err)
 	}
 
-	if err := db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";").Error; err != nil {
+	if err := testdb.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";").Error; err != nil {
 		panic(err)
 	}
 
-	db.AutoMigrate(User{})
+	testdb.AutoMigrate(User{})
 
 }
 
@@ -56,10 +56,10 @@ func TestMain(m *testing.M) {
 		APIKeyExp: exp,
 	}
 
-	if err := db.Save(&u).Error; err != nil {
+	if err := testdb.Save(&u).Error; err != nil {
 		panic(err)
 	}
-	defer db.Delete(&u)
+	defer testdb.Delete(&u)
 
 	id = u.ID
 
@@ -72,7 +72,7 @@ func TestGetByID(t *testing.T) {
 		return
 	}
 
-	user, err := GetByID(id, db)
+	user, err := GetByID(id, testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return
@@ -84,7 +84,7 @@ func TestGetByID(t *testing.T) {
 }
 
 func TestGetByUsername(t *testing.T) {
-	user, err := GetByUsername("user1", db)
+	user, err := GetByUsername("user1", testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return
@@ -96,7 +96,7 @@ func TestGetByUsername(t *testing.T) {
 }
 
 func TestGetByEmail(t *testing.T) {
-	user, err := GetByEmail("user1@email.com", db)
+	user, err := GetByEmail("user1@email.com", testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return
@@ -108,7 +108,7 @@ func TestGetByEmail(t *testing.T) {
 }
 
 func TestGetByAPIKey(t *testing.T) {
-	user, err := GetByAPIKey(apiKey, db)
+	user, err := GetByAPIKey(apiKey, testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return
@@ -120,7 +120,7 @@ func TestGetByAPIKey(t *testing.T) {
 }
 
 func TestListByIDs(t *testing.T) {
-	user, err := ListByIDs([]string{id}, db)
+	user, err := ListByIDs([]string{id}, testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return
@@ -134,7 +134,7 @@ func TestListByIDs(t *testing.T) {
 func TestListRelated(t *testing.T) {
 	slicer := useridslicer{}
 
-	user, err := ListRelated(&slicer, db)
+	user, err := ListRelated(&slicer, testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return

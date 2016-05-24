@@ -60,7 +60,7 @@ func GetConfirmedByUserID(userID string, db *gorm.DB) (fs Friendships, err error
 	return
 }
 
-func GetConfirmedIDsByUserID(userID string, db *gorm.DB) (uuids []string, err error) {
+func ListConfirmedIDsByUserID(userID string, db *gorm.DB) (uuids []string, err error) {
 	fids := []string{}
 	uids := []string{}
 
