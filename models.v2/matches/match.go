@@ -2,6 +2,7 @@ package matches
 
 import (
 	"math"
+	"strings"
 
 	"partisan/models.v2/users"
 )
@@ -41,4 +42,51 @@ type SearchBinding struct {
 func (s SearchBinding) Degrees() float64 {
 	earthRadius := float64(3959) // in miles
 	return float64(s.Radius) / earthRadius * float64(180) / math.Pi
+}
+
+func (s SearchBinding) GenderGroup() ([]string, error) {
+	genderGuesses := [][]string{
+		// cisfemme
+		{
+			"female",
+			"woman",
+			"girl",
+			"lady",
+			"ciswoman", "ciswomyn",
+			"cis woman", "cis womyn",
+		},
+		// cismasc
+		{
+			"male",
+			"man",
+			"boy",
+			"guy",
+			"cisman",
+			"cis man",
+		},
+		// transfemme
+		{
+			"femme", "feminine",
+			"transwoman", "transwomyn",
+			"trans woman", "trans womyn",
+			"mtf", "m -> f",
+		},
+		// transmasc
+		{
+			"masc", "masculine",
+			"transman",
+			"trans man",
+			"ftm", "f -> m",
+		},
+	}
+
+	for _, gs := range genderGuesses {
+		for _, g := range gs {
+			if strings.ToLower(s.Gender) == g {
+				return gs, nil
+			}
+		}
+	}
+
+	return []string{}, ErrGenderGroup
 }

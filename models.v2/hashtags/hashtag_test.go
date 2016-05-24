@@ -122,7 +122,7 @@ func TestExistingCreate(t *testing.T) {
 }
 
 func TestExtractTags(t *testing.T) {
-	if tags := extractTags("#blah"); len(tags) != 1 {
+	if tags := ExtractTags("#blah"); len(tags) != 1 {
 		t.Error("Expected 1 tag, got:", len(tags))
 	} else {
 		if tags[0] != "blah" {
@@ -130,7 +130,7 @@ func TestExtractTags(t *testing.T) {
 		}
 	}
 
-	if tags := extractTags("#foo #bar"); len(tags) != 2 {
+	if tags := ExtractTags("#foo #bar"); len(tags) != 2 {
 		t.Error("Expected 2 tag, got:", len(tags))
 	} else {
 		if tags[0] != "foo" || tags[1] != "bar" {
@@ -138,7 +138,7 @@ func TestExtractTags(t *testing.T) {
 		}
 	}
 
-	if tags := extractTags("#foo #bar\n# header"); len(tags) != 2 {
+	if tags := ExtractTags("#foo #bar\n# header"); len(tags) != 2 {
 		t.Error("Expected 2 tag, got:", len(tags))
 	} else {
 		if tags[0] != "foo" || tags[1] != "bar" {

@@ -23,7 +23,7 @@ func List(user users.User, search SearchBinding, db *gorm.DB) (matches Matches, 
 	err = db.Where("id != ?", user.ID).Scopes(
 		inBounds(user),
 		inGeoRadius(user.Latitude, user.Longitude, search.Degrees()),
-		withGender(search.Gender),
+		withGender(search),
 		withAgeRange(search.MinAge, search.MaxAge),
 		lookingFor(search.LookingFor),
 		noFriends(user),
@@ -70,14 +70,19 @@ func inGeoRadius(lat, long, rad float64) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func withGender(gender string) func(db *gorm.DB) *gorm.DB {
+func withGender(search SearchBinding) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		// make sure you can't overload on gender
-		if len(gender) > 0 && len(gender) < 256 {
-			return db.Where("gender ILIKE ?", "%"+gender+"%")
+		group, err := search.GenderGroup()
+		if err != nil {
+			if len(search.Gender) > 0 && len(search.Gender) < 256 {
+				return db.Where("gender ILIKE ?", "%"+search.Gender+"%")
+			}
+
+			return db
 		}
 
-		return db
+		return db.Where("gender IN (?)", group)
 	}
 }
 

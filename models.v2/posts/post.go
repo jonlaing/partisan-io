@@ -47,8 +47,21 @@ func (p Post) GetContent() string {
 	return p.Body
 }
 
+// GetUserID satisfies UserTagger interface
+func (p *Post) GetUserID() string {
+	return p.UserID
+}
+
 // Posts is a list type of post
 type Posts []Post
+
+// GetUserIDs satisfies UserIDerSlice
+func (ps Posts) GetUserIDs() (userIDs []string) {
+	for _, p := range ps {
+		userIDs = append(userIDs, p.UserID)
+	}
+	return
+}
 
 // CreatorBinding is a struct to use for binding JSON requests to a new Post.
 type CreatorBinding struct {

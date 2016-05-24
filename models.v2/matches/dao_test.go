@@ -206,4 +206,20 @@ func TestList(t *testing.T) {
 	if matches[0].User.ID != find.ID {
 		t.Error("Expected to find user with ID:", find.ID, "got:", matches[0].User.ID)
 	}
+
+	if matches[0].Match == 0 {
+		t.Error("Expected non-zero match")
+	}
+
+	search.Gender = ""
+
+	matches, err = List(me, search, testdb)
+	if err != nil {
+		t.Error("Unexpected error:", err)
+	}
+
+	if len(matches) != 2 {
+		t.Error("Expected 2 results, found:", len(matches))
+		return
+	}
 }

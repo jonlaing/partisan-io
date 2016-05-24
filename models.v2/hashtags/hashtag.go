@@ -61,7 +61,7 @@ func Create(r Hashtagger, tag string, db *gorm.DB) error {
 
 // FindAndCreate searches the content of the Hashtagger for hashtags and saves them
 func FindAndCreate(r Hashtagger, db *gorm.DB) {
-	hashtags := extractTags(r.GetContent())
+	hashtags := ExtractTags(r.GetContent())
 	for _, hashtag := range hashtags {
 		if err := Create(r, hashtag, db); err != nil {
 			logger.Error.Println(err)
@@ -69,8 +69,9 @@ func FindAndCreate(r Hashtagger, db *gorm.DB) {
 	}
 }
 
-func extractTags(text string) []string {
-	hashtagSearch := regexp.MustCompile("#([a-zA-Z]+)")
+// ExtractTags finds hashtags in a string
+func ExtractTags(text string) []string {
+	hashtagSearch := regexp.MustCompile("#([a-zA-Z0-9]+)")
 	hashtagSlices := hashtagSearch.FindAllStringSubmatch(text, -1) // -1 means find all instances
 
 	var hashtags []string

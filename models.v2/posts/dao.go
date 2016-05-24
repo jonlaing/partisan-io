@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"partisan/models.v2/attachments"
+	"partisan/models.v2/users"
 
 	"github.com/jinzhu/gorm"
 )
@@ -14,6 +15,8 @@ func GetByID(id string, userID string, db *gorm.DB) (p Post, err error) {
 		p.GetCommentCount(db)
 	}
 	p.GetLikeCount(userID, db)
+	p.GetUser(db)
+
 	return
 }
 
@@ -28,6 +31,25 @@ func GetFeedByUserIDs(currentUserID string, userIDs []string, offset int, db *go
 		Find(&ps).Error
 
 	ps.Unique()
+	ps.GetRelations(currentUserID, db)
+	ps.GetUsers(db)
+
+	return
+}
+
+func ListByIDs(currentUserID string, ids []string, offset int, db *gorm.DB) (ps Posts, err error) {
+	err = db.Joins("left join flags on flags.record_id = posts.id").
+		Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
+		Where("posts.id IN (?)", ids).
+		Where("posts.parent_type IN (?)", []ParentType{PTNoType, PTPost}).
+		Order("posts.created_at desc").
+		Limit(25).
+		Offset(offset).
+		Find(&ps).Error
+
+	ps.Unique()
+	ps.GetRelations(currentUserID, db)
+	ps.GetUsers(db)
 
 	return
 }
@@ -43,6 +65,8 @@ func GetFeedByUserIDsAfter(currentUserID string, userIDs []string, after time.Ti
 		Find(&ps).Error
 
 	ps.Unique()
+	ps.GetRelations(currentUserID, db)
+	ps.GetUsers(db)
 
 	return
 }
@@ -114,6 +138,10 @@ func (p *Post) GetCommentCount(db *gorm.DB) error {
 		Count(&p.CommentCount).Error
 }
 
+func (p *Post) GetUser(db *gorm.DB) error {
+	return db.Where("id = ?", p.UserID).Find(&p.User).Error
+}
+
 func (ps *Posts) GetChildCountList(userID string, db *gorm.DB) error {
 	postIDs := collectIDs(ps)
 	posts := []Post(*ps)
@@ -165,6 +193,25 @@ func (ps *Posts) GetRelations(userID string, db *gorm.DB) {
 	ps.GetChildCountList(userID, db)
 
 	*ps = Posts(posts)
+}
+
+func (ps *Posts) GetUsers(db *gorm.DB) error {
+	users, err := users.ListRelated(ps, db)
+	if err != nil {
+		return err
+	}
+
+	posts := []Post(*ps)
+	for i := range posts {
+		for _, u := range users {
+			if posts[i].UserID == u.ID {
+				posts[i].User = u
+			}
+		}
+	}
+
+	*ps = Posts(posts)
+	return nil
 }
 
 func collectIDs(ps *Posts) []string {
