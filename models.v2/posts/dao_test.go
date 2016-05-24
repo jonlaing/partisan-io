@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"partisan/models.v2/flags"
+
 	_ "github.com/lib/pq"
 
 	"github.com/jinzhu/gorm"
@@ -16,7 +18,7 @@ import (
 var testdb *gorm.DB
 var id string
 var userID string
-var p, comment, like Post
+var p, comment, like, flagged Post
 
 func init() {
 	var err error
@@ -30,7 +32,7 @@ func init() {
 		panic(err)
 	}
 
-	testdb.AutoMigrate(Post{})
+	testdb.AutoMigrate(Post{}, flags.Flag{})
 }
 
 func TestMain(m *testing.M) {
@@ -82,6 +84,30 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 	defer testdb.Delete(&like)
+
+	flagged = Post{
+		UserID:    userID,
+		Action:    APost,
+		Body:      "flagged post",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	if err := testdb.Save(&flagged).Error; err != nil {
+		panic(err)
+	}
+	defer testdb.Delete(&flagged)
+
+	flag := flags.Flag{
+		UserID:     userID,
+		RecordID:   flagged.ID,
+		RecordType: "post",
+	}
+
+	if err := testdb.Save(&flag).Error; err != nil {
+		panic(err)
+	}
+	defer testdb.Delete(&flag)
 
 	m.Run()
 }

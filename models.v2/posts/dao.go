@@ -18,18 +18,11 @@ func GetByID(id string, userID string, db *gorm.DB) (p Post, err error) {
 }
 
 func GetFeedByUserIDs(currentUserID string, userIDs []string, offset int, db *gorm.DB) (ps Posts, err error) {
-	// TODO: Get flagging in there
-	// err = db.Joins("left join flags on flags.record_id = posts.id").
-	// 	Where("posts.user_id IN (?)", userIDs).
-	// 	Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
-	// 	Order("posts.created_at desc").
-	// 	Limit(25).
-	// 	Offset(offset).
-	// 	Find(&ps).Error
-
-	err = db.Where("user_id IN (?)", userIDs).
-		Where("parent_type IN (?)", []ParentType{PTNoType, PTPost}).
-		Order("created_at desc").
+	err = db.Joins("left join flags on flags.record_id = posts.id").
+		Where("posts.user_id IN (?)", userIDs).
+		Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
+		Where("posts.parent_type IN (?)", []ParentType{PTNoType, PTPost}).
+		Order("posts.created_at desc").
 		Limit(25).
 		Offset(offset).
 		Find(&ps).Error
@@ -40,18 +33,12 @@ func GetFeedByUserIDs(currentUserID string, userIDs []string, offset int, db *go
 }
 
 func GetFeedByUserIDsAfter(currentUserID string, userIDs []string, after time.Time, db *gorm.DB) (ps Posts, err error) {
-	// TODO: Get flagging in there
-	// err = db.Joins("left join flags on flags.record_id = posts.id").
-	// 	Where("posts.user_id IN (?)", userIDs).
-	// 	Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
-	// 	Where("posts.create_at >= ?::timestamp", after).
-	// 	Order("posts.created_at desc").
-	// 	Limit(25).
-	// 	Find(&ps).Error
-	err = db.Where("user_id IN (?)", userIDs).
-		Where("parent_type IN (?)", []ParentType{PTNoType, PTPost}).
-		Where("created_at >= ?::timestamp", after).
-		Order("created_at desc").
+	err = db.Joins("left join flags on flags.record_id = posts.id").
+		Where("posts.user_id IN (?)", userIDs).
+		Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
+		Where("posts.parent_type IN (?)", []ParentType{PTNoType, PTPost}).
+		Where("posts.created_at >= ?::timestamp", after).
+		Order("posts.created_at desc").
 		Limit(25).
 		Find(&ps).Error
 
@@ -72,15 +59,10 @@ func (p Post) GetParent(db *gorm.DB) (parent Post, err error) {
 }
 
 func (p Post) GetChildren(currentUserID string, db *gorm.DB) (c Posts, err error) {
-	// TODO: Get flagging in there
-	// err = db.Joins("left join flags on flags.record_id = posts.id").
-	// 	Where("posts.parent_id = ?", p.ID).
-	// 	Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
-	// 	Order("posts.created_at desc").
-	// 	Find(&c).Error
-
-	err = db.Where("parent_id = ?", p.ID).
-		Order("created_at desc").
+	err = db.Joins("left join flags on flags.record_id = posts.id").
+		Where("posts.parent_id = ?", p.ID).
+		Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
+		Order("posts.created_at desc").
 		Find(&c).Error
 
 	c.GetRelations(currentUserID, db)
