@@ -34,7 +34,7 @@ func List(user users.User, search SearchBinding, db *gorm.DB) (matches Matches, 
 			if match, err := matcher.Match(user.PoliticalMap, u.PoliticalMap); err == nil {
 				matches = append(matches, Match{
 					User:  u,
-					Match: float64(int(match*1000)) / 10,
+					Match: matcher.ToHuman(match),
 				})
 			}
 		}

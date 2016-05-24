@@ -21,6 +21,7 @@ import (
 var testDB *gorm.DB
 var testRouter *gin.Engine
 var userCount = 0
+var testUser users.User
 var testPostID, unownedTestPostID string
 var testLikePostID string
 var testCommentPostID, testCommentID string
@@ -48,7 +49,7 @@ func TestMain(m *testing.M) {
 	defer testDB.Exec("DELETE FROM users;")
 	defer testDB.Exec("DELETE FROM posts;")
 	defer testDB.Exec("DELETE FROM friendships;")
-	initUserTests()
+	testUser = initUserTests()
 	testPostID, unownedTestPostID = initPostTests()
 	testLikePostID = initLikeTests()
 	testCommentPostID, testCommentID = initCommentTests()
@@ -108,7 +109,7 @@ func login(user *users.User) gin.HandlerFunc {
 	}
 }
 
-func initUserTests() {
+func initUserTests() users.User {
 	uBinding := users.CreatorBinding{
 		Username:        "user",
 		Email:           "user@email.com",
@@ -129,10 +130,12 @@ func initUserTests() {
 	}
 
 	testRouter.POST("/users", UserCreate)
-	testRouter.GET("/users", login(&testUser), UserShow) // Show Current User
+	testRouter.GET("/users", login(&testUser), UserShow)           // Show Current User
+	testRouter.GET("/users/:username", login(&testUser), UserShow) // Show Other USer
 	testRouter.PATCH("/users", login(&testUser), UserUpdate)
 	// TODO: test this one...
 	// testRouter.POST("/users/avatar_upload", login(&testUser), UserAvatarUpload)
+	return createTestUser()
 }
 
 func initPostTests() (string, string) {

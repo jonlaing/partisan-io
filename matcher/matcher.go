@@ -197,3 +197,7 @@ type ErrOutOfRange struct {
 func (e *ErrOutOfRange) Error() string {
 	return fmt.Sprintf("partisan/matcher: Answer map coordinate out of range at %d! Must be 16 or less. Was %d", e.Index, e.Val)
 }
+
+func ToHuman(match float64) float64 {
+	return float64(int(match*1000)) / 10
+}

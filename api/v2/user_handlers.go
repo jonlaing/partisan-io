@@ -5,6 +5,7 @@ import (
 
 	"partisan/auth"
 	"partisan/db"
+	"partisan/matcher"
 
 	"github.com/gin-gonic/gin"
 	"partisan/models.v2/users"
@@ -40,13 +41,29 @@ func UserCreate(c *gin.Context) {
 }
 
 func UserShow(c *gin.Context) {
+	db := db.GetDB(c)
+
 	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	username := c.Param("username")
+	if len(username) == 0 {
+		c.JSON(http.StatusOK, gin.H{"user": user})
+		return
+	}
+
+	profile, err := users.GetByUsername(username, db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	match, _ := matcher.Match(user.PoliticalMap, profile.PoliticalMap)
+
+	c.JSON(http.StatusOK, gin.H{"user": profile, "match": matcher.ToHuman(match)})
 }
 
 func UserUpdate(c *gin.Context) {
