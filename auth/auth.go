@@ -154,7 +154,7 @@ func Login(user *users.User, c *gin.Context) (string, error) {
 }
 
 // Logout a user
-func Logout(u users.User, c *gin.Context) {
+func Logout(u *users.User, c *gin.Context) {
 	u.DestroyAPIKey()
 	c.Status(http.StatusOK)
 }
