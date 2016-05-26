@@ -178,6 +178,10 @@ func main() {
 	// V2
 	v2Root := "api/v2"
 	{
+		r.POST(v1Root+"/login", apiV1.LoginHandler)
+		r.DELETE(v1Root+"/logout", apiV1.LogoutHandler)
+		r.GET(v1Root+"/logout", apiV1.LogoutHandler)
+
 		users := r.Group(v2Root + "/users")
 		users.Use(auth.Auth())
 		{
@@ -188,23 +192,22 @@ func main() {
 			users.POST("/avatar_upload", apiV2.UserAvatarUpload)
 		}
 
-		// posts := r.Group(v2Root + "/posts")
-		// posts.Use(auth.Auth())
-		// {
-		// 	posts.GET("/", apiV2.PostsIndex)
-		// 	posts.POST("/", apiV2.PostsCreate)
-		// 	posts.GET("/:record_id", apiV2.PostsShow)
-		// 	posts.PATCH("/:id", apiV2.PostsUpdate)
-		// 	posts.DELETE("/:id", apiV2.PostsDestroy)
-		// 	posts.GET("/:record_id/likes", apiV2.LikeCount)
-		// 	posts.POST("/:record_id/likes", apiV2.LikeCreate)
+		posts := r.Group(v2Root + "/posts")
+		posts.Use(auth.Auth())
+		{
+			posts.GET("/", apiV2.PostsIndex)
+			posts.POST("/", apiV2.PostsCreate)
+			posts.GET("/:record_id", apiV2.PostsShow)
+			posts.PATCH("/:record_id", apiV2.PostsUpdate)
+			posts.DELETE("/:record_id", apiV2.PostsDestroy)
+			posts.POST("/:record_id/like", apiV2.LikeCreate)
 
-		// 	posts.GET("/:record_id/comments", apiV2.CommentsIndex)
-		// 	posts.GET("/:record_id/comments/count", apiV2.CommentsCount)
+			posts.GET("/:record_id/comments", apiV2.CommentsIndex)
+			posts.POST("/:record_id/comments", apiV2.CommentsCreate)
 
-		// 	posts.GET("/:record_id/attachments", apiV2.ImageAttachmentIndex)
-		// 	// posts.POST("/:record_id/attachments", apiV1.ImageAttachmentCreate)
-		// }
+			posts.GET("/:record_id/attachments", apiV2.ImageAttachmentIndex)
+			// posts.POST("/:record_id/attachments", apiV1.ImageAttachmentCreate)
+		}
 	}
 
 	// HTML

@@ -21,14 +21,17 @@ type Thread struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 
-	Users []ThreadUser `json:"users" sql:"-"`
+	Users       ThreadUsers `json:"users;omitempty" sql:"-"`
+	LastMessage Message     `json:"last_message;omitempty" sql:"-"`
 }
+
+type Threads []Thread
 
 type ThreadCreatorBinding struct {
 	UserIDs []string `json:"user_ids" binding:"required"`
 }
 
-func NewThread(b ThreadCreatorBinding) (m Thread, mtus []ThreadUser, errs models.ValidationErrors) {
+func NewThread(b ThreadCreatorBinding) (t Thread, errs models.ValidationErrors) {
 	errs = make(models.ValidationErrors)
 
 	id, err := uuid.NewV4()
@@ -37,7 +40,7 @@ func NewThread(b ThreadCreatorBinding) (m Thread, mtus []ThreadUser, errs models
 		return
 	}
 
-	m = Thread{ID: id.String(), Status: SOpen, CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	t = Thread{ID: id.String(), Status: SOpen, CreatedAt: time.Now(), UpdatedAt: time.Now()}
 
 	for _, uid := range b.UserIDs {
 		mtus = append(mtus, ThreadUser{
@@ -55,6 +58,8 @@ func NewThread(b ThreadCreatorBinding) (m Thread, mtus []ThreadUser, errs models
 
 		ids[mtu.UserID] = true
 	}
+
+	m.Users = ThreadUsers(mtus)
 
 	return
 }

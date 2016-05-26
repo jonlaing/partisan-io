@@ -9,15 +9,20 @@ import (
 // GetThread will get the thread or throw an error if nothing is found
 func GetThread(threadID string, db *gorm.DB) (thread Thread, err error) {
 	err = db.Where("id = ?", threadID).First(&thread).Error
+	thread.GetUsers(db)
+	thread.GetLastMessage(db)
 	return
 }
 
 // ListThreads returns a list of threads
-func ListThreads(userID string, db *gorm.DB) (threads []Thread, err error) {
+func ListThreads(userID string, db *gorm.DB) (threads Threads, err error) {
 	err = db.Joins("INNER JOIN thread_users on thread_users.thread_id = threads.id").
 		Where("thread_users.user_id = ?", userID).
 		Order("threads.updated_at DESC").
 		Find(&threads).Error
+
+	threads.CollectUsers(db)
+	threads.CollectLastMessage(db)
 	return
 }
 
@@ -111,14 +116,13 @@ func GetByUsers(db *gorm.DB, userIDs ...string) (thread Thread, err error) {
 		return
 	}
 
-	var users []ThreadUser
-	err = db.Where("thread_id = ?", thread.ID).Find(&users).Error
+	err = thread.GetUsers(db)
 	if err != nil {
 		return
 	}
 
 	count := 0
-	for _, u := range users {
+	for _, u := range thread.Users {
 		for _, id := range userIDs {
 			if id == u.UserID {
 				count++
@@ -131,16 +135,85 @@ func GetByUsers(db *gorm.DB, userIDs ...string) (thread Thread, err error) {
 		return
 	}
 
-	if count != len(userIDs) {
+	if count < len(userIDs) {
 		err = ErrThreadUnreciprocated
 		return
 	}
 
+	thread.GetLastMessage(db)
+
 	return
 }
 
-// LastMessage returns the most recent message in the thread
-func LastMessage(threadID string, db *gorm.DB) (msg Message, err error) {
-	err = db.Where("thread_id = ?", threadID).Limit(1).Order("created_at DESC").Find(&msg).Error
-	return
+// GetLastMessage returns the most recent message in the thread
+func (t *Thread) GetLastMessage(db *gorm.DB) error {
+	return db.Where("thread_id = ?", t.ID).Limit(1).Order("created_at DESC").Find(&t.LastMessage).Error
+}
+
+func (ts *Threads) CollectLastMessages(db *gorm.DB) error {
+	ids := collectIDS(ts)
+	var ms []Message
+	err := db.Where("thread_id IN (?)", ids).Find(&ms).Error
+	if err != nil {
+		return err
+	}
+
+	threads := []Thread(*ts)
+
+	for i := range threads {
+		for _, m := range ms {
+			if ms.ThreadID == threads[i].ID {
+				threads[i].LastMessage = m
+			}
+		}
+	}
+
+	*ts = Threads(threads)
+}
+
+func (t *Thread) GetUsers(db *gorm) error {
+	err := db.Where("thread_id = ?", t.ID).Find(&t.Users).Error
+	if err != nil {
+		return err
+	}
+
+	us, err := users.ListRelated(t.Users, db)
+	if err != nil {
+		return err
+	}
+
+	t.Users.CollectUsers(us)
+}
+
+func (ts *Thread) CollectUsers(db *gorm) error {
+	ids := collectIDs(ts)
+	var tus ThreadUsers
+	err := db.Where("thread_id IN (?)", ids).Find(&tus).Error
+	if err != nil {
+		return err
+	}
+
+	us, err := users.ListRelated(tus, db)
+	if err != nil {
+		return err
+	}
+
+	tus.CollectUsers(us)
+
+	threads := []Thread(*ts)
+	for i := range threads {
+		for _, tu := range tus {
+			if tu.ThreadID == threads[i].ID {
+				threads[i].Users = append(threads[i].Users, tu)
+			}
+		}
+	}
+
+	return nil
+}
+
+func collectIDs(ts Threads) (ids []string) {
+	for _, t := range ts {
+		ids = append(ids, ts.ID)
+	}
 }
