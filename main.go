@@ -15,6 +15,7 @@ import (
 	"partisan/models.v2/messages"
 	"partisan/models.v2/notifications"
 	"partisan/models.v2/posts"
+	"partisan/models.v2/tickets"
 	"partisan/models.v2/users"
 
 	"github.com/DeanThompson/ginpprof"
@@ -79,7 +80,7 @@ func main() {
 		&messages.Message{},
 		&messages.Thread{},
 		&messages.ThreadUser{},
-		// &m.SocketTicket{},
+		&tickets.SocketTicket{},
 	)
 
 	ginpprof.Wrapper(r)

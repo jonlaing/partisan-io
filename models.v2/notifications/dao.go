@@ -15,6 +15,11 @@ func ListByUserID(userID string, db *gorm.DB) (ns Notifications, err error) {
 	return
 }
 
+func CountByUserID(userID string, db *gorm.DB) (count int, err error) {
+	err = db.Model(Notification{}).Where("to_id = ?", userID).Where("read = ?", false).Count(&count).Error
+	return
+}
+
 func (ns *Notifications) CollectUsers(db *gorm.DB) {
 	us, err := users.ListByIDs(collectUserIDs(*ns), db)
 	if err != nil {

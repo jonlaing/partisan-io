@@ -56,6 +56,14 @@ func initRoutesV2(r *gin.Engine) {
 			// posts.POST("/:record_id/attachments", apiV2.ImageAttachmentCreate)
 		}
 
+		// NOTIFICATIONS
+		notifications := v2.Group("/notifications")
+		notifications.Use(auth.Auth())
+		{
+			notifications.GET("/", apiV2.NotificationIndex)
+			notifications.GET("/count", apiV2.NotificationsCount)
+		}
+
 		// COMMENTS
 		v2.POST("/comments/:record_id/like", auth.Auth(), apiV2.LikeCreate)
 
@@ -73,5 +81,7 @@ func initRoutesV2(r *gin.Engine) {
 
 		// HASHTAGS
 		v2.GET("/search", auth.Auth(), apiV2.HashtagShow)
+
+		v2.GET("/socket_ticket", auth.Auth(), apiV2.SocketTicketCreate)
 	}
 }

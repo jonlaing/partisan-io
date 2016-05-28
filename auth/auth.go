@@ -12,9 +12,11 @@ import (
 	"partisan/db"
 	"time"
 
+	"partisan/models.v2/tickets"
 	"partisan/models.v2/users"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/jinzhu/gorm"
 	"github.com/nu7hatch/gouuid"
 
 	"github.com/gin-gonic/gin"
@@ -79,43 +81,28 @@ type LoginJSON struct {
 // Auth is the authentication middleware
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		db := db.GetDB(c)
+		var user users.User
+		var err error
+
 		tokn, okTok := c.Request.Header["X-Auth-Token"]
 
-		var apiKey string
-
-		if !okTok {
-			c.AbortWithError(http.StatusUnauthorized, ErrNoToken)
-			return
-		}
-
-		token, err := jwt.Parse(tokn[0], func(token *jwt.Token) (interface{}, error) {
-			// Don't forget to validate the alg is what you expect:
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		if okTok {
+			user, err = userWithToken(tokn[0], db)
+			if err != nil {
+				c.AbortWithError(http.StatusUnauthorized, err)
 			}
-
-			return hmacKey, nil
-		})
-
-		if err != nil {
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Problems parsing token"))
-			return
-		}
-
-		key, err := uuid.ParseHex(token.Claims["api_key"].(string))
-		if err != nil {
-			c.AbortWithError(http.StatusUnauthorized, err)
-			return
-		}
-		apiKey = key.String()
-
-		// Check this is the right user with correct API key
-		db := db.GetDB(c)
-
-		user, err := users.GetByAPIKey(apiKey, db)
-		if err != nil {
-			c.AbortWithError(http.StatusUnauthorized, err)
-			return
+		} else {
+			if key, ok := c.GetQuery("key"); allowedWithKey(c) && ok {
+				user, err = userWithKey(key, db)
+				if err != nil {
+					c.AbortWithError(http.StatusUnauthorized, err)
+					return
+				}
+			} else {
+				c.AbortWithError(http.StatusUnauthorized, ErrNoToken)
+				return
+			}
 		}
 
 		err = user.UpdateAPIKey()
@@ -177,10 +164,48 @@ func CurrentUser(c *gin.Context) (u users.User, err error) {
 	return
 }
 
+func userWithToken(tokn string, db *gorm.DB) (users.User, error) {
+	token, err := jwt.Parse(tokn, func(token *jwt.Token) (interface{}, error) {
+		// Don't forget to validate the alg is what you expect:
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return hmacKey, nil
+	})
+
+	if err != nil {
+		return users.User{}, err
+	}
+
+	key, err := uuid.ParseHex(token.Claims["api_key"].(string))
+	if err != nil {
+		return users.User{}, err
+	}
+	apiKey := key.String()
+
+	// Check this is the right user with correct API key
+
+	user, err := users.GetByAPIKey(apiKey, db)
+	if err != nil {
+		return users.User{}, err
+	}
+
+	return user, nil
+}
+
+func userWithKey(key string, db *gorm.DB) (users.User, error) {
+	ticket, err := tickets.GetByID(key, db)
+	if err != nil {
+		return users.User{}, err
+	}
+	return users.GetByID(ticket.UserID, db)
+}
+
 func allowedWithKey(c *gin.Context) bool {
 	allowed := []string{
-		"partisan/api/v1.NotificationsCount",
-		"partisan/api/v1.MessageSocket",
+		"partisan/api/v2.NotificationsCount",
+		"partisan/api/v2.MessageSocket",
 	}
 	for _, v := range allowed {
 		if c.HandlerName() == v {
