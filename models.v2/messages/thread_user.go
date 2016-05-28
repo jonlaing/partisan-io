@@ -27,7 +27,7 @@ func (mtus ThreadUsers) GetUserIDs() (userIDs []string) {
 	return
 }
 
-func (mtus *ThreadUsers) CollectUsers(us []User) {
+func (mtus *ThreadUsers) CollectUsers(us []users.User) {
 	tusers := []ThreadUser(*mtus)
 
 	for i := range tusers {

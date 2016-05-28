@@ -16,13 +16,14 @@ func GetByID(id string, userID string, db *gorm.DB) (p Post, err error) {
 	}
 	p.GetLikeCount(userID, db)
 	p.GetUser(db)
+	p.Attachments, _ = attachments.GetByPostID(p.ID, db)
 
 	return
 }
 
 func GetFeedByUserIDs(currentUserID string, userIDs []string, offset int, db *gorm.DB) (ps Posts, err error) {
 	err = db.Joins("left join flags on flags.record_id = posts.id").
-		Where("posts.user_id IN (?)", userIDs).
+		Where("posts.user_id IN (?)", append(userIDs, currentUserID)).
 		Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
 		Where("posts.parent_type IN (?)", []ParentType{PTNoType, PTPost}).
 		Order("posts.created_at desc").
@@ -127,6 +128,7 @@ func (p *Post) GetComments(userID string, db *gorm.DB) (cs Posts, err error) {
 		Find(&cs).Error
 
 	cs.GetRelations(userID, db)
+	cs.GetUsers(db)
 
 	return
 }

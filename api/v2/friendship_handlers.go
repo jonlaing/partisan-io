@@ -49,7 +49,7 @@ func FriendshipShow(c *gin.Context) {
 		return
 	}
 
-	friendID := c.Param("user_id")
+	friendID := c.Param("friend_id")
 
 	f, err := friendships.GetByUserIDs(user.ID, friendID, db)
 	if err != nil {
@@ -108,7 +108,7 @@ func FriendshipUpdate(c *gin.Context) {
 		return
 	}
 
-	friendID := c.Param("user_id")
+	friendID := c.Param("friend_id")
 
 	f, err := friendships.GetByUserIDs(user.ID, friendID, db)
 	if err != nil {

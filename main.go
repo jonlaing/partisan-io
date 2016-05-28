@@ -4,12 +4,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-	apiV1 "partisan/api/v1"
 	"partisan/db"
 	"partisan/logger"
-	m "partisan/models" // V1 models
 	"time"
 
+	"partisan/models.v2/attachments"
 	"partisan/models.v2/flags"
 	"partisan/models.v2/friendships"
 	"partisan/models.v2/hashtags"
@@ -25,7 +24,7 @@ import (
 )
 
 func init() {
-	apiV1.ConfigureEmailer(emailConfig)
+	// apiV1.ConfigureEmailer(emailConfig)
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
@@ -48,7 +47,7 @@ func main() {
 	// 	"partisan-basic": "antistate123",
 	// }))
 
-	initRoutesV1(r)
+	// initRoutesV1(r)
 	initRoutesV2(r)
 
 	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))
@@ -71,16 +70,16 @@ func main() {
 		&posts.Post{},
 		&users.User{},
 		&friendships.Friendship{},
-		&attachments.ImageAttachment{},
+		&attachments.Attachment{},
 		&notifications.Notification{},
 		&hashtags.Hashtag{},
 		&hashtags.Taxonomy{},
 		&flags.Flag{},
-		&m.UserTag{},
+		// &m.UserTag{},
 		&messages.Message{},
 		&messages.Thread{},
-		&messaages.ThreadUser{},
-		&m.SocketTicket{},
+		&messages.ThreadUser{},
+		// &m.SocketTicket{},
 	)
 
 	ginpprof.Wrapper(r)
@@ -96,13 +95,13 @@ func main() {
 	s.ListenAndServe()
 }
 
-func deprecated(newPath string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		if newPath != "" {
-			c.AbortWithError(http.StatusBadRequest, fmt.Errorln("This endpoint is deprecated. Please see:", newPath))
-			return
-		}
+// func deprecated(newPath string) gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		if newPath != "" {
+// 			c.AbortWithError(http.StatusBadRequest, fmt.Errorln("This endpoint is deprecated. Please see:", newPath))
+// 			return
+// 		}
 
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorln("This endpoint is deprecated."))
-	}
-}
+// 		c.AbortWithError(http.StatusBadRequest, fmt.Errorln("This endpoint is deprecated."))
+// 	}
+// }

@@ -49,13 +49,13 @@ func UserShow(c *gin.Context) {
 		return
 	}
 
-	username := c.Param("username")
-	if len(username) == 0 {
+	userID := c.Param("user_id")
+	if len(userID) == 0 {
 		c.JSON(http.StatusOK, gin.H{"user": user})
 		return
 	}
 
-	profile, err := users.GetByUsername(username, db)
+	profile, err := users.GetByID(userID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

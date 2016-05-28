@@ -5,6 +5,7 @@ import (
 	"partisan/auth"
 	"partisan/db"
 
+	"partisan/models.v2/attachments"
 	"partisan/models.v2/friendships"
 	"partisan/models.v2/hashtags"
 	"partisan/models.v2/posts"
@@ -33,7 +34,7 @@ func PostIndex(c *gin.Context) {
 
 	page := getPage(c)
 
-	posts, err := posts.GetFeedByUserIDs(user.ID, friendIDs, page, db)
+	posts, err := posts.GetFeedByUserIDs(user.ID, friendIDs, page*25, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
@@ -87,6 +88,23 @@ func PostCreate(c *gin.Context) {
 	if err := db.Save(&post).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
+	}
+
+	tmpFile, _, err := c.Request.FormFile("attachments")
+	if err == nil {
+		defer tmpFile.Close()
+		attachment, err := attachments.NewImage(user.ID, post.ID, tmpFile)
+		if err != nil {
+			c.AbortWithError(http.StatusNotAcceptable, err)
+			db.Delete(&post) // clean up post
+			return
+		}
+
+		if err := db.Save(&attachment).Error; err != nil {
+			c.AbortWithError(http.StatusNotAcceptable, err)
+			db.Delete(&post) // clean up post
+			return
+		}
 	}
 
 	hashtags.FindAndCreate(post, db)

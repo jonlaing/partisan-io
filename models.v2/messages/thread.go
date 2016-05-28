@@ -42,6 +42,7 @@ func NewThread(b ThreadCreatorBinding) (t Thread, errs models.ValidationErrors) 
 
 	t = Thread{ID: id.String(), Status: SOpen, CreatedAt: time.Now(), UpdatedAt: time.Now()}
 
+	var mtus []ThreadUser
 	for _, uid := range b.UserIDs {
 		mtus = append(mtus, ThreadUser{
 			ThreadID: id.String(),
@@ -59,7 +60,7 @@ func NewThread(b ThreadCreatorBinding) (t Thread, errs models.ValidationErrors) 
 		ids[mtu.UserID] = true
 	}
 
-	m.Users = ThreadUsers(mtus)
+	t.Users = ThreadUsers(mtus)
 
 	return
 }

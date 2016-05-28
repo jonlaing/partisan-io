@@ -49,7 +49,7 @@ func ThreadCreate(c *gin.Context) {
 		return
 	}
 
-	existing, err := messages.GetByUsers(db, thread.Users.GetUserIDs()...)
+	existing, err := messages.GetByUsers(db, append(thread.Users.GetUserIDs(), user.ID)...)
 	if err == nil {
 		// apparently this thread already exists
 		c.JSON(http.StatusOK, gin.H{"thread": thread})
@@ -69,7 +69,7 @@ func ThreadCreate(c *gin.Context) {
 
 	for i := range thread.Users {
 		if err := db.Create(&thread.Users[i]).Error; err != nil {
-			c.AborthWithError(http.StatusNotAcceptable, err)
+			c.AbortWithError(http.StatusNotAcceptable, err)
 			return
 		}
 	}

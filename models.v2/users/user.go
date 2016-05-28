@@ -68,7 +68,7 @@ type CreatorBinding struct {
 // UpdaterBinding is a struct for fields neeeded to update a user via JSON Binding
 type UpdaterBinding struct {
 	Gender     string     `json:"gender"`
-	Birthdate  time.Time  `json:"birthdate"`
+	Birthdate  string     `json:"birthdate"`
 	LookingFor LookingFor `json:"looking_for"`
 	Summary    string     `json:"summary"`
 	PostalCode string     `json:"postal_code"`
@@ -109,8 +109,12 @@ func (u *User) Update(b UpdaterBinding) (errs models.ValidationErrors) {
 		u.Gender = b.Gender
 	}
 
-	if !b.Birthdate.IsZero() {
-		u.Birthdate = b.Birthdate
+	if b.Birthdate != "" {
+		var err error
+		u.Birthdate, err = time.Parse("2006-01-02", b.Birthdate)
+		if err != nil {
+			errs["birthdate"] = err
+		}
 	}
 
 	if b.PostalCode != "" {
@@ -150,7 +154,7 @@ func (u *User) Validate() (errs models.ValidationErrors) {
 	errs = make(models.ValidationErrors)
 
 	emailRegex := regexp.MustCompile("(?i)[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
-	if !emailRegex.MatchString(u.Email) {
+	if len(u.Email) > 255 || !emailRegex.MatchString(u.Email) {
 		errs["email"] = ErrEmailValidation
 	}
 

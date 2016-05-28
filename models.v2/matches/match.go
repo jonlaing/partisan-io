@@ -8,8 +8,8 @@ import (
 )
 
 type Match struct {
-	User  users.User
-	Match float64
+	User  users.User `json:"user"`
+	Match float64    `json:"match"`
 }
 
 type Matches []Match

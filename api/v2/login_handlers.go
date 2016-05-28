@@ -15,7 +15,7 @@ type loginFields struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func Login(c *gin.Context) {
+func LoginHandler(c *gin.Context) {
 	db := db.GetDB(c)
 
 	var fields loginFields
@@ -44,10 +44,10 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": token, "user": user})
 }
 
-func Logout(c *gin.Context) {
+func LogoutHandler(c *gin.Context) {
 	user, err := auth.CurrentUser(c)
 	if err != nil {
-		c.AborthWithError(http.StatusUnauthorized, err)
+		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 

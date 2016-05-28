@@ -7,9 +7,9 @@ import (
 )
 
 func getPage(c *gin.Context) int {
-	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
+	page, err := strconv.Atoi(c.DefaultQuery("page", "0"))
 	if err != nil {
-		return 1
+		return 0
 	}
 
 	return page

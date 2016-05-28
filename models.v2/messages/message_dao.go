@@ -5,8 +5,6 @@ import (
 	"sort"
 	"time"
 
-	m "partisan/models"
-
 	"partisan/models.v2/users"
 
 	"github.com/jinzhu/gorm"
@@ -23,7 +21,7 @@ func UnreadCount(userID string, db *gorm.DB) (count int, err error) {
 		return
 	}
 
-	err = db.Model(m.Message{}).Where("user_id != ? AND thread_id IN (?) AND read = ?", userID, threadIDs, false).Count(&count).Error
+	err = db.Model(Message{}).Where("user_id != ? AND thread_id IN (?) AND read = ?", userID, threadIDs, false).Count(&count).Error
 
 	return
 }
