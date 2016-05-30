@@ -23,8 +23,10 @@ func GetByID(id string, userID string, db *gorm.DB) (p Post, err error) {
 
 func GetFeedByUserIDs(currentUserID string, userIDs []string, offset int, db *gorm.DB) (ps Posts, err error) {
 	err = db.Joins("left join flags on flags.record_id = posts.id").
+		Joins("left join flags as pflags on pflags.record_id = posts.parent_id").
 		Where("posts.user_id IN (?)", append(userIDs, currentUserID)).
 		Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
+		Where("pflags.user_id != ? OR pflags.record_id IS NULL", currentUserID).
 		Where("posts.parent_type IN (?)", []ParentType{PTNoType, PTPost}).
 		Order("posts.created_at desc").
 		Limit(25).

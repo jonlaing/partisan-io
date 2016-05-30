@@ -1,7 +1,6 @@
 package notifications
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/nu7hatch/gouuid"
@@ -11,19 +10,19 @@ import (
 )
 
 type Notifier interface {
-	GetID() sql.NullString
+	GetID() string
 	GetAction() string
 }
 
 type Notification struct {
-	ID        string         `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
-	UserID    string         `json:"user_id" sql:"type:uuid"` // ID of first user
-	ToID      string         `json:"to_id" sql:"type:uuid"`   // ID of second user
-	RecordID  sql.NullString `json:"record_id"`
-	Action    Action         `json:"action"`
-	Read      bool           `json:"read"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	ID        string    `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
+	UserID    string    `json:"user_id" sql:"type:uuid"` // ID of first user
+	ToID      string    `json:"to_id" sql:"type:uuid"`   // ID of second user
+	RecordID  string    `json:"record_id"`
+	Action    Action    `json:"action"`
+	Read      bool      `json:"read"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 
 	User users.User `json:"user" sql:"-"`
 }

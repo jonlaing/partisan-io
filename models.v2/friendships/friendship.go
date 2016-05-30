@@ -1,7 +1,6 @@
 package friendships
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/nu7hatch/gouuid"
@@ -72,12 +71,12 @@ func (f Friendship) CanDelete(userID string) bool {
 	return f.UserID == userID || f.FriendID == userID
 }
 
-func (f Friendship) GetID() sql.NullString {
+func (f Friendship) GetID() string {
 	if f.Confirmed {
-		return sql.NullString{f.FriendID, true}
+		return f.FriendID
 	}
 
-	return sql.NullString{f.UserID, true}
+	return f.UserID
 }
 
 func (f Friendship) GetAction() string {

@@ -5,6 +5,7 @@ import (
 	"partisan/auth"
 	"partisan/db"
 
+	"partisan/models.v2/notifications"
 	"partisan/models.v2/posts"
 
 	"github.com/gin-gonic/gin"
@@ -54,6 +55,13 @@ func LikeCreate(c *gin.Context) {
 
 	post.LikeCount++
 	post.Liked = true
+
+	if user.ID != post.UserID {
+		n, errs := notifications.New(user.ID, post.UserID, like)
+		if len(errs) == 0 {
+			db.Save(&n)
+		}
+	}
 
 	c.JSON(http.StatusCreated, gin.H{string(post.Action): post})
 }

@@ -5,6 +5,7 @@ import (
 	"partisan/auth"
 	"partisan/db"
 
+	"partisan/models.v2/notifications"
 	"partisan/models.v2/posts"
 
 	"github.com/gin-gonic/gin"
@@ -85,6 +86,13 @@ func CommentCreate(c *gin.Context) {
 	if err := db.Save(&comment).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, errs)
 		return
+	}
+
+	if user.ID != post.UserID {
+		n, errs := notifications.New(user.ID, post.UserID, comment)
+		if len(errs) == 0 {
+			db.Save(&n)
+		}
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"comment": comment})

@@ -6,7 +6,7 @@ import (
 )
 
 func ListByUserID(userID string, db *gorm.DB) (ns Notifications, err error) {
-	err = db.Where("to_id = ?", userID).Limit(25).Find(&ns).Error
+	err = db.Where("to_id = ?", userID).Order("created_at DESC").Limit(25).Find(&ns).Error
 	if err != nil {
 		return
 	}

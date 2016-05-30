@@ -20,7 +20,7 @@ type Post struct {
 	ID           string                   `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
 	UserID       string                   `json:"user_id" sql:"type:uuid"`
 	ParentType   ParentType               `json:"parent_type"`
-	ParentID     sql.NullString           `json:"-" sql:"type:uuid;default:null"`
+	ParentID     sql.NullString           `json:"parent_id" sql:"type:uuid;default:null"`
 	Body         string                   `json:"body"`
 	Action       Action                   `json:"action"`
 	CreatedAt    time.Time                `json:"created_at"`
@@ -40,6 +40,10 @@ func (p Post) GetType() string {
 // GetID satisfies hashtags/Hashtagger
 func (p Post) GetID() string {
 	return p.ID
+}
+
+func (p Post) GetAction() string {
+	return string(p.Action)
 }
 
 // GetContent satisfies hashtags/Hashtagger
