@@ -8,4 +8,5 @@ var (
 	ErrThreadsNotFound      = errors.New("No threads were found")
 	ErrThreadUsersNotFound  = errors.New("No thread users were found")
 	ErrThreadUnreciprocated = errors.New("This thread is unreciprocated")
+	ErrThreadUser           = errors.New("User isn't in this thread")
 )

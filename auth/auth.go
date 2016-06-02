@@ -205,7 +205,8 @@ func userWithKey(key string, db *gorm.DB) (users.User, error) {
 func allowedWithKey(c *gin.Context) bool {
 	allowed := []string{
 		"partisan/api/v2.NotificationsCount",
-		"partisan/api/v2.MessageSocket",
+		"partisan/api/v2.MessageThreadSubscribe",
+		"partisan/api/v2.MessageUnread",
 	}
 	for _, v := range allowed {
 		if c.HandlerName() == v {

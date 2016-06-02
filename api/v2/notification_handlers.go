@@ -46,13 +46,6 @@ func NotificationsCount(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
-		// // probably screwed up because it's coming from mobile
-		// // and you can't send a token with WebSocket API
-		// user, err = getUserByTicket(c, db)
-		// if err != nil {
-		// 	handleError(err, c)
-		// 	return
-		// }
 	}
 
 	conn, err := wsupgrader.Upgrade(c.Writer, c.Request, nil)

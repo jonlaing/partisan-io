@@ -51,9 +51,6 @@ func initRoutesV2(r *gin.Engine) {
 
 			posts.GET("/:record_id/comments", apiV2.CommentIndex)
 			posts.POST("/:record_id/comments", apiV2.CommentCreate)
-
-			// posts.GET("/:record_id/attachments", apiV2.ImageAttachmentIndex)
-			// posts.POST("/:record_id/attachments", apiV2.ImageAttachmentCreate)
 		}
 
 		// NOTIFICATIONS
@@ -62,6 +59,18 @@ func initRoutesV2(r *gin.Engine) {
 		{
 			notifications.GET("/", apiV2.NotificationIndex)
 			notifications.GET("/count", apiV2.NotificationsCount)
+		}
+
+		// MESSAGES
+		messages := v2.Group("/messages")
+		messages.Use(auth.Auth())
+		{
+			messages.GET("/threads", apiV2.ThreadIndex)
+			messages.POST("/threads", apiV2.ThreadCreate)
+			messages.GET("/threads/:thread_id", apiV2.MessageIndex)
+			messages.POST("/threads/:thread_id", apiV2.MessageCreate)
+			messages.GET("/threads/:thread_id/subscribe", apiV2.MessageThreadSubscribe)
+			messages.GET("/unread", apiV2.MessageUnread)
 		}
 
 		// COMMENTS

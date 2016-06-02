@@ -109,51 +109,36 @@ func HasUser(userID, threadID string, db *gorm.DB) (bool, error) {
 
 // GetByUsers returns a thread based on a group of users
 func GetByUsers(db *gorm.DB, userIDs ...string) (thread Thread, err error) {
-	err = db.Joins("INNER JOIN thread_users ON thread_users.thread_id = threads.id").
-		Where("thread_users.user_id IN (?)", userIDs).
-		First(&thread).Error
+	tUsers := make(map[string][]ThreadUser)
+
+	var tus []ThreadUser
+	err = db.Where("user_id IN (?)").Find(&tus).Error
 	if err != nil {
 		return
 	}
 
-	err = thread.GetUsers(db)
+	for _, tu := range tus {
+		tUsers[tu.ThreadID] = append(tUsers[tu.ThreadID], tu)
+	}
+
+	var threadID string
+	threadID, err = findThreadForUsers(tUsers, userIDs)
 	if err != nil {
 		return
 	}
 
-	count := 0
-	for _, u := range thread.Users {
-		for _, id := range userIDs {
-			if id == u.UserID {
-				count++
-			}
-		}
-	}
-
-	if count == 0 {
-		err = ErrThreadsNotFound
-		return
-	}
-
-	if count < len(userIDs) {
-		err = ErrThreadUnreciprocated
-		return
-	}
-
-	thread.GetLastMessage(db)
-
-	return
+	return GetThread(threadID, db)
 }
 
 // GetLastMessage returns the most recent message in the thread
 func (t *Thread) GetLastMessage(db *gorm.DB) error {
-	return db.Where("thread_id = ?", t.ID).Limit(1).Order("created_at DESC").Find(&t.LastMessage).Error
+	return db.Where("thread_id = ?", t.ID).Order("created_at DESC").Limit(1).Find(&t.LastMessage).Error
 }
 
 func (ts *Threads) CollectLastMessages(db *gorm.DB) error {
 	ids := collectIDs(*ts)
 	var ms []Message
-	err := db.Where("thread_id IN (?)", ids).Find(&ms).Error
+	err := db.Where("thread_id IN (?)", ids).Order("created_at DESC").Find(&ms).Error
 	if err != nil {
 		return err
 	}
@@ -162,7 +147,7 @@ func (ts *Threads) CollectLastMessages(db *gorm.DB) error {
 
 	for i := range threads {
 		for _, m := range ms {
-			if m.ThreadID == threads[i].ID {
+			if m.ThreadID == threads[i].ID && threads[i].LastMessage.ID == "" {
 				threads[i].LastMessage = m
 			}
 		}
@@ -220,4 +205,31 @@ func collectIDs(ts Threads) (ids []string) {
 	}
 
 	return
+}
+
+func findThreadForUsers(tUsers map[string][]ThreadUser, userIDs []string) (string, error) {
+	var threadIDs []string
+
+	for id, tus := range tUsers {
+		if len(tus) >= len(userIDs) {
+			threadIDs = append(threadIDs, id)
+		}
+	}
+
+	for _, id := range threadIDs {
+		for _, tu := range tUsers[id] {
+			var found []string
+			for _, uid := range userIDs {
+				if tu.UserID == uid {
+					found = append(found, uid)
+				}
+			}
+
+			if len(found) == len(userIDs) {
+				return id, nil
+			}
+		}
+	}
+
+	return "", ErrThreadsNotFound
 }
