@@ -178,5 +178,7 @@ func PostDestroy(c *gin.Context) {
 		return
 	}
 
+	db.Delete(posts.Post{}, "parent_id = ?", id)
+
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
 }

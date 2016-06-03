@@ -8,6 +8,12 @@ func ListByUserID(userID string, db *gorm.DB) (fs Friendships, err error) {
 	return
 }
 
+func ListConfirmedByUserID(userID string, db *gorm.DB) (fs Friendships, err error) {
+	err = db.Where("user_id = ? OR friend_id = ?", userID, userID).Where("confirmed = ?", true).Find(&fs).Error
+	// don't collect the users here because we do that in the handler
+	return
+}
+
 func GetByUserIDs(userID, friendID string, db *gorm.DB) (f Friendship, err error) {
 	if err = db.Where("user_id = ? AND friend_id = ?", userID, friendID).Find(&f).Error; err != nil {
 		// if you don't find it the first way, try the other way

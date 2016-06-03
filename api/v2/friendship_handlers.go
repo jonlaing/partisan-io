@@ -22,7 +22,7 @@ func FriendshipIndex(c *gin.Context) {
 		return
 	}
 
-	fs, err := friendships.ListByUserID(user.ID, db)
+	fs, err := friendships.ListConfirmedByUserID(user.ID, db)
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return
