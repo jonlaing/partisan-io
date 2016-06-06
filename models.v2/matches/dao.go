@@ -1,11 +1,11 @@
 package matches
 
 import (
-	"errors"
 	"sort"
 	"strconv"
 	"time"
 
+	"partisan/location"
 	"partisan/matcher"
 
 	"partisan/models.v2/friendships"
@@ -60,7 +60,7 @@ func inBounds(user users.User) func(db *gorm.DB) *gorm.DB {
 
 func inGeoRadius(lat, long, rad float64) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		minLat, maxLat, minLong, maxLong, err := geoBounds(lat, long, rad)
+		minLat, maxLat, minLong, maxLong, err := location.Bounds(lat, long, rad)
 		if err != nil {
 			return db
 		}
@@ -140,40 +140,4 @@ func lookingFor(looking int) func(db *gorm.DB) *gorm.DB {
 
 		return db
 	}
-}
-
-func geoBounds(lat, long, rad float64) (minLat, maxLat, minLong, maxLong float64, err error) {
-	if rad > 90 {
-		err = errors.New("Radius cannot be above 90")
-	}
-
-	// LATITUDE
-	minLat = lat - rad
-	maxLat = lat + rad
-	if minLat > 90 {
-		minLat = 90 - minLat
-	} else if minLat < -90 {
-		minLat = 90 + minLat
-	}
-	if maxLat > 90 {
-		maxLat = 90 - maxLat
-	} else if maxLat < -90 {
-		maxLat = 90 + maxLat
-	}
-
-	// LONGITUDE
-	minLong = long - rad
-	maxLong = long + rad
-	if minLong > 180 {
-		minLong = 180 - minLong
-	} else if minLong < -180 {
-		minLong = 180 + minLong
-	}
-	if maxLong > 180 {
-		maxLong = 180 - maxLong
-	} else if maxLong < -180 {
-		maxLong = 180 + maxLong
-	}
-
-	return
 }

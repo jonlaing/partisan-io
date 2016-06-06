@@ -17,6 +17,7 @@ func GetByID(id string, userID string, db *gorm.DB) (p Post, err error) {
 	p.GetLikeCount(userID, db)
 	p.GetUser(db)
 	p.Attachments, _ = attachments.GetByPostID(p.ID, db)
+	p.GetParent(userID, db)
 
 	return
 }
@@ -36,6 +37,7 @@ func GetFeedByUserIDs(currentUserID string, userIDs []string, offset int, db *go
 	ps.Unique()
 	ps.GetRelations(currentUserID, db)
 	ps.GetUsers(db)
+	ps.CollectParents(currentUserID, db)
 
 	return
 }
@@ -75,13 +77,48 @@ func GetFeedByUserIDsAfter(currentUserID string, userIDs []string, after time.Ti
 }
 
 // GetParent queries the database for the parent of a post
-func (p Post) GetParent(db *gorm.DB) (parent Post, err error) {
+func (p *Post) GetParent(currentUserID string, db *gorm.DB) (err error) {
 	if p.Action == APost {
 		err = ErrParentQuery
 		return
 	}
 
+	var parent Post
 	err = db.Where("id = ?", p.ParentID.String).Find(&parent).Error
+	if err == nil {
+		parent.GetUser(db)
+		parent.Attachments, _ = attachments.GetByPostID(parent.ID, db)
+		p.Parent = parent
+	}
+
+	return
+}
+
+// CollectParents queries the database for the parent of a group of posts
+func (ps *Posts) CollectParents(currentUserID string, db *gorm.DB) (err error) {
+	ids := collectParentIDs(ps)
+
+	var parents Posts
+	err = db.Where("id IN (?)", ids).Find(&parents).Error
+	if err != nil {
+		return err
+	}
+
+	parents.GetRelations(currentUserID, db)
+	parents.GetUsers(db)
+
+	posts := []Post(*ps)
+
+	for i := range posts {
+		for _, parent := range parents {
+			if parent.ID == posts[i].ParentID.String {
+				posts[i].Parent = parent
+			}
+		}
+	}
+
+	*ps = Posts(posts)
+
 	return
 }
 
@@ -223,6 +260,18 @@ func collectIDs(ps *Posts) []string {
 
 	for _, p := range *ps {
 		ids = append(ids, p.ID)
+	}
+
+	return ids
+}
+
+func collectParentIDs(ps *Posts) []string {
+	var ids = make([]string, 0)
+
+	for _, p := range *ps {
+		if p.Action != APost && p.ParentID.Valid {
+			ids = append(ids, p.ParentID.String)
+		}
 	}
 
 	return ids

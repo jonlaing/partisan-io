@@ -17,15 +17,17 @@ import (
 // Post is the representation of posts, comments and likes. See ./types.go for more information
 // About what kind of type a post is.
 type Post struct {
-	ID           string                   `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
-	UserID       string                   `json:"user_id" sql:"type:uuid"`
-	ParentType   ParentType               `json:"parent_type"`
-	ParentID     sql.NullString           `json:"parent_id" sql:"type:uuid;default:null"`
-	Body         string                   `json:"body"`
-	Action       Action                   `json:"action"`
-	CreatedAt    time.Time                `json:"created_at"`
-	UpdatedAt    time.Time                `json:"updated_at"`
+	ID         string         `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
+	UserID     string         `json:"user_id" sql:"type:uuid"`
+	ParentType ParentType     `json:"parent_type"`
+	ParentID   sql.NullString `json:"parent_id" sql:"type:uuid;default:null"`
+	Body       string         `json:"body"`
+	Action     Action         `json:"action"`
+	CreatedAt  time.Time      `json:"created_at"`
+	UpdatedAt  time.Time      `json:"updated_at"`
+
 	User         users.User               `json:"user" sql:"-"`
+	Parent       interface{}              `json:"parent" sql:"-"`
 	LikeCount    int                      `json:"like_count" sql:"-"`
 	Liked        bool                     `json:"liked" sql:"-"`
 	CommentCount int                      `json:"child_count" sql:"-"`

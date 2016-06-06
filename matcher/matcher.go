@@ -172,6 +172,25 @@ func Match(p1, p2 PoliticalMap) (float64, error) {
 	return float64(matchPoints) / float64(totalPoints), nil
 }
 
+// Merge merges two or more maps by averaging their values at each subquadrant
+func Merge(maps ...PoliticalMap) (p PoliticalMap, err error) {
+	numMaps := len(maps)
+	if numMaps < 2 {
+		return p, errors.New("Cannot merge less than 2 maps")
+	}
+
+	for i := 0; i < 16; i++ {
+		sum := 0
+		for _, m := range maps {
+			sum += m[i]
+		}
+
+		p[i] = sum / numMaps
+	}
+
+	return
+}
+
 func contains(a []int, i int) bool {
 	for _, v := range a {
 		if i == v {

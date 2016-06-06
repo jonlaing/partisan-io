@@ -264,3 +264,15 @@ func (u *User) AttachAvatar(f multipart.File) error {
 
 	return nil
 }
+
+func (u User) GetID() string {
+	return u.ID
+}
+
+func (u User) GetSubscriberType() string {
+	return "user"
+}
+
+func (u User) GetPoliticalMap() matcher.PoliticalMap {
+	return u.PoliticalMap
+}
