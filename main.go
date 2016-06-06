@@ -4,11 +4,14 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"partisan/auth"
 	"partisan/db"
 	"partisan/logger"
 	"time"
 
+	"partisan/models.v2/apptokens"
 	"partisan/models.v2/attachments"
+	"partisan/models.v2/events"
 	"partisan/models.v2/flags"
 	"partisan/models.v2/friendships"
 	"partisan/models.v2/hashtags"
@@ -33,6 +36,7 @@ func main() {
 	r := gin.Default()
 	r.Use(db.DB())
 	r.Use(ForceSSL)
+	r.Use(auth.AppToken())
 	// recover from panics with a 500
 	r.Use(func(c *gin.Context) {
 		defer func() {
@@ -68,6 +72,7 @@ func main() {
 
 	// DON'T DO THIS IN PROD!!!
 	db.Database.AutoMigrate(
+		&apptokens.AppToken{},
 		&posts.Post{},
 		&users.User{},
 		&friendships.Friendship{},
@@ -81,6 +86,8 @@ func main() {
 		&messages.Thread{},
 		&messages.ThreadUser{},
 		&tickets.SocketTicket{},
+		&events.Event{},
+		&events.EventSubscription{},
 	)
 
 	ginpprof.Wrapper(r)

@@ -1,11 +1,13 @@
 package v2
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
 	"partisan/logger"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -115,6 +117,49 @@ func MessageIndex(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"messages": msgs})
 }
 
+func NewMessages(c *gin.Context) {
+	db := db.GetDB(c)
+
+	user, err := auth.CurrentUser(c)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	threadID := c.Param("thread_id")
+
+	if hasUser, err := messages.HasUser(user.ID, threadID, db); err != nil || !hasUser {
+		c.AbortWithError(http.StatusUnauthorized, messages.ErrThreadUser)
+		return
+	}
+
+	stamp, ok := c.GetQuery("timestamp")
+	if !ok {
+		c.AbortWithError(http.StatusNotAcceptable, errors.New("Bad timestamp"))
+		return
+	}
+
+	sec, err := strconv.Atoi(stamp)
+	if err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, errors.New("Bad timestamp"))
+		return
+	}
+
+	after := time.Unix(int64(sec), int64(0))
+
+	msgs, err := messages.GetMessagesAfter(threadID, after, db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	if err := messages.MarkAllMessagesRead(user.ID, threadID, db); err != nil {
+		logger.Error.Println(err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"messages": msgs})
+}
+
 func MessageCreate(c *gin.Context) {
 	db := db.GetDB(c)
 
@@ -157,13 +202,13 @@ func MessageCreate(c *gin.Context) {
 		return
 	}
 
+	c.JSON(http.StatusCreated, gin.H{"message": msg})
+
 	// Touch Updated at on thread and thread users
 	// Not handling error here, because it's really not that big a deal
 	thread.UpdatedAt = time.Now()
 	db.Save(&thread)
 	db.Model(messages.ThreadUser{}).Where("thread_id = ?", thread.ID).UpdateColumn("updated_at", time.Now())
-
-	c.JSON(http.StatusCreated, gin.H{"message": msg})
 }
 
 func MessageUnread(c *gin.Context) {

@@ -70,8 +70,24 @@ func initRoutesV2(r *gin.Engine) {
 			messages.GET("/threads/:thread_id", apiV2.MessageIndex)
 			messages.POST("/threads/:thread_id", apiV2.MessageCreate)
 			messages.GET("/threads/:thread_id/subscribe", apiV2.MessageThreadSubscribe)
+			messages.GET("/threads/:thread_id/new", apiV2.NewMessages)
 			messages.GET("/unread", apiV2.MessageUnread)
 		}
+
+		// EVENTS
+		// events := v2.Group("/events")
+		// events.Use(auth.Auth())
+		// {
+		// 	events.GET("/", apiV2.EventIndex)
+		// 	events.POST("/", apiV2.EventCreate)
+		// 	events.GET("/:event_id", apiV2.EventShow)
+		// 	events.PATCH("/:event_id", apiV2.EventUpdate)
+		// 	events.POST("/:event_id/host", apiV2.EventAddHost)
+		// 	events.DELETE("/:event_id/host", apiV2.EventRemoveHost)
+		// 	events.POST("/:event_id/subscribe", apiV2.EventSubscribe)
+		// 	events.DELETE("/:event_id/unsubscribe", apiV2.EventUnsubscribe)
+		// 	events.DELETE("/:event_id", apiV2.EventDestroy)
+		// }
 
 		// COMMENTS
 		v2.POST("/comments/:record_id/like", auth.Auth(), apiV2.LikeCreate)

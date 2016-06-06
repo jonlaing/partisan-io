@@ -108,10 +108,10 @@ func (sub MessageThreadSubscription) MessageWriteLoop(db *gorm.DB) {
 
 			msgs, err := messages.GetMessagesAfter(sub.thread.ID, after, db)
 			if err != nil {
-				sub.conn.WriteJSON(gin.H{"messages": []messages.Message{}})
+				sub.conn.WriteJSON(gin.H{"messages": 0})
 			}
 
-			if err := sub.conn.WriteJSON(gin.H{"messages": msgs}); err != nil {
+			if err := sub.conn.WriteJSON(gin.H{"stamp": sec, "messages": len(msgs)}); err != nil {
 				return
 			}
 

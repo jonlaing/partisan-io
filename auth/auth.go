@@ -10,8 +10,9 @@ import (
 	"net/http"
 	"os"
 	"partisan/db"
-	"time"
+	"partisan/logger"
 
+	"partisan/models.v2/apptokens"
 	"partisan/models.v2/tickets"
 	"partisan/models.v2/users"
 
@@ -63,46 +64,33 @@ func init() {
 	}
 }
 
-// UserSession is a database record that holds user sessions (go figure)
-type UserSession struct {
-	ID         uint `gorm:"primary_key"`
-	UserID     uint
-	SigningKey []byte
-	CreatedAt  time.Time
-	ExpiresAt  time.Time
-}
-
 // LoginJSON is the expected schema from a login form
 type LoginJSON struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
+// AppToken is middleware to make sure only Partisan approved products are accessing the API
+func AppToken() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		db := db.GetDB(c)
+
+		if err := getAppToken(c, db); err != nil {
+			c.AbortWithError(http.StatusUnauthorized, err)
+			return
+		}
+	}
+}
+
 // Auth is the authentication middleware
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := db.GetDB(c)
-		var user users.User
-		var err error
 
-		tokn, okTok := c.Request.Header["X-Auth-Token"]
-
-		if okTok {
-			user, err = userWithToken(tokn[0], db)
-			if err != nil {
-				c.AbortWithError(http.StatusUnauthorized, err)
-			}
-		} else {
-			if key, ok := c.GetQuery("key"); allowedWithKey(c) && ok {
-				user, err = userWithKey(key, db)
-				if err != nil {
-					c.AbortWithError(http.StatusUnauthorized, err)
-					return
-				}
-			} else {
-				c.AbortWithError(http.StatusUnauthorized, ErrNoToken)
-				return
-			}
+		user, err := getAuthToken(c, db)
+		if err != nil {
+			c.AbortWithError(http.StatusUnauthorized, err)
+			return
 		}
 
 		err = user.UpdateAPIKey()
@@ -160,6 +148,54 @@ func CurrentUser(c *gin.Context) (u users.User, err error) {
 	}
 
 	u = user.(users.User)
+
+	return
+}
+
+func getAppToken(c *gin.Context, db *gorm.DB) error {
+	appToken, okAppToken := c.Request.Header["X-App-Token"]
+
+	if !okAppToken {
+		// if there's a socket ticket, continue. A bad socket ticket
+		// should be caught by Auth()
+		if _, ok := c.GetQuery("key"); !allowedWithKey(c) || !ok {
+			return ErrNoAppToken
+		}
+	} else {
+		appToken, err := apptokens.GetByID(appToken[0], db)
+		if err != nil {
+			return err
+		}
+
+		if !appToken.Active {
+			return ErrAppTokenRevoked
+		}
+
+		logger.Info.Println("Partisan being used by:", appToken)
+	}
+
+	return nil
+}
+
+func getAuthToken(c *gin.Context, db *gorm.DB) (user users.User, err error) {
+	tokn, okTok := c.Request.Header["X-Auth-Token"]
+
+	if okTok {
+		user, err = userWithToken(tokn[0], db)
+		if err != nil {
+			return
+		}
+	} else {
+		if key, ok := c.GetQuery("key"); allowedWithKey(c) && ok {
+			user, err = userWithKey(key, db)
+			if err != nil {
+				return
+			}
+		} else {
+			err = ErrNoToken
+			return
+		}
+	}
 
 	return
 }
