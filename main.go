@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"partisan/auth"
 	"partisan/db"
 	"partisan/logger"
 	"time"
@@ -36,7 +35,6 @@ func main() {
 	r := gin.Default()
 	r.Use(db.DB())
 	r.Use(ForceSSL)
-	r.Use(auth.AppToken())
 	// recover from panics with a 500
 	r.Use(func(c *gin.Context) {
 		defer func() {

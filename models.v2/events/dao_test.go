@@ -179,7 +179,7 @@ func TestGetByID(t *testing.T) {
 }
 
 func TestSearchForUser(t *testing.T) {
-	es, err := SearchForUser(testLook, testdb)
+	es, err := SearchForUser(testLook, 0, testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return
@@ -203,7 +203,7 @@ func TestSearchForUser(t *testing.T) {
 }
 
 func TestGetByHost(t *testing.T) {
-	es, err := GetByHost(testHost, testdb)
+	es, err := GetByHost(testHost, 0, testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return
@@ -239,7 +239,7 @@ func TestGetByHost(t *testing.T) {
 }
 
 func TestGetByGuest(t *testing.T) {
-	es, err := GetByGuest(testGuest, testdb)
+	es, err := GetByGuest(testGuest, 0, testdb)
 	if err != nil {
 		t.Error("Unexpected error:", err)
 		return

@@ -3,6 +3,7 @@ package notifications
 import (
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/nu7hatch/gouuid"
 
 	models "partisan/models.v2"
@@ -12,6 +13,11 @@ import (
 type Notifier interface {
 	GetID() string
 	GetAction() string
+}
+
+type BulkNotifier interface {
+	Notifier
+	GetNotifUserIDs() []string
 }
 
 type Notification struct {
@@ -43,6 +49,28 @@ func New(userID, toID string, r Notifier) (n Notification, errs models.Validatio
 	return
 }
 
+func NewBulk(userID string, b BulkNotifier) (ns []Notification, errs models.ValidationErrors) {
+	for _, toID := range b.GetNotifUserIDs() {
+		if userID != toID {
+			n := Notification{
+				UserID:    userID,
+				ToID:      toID,
+				RecordID:  b.GetID(),
+				Action:    Action(b.GetAction()),
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			}
+			if errs = n.Validate(); len(errs) > 0 {
+				return ns, errs
+			}
+
+			ns = append(ns, n)
+		}
+	}
+
+	return
+}
+
 func (n *Notification) Validate() (errs models.ValidationErrors) {
 	errs = make(models.ValidationErrors)
 
@@ -59,4 +87,19 @@ func (n *Notification) Validate() (errs models.ValidationErrors) {
 	}
 
 	return errs
+}
+
+func BulkNotify(userID string, b BulkNotifier, db *gorm.DB) {
+	bufDB := db.New()
+
+	go func() {
+		ns, errs := NewBulk(userID, b)
+		if len(errs) > 0 {
+			return
+		}
+
+		for _, n := range ns {
+			bufDB.Create(&n)
+		}
+	}()
 }

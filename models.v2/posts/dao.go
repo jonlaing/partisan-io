@@ -3,7 +3,10 @@ package posts
 import (
 	"time"
 
+	"partisan/logger"
+
 	"partisan/models.v2/attachments"
+	"partisan/models.v2/events"
 	"partisan/models.v2/users"
 
 	"github.com/jinzhu/gorm"
@@ -59,6 +62,23 @@ func ListByIDs(currentUserID string, ids []string, offset int, db *gorm.DB) (ps 
 	return
 }
 
+func ListByParent(currentUserID string, parentType ParentType, parentID string, offset int, db *gorm.DB) (ps Posts, err error) {
+	err = db.Joins("left join flags on flags.record_id = posts.id").
+		Where("flags.user_id != ? OR flags.record_id IS NULL", currentUserID).
+		Where("posts.parent_id = ?", parentID).
+		Where("posts.parent_type = ?", parentType).
+		Order("posts.created_at desc").
+		Limit(25).
+		Offset(offset).
+		Find(&ps).Error
+
+	ps.Unique()
+	ps.GetRelations(currentUserID, db)
+	ps.GetUsers(db)
+
+	return
+}
+
 func GetFeedByUserIDsAfter(currentUserID string, userIDs []string, after time.Time, db *gorm.DB) (ps Posts, err error) {
 	err = db.Joins("left join flags on flags.record_id = posts.id").
 		Where("posts.user_id IN (?)", userIDs).
@@ -78,17 +98,27 @@ func GetFeedByUserIDsAfter(currentUserID string, userIDs []string, after time.Ti
 
 // GetParent queries the database for the parent of a post
 func (p *Post) GetParent(currentUserID string, db *gorm.DB) (err error) {
-	if p.Action == APost {
+	if p.Action == APost && p.ParentType == PTPost {
 		err = ErrParentQuery
+		logger.Error.Println("Invalid parent type:", p.Action, p.ParentType)
 		return
 	}
 
-	var parent Post
-	err = db.Where("id = ?", p.ParentID.String).Find(&parent).Error
-	if err == nil {
-		parent.GetUser(db)
-		parent.Attachments, _ = attachments.GetByPostID(parent.ID, db)
-		p.Parent = parent
+	switch p.ParentType {
+	case PTPost:
+		var parent Post
+		err = db.Where("id = ?", p.ParentID.String).Find(&parent).Error
+		if err == nil {
+			parent.GetUser(db)
+			parent.Attachments, _ = attachments.GetByPostID(parent.ID, db)
+			p.Parent = parent
+		}
+	case PTEvent:
+		logger.Info.Println("trying to get event parent")
+		event, err := events.GetByID(p.ParentID.String, nil, db)
+		if err == nil {
+			p.Parent = event
+		}
 	}
 
 	return

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"partisan/location"
+	"partisan/matcher"
 
 	"github.com/jinzhu/gorm"
 	"partisan/models.v2/users"
@@ -17,18 +18,21 @@ func GetByID(id string, guest Subscriber, db *gorm.DB) (e Event, err error) {
 
 	e.CountGuests(db)
 	e.GetHosts(db)
-	e.GetRSVP(guest, db)
+	if guest != nil {
+		e.GetRSVP(guest, db)
+		e.GetMatch(guest)
+	}
 
 	return
 }
 
-func SearchForUser(u users.User, db *gorm.DB) (es Events, err error) {
+func SearchForUser(u users.User, offset int, db *gorm.DB) (es Events, err error) {
 	minX := u.CenterX - 10
 	maxX := u.CenterX + 10
 	minY := u.CenterY - 10
 	maxY := u.CenterY + 10
 
-	minLat, maxLat, minLong, maxLong, err := location.Bounds(u.Latitude, u.Longitude, 25)
+	minLat, maxLat, minLong, maxLong, err := location.Bounds(u.Latitude, u.Longitude, 1)
 	if err != nil {
 		return
 	}
@@ -37,6 +41,7 @@ func SearchForUser(u users.User, db *gorm.DB) (es Events, err error) {
 		Where("centery > ? AND centery < ?", minY, maxY).
 		Where("latitude > ? AND latitude < ?", minLat, maxLat).
 		Where("longitude > ? AND longitude < ?", minLong, maxLong).
+		Offset(offset).Limit(25).Order("start_date ASC").
 		Find(&es).Error
 	if err != nil {
 		return
@@ -49,16 +54,18 @@ func SearchForUser(u users.User, db *gorm.DB) (es Events, err error) {
 	es.CollectHosts(db)
 	es.CountGuests(db)
 	es.CollectRSVPs(u, db)
+	es.CollectMatches(u)
 
 	return
 }
 
-func GetByHost(host Subscriber, db *gorm.DB) (es Events, err error) {
+func GetByHost(host Subscriber, offset int, db *gorm.DB) (es Events, err error) {
 	err = db.Joins("LEFT JOIN event_subscriptions ON event_subscriptions.event_id = events.id").
 		Where("event_subscriptions.subscriber_type = ?", host.GetSubscriberType()).
 		Where("event_subscriptions.subscriber_id = ?", host.GetID()).
 		Where("event_subscriptions.rsvp = ?", RTHost).
 		Where("events.start_date > ?::timestamp", time.Now()).
+		Offset(offset).Limit(25).
 		Find(&es).Error
 	if err != nil {
 		return
@@ -71,16 +78,18 @@ func GetByHost(host Subscriber, db *gorm.DB) (es Events, err error) {
 	es.CollectHosts(db)
 	es.CountGuests(db)
 	es.CollectRSVPs(host, db)
+	es.CollectMatches(host)
 
 	return
 }
 
-func GetByGuest(guest Subscriber, db *gorm.DB) (es Events, err error) {
+func GetByGuest(guest Subscriber, offset int, db *gorm.DB) (es Events, err error) {
 	err = db.Joins("LEFT JOIN event_subscriptions ON event_subscriptions.event_id = events.id").
 		Where("event_subscriptions.subscriber_type = ?", guest.GetSubscriberType()).
 		Where("event_subscriptions.subscriber_id = ?", guest.GetID()).
 		Where("event_subscriptions.rsvp IN (?)", []RSVPType{RTGoing, RTMaybe}).
 		Where("events.start_date > ?::timestamp", time.Now()).
+		Offset(offset).Limit(25).
 		Find(&es).Error
 	if err != nil {
 		return
@@ -93,16 +102,18 @@ func GetByGuest(guest Subscriber, db *gorm.DB) (es Events, err error) {
 	es.CollectHosts(db)
 	es.CountGuests(db)
 	es.CollectRSVPs(guest, db)
+	es.CollectMatches(guest)
 
 	return
 }
 
-func GetPastByGuest(guest Subscriber, db *gorm.DB) (es Events, err error) {
+func GetPastByGuest(guest Subscriber, offset int, db *gorm.DB) (es Events, err error) {
 	err = db.Joins("event_subscriptions ON event_subscriptions.event_id = events.id").
 		Where("event_subscriptions.subscriber_type = ?", guest.GetSubscriberType()).
 		Where("event_subscriptions.subscriber_id = ?", guest.GetID()).
 		Where("event_subscriptions.rsvp IN (?)", []RSVPType{RTGoing, RTMaybe}).
 		Where("events.start_date < ?::timestamp", time.Now()).
+		Offset(offset).Limit(25).
 		Find(&es).Error
 	if err != nil {
 		return
@@ -110,18 +121,15 @@ func GetPastByGuest(guest Subscriber, db *gorm.DB) (es Events, err error) {
 
 	es.CollectHosts(db)
 	es.CountGuests(db)
+	es.CollectRSVPs(guest, db)
+	es.CollectMatches(guest)
 
 	return
 }
 
 func (e *Event) GetHosts(db *gorm.DB) error {
-	var hosts EventSubscriptions
-	if err := db.Where("event_id = ? AND rsvp = ?", e.ID, RTHost).
-		Find(&hosts).Error; err != nil {
-		return err
-	}
-
-	if err := hosts.CollectSubscribers(db); err != nil {
+	hosts, err := e.GetHostSubscriptions(db)
+	if err != nil {
 		return err
 	}
 
@@ -130,6 +138,16 @@ func (e *Event) GetHosts(db *gorm.DB) error {
 	}
 
 	return nil
+}
+
+func (e Event) GetHostSubscriptions(db *gorm.DB) (subs EventSubscriptions, err error) {
+	err = db.Where("event_id = ? AND rsvp = ?", e.ID, RTHost).Find(&subs).Error
+	if err != nil {
+		return
+	}
+
+	err = subs.CollectSubscribers(db)
+	return
 }
 
 func (e *Event) CountGuests(db *gorm.DB) error {
@@ -160,6 +178,24 @@ func (e *Event) GetRSVP(guest Subscriber, db *gorm.DB) error {
 	e.RSVP = sub.RSVP
 
 	return nil
+}
+
+func (e *Event) GetMatch(guest Subscriber) error {
+	match, err := matcher.Match(e.PoliticalMap, guest.GetPoliticalMap())
+	if err != nil {
+		return err
+	}
+
+	e.Match = matcher.ToHuman(match)
+
+	return nil
+}
+
+func (e Event) GetSubscription(guest Subscriber, db *gorm.DB) (s EventSubscription, err error) {
+	err = db.Where("subscriber_type = ?", guest.GetSubscriberType()).
+		Where("subscriber_id = ?", guest.GetID()).
+		Where("event_id = ?", e.ID).Find(&s).Error
+	return
 }
 
 func (es *Events) CollectHosts(db *gorm.DB) error {
@@ -240,6 +276,18 @@ func (es *Events) CollectRSVPs(guest Subscriber, db *gorm.DB) error {
 	*es = Events(events)
 
 	return nil
+}
+
+func (es *Events) CollectMatches(guest Subscriber) {
+	events := []Event(*es)
+	for i := range events {
+		match, err := matcher.Match(events[i].PoliticalMap, guest.GetPoliticalMap())
+		if err == nil {
+			events[i].Match = matcher.ToHuman(match)
+		}
+	}
+
+	*es = Events(events)
 }
 
 func (subs *EventSubscriptions) CollectSubscribers(db *gorm.DB) error {

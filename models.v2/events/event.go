@@ -1,11 +1,15 @@
 package events
 
 import (
+	"mime/multipart"
+	"os"
 	"time"
 
 	"github.com/jasonmoo/geo"
 	"github.com/nu7hatch/gouuid"
 
+	"partisan/imager"
+	"partisan/logger"
 	"partisan/matcher"
 
 	models "partisan/models.v2"
@@ -13,6 +17,7 @@ import (
 
 type Event struct {
 	ID            string               `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
+	Title         string               `json:"title"`
 	StartDate     time.Time            `json:"start_date"`
 	EndDate       time.Time            `json:"end_date"`
 	Latitude      float64              `json:"latitude"`
@@ -36,17 +41,19 @@ type Event struct {
 type Events []Event
 
 type CreatorBinding struct {
-	StartDate time.Time `json:"start_date"`
-	EndDate   time.Time `json:"end_date"`
-	Location  string    `json:"location"`
-	Summary   string    `json:"summary"`
+	Title     string `json:"title" form:"title" binding:"required"`
+	StartDate string `json:"start_date" form:"start_date" binding:"required"`
+	EndDate   string `json:"end_date" form:"end_date" binding:"required"`
+	Location  string `json:"location" form:"location"`
+	Summary   string `json:"summary" form:"summary"`
 }
 
 type UpdaterBinding struct {
-	StartDate time.Time `json:"start_date"`
-	EndDate   time.Time `json:"end_date"`
-	Location  string    `json:"location"`
-	Summary   string    `json:"summary"`
+	Title     string `json:"title" form:"title" binding:"required"`
+	StartDate string `json:"start_date" form:"start_date"`
+	EndDate   string `json:"end_date" form:"end_date"`
+	Location  string `json:"location" form:"location"`
+	Summary   string `json:"summary" form:"summary"`
 }
 
 func New(host Subscriber, b CreatorBinding) (e Event, s EventSubscription, errs models.ValidationErrors) {
@@ -58,11 +65,24 @@ func New(host Subscriber, b CreatorBinding) (e Event, s EventSubscription, errs 
 	}
 
 	e.ID = id.String()
-	e.StartDate = b.StartDate
-	e.EndDate = b.EndDate
+	e.Title = b.Title
 	e.Summary = b.Summary
 	e.CreatedAt = time.Now()
 	e.UpdatedAt = e.CreatedAt
+
+	if time, err := parseTime(b.StartDate); err != nil {
+		logger.Error.Println(err)
+		errs["start_date"] = err
+	} else {
+		e.StartDate = time
+	}
+
+	if time, err := parseTime(b.EndDate); err != nil {
+		logger.Error.Println(err)
+		errs["end_date"] = err
+	} else {
+		e.EndDate = time
+	}
 
 	var herrs models.ValidationErrors
 	s, herrs = e.NewHost(host)
@@ -95,12 +115,24 @@ func New(host Subscriber, b CreatorBinding) (e Event, s EventSubscription, errs 
 func (e *Event) Update(b UpdaterBinding) (errs models.ValidationErrors) {
 	errs = make(models.ValidationErrors)
 
-	if !b.StartDate.IsZero() {
-		e.StartDate = b.StartDate
+	if b.Title != "" {
+		e.Title = b.Title
 	}
 
-	if !b.EndDate.IsZero() {
-		e.EndDate = b.EndDate
+	if len(b.StartDate) > 0 {
+		if time, err := parseTime(b.StartDate); err != nil {
+			errs["start_date"] = err
+		} else {
+			e.StartDate = time
+		}
+	}
+
+	if len(b.EndDate) > 0 {
+		if time, err := parseTime(b.EndDate); err != nil {
+			errs["end_date"] = err
+		} else {
+			e.EndDate = time
+		}
 	}
 
 	if b.Summary != "" {
@@ -140,6 +172,24 @@ func (e Event) Validate() (errs models.ValidationErrors) {
 	return
 }
 
+func (e Event) HasHost(host Subscriber) bool {
+	for _, h := range e.Hosts {
+		if h != nil && h.GetID() == host.GetID() {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (e Event) CanUpdate(host Subscriber) bool {
+	return e.HasHost(host)
+}
+
+func (e Event) CanDelete(host Subscriber) bool {
+	return e.HasHost(host)
+}
+
 // GetLocation finds the latitude/longitude by postal code
 func (e *Event) GetLocation(address string) error {
 	location, err := geo.Geocode(address)
@@ -152,4 +202,37 @@ func (e *Event) GetLocation(address string) error {
 	e.Longitude = location.Lng
 
 	return nil
+}
+
+func (e *Event) AttachCoverPhoto(f multipart.File) error {
+	var err error
+	var fullPath string
+	isS3 := false
+
+	if len(os.Getenv("AWS_ACCESS_KEY_ID")) > 0 {
+		isS3 = true
+	}
+
+	processor := imager.ImageProcessor{File: f}
+
+	if err := processor.Resize(1500); err != nil {
+		return err
+	}
+
+	if isS3 {
+		fullPath, err = processor.Save("/img")
+	} else {
+		fullPath, err = processor.Save("/localfiles/img")
+	}
+	if err != nil {
+		return err
+	}
+
+	e.CoverPhotoURL = fullPath
+
+	return nil
+}
+
+func parseTime(s string) (time.Time, error) {
+	return time.Parse("2006-01-02T15:04:05", s)
 }

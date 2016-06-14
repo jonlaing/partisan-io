@@ -86,5 +86,13 @@ func (e *Event) NewGuest(guest Subscriber, rsvp RSVPType) (s EventSubscription, 
 	s.CreatedAt = time.Now()
 	s.UpdatedAt = s.CreatedAt
 
+	if rsvp == RTGoing {
+		e.GoingCount++
+	}
+
+	if rsvp == RTMaybe {
+		e.MaybeCount++
+	}
+
 	return
 }

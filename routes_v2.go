@@ -10,6 +10,7 @@ import (
 func initRoutesV2(r *gin.Engine) {
 	// V2
 	v2 := r.Group("api/v2")
+	v2.Use(auth.AppToken())
 	{
 		// AUTH
 		v2.POST("/login", apiV2.LoginHandler)
@@ -75,19 +76,22 @@ func initRoutesV2(r *gin.Engine) {
 		}
 
 		// EVENTS
-		// events := v2.Group("/events")
-		// events.Use(auth.Auth())
-		// {
-		// 	events.GET("/", apiV2.EventIndex)
-		// 	events.POST("/", apiV2.EventCreate)
-		// 	events.GET("/:event_id", apiV2.EventShow)
-		// 	events.PATCH("/:event_id", apiV2.EventUpdate)
-		// 	events.POST("/:event_id/host", apiV2.EventAddHost)
-		// 	events.DELETE("/:event_id/host", apiV2.EventRemoveHost)
-		// 	events.POST("/:event_id/subscribe", apiV2.EventSubscribe)
-		// 	events.DELETE("/:event_id/unsubscribe", apiV2.EventUnsubscribe)
-		// 	events.DELETE("/:event_id", apiV2.EventDestroy)
-		// }
+		events := v2.Group("/events")
+		events.Use(auth.Auth())
+		{
+			events.GET("/", apiV2.EventIndex)
+			events.POST("/", apiV2.EventCreate)
+			events.GET("/:event_id", apiV2.EventShow)
+			events.PATCH("/:event_id", apiV2.EventUpdate)
+			events.POST("/:event_id/hosts/:user_id", apiV2.EventAddHost)
+			events.DELETE("/:event_id/hosts/:user_id", apiV2.EventRemoveHost)
+			events.POST("/:event_id/going", apiV2.EventGoing)
+			events.POST("/:event_id/maybe", apiV2.EventMaybe)
+			events.DELETE("/:event_id/unsubscribe", apiV2.EventUnsubscribe)
+			events.DELETE("/:event_id", apiV2.EventDestroy)
+
+			events.GET("/:event_id/posts", apiV2.EventPosts)
+		}
 
 		// COMMENTS
 		v2.POST("/comments/:record_id/like", auth.Auth(), apiV2.LikeCreate)

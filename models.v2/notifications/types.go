@@ -10,6 +10,7 @@ const (
 	AMention              = "mention"
 	ALike                 = "like"
 	AComment              = "comment"
+	AEventUpdate          = "eventupdate"
 )
 
 func (a *Action) Scan(src interface{}) error {
