@@ -23,8 +23,13 @@ func EventIndex(c *gin.Context) {
 
 	page := getPage(c)
 
-	events, _ := events.SearchForUser(user, page*25, db)
-	c.JSON(http.StatusOK, gin.H{"events": events})
+	var es events.Events
+	if _, ok := c.GetQuery("subscriptions"); ok {
+		es, _ = events.GetByGuest(user, page*25, db)
+	} else {
+		es, _ = events.SearchForUser(user, page*25, db)
+	}
+	c.JSON(http.StatusOK, gin.H{"events": es})
 }
 
 func EventShow(c *gin.Context) {

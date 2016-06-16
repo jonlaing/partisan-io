@@ -87,7 +87,7 @@ func GetByGuest(guest Subscriber, offset int, db *gorm.DB) (es Events, err error
 	err = db.Joins("LEFT JOIN event_subscriptions ON event_subscriptions.event_id = events.id").
 		Where("event_subscriptions.subscriber_type = ?", guest.GetSubscriberType()).
 		Where("event_subscriptions.subscriber_id = ?", guest.GetID()).
-		Where("event_subscriptions.rsvp IN (?)", []RSVPType{RTGoing, RTMaybe}).
+		Where("event_subscriptions.rsvp IN (?)", []RSVPType{RTHost, RTGoing, RTMaybe}).
 		Where("events.start_date > ?::timestamp", time.Now()).
 		Offset(offset).Limit(25).
 		Find(&es).Error

@@ -223,11 +223,14 @@ func (p Post) Validate() models.ValidationErrors {
 func (ps *Posts) Unique() {
 	posts := []Post(*ps)
 	delIDs := []string{}
+	goodIDs := []string{}
 
 	for _, p1 := range posts {
 		for _, p2 := range posts {
-			if p1.ID == p2.ParentID.String {
-				delIDs = append(delIDs, p2.ID)
+			if isParent(p1, p2) || hasSameParent(p1, p2, goodIDs) {
+				delIDs = append(delIDs, prioritizeUnique(p1, p2))
+			} else {
+				goodIDs = append(goodIDs, p2.ID)
 			}
 		}
 	}
@@ -246,4 +249,34 @@ func (ps *Posts) Unique() {
 	}
 
 	*ps = Posts(posts)
+}
+
+func isParent(parent, child Post) bool {
+	return child.ParentID.Valid && parent.ID == child.ParentID.String
+}
+
+func hasSameParent(p1, p2 Post, whitelist []string) bool {
+	if !p1.ParentID.Valid || !p2.ParentID.Valid {
+		return false
+	}
+
+	for _, id := range whitelist {
+		if p2.ID == id {
+			return false // prevent deleting all children
+		}
+	}
+
+	return p1.ID != p2.ID && p1.ParentID.String == p2.ParentID.String
+}
+
+func prioritizeUnique(p1, p2 Post) string {
+	if p1.Action == AComment && p2.Action == ALike {
+		return p2.ID
+	}
+
+	if p1.Action == ALike && p2.Action == AComment {
+		return p1.ID
+	}
+
+	return p2.ID
 }
