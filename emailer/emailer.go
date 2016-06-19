@@ -9,8 +9,9 @@ import (
 
 // Config is configuration for the emaail
 type Config struct {
-	From     string
+	Auth     string
 	Password string
+	From     string
 }
 
 var config Config
@@ -21,12 +22,14 @@ func Configure(c Config) {
 }
 
 // SendEmail sends an email through gmail
-func SendEmail(to, subject, body string) error {
+func SendPlainEmail(to, subject, body string) error {
 	m := email.NewMessage(subject, body)
-	m.From = config.From
-	m.To = []string{to}
+	return send(to, m)
+}
 
-	return email.Send("smtp.gmail.com:587", smtp.PlainAuth("", config.From, config.Password, "smtp.gmail.com"), m)
+func SendHTMLEmail(to, subject, body string) error {
+	m := email.NewHTMLMessage(subject, body)
+	return send(to, m)
 }
 
 // SendWelcomeEmail sends the welcome email to a user
@@ -43,5 +46,29 @@ func SendWelcomeEmail(username, email string) error {
 
 	body := fmt.Sprintf(bodyTemp, username)
 
-	return SendEmail(email, subject, body)
+	return SendPlainEmail(email, subject, body)
+}
+
+func SendPasswordReset(email, resetID string) error {
+	subject := "Partisan.IO: Password Reset"
+	bodyTemp := `
+	<p>
+		A request was made to reset your password. If you did not request to reset your password, 
+		disregard this email.
+	</p>
+
+	<p>To reset your password follow click the following link on your mobile device: <a href="partisanio://password_reset?reset_id=%s">Click Here</a></p>
+
+	<p>- Jon at Partisan.IO</p>
+	`
+
+	body := fmt.Sprintf(bodyTemp, resetID)
+
+	return SendHTMLEmail(email, subject, body)
+}
+
+func send(to string, m *email.Message) error {
+	m.To = []string{to}
+
+	return email.Send("smtp.gmail.com:587", smtp.PlainAuth("", config.Auth, config.Password, "smtp.gmail.com"), m)
 }

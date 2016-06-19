@@ -1,10 +1,12 @@
 package main
 
 import (
+	"os"
 	"partisan/emailer"
 )
 
 var emailConfig = emailer.Config{
-	From: "jon@partisan.io",
-	Password: "c@cT8$7L8Sen0KC^",
+	Auth:     os.Getenv("EMAIL_UN"),
+	Password: os.Getenv("EMAIL_PASS"),
+	From:     "no-reply@partisan.io",
 }

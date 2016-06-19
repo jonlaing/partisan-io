@@ -55,7 +55,12 @@ func UserShow(c *gin.Context) {
 		return
 	}
 
-	profile, err := users.GetByID(userID, db)
+	var profile users.User
+	if userID[0] == '@' { // username
+		profile, err = users.GetByUsername(userID[1:], db)
+	} else {
+		profile, err = users.GetByID(userID, db)
+	}
 	if err != nil {
 		c.AbortWithError(http.StatusNotFound, err)
 		return

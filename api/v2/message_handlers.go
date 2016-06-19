@@ -252,12 +252,10 @@ func msgWriteLoop(userID string, db *gorm.DB, c *websocket.Conn, received chan b
 			count, err := messages.UnreadCount(userID, db)
 			if err != nil {
 				log.Println(err)
-				return
 			}
 
 			if err := c.WriteJSON(gin.H{"unread": count > 0}); err != nil {
 				log.Println(err)
-				return
 			}
 		case <-quit:
 			return // kill the loop

@@ -7,6 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func init() {
+	apiV2.ConfigureEmailer(emailConfig)
+}
+
 func initRoutesV2(r *gin.Engine) {
 	// V2
 	v2 := r.Group("api/v2")
@@ -112,5 +116,13 @@ func initRoutesV2(r *gin.Engine) {
 		v2.GET("/search", auth.Auth(), apiV2.HashtagShow)
 
 		v2.GET("/socket_ticket", auth.Auth(), apiV2.SocketTicketCreate)
+
+		// should only be able to request a password reset to the app
+		v2.POST("/password_reset", apiV2.PasswordResetCreate)
 	}
+
+	// by virtue of not being logged in, and currently having to do this from the website, we can't use
+	// the app token here
+	r.GET("api/v2/password_reset/:reset_id", apiV2.PasswordResetShow)
+	r.PATCH("api/v2/password_reset/:reset_id", apiV2.PasswordResetUpdate)
 }

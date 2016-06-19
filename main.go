@@ -16,18 +16,19 @@ import (
 	"partisan/models.v2/hashtags"
 	"partisan/models.v2/messages"
 	"partisan/models.v2/notifications"
+	"partisan/models.v2/password_reset"
 	"partisan/models.v2/posts"
 	"partisan/models.v2/tickets"
 	"partisan/models.v2/users"
 
 	"github.com/DeanThompson/ginpprof"
+	"github.com/gin-gonic/contrib/renders/multitemplate"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
 func init() {
-	// apiV1.ConfigureEmailer(emailConfig)
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
@@ -46,12 +47,13 @@ func main() {
 
 		c.Next()
 	})
-	// r.Us (gin.BasicAuth(gin.Accounts{
-	// 	"partisan-basic": "antistate123",
-	// }))
 
-	// initRoutesV1(r)
 	initRoutesV2(r)
+
+	// HTML
+	r.HTMLRender = createMyRender()
+
+	// r.GET("/password_reset/:reset_id", PasswordResetRedirect)
 
 	r.Use(static.Serve("/localfiles", static.LocalFile("localfiles", false)))
 	r.Use(static.Serve("/", static.LocalFile("front_dist", false)))
@@ -86,11 +88,11 @@ func main() {
 		&tickets.SocketTicket{},
 		&events.Event{},
 		&events.EventSubscription{},
+		&pwreset.PasswordReset{},
 	)
 
 	ginpprof.Wrapper(r)
 
-	// r.Run(":" + os.Getenv("PORT"))
 	s := &http.Server{
 		Addr:           ":" + os.Getenv("PORT"),
 		Handler:        r,
@@ -101,13 +103,12 @@ func main() {
 	s.ListenAndServe()
 }
 
-// func deprecated(newPath string) gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		if newPath != "" {
-// 			c.AbortWithError(http.StatusBadRequest, fmt.Errorln("This endpoint is deprecated. Please see:", newPath))
-// 			return
-// 		}
+func createMyRender() multitemplate.Render {
+	root := "templates"
+	base := root + "/layout.html"
 
-// 		c.AbortWithError(http.StatusBadRequest, fmt.Errorln("This endpoint is deprecated."))
-// 	}
-// }
+	r := multitemplate.New()
+	r.AddFromFiles("password_reset", base, root+"/password_reset.html")
+
+	return r
+}
