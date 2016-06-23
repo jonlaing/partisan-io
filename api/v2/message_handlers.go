@@ -249,7 +249,7 @@ func msgWriteLoop(userID string, db *gorm.DB, c *websocket.Conn, received chan b
 	for {
 		select {
 		case <-received:
-			count, err := messages.UnreadCount(userID, db)
+			count, _ := messages.UnreadCount(userID, db)
 			// Printing this way too often
 			// if err != nil {
 			// 	log.Println(err)
