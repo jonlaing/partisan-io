@@ -64,21 +64,17 @@ func init() {
 	}
 }
 
-// LoginJSON is the expected schema from a login form
-type LoginJSON struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 // AppToken is middleware to make sure only Partisan approved products are accessing the API
 func AppToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := db.GetDB(c)
 
 		if err := getAppToken(c, db); err != nil {
+			logger.Error.Println("couldn't get app token:", err)
 			c.AbortWithError(http.StatusUnauthorized, err)
 			return
 		}
+		c.Next()
 	}
 }
 
@@ -110,12 +106,14 @@ func Auth() gin.HandlerFunc {
 }
 
 // Login a user
-func Login(user *users.User, c *gin.Context) (string, error) {
+func Login(user *users.User, deviceToken string, c *gin.Context) (string, error) {
 	if err := user.UpdateAPIKey(); err != nil {
 		if err = user.GenAPIKey(); err != nil {
 			return "", err
 		}
 	}
+
+	user.DeviceToken = deviceToken // for push notifs
 
 	token := jwt.New(jwt.SigningMethodHS256)
 
@@ -224,6 +222,7 @@ func userWithToken(tokn string, db *gorm.DB) (users.User, error) {
 
 	user, err := users.GetByAPIKey(apiKey, db)
 	if err != nil {
+		logger.Error.Println("couldn't find user with token:", tokn, "and apiKey:", apiKey)
 		return users.User{}, err
 	}
 

@@ -11,8 +11,9 @@ import (
 )
 
 type loginFields struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email       string `json:"email" binding:"required"`
+	Password    string `json:"password" binding:"required"`
+	DeviceToken string `json:"device_token"`
 }
 
 func LoginHandler(c *gin.Context) {
@@ -35,9 +36,14 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.Login(&user, c)
+	token, err := auth.Login(&user, fields.DeviceToken, c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	if err := db.Save(&user).Error; err != nil {
+		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
 

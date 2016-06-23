@@ -26,7 +26,7 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.Login(&user, c)
+	token, err := auth.Login(&user, binding.DeviceToken, c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return

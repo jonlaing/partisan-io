@@ -7,7 +7,7 @@ type Action string
 const (
 	AFriendRequest Action = "friendrequest"
 	AFriendAccept         = "friendaccept"
-	AMention              = "mention"
+	AUserTag              = "usertag"
 	ALike                 = "like"
 	AComment              = "comment"
 	AEventUpdate          = "eventupdate"

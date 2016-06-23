@@ -20,6 +20,11 @@ func GetByUsername(username string, db *gorm.DB) (u User, err error) {
 	return u, err
 }
 
+func ListByUsernames(db *gorm.DB, usernames ...string) (us []User, err error) {
+	err = db.Where("username IN (?)", usernames).Find(&us).Error
+	return
+}
+
 func GetByEmail(email string, db *gorm.DB) (u User, err error) {
 	err = db.Where("email = ?", email).Find(&u).Error
 	return u, err

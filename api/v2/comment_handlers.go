@@ -4,9 +4,13 @@ import (
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/logger"
 
+	"partisan/models.v2/attachments"
+	"partisan/models.v2/hashtags"
 	"partisan/models.v2/notifications"
 	"partisan/models.v2/posts"
+	"partisan/models.v2/user_tags"
 
 	"github.com/gin-gonic/gin"
 )
@@ -88,11 +92,35 @@ func CommentCreate(c *gin.Context) {
 		return
 	}
 
+	tmpFile, _, err := c.Request.FormFile("attachments")
+	if err == nil {
+		defer tmpFile.Close()
+		attachment, err := attachments.NewImage(user.ID, comment.ID, tmpFile)
+		if err != nil {
+			c.AbortWithError(http.StatusNotAcceptable, err)
+			db.Delete(&comment) // clean up comment
+			return
+		}
+
+		if err := db.Save(&attachment).Error; err != nil {
+			c.AbortWithError(http.StatusNotAcceptable, err)
+			db.Delete(&comment) // clean ucomment
+			return
+		}
+	} else {
+		logger.Error.Println(err)
+	}
+
 	if user.ID != post.UserID {
 		n, errs := notifications.New(user.ID, post.UserID, comment)
 		if len(errs) == 0 {
 			db.Save(&n)
 		}
+	}
+
+	hashtags.FindAndCreate(comment, db)
+	if err := usertags.Extract(comment, db); err != nil {
+		logger.Error.Println(err)
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"comment": comment})

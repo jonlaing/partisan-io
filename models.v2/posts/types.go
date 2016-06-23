@@ -13,6 +13,7 @@ const (
 	APost    = "post"
 	AComment = "comment"
 	ALike    = "like"
+	AUserTag = "usertag"
 )
 
 type ParentType string
@@ -66,6 +67,8 @@ func validAction(s Action) bool {
 	case AComment:
 		fallthrough
 	case ALike:
+		fallthrough
+	case AUserTag:
 		return true
 	default:
 		return false

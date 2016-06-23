@@ -4,11 +4,13 @@ import (
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/logger"
 
 	"partisan/models.v2/attachments"
 	"partisan/models.v2/friendships"
 	"partisan/models.v2/hashtags"
 	"partisan/models.v2/posts"
+	"partisan/models.v2/user_tags"
 
 	"github.com/gin-gonic/gin"
 )
@@ -108,6 +110,9 @@ func PostCreate(c *gin.Context) {
 	}
 
 	hashtags.FindAndCreate(post, db)
+	if err := usertags.Extract(post, db); err != nil {
+		logger.Error.Println(err)
+	}
 
 	c.JSON(http.StatusCreated, gin.H{"post": post})
 }

@@ -41,6 +41,10 @@ func (p Post) GetType() string {
 
 // GetID satisfies hashtags/Hashtagger
 func (p Post) GetID() string {
+	if p.Action == ALike && p.ParentID.Valid {
+		return p.ParentID.String
+	}
+
 	return p.ID
 }
 
@@ -54,7 +58,7 @@ func (p Post) GetContent() string {
 }
 
 // GetUserID satisfies UserTagger interface
-func (p *Post) GetUserID() string {
+func (p Post) GetUserID() string {
 	return p.UserID
 }
 
@@ -94,7 +98,7 @@ func New(userID string, b CreatorBinding) (p Post, errs models.ValidationErrors)
 		p.ParentID.Valid = true
 		p.ParentType = parentType
 	}
-	if action != ALike {
+	if action != ALike && action != AUserTag {
 		p.Body = b.Body
 	}
 
@@ -112,7 +116,7 @@ func New(userID string, b CreatorBinding) (p Post, errs models.ValidationErrors)
 // It does not save the Post to the databse. This should always be used rather
 // than updating a Post manually from user input.
 func (p *Post) Update(userID string, b UpdaterBinding) models.ValidationErrors {
-	if p.Action != ALike {
+	if p.Action != ALike && p.Action != AUserTag {
 		p.Body = b.Body
 	}
 	p.UpdatedAt = time.Now()
@@ -194,13 +198,13 @@ func (p Post) Validate() models.ValidationErrors {
 		}
 	}
 
-	if p.Action == AComment || p.Action == ALike {
+	if p.Action == AComment || p.Action == ALike || p.Action == AUserTag {
 		if !p.ParentID.Valid {
 			errs["parent_id"] = ErrMustHaveParent
 		}
 	}
 
-	if p.Action == ALike {
+	if p.Action == ALike || p.Action == AUserTag {
 		if p.ParentType != PTPost && p.ParentType != PTComment {
 			errs["parent_type"] = ErrLikeParent
 		}
@@ -269,13 +273,14 @@ func hasSameParent(p1, p2 Post, whitelist []string) bool {
 	return p1.ID != p2.ID && p1.ParentID.String == p2.ParentID.String
 }
 
+// this is a little backward, but basically, the id that's returned will be removed from the list
 func prioritizeUnique(p1, p2 Post) string {
-	if p1.Action == AComment && p2.Action == ALike {
-		return p2.ID
+	if p1.Action == AComment && (p2.Action == ALike || p2.Action == AUserTag) {
+		return p2.ID // p2 is removed from the list
 	}
 
-	if p1.Action == ALike && p2.Action == AComment {
-		return p1.ID
+	if (p1.Action == ALike || p1.Action == AUserTag) && p2.Action == AComment {
+		return p1.ID // p1 one is removed from the list
 	}
 
 	return p2.ID

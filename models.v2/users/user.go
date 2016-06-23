@@ -54,6 +54,7 @@ type User struct {
 	APIKey             string               `json:"-" sql:"type:uuid;default:uuid_generate_v4()"`
 	APIKeyExp          time.Time            `json:"-"`
 	PasswordHash       []byte               `json:"-"`
+	DeviceToken        string               `json:"-"`
 }
 
 // CreatorBinding is a struct for fields neeeded to create a user via JSON Binding
@@ -63,6 +64,7 @@ type CreatorBinding struct {
 	PostalCode      string `json:"postal_code" binding:"required"`
 	Password        string `json:"password" binding:"required"`
 	PasswordConfirm string `json:"password_confirm" binding:"required"`
+	DeviceToken     string `json:"device_token"`
 }
 
 // UpdaterBinding is a struct for fields neeeded to update a user via JSON Binding
@@ -83,6 +85,7 @@ func New(b CreatorBinding) (u User, errs models.ValidationErrors) {
 	u.PostalCode = b.PostalCode
 	u.CreatedAt = time.Now()
 	u.UpdatedAt = u.CreatedAt
+	u.DeviceToken = b.DeviceToken
 
 	if err := u.GeneratePasswordHash(b.Password, b.PasswordConfirm); err != nil {
 		errs["password"] = err
