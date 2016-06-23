@@ -23,7 +23,6 @@ import (
 
 	"github.com/DeanThompson/ginpprof"
 	"github.com/gin-gonic/contrib/renders/multitemplate"
-	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
@@ -60,13 +59,6 @@ func main() {
 
 	// homepage
 	r.GET("/", func(c *gin.Context) {
-		sess := sessions.Default(c)
-
-		if sess.Get("user_id") != nil {
-			c.Redirect(http.StatusFound, "/feed")
-			return
-		}
-
 		c.File("front_dist/index.html")
 	})
 
