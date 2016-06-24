@@ -2,6 +2,7 @@ package notifications
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/jinzhu/gorm"
 	"github.com/timehop/apns"
@@ -9,8 +10,9 @@ import (
 )
 
 type PushNotification struct {
-	DeviceToken string
-	Message     string
+	DeviceToken    string
+	Message        string
+	NotificationID string
 }
 
 func (n Notification) NewPushNotification(db *gorm.DB) (PushNotification, error) {
@@ -29,8 +31,9 @@ func (n Notification) NewPushNotification(db *gorm.DB) (PushNotification, error)
 	}
 
 	pn := PushNotification{
-		DeviceToken: to.DeviceToken,
-		Message:     n.pnMessage(from.Username),
+		DeviceToken:    to.DeviceToken,
+		Message:        n.pnMessage(from.Username),
+		NotificationID: n.ID,
 	}
 
 	if pn.Message == "" {
@@ -49,6 +52,8 @@ func (n PushNotification) Prepare() apns.Notification {
 	pn.DeviceToken = n.DeviceToken
 	pn.Payload = payload
 	pn.Priority = apns.PriorityImmediate
+	pn.Identifier = uint32(rand.Intn(100000))
+	pn.ID = n.NotificationID
 
 	return pn
 }
