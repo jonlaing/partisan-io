@@ -11,7 +11,7 @@ var pushClient apns.Client
 
 func init() {
 	var err error
-	pushClient, err = apns.NewClientWithFiles(apns.ProductionGateway, "pushcert.pem", "pushkey.pem")
+	pushClient, err = apns.NewClientWithFiles(apns.SandboxGateway, "pushcert.pem", "pushkey.pem")
 	if err != nil {
 		logger.Error.Println("Couldn't connect to APNS:", err)
 	}

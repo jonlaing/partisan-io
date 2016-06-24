@@ -98,6 +98,7 @@ func FriendshipCreate(c *gin.Context) {
 	}
 
 	if pn, err := n.NewPushNotification(db); err == nil {
+		logger.Info.Println("Trying to send push notif")
 		pushNotif := pn.Prepare()
 		pushClient.Send(pushNotif)
 	} else {
