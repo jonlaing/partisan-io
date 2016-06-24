@@ -1,8 +1,8 @@
 package v2
 
 import (
+	"fmt"
 	"partisan/emailer"
-	"partisan/logger"
 
 	"github.com/timehop/apns"
 )
@@ -13,13 +13,13 @@ func init() {
 	var err error
 	pushClient, err = apns.NewClientWithFiles(apns.SandboxGateway, "pushcert.pem", "pushkey.pem")
 	if err != nil {
-		logger.Error.Println("Couldn't connect to APNS:", err)
+		fmt.Println("Couldn't connect to APNS:", err)
 	}
 
 	go func() {
 		for f := range pushClient.FailedNotifs {
-			logger.Error.Println("Notif", f.Notif.ID, "failed with", f.Err.Error())
-			logger.Error.Println("Device Token:", f.Notif.DeviceToken)
+			fmt.Println("Notif", f.Notif.ID, "failed with", f.Err.Error())
+			fmt.Println("Device Token:", f.Notif.DeviceToken)
 		}
 	}()
 }
