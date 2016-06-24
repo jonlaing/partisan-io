@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/logger"
 	"partisan/matcher"
 
 	"partisan/models.v2/friendships"
@@ -94,6 +95,13 @@ func FriendshipCreate(c *gin.Context) {
 	n, errs := notifications.New(user.ID, binding.FriendID, f)
 	if len(errs) == 0 {
 		db.Save(&n)
+	}
+
+	if pn, err := n.NewPushNotification(db); err == nil {
+		pushNotif := pn.Prepare()
+		pushClient.Send(pushNotif)
+	} else {
+		logger.Error.Println("Error sending push notif:", err)
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"friendship": f})
