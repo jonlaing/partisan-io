@@ -1,7 +1,6 @@
 package v2
 
 import (
-	"fmt"
 	"partisan/emailer"
 	"partisan/logger"
 
@@ -19,7 +18,8 @@ func init() {
 
 	go func() {
 		for f := range pushClient.FailedNotifs {
-			fmt.Println("Notif", f.Notif.ID, "failed with", f.Err.Error())
+			logger.Error.Println("Notif", f.Notif.ID, "failed with", f.Err.Error())
+			logger.Error.Println("Device Token:", f.Notif.DeviceToken)
 		}
 	}()
 }
