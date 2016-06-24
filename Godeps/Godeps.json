@@ -131,6 +131,10 @@
 			"Rev": "1327236a73ce4e58dc466eb453e05cfad3579a7b"
 		},
 		{
+			"ImportPath": "github.com/timehop/apns",
+			"Rev": "02b971829dfca0436e051a28d60f11ffec5e3516"
+		},
+		{
 			"ImportPath": "github.com/vaughan0/go-ini",
 			"Rev": "a98ad7ee00ec53921f08832bc06ecf7fd600e6a1"
 		},
