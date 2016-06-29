@@ -15,7 +15,6 @@ func init() {
 	questionSets = q.QuestionSets{
 		q.QuestionSet{
 			// Initial
-			ValidSet: func(x, y int) bool { return x == 0 && y == 0 },
 			Questions: q.Questions{
 				q.Question{
 					// ProCapital
@@ -41,7 +40,6 @@ func init() {
 		},
 		q.QuestionSet{
 			// Initial
-			ValidSet: func(x, y int) bool { return x == 0 && y == 0 },
 			Questions: q.Questions{
 				q.Question{
 					// Right-Wing
@@ -66,8 +64,32 @@ func init() {
 			},
 		},
 		q.QuestionSet{
+			// Initial
+			Questions: q.Questions{
+				q.Question{
+					// Pro-Capital
+					Prompt: "Hard work leads to upward social mobility",
+					Map:    []int{2, 3, 6, 7, 10, 11, 14, 15},
+				},
+				q.Question{
+					// Pro-State
+					Prompt: "Good social organization is centralized",
+					Map:    []int{0, 1, 2, 3, 4, 5, 6, 7},
+				},
+				q.Question{
+					// Anti-Capital
+					Prompt: "Corporations should not self-regulate",
+					Map:    []int{0, 1, 4, 5, 8, 9, 12, 13},
+				},
+				q.Question{
+					// Anti-State
+					Prompt: "Dissent is a vitrue",
+					Map:    []int{8, 9, 10, 11, 12, 13, 14, 15},
+				},
+			},
+		},
+		q.QuestionSet{
 			// Left-Wing
-			ValidSet: func(x, y int) bool { return x < 0 && x > -50 },
 			// Mask:     []int{0, 1, 4, 5, 8, 9, 12, 13},
 			Questions: q.Questions{
 				q.Question{
@@ -93,9 +115,32 @@ func init() {
 			},
 		},
 		q.QuestionSet{
+			// Left-Wing
+			Questions: q.Questions{
+				q.Question{
+					// Far-Left
+					Prompt: "Power grows out of the barrel of a gun",
+					Map:    q.MFarLeft,
+				},
+				q.Question{
+					// Middle-Left
+					Prompt: "Capitalism can be tamed by strong socialist reforms",
+					Map:    q.MMiddleLeft,
+				},
+				q.Question{
+					// Pro-State
+					Prompt: "Discipline is a virtue",
+					Map:    q.MProState,
+				},
+				q.Question{
+					// Anti-State
+					Prompt: "Absolute power corrupts, absolutely",
+					Map:    q.MAntiState,
+				},
+			},
+		},
+		q.QuestionSet{
 			// Right-Wing
-			ValidSet: func(x, y int) bool { return x > 0 },
-			Mask:     []int{2, 3, 6, 7, 10, 11, 14, 15},
 			Questions: q.Questions{
 				q.Question{
 					// Far-Right
@@ -119,30 +164,49 @@ func init() {
 				},
 			},
 		},
+		// q.QuestionSet{
+		// 	// Authoritarian Socialist
+		// 	Mask: q.SocialistMask,
+		// 	Questions: q.Questions{
+		// 		q.Question{
+		// 			// High Authoritarian
+		// 			Prompt: "Centralized power is essential to sustaining political organizations",
+		// 			Map:    q.MAuthoritarian,
+		// 		},
+		// 		q.Question{
+		// 		// Middle Authoritarian
+		// 		},
+		// 		q.Question{
+		// 		// Far-Left
+		// 		},
+		// 		q.Question{
+		// 		// Middle-Left
+		// 		},
+		// 	},
+		// },
 		q.QuestionSet{
 			// Libertarian Socialist
-			ValidSet: func(x, y int) bool { return x < -50 && y < -50 },
-			// Mask:     []int{8, 9, 12, 13},
+			Mask: q.AnarchistMask,
 			Questions: q.Questions{
 				q.Question{
 					// Far-Left
 					Prompt: "Work should be abolished.",
-					Map:    []int{8, 12},
+					Map:    q.MFarLeft,
 				},
 				q.Question{
 					// Middle-Left
 					Prompt: "The workplace is the primary arena of struggle against the excesses of capitalism.",
-					Map:    []int{9, 13},
+					Map:    q.MMiddleLeft,
 				},
 				q.Question{
 					// Anti-organization
 					Prompt: "Large organizations are inherently authoritarian.",
-					Map:    []int{12, 13},
+					Map:    q.MAntiAuthoritarian,
 				},
 				q.Question{
 					// Pro-organization
 					Prompt: "It may be necessary to negotiate with capitalists and politicians in furthering political goals.",
-					Map:    []int{8, 9},
+					Map:    q.MMiddleAuthoritarian,
 				},
 			},
 		},

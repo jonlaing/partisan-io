@@ -77,17 +77,17 @@ func (p *PoliticalMap) Center() (int, int) {
 	// distance from the "origin"
 	// moving up by two places at a time (since there's no 0 on the grid)
 	xCoef := []int{
-		-3, -1, 1, 3,
-		-3, -1, 1, 3,
-		-3, -1, 1, 3,
-		-3, -1, 1, 3,
+		-2, -1, 1, 2,
+		-2, -1, 1, 2,
+		-2, -1, 1, 2,
+		-2, -1, 1, 2,
 	}
 
 	yCoef := []int{
-		3, 3, 3, 3,
+		2, 2, 2, 2,
 		1, 1, 1, 1,
 		-1, -1, -1, -1,
-		-3, -3, -3, -3,
+		-2, -2, -2, -2,
 	}
 
 	for k, v := range p {

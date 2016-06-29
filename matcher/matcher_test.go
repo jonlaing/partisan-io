@@ -159,6 +159,72 @@ func TestCenter(t *testing.T) {
 	if x, y := p2.Center(); x != 0 || y != 0 {
 		t.Error("Incorrect center: ", x, y)
 	}
+
+	p3 := PoliticalMap{
+		1, 1, 0, 0,
+		1, 1, 0, 0,
+		1, 1, 0, 0,
+		1, 1, 0, 0,
+	}
+
+	if x, y := p3.Center(); x != -50 || y != 0 {
+		t.Error("Incorrect center: ", x, y)
+	}
+
+	p4 := PoliticalMap{
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		1, 1, 1, 1,
+		1, 1, 1, 1,
+	}
+
+	if x, y := p4.Center(); x != 0 || y != -50 {
+		t.Error("Incorrect center: ", x, y)
+	}
+
+	p5 := PoliticalMap{
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		1, 1, 0, 0,
+		1, 1, 0, 0,
+	}
+
+	if x, y := p5.Center(); x != -50 || y != -50 {
+		t.Error("Incorrect center: ", x, y)
+	}
+
+	p6 := PoliticalMap{
+		0, 1, 0, 0,
+		0, 1, 0, 0,
+		0, 1, 0, 0,
+		0, 1, 0, 0,
+	}
+
+	if x, y := p6.Center(); x != -33 || y != 0 {
+		t.Error("Incorrect center: ", x, y)
+	}
+
+	p7 := PoliticalMap{
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		1, 1, 1, 1,
+		0, 0, 0, 0,
+	}
+
+	if x, y := p7.Center(); x != 0 || y != -33 {
+		t.Error("Incorrect center: ", x, y)
+	}
+
+	p8 := PoliticalMap{
+		1, 0, 0, 0,
+		1, 0, 0, 0,
+		1, 0, 0, 0,
+		1, 0, 0, 0,
+	}
+
+	if x, y := p8.Center(); x != -66 || y != 0 {
+		t.Error("Incorrect center: ", x, y)
+	}
 }
 
 func TestScan(t *testing.T) {
