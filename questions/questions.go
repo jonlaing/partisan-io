@@ -9,7 +9,7 @@ import (
 // The radius for an acceptable question
 const radius = 17
 
-const (
+var (
 	MProState    = []int{0, 1, 2, 3, 4, 5, 6, 7}
 	MProCapital  = []int{2, 3, 6, 7, 10, 11, 14, 15}
 	MAntiState   = []int{8, 9, 10, 11, 12, 13, 14, 15}
@@ -26,7 +26,7 @@ const (
 	MFarLeft           = []int{0, 4, 8, 12}
 )
 
-const (
+var (
 	SocialistMask = []int{0, 1, 4, 5}
 	AnarchistMask = []int{8, 9, 12, 13}
 	LiberalMask   = []int{2, 3, 6, 7}
