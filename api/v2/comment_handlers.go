@@ -115,11 +115,18 @@ func CommentCreate(c *gin.Context) {
 		n, errs := notifications.New(user.ID, post.UserID, comment)
 		if len(errs) == 0 {
 			db.Save(&n)
+
+			if pn, err := n.NewPushNotification(db); err == nil {
+				pushNotif := pn.Prepare()
+				pushClient.Send(pushNotif)
+			} else {
+				logger.Error.Println("Error sending push notif:", err)
+			}
 		}
 	}
 
 	hashtags.FindAndCreate(comment, db)
-	if err := usertags.Extract(comment, db); err != nil {
+	if err := usertags.Extract(comment, db, &pushClient); err != nil {
 		logger.Error.Println(err)
 	}
 

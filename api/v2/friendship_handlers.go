@@ -95,14 +95,13 @@ func FriendshipCreate(c *gin.Context) {
 	n, errs := notifications.New(user.ID, binding.FriendID, f)
 	if len(errs) == 0 {
 		db.Save(&n)
-	}
 
-	if pn, err := n.NewPushNotification(db); err == nil {
-		logger.Info.Println("Trying to send push notif")
-		pushNotif := pn.Prepare()
-		pushClient.Send(pushNotif)
-	} else {
-		logger.Error.Println("Error sending push notif:", err)
+		if pn, err := n.NewPushNotification(db); err == nil {
+			pushNotif := pn.Prepare()
+			pushClient.Send(pushNotif)
+		} else {
+			logger.Error.Println("Error sending push notif:", err)
+		}
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"friendship": f})
@@ -144,6 +143,13 @@ func FriendshipUpdate(c *gin.Context) {
 	n, errs := notifications.New(user.ID, friendID, f)
 	if len(errs) == 0 {
 		db.Save(&n)
+
+		if pn, err := n.NewPushNotification(db); err == nil {
+			pushNotif := pn.Prepare()
+			pushClient.Send(pushNotif)
+		} else {
+			logger.Error.Println("Error sending push notif:", err)
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"friendship": f})

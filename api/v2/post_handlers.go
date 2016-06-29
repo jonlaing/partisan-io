@@ -110,7 +110,7 @@ func PostCreate(c *gin.Context) {
 	}
 
 	hashtags.FindAndCreate(post, db)
-	if err := usertags.Extract(post, db); err != nil {
+	if err := usertags.Extract(post, db, &pushClient); err != nil {
 		logger.Error.Println(err)
 	}
 

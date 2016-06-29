@@ -202,6 +202,16 @@ func MessageCreate(c *gin.Context) {
 		return
 	}
 
+	pns, err := msg.NewPushNotifications(db)
+	if err != nil && len(pns) > 0 {
+		for _, pn := range pns {
+			pushNotif := pn.Prepare()
+			pushClient.Send(pushNotif)
+		}
+	} else {
+		logger.Error.Println("Error sending push notif")
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"message": msg})
 
 	// Touch Updated at on thread and thread users

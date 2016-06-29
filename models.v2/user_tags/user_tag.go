@@ -11,6 +11,7 @@ import (
 	"partisan/models.v2/users"
 
 	"github.com/jinzhu/gorm"
+	"github.com/timehop/apns"
 )
 
 // Usertagger is an interface for records that can be tagged with a username
@@ -33,7 +34,7 @@ func (t usertag) GetAction() string {
 	return string(notifications.AUserTag)
 }
 
-func Extract(r Usertagger, db *gorm.DB) error {
+func Extract(r Usertagger, db *gorm.DB, pushClient *apns.Client) error {
 	tags := extractTags(r.GetContent())
 	if len(tags) == 0 {
 		return ErrNoTags
@@ -47,7 +48,7 @@ func Extract(r Usertagger, db *gorm.DB) error {
 	for _, user := range us {
 		// can't tag users that aren't your friend
 		if friendships.Exists(r.GetUserID(), user.ID, db) {
-			createPost(user.ID, r, db)
+			createPost(user.ID, r, db, pushClient)
 		}
 	}
 
@@ -56,7 +57,7 @@ func Extract(r Usertagger, db *gorm.DB) error {
 
 // create a post with action AUserTag, so user tags will show up in feed,
 // and then notify the user that was tagged
-func createPost(userID string, r Usertagger, db *gorm.DB) {
+func createPost(userID string, r Usertagger, db *gorm.DB, pushClient *apns.Client) {
 	binding := posts.CreatorBinding{
 		ParentType: r.GetType(),
 		ParentID:   r.GetID(),
@@ -65,17 +66,24 @@ func createPost(userID string, r Usertagger, db *gorm.DB) {
 	p, errs := posts.New(userID, binding)
 	if len(errs) == 0 {
 		if err := db.Create(&p).Error; err == nil {
-			notifyUser(userID, r, db)
+			notifyUser(userID, r, db, pushClient)
 		}
 	} else {
 		logger.Error.Println(errs)
 	}
 }
 
-func notifyUser(userID string, r Usertagger, db *gorm.DB) {
+func notifyUser(userID string, r Usertagger, db *gorm.DB, pushClient *apns.Client) {
 	n, errs := notifications.New(r.GetUserID(), userID, usertag{r.GetID()})
 	if len(errs) == 0 {
 		db.Create(&n)
+
+		if pn, err := n.NewPushNotification(db); err == nil {
+			pushNotif := pn.Prepare()
+			pushClient.Send(pushNotif)
+		} else {
+			logger.Error.Println("Error sending push notif:", err)
+		}
 	}
 }
 

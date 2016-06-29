@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"partisan/auth"
 	"partisan/db"
+	"partisan/logger"
 
 	"partisan/models.v2/notifications"
 	"partisan/models.v2/posts"
@@ -60,6 +61,13 @@ func LikeCreate(c *gin.Context) {
 		n, errs := notifications.New(user.ID, post.UserID, like)
 		if len(errs) == 0 {
 			db.Save(&n)
+
+			if pn, err := n.NewPushNotification(db); err == nil {
+				pushNotif := pn.Prepare()
+				pushClient.Send(pushNotif)
+			} else {
+				logger.Error.Println("Error sending push notif:", err)
+			}
 		}
 	}
 

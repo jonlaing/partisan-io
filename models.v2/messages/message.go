@@ -1,11 +1,14 @@
 package messages
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/nu7hatch/gouuid"
 
 	models "partisan/models.v2"
+	"partisan/models.v2/notifications"
 	"partisan/models.v2/users"
 )
 
@@ -75,4 +78,30 @@ func (m Message) Validate() (errs models.ValidationErrors) {
 	}
 
 	return
+}
+
+func (m Message) NewPushNotifications(db *gorm.DB) (pns []notifications.PushNotification, err error) {
+	thread, err := GetThread(m.ThreadID, db)
+	if err != nil {
+		return pns, err
+	}
+
+	var from users.User
+	for _, mtu := range thread.Users {
+		if mtu.UserID == m.UserID {
+			from = mtu.User
+		}
+	}
+
+	for _, mtu := range thread.Users {
+		if mtu.UserID != m.UserID {
+			pns = append(pns, notifications.PushNotification{
+				DeviceToken:    mtu.User.DeviceToken,
+				Message:        fmt.Sprintf("@%s: %s", from.Username, m.Body),
+				NotificationID: m.ID,
+			})
+		}
+	}
+
+	return pns, nil
 }
