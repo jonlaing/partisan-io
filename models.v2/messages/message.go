@@ -98,6 +98,8 @@ func (m Message) NewPushNotifications(db *gorm.DB) (pns []notifications.PushNoti
 			pns = append(pns, notifications.PushNotification{
 				DeviceToken:    mtu.User.DeviceToken,
 				Message:        fmt.Sprintf("@%s: %s", from.Username, m.Body),
+				Action:         "message",
+				Meta:           map[string]interface{}{"thread_id": m.ThreadID},
 				NotificationID: m.ID,
 			})
 		}

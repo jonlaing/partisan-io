@@ -12,6 +12,8 @@ import (
 type PushNotification struct {
 	DeviceToken    string
 	Message        string
+	Action         string
+	Meta           map[string]interface{}
 	NotificationID string
 }
 
@@ -33,6 +35,8 @@ func (n Notification) NewPushNotification(db *gorm.DB) (PushNotification, error)
 	pn := PushNotification{
 		DeviceToken:    to.DeviceToken,
 		Message:        n.pnMessage(from.Username),
+		Action:         string(n.Action),
+		Meta:           map[string]interface{}{"record_id": n.RecordID},
 		NotificationID: n.ID,
 	}
 
@@ -47,6 +51,8 @@ func (n PushNotification) Prepare() apns.Notification {
 	payload := apns.NewPayload()
 	payload.APS.Alert.Body = n.Message
 	payload.APS.Sound = "bingbong.aiff"
+	payload.SetCustomValue("action", n.Action)
+	payload.SetCustomValue("meta", n.Meta)
 
 	pn := apns.NewNotification()
 	pn.DeviceToken = n.DeviceToken
