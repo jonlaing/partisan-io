@@ -13,6 +13,7 @@ import (
 type Notifier interface {
 	GetID() string
 	GetAction() string
+	GetNotifType() string
 }
 
 type BulkNotifier interface {
@@ -21,14 +22,15 @@ type BulkNotifier interface {
 }
 
 type Notification struct {
-	ID        string    `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
-	UserID    string    `json:"user_id" sql:"type:uuid"` // ID of first user
-	ToID      string    `json:"to_id" sql:"type:uuid"`   // ID of second user
-	RecordID  string    `json:"record_id"`
-	Action    Action    `json:"action"`
-	Read      bool      `json:"read"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID         string    `json:"id" gorm:"primary_key" sql:"type:uuid;default:uuid_generate_v4()"`
+	UserID     string    `json:"user_id" sql:"type:uuid"` // ID of first user
+	ToID       string    `json:"to_id" sql:"type:uuid"`   // ID of second user
+	RecordID   string    `json:"record_id"`
+	RecordType string    `json:"record_type"`
+	Action     Action    `json:"action"`
+	Read       bool      `json:"read"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 
 	User users.User `json:"user" sql:"-"`
 }
@@ -37,12 +39,13 @@ type Notifications []Notification
 
 func New(userID, toID string, r Notifier) (n Notification, errs models.ValidationErrors) {
 	n = Notification{
-		UserID:    userID,
-		ToID:      toID,
-		RecordID:  r.GetID(),
-		Action:    Action(r.GetAction()),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		UserID:     userID,
+		ToID:       toID,
+		RecordID:   r.GetID(),
+		RecordType: r.GetNotifType(),
+		Action:     Action(r.GetAction()),
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
 	}
 
 	errs = n.Validate()
@@ -53,12 +56,13 @@ func NewBulk(userID string, b BulkNotifier) (ns []Notification, errs models.Vali
 	for _, toID := range b.GetNotifUserIDs() {
 		if userID != toID {
 			n := Notification{
-				UserID:    userID,
-				ToID:      toID,
-				RecordID:  b.GetID(),
-				Action:    Action(b.GetAction()),
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
+				UserID:     userID,
+				ToID:       toID,
+				RecordID:   b.GetID(),
+				RecordType: b.GetNotifType(),
+				Action:     Action(b.GetAction()),
+				CreatedAt:  time.Now(),
+				UpdatedAt:  time.Now(),
 			}
 			if errs = n.Validate(); len(errs) > 0 {
 				return ns, errs

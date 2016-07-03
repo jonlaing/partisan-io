@@ -71,9 +71,9 @@ func (n Notification) pnMessage(username string) string {
 	case AFriendAccept:
 		return fmt.Sprintf("@%s accepted your friend request.", username)
 	case AUserTag:
-		return fmt.Sprintf("@%s tagged you in something.", username)
+		return fmt.Sprintf("@%s tagged you in a %s.", username, n.RecordType)
 	case ALike:
-		return fmt.Sprintf("@%s liked something you wrote.", username)
+		return fmt.Sprintf("@%s liked your %s.", username, n.RecordType)
 	case AComment:
 		return fmt.Sprintf("@%s commented on your post.", username)
 	case AEventUpdate:

@@ -86,3 +86,7 @@ func (f Friendship) GetAction() string {
 
 	return string(notifications.AFriendRequest)
 }
+
+func (f Friendship) GetNotifType() string {
+	return "user"
+}

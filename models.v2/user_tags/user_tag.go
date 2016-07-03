@@ -34,6 +34,10 @@ func (t usertag) GetAction() string {
 	return string(notifications.AUserTag)
 }
 
+func (t usertag) GetNotifType() string {
+	return "user"
+}
+
 func Extract(r Usertagger, db *gorm.DB, pushClient *apns.Client) error {
 	tags := extractTags(r.GetContent())
 	if len(tags) == 0 {

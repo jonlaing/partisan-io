@@ -39,6 +39,10 @@ func (p Post) GetType() string {
 	return "post"
 }
 
+func (p Post) GetNotifType() string {
+	return string(p.ParentType)
+}
+
 // GetID satisfies hashtags/Hashtagger
 func (p Post) GetID() string {
 	if p.Action == ALike && p.ParentID.Valid {
