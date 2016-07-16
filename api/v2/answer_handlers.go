@@ -31,7 +31,7 @@ func AnswersUpdate(c *gin.Context) {
 		return
 	}
 
-	err = user.PoliticalMap.Add(a.Map, a.Agree)
+	err = user.PoliticalMap.Add(a.Map, a.Mask, a.Agree)
 	if err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return

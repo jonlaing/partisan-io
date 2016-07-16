@@ -25,8 +25,11 @@ import (
 //
 type PoliticalMap [16]int
 
-// Add records an answer and places it in the map
-func (p *PoliticalMap) Add(aMap []int, agree bool) error {
+// Add records an answer and places it in the map.
+// NOTE: In case you forget, as you have 100 times, yes, the mask is necessary! If, for instance, you disagree with something mapped to
+// MMiddleLeft, without the mask, both the Far Left AND the whole Right Wing will get points added! With the mask, only the
+// Far Left will get highlighted.
+func (p *PoliticalMap) Add(aMap []int, mask []int, agree bool) error {
 	var sign int
 
 	if agree {
@@ -40,7 +43,10 @@ func (p *PoliticalMap) Add(aMap []int, agree bool) error {
 			return &ErrOutOfRange{k, v}
 		}
 
-		p[v] += sign
+		// if there's no mask, or the index is within the mask, add it
+		if len(mask) == 0 || contains(mask, v) {
+			p[v] += sign
+		}
 	}
 
 	p.normalize() // if any term is < 0, shift the whole thing up

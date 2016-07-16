@@ -6,6 +6,7 @@ import (
 
 type answer struct {
 	Map   []int
+	Mask  []int
 	Agree bool
 }
 
@@ -21,7 +22,7 @@ func TestAddingPointsToMap(t *testing.T) {
 	}
 
 	p1 := PoliticalMap{}
-	p1.Add(a1.Map, a1.Agree)
+	p1.Add(a1.Map, a1.Mask, a1.Agree)
 	for i, val := range p1 {
 		if i%4 == 0 && val != 1 {
 			t.Error("PoliticalMap didn't mark right fields:", p1)
@@ -30,7 +31,7 @@ func TestAddingPointsToMap(t *testing.T) {
 		}
 	}
 
-	p1.Add(a1.Map, a1.Agree)
+	p1.Add(a1.Map, a1.Mask, a1.Agree)
 	for i, val := range p1 {
 		if i%4 == 0 && val != 2 {
 			t.Error("PoliticalMap didn't mark right fields:", p1)
@@ -40,7 +41,7 @@ func TestAddingPointsToMap(t *testing.T) {
 	}
 
 	a1.Agree = false
-	p1.Add(a1.Map, a1.Agree)
+	p1.Add(a1.Map, a1.Mask, a1.Agree)
 	for i, val := range p1 {
 		if i%4 == 0 && val != 1 {
 			t.Error("PoliticalMap didn't mark right fields:", p1)
@@ -49,12 +50,76 @@ func TestAddingPointsToMap(t *testing.T) {
 		}
 	}
 
-	p1.Add(a2.Map, a2.Agree)
+	p1.Add(a2.Map, a2.Mask, a2.Agree)
 	for i, val := range p1 {
 		if (i+1)%4 == 0 && val != 1 {
 			t.Error("PoliticalMap didn't mark right fields:", p1)
 		}
 	}
+}
+
+func TestMask(t *testing.T) {
+	a1 := answer{
+		Map:   []int{0, 1, 2, 3},
+		Mask:  []int{4, 5, 6, 7},
+		Agree: true,
+	}
+
+	p := PoliticalMap{}
+	p.Add(a1.Map, a1.Mask, a1.Agree)
+
+	for _, val := range p {
+		if val != 0 {
+			t.Error("Expected political map to be unaffected for a1")
+		}
+	}
+
+	a2 := answer{
+		Map:   []int{0, 1, 2, 3},
+		Mask:  []int{4, 5, 6, 7},
+		Agree: false,
+	}
+
+	p.Add(a2.Map, a2.Mask, a2.Agree)
+
+	for _, val := range p {
+		if val != 0 {
+			t.Error("Expected political map to be unaffected for a2")
+		}
+	}
+
+	a3 := answer{
+		Map:   []int{0, 1, 2, 3},
+		Mask:  []int{0, 1, 2, 3},
+		Agree: true,
+	}
+
+	p.Add(a3.Map, a3.Mask, a3.Agree)
+
+	for i, val := range p {
+		if i < 4 && val != 1 {
+			t.Error("Expected values at indices less than 4, got:", val, "at", i)
+		}
+
+		if i >= 4 && val != 0 {
+			t.Error("Expected no change outside of mask. Got:", val, "at", i)
+		}
+	}
+
+	a4 := answer{
+		Map:   []int{0, 1, 2, 3},
+		Mask:  []int{0, 1, 2, 3},
+		Agree: false,
+	}
+
+	p.Add(a4.Map, a4.Mask, a4.Agree)
+
+	for _, val := range p {
+		if val != 0 {
+			t.Error("Expected all values to go back to 0")
+		}
+	}
+
 }
 
 func TestNormalize(t *testing.T) {
@@ -64,7 +129,7 @@ func TestNormalize(t *testing.T) {
 	}
 
 	p := PoliticalMap{}
-	p.Add(a.Map, a.Agree)
+	p.Add(a.Map, a.Mask, a.Agree)
 
 	for k, v := range p {
 		if k >= 0 && k <= 3 && v != 0 {

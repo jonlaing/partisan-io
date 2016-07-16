@@ -129,6 +129,7 @@ func Login(user *users.User, deviceToken string, c *gin.Context) (string, error)
 // Logout a user
 func Logout(u *users.User, c *gin.Context) {
 	u.DestroyAPIKey()
+	u.DeviceToken = "" // kill the device token when the user logs out
 	c.Status(http.StatusOK)
 }
 

@@ -2,6 +2,44 @@ package questions
 
 import "testing"
 
+func TestQuestions(t *testing.T) {
+	if num := len(InitialQuestions); num < 8 {
+		t.Error("InitialQuestions should have 8 questions, got:", num)
+	}
+
+	if num := len(LeftWingQuestions); num < 8 {
+		t.Error("LeftWingQuestions should have 8 questions, got:", num)
+	}
+
+	if num := len(RightWingQuestions); num < 8 {
+		t.Error("RightWingQuestions should have 8 questions, got:", num)
+	}
+
+	if num := len(AuthoritarianSocialistQuestions); num < 8 {
+		t.Error("AuthoritarianSocialistQuestions should have 8 questions, got:", num)
+	}
+
+	if num := len(LibertarianSocialistQuestions); num < 8 {
+		t.Error("LibertarianSocialistQuestions should have 8 questions, got:", num)
+	}
+
+	if num := len(AuthoritarianQuestions); num < 8 {
+		t.Error("AuthoritarianQuestions should have 8 questions, got:", num)
+	}
+
+	if num := len(LibertarianQuestions); num < 8 {
+		t.Error("LibertarianQuestions should have 8 questions, got:", num)
+	}
+
+	if num := len(AuthoritarianCapitalistQuestions); num < 8 {
+		t.Error("AuthoritarianCapitalistQuestions should have 8 questions, got:", num)
+	}
+
+	if num := len(LibertarianCapitalistQuestions); num < 8 {
+		t.Error("LibertarianCapitalistQuestions should have 8 questions, got:", num)
+	}
+}
+
 func TestHasMask(t *testing.T) {
 	qs1 := QuestionSet{}
 	qs2 := QuestionSet{Mask: []int{0}}

@@ -24,13 +24,11 @@ var (
 	MFarRight          = []int{3, 7, 11, 15}
 	MAntiAuthoritarian = []int{12, 13, 14, 15}
 	MFarLeft           = []int{0, 4, 8, 12}
-)
 
-var (
-	SocialistMask = []int{0, 1, 4, 5}
-	AnarchistMask = []int{8, 9, 12, 13}
-	LiberalMask   = []int{2, 3, 6, 7}
-	AltRightMask  = []int{10, 11, 14, 15}
+	MAuthSocialist  = []int{0, 1, 4, 5}
+	MAuthCapitalist = []int{2, 3, 6, 7}
+	MLibSocialist   = []int{8, 9, 12, 13}
+	MLibCapitalist  = []int{10, 11, 14, 15}
 )
 
 // Question holds questions to guage a user's political leanings
@@ -45,14 +43,17 @@ type Questions [4]Question
 // QuestionSet is a collection of questions. Using ValidSet, the algorithm can determine whether this is an appropriate question given
 // a User's current Center.
 type QuestionSet struct {
-	Mask      []int     `json:"-"`
+	// In case you forget, as you have 100 times, yes, Mask is necessary! If, for instance, you disagree with something mapped to
+	// MMiddleLeft, without the Mask, both the Far Left AND the whole Right Wing will get points added! With the Mask, only the
+	// Far Left will get highlighted.
+	Mask      []int     `json:"mask"`
 	Questions Questions `json:"questions"`
 }
 
 func (qs QuestionSet) ValidSet(x, y int) bool {
 	var pMap matcher.PoliticalMap
 	for _, q := range qs.Questions {
-		pMap.Add(q.Map, true)
+		pMap.Add(q.Map, qs.Mask, true)
 	}
 
 	centerX, centerY := pMap.Center()
@@ -80,6 +81,15 @@ func (qs QuestionSet) InMask(n int) bool {
 	return false
 }
 
+func (qs QuestionSet) Shuffle() QuestionSet {
+	for i := range qs.Questions {
+		j := rand.Intn(i + 1)
+		qs.Questions[i], qs.Questions[j] = qs.Questions[j], qs.Questions[i]
+	}
+
+	return qs
+}
+
 type QuestionSets []QuestionSet
 
 func (qss QuestionSets) NextSet(x, y int) (QuestionSet, error) {
@@ -93,7 +103,7 @@ func (qss QuestionSets) NextSet(x, y int) (QuestionSet, error) {
 
 	// once you get a list of valid sets, choose one at random
 	if l := len(validSets); l > 0 {
-		return validSets[rand.Intn(l)], nil // Intn chooses from [0, n-1] (i.e. Intn(1) is always 0)
+		return validSets[rand.Intn(l)].Shuffle(), nil // Intn chooses from [0, n-1] (i.e. Intn(1) is always 0)
 	}
 
 	return QuestionSet{}, &ErrNoneValid{x, y}
