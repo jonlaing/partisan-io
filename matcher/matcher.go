@@ -175,7 +175,13 @@ func Match(p1, p2 PoliticalMap) (float64, error) {
 		return 0.0, errors.New("No maps between users")
 	}
 
-	return float64(matchPoints) / float64(totalPoints), nil
+	// just the simple ratio is too generous so...
+	naive := float64(matchPoints) / float64(totalPoints)
+
+	// we put the naive calculation on a new curve (a circle) to
+	// exaggerate disagreement. It makes the matcher a little
+	// more interesting (otherwise you match with freakin' everyone)
+	return -math.Sqrt(1-naive) + 1, nil
 }
 
 // Merge merges two or more maps by averaging their values at each subquadrant

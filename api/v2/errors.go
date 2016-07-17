@@ -7,4 +7,6 @@ var (
 	ErrCannotUpdate  = errors.New("You do not have the permissions to update this record")
 	ErrCannotDelete  = errors.New("You do not have the permissions to delete this record")
 	ErrAlreadyExists = errors.New("Cannot create resource as it already exists")
+
+	ErrEnemy = errors.New("Match percentage is too low to friend this person. They do not want enemies.")
 )

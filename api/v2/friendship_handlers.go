@@ -81,6 +81,22 @@ func FriendshipCreate(c *gin.Context) {
 		return
 	}
 
+	friend, err := users.GetByID(binding.FriendID, db)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+
+	// the friend is not looking for enemies, disallow if
+	// match % isn't high enough
+	if friend.LookingFor < 4 {
+		m, _ := matcher.Match(user.PoliticalMap, friend.PoliticalMap)
+		if m < 0.75 {
+			c.AbortWithError(http.StatusForbidden, ErrEnemy)
+			return
+		}
+	}
+
 	f, errs := friendships.New(user.ID, binding)
 	if len(errs) > 0 {
 		c.AbortWithError(http.StatusNotAcceptable, errs)
