@@ -19,5 +19,15 @@ func PostShow(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "post", gin.H{"data": gin.H{}, "post": post})
+	fbOpengraph := map[string]string{
+		"title":     post.Body,
+		"url":       "https://www.partisan.io/posts/" + post.ID,
+		"site_name": "Partisan.IO",
+	}
+
+	if len(post.Attachments) > 0 {
+		fbOpengraph["image"] = post.Attachments[0].URL
+	}
+
+	c.HTML(http.StatusOK, "post", gin.H{"title": post.Body, "og": fbOpengraph, "data": gin.H{}, "post": post})
 }
