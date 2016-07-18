@@ -89,7 +89,7 @@ func FriendshipCreate(c *gin.Context) {
 
 	// the friend is not looking for enemies, disallow if
 	// match % isn't high enough
-	if friend.LookingFor < 4 {
+	if friend.LookingFor < 4 && !isPartisan(user, friend) {
 		m, _ := matcher.Match(user.PoliticalMap, friend.PoliticalMap)
 		if m < 0.75 {
 			c.AbortWithError(http.StatusForbidden, ErrEnemy)
@@ -230,4 +230,15 @@ func collectUsers(user users.User, fs *friendships.Friendships, friends []users.
 	}
 
 	*fs = friendships.Friendships(xfs)
+}
+
+// We wanna allow everyone to be able to friend partisan
+func isPartisan(us ...users.User) bool {
+	for _, u := range us {
+		if u.Email == "jon@partisan.io" {
+			return true
+		}
+	}
+
+	return false
 }
