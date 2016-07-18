@@ -51,6 +51,8 @@ func LoginHandler(c *gin.Context) {
 }
 
 func LogoutHandler(c *gin.Context) {
+	db := db.GetDB(c)
+
 	user, err := auth.CurrentUser(c)
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
