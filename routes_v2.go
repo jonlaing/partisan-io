@@ -129,4 +129,5 @@ func initRoutesV2(r *gin.Engine) {
 	// view a post without being logged in
 	// NOTE: Don't show user details here!
 	r.GET("posts/:post_id", PostShow)
+	r.HEAD("posts/:post_id", PostShow)
 }
