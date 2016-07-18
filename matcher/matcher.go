@@ -159,9 +159,9 @@ func (p PoliticalMap) Value() (driver.Value, error) {
 // Only match subquadrants will be compared. If one or both maps has
 // 0 points at a subquadrant, it will be ignored.
 func Match(p1, p2 PoliticalMap) (float64, error) {
-	if p1.IsEmpty() || p2.IsEmpty() {
-		return -1.0, errors.New("One or both maps are empty")
-	}
+	// if p1.IsEmpty() || p2.IsEmpty() {
+	// 	return -1.0, errors.New("One or both maps are empty")
+	// }
 
 	matchPoints := 0 // Points among matching coordinates
 	totalPoints := 0 // total points of all subquadrants in both maps
@@ -176,7 +176,7 @@ func Match(p1, p2 PoliticalMap) (float64, error) {
 	}
 
 	if totalPoints < 1 {
-		return -1.0, errors.New("No maps between users")
+		return 0.0, errors.New("No maps between users")
 	}
 
 	// just the simple ratio is too generous so...
