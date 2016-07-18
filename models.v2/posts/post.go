@@ -227,6 +227,10 @@ func (p Post) Validate() models.ValidationErrors {
 	return errs
 }
 
+func (p Post) FormatCreated() string {
+	return p.CreatedAt.Format(time.RFC1123)
+}
+
 // Unique removes any post from the list that has its parent already in the list
 func (ps *Posts) Unique() {
 	posts := []Post(*ps)

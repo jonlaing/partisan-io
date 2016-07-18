@@ -1,5 +1,39 @@
+{{ define "smartbanner" }}
+  <meta name="apple-itunes-app" content="app-id=1135131258, app-argument=partisanio://post?postID={{ .post.ID }}">
+{{ end }}
+
 {{ define "content" }}
-  <div id="post">
-    <!-- Flux goes here -->
+  <div id="post" style="padding: 32px 0px; max-width: 700px; margin: 0 auto;">
+    <div class="card">
+      <div class="post">
+        <div class="card-body">
+          <div style="display: flex; flex-direction: row; justify-content: center; align-items: stretch">
+            <div style="flex: 1">
+              <a href="/">
+                <img src="/images/logo.svg" />
+              </a>
+            </div>
+            <div style="flex: 1; text-align: right">
+              {{ with .post }}
+                Posted: {{ .FormatCreated }}
+              {{ end }}
+            </div>
+          </div>
+          {{ if .post.Attachments }}
+            {{ with $a := index .post.Attachments 0 }}
+              <div class="post-attachment">
+                <img src={{ $a.URL }} width="100%" />
+              </div>
+            {{ end }}
+          {{ end }}
+          <div class="post-body">
+            {{ html .post.Body }}
+          </div>
+        </div>
+        <div class="post-actions">
+        </div>
+      </div>
+    </div>
+    <p>Posted with <a href="/">Partisan.IO</a></p>
   </div>
 {{ end }}

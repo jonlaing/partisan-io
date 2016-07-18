@@ -101,6 +101,7 @@ func createMyRender() multitemplate.Render {
 
 	r := multitemplate.New()
 	r.AddFromFiles("password_reset", base, root+"/password_reset.html")
+	r.AddFromFiles("post", base, root+"/post.html")
 
 	return r
 }

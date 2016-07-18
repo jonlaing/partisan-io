@@ -125,4 +125,8 @@ func initRoutesV2(r *gin.Engine) {
 	// the app token here
 	r.GET("api/v2/password_reset/:reset_id", apiV2.PasswordResetShow)
 	r.PATCH("api/v2/password_reset/:reset_id", apiV2.PasswordResetUpdate)
+
+	// view a post without being logged in
+	// NOTE: Don't show user details here!
+	r.GET("posts/:post_id", PostShow)
 }
