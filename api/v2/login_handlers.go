@@ -58,4 +58,5 @@ func LogoutHandler(c *gin.Context) {
 	}
 
 	auth.Logout(&user, c)
+	db.Save(&user)
 }
