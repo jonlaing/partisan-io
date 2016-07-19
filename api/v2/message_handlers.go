@@ -203,7 +203,7 @@ func MessageCreate(c *gin.Context) {
 	}
 
 	pns, err := msg.NewPushNotifications(db)
-	if err != nil && len(pns) > 0 {
+	if err == nil && len(pns) > 0 {
 		for _, pn := range pns {
 			pushNotif := pn.Prepare()
 			pushClient.Send(pushNotif)
