@@ -43,6 +43,8 @@ type User struct {
 	PoliticalMap       matcher.PoliticalMap `json:"-" sql:"type:varchar(255)"`
 	CenterX            int                  `json:"-"`
 	CenterY            int                  `json:"-"`
+	DeltaX             int                  `json:"-"` // For choosing new question sets
+	DeltaY             int                  `json:"-"` // For choosing new question sets
 	PostalCode         string               `json:"postal_code"`
 	Location           string               `json:"location"`
 	Longitude          float64              `json:"-"`

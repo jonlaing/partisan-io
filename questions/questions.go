@@ -1,13 +1,29 @@
 package questions
 
 import (
+	"errors"
 	"fmt"
+	"math"
 	"math/rand"
 	"partisan/matcher"
 )
 
-// The radius for an acceptable question
+var Sets QuestionSets
+
 const radius = 17
+
+func init() {
+	Sets = QuestionSets{}
+	Sets = append(Sets, InitialQuestions...)
+	Sets = append(Sets, LeftWingQuestions...)
+	Sets = append(Sets, RightWingQuestions...)
+	Sets = append(Sets, AuthoritarianQuestions...)
+	Sets = append(Sets, LibertarianQuestions...)
+	Sets = append(Sets, AuthoritarianSocialistQuestions...)
+	Sets = append(Sets, LibertarianSocialistQuestions...)
+	Sets = append(Sets, AuthoritarianCapitalistQuestions...)
+	Sets = append(Sets, LibertarianCapitalistQuestions...)
+}
 
 var (
 	MProState    = []int{0, 1, 2, 3, 4, 5, 6, 7}
@@ -58,9 +74,6 @@ func (qs QuestionSet) ValidSet(x, y int) bool {
 
 	centerX, centerY := pMap.Center()
 
-	fmt.Println("CENTER:", centerX, centerY)
-	fmt.Println("RADIUS:", centerX+radius, centerY+radius, centerX-radius, centerY-radius)
-
 	return x <= centerX+radius &&
 		x >= centerX-radius ||
 		y <= centerY+radius &&
@@ -90,23 +103,115 @@ func (qs QuestionSet) Shuffle() QuestionSet {
 	return qs
 }
 
-type QuestionSets []QuestionSet
+func (qs QuestionSet) center() (int, int) {
+	var x, y, t float64 // t is the total points
+	var p [16]int
 
-func (qss QuestionSets) NextSet(x, y int) (QuestionSet, error) {
-	var validSets []QuestionSet
-
-	for _, qs := range qss {
-		if qs.ValidSet(x, y) {
-			validSets = append(validSets, qs)
+	for _, q := range qs.Questions {
+		for _, i := range q.Map {
+			p[i]++
 		}
 	}
 
-	// once you get a list of valid sets, choose one at random
-	if l := len(validSets); l > 0 {
-		return validSets[rand.Intn(l)].Shuffle(), nil // Intn chooses from [0, n-1] (i.e. Intn(1) is always 0)
+	// distance from the "origin"
+	// moving up by two places at a time (since there's no 0 on the grid)
+	xCoef := []int{
+		-2, -1, 1, 2,
+		-2, -1, 1, 2,
+		-2, -1, 1, 2,
+		-2, -1, 1, 2,
 	}
 
-	return QuestionSet{}, &ErrNoneValid{x, y}
+	yCoef := []int{
+		2, 2, 2, 2,
+		1, 1, 1, 1,
+		-1, -1, -1, -1,
+		-2, -2, -2, -2,
+	}
+
+	for k, v := range p {
+		x += float64(v * xCoef[k])
+		y += float64(v * yCoef[k])
+		t += float64(v)
+	}
+
+	if t > 0 {
+		return int(math.Ceil(x * 100 / t)), int(math.Ceil(y * 100 / t))
+	}
+
+	return 0, 0
+}
+
+type QuestionSets []QuestionSet
+
+func (qss QuestionSets) NextSet(x, y, dx, dy int) (QuestionSet, error) {
+	if x != 0 && y != 0 && dx == 0 && dy == 0 {
+		return QuestionSet{}, errors.New("No deltas")
+	}
+
+	// var validSets QuestionSets
+
+	// for _, qs := range qss {
+	// 	if qs.ValidSet(x, y) {
+	// 		validSets = append(validSets, qs)
+	// 	}
+	// }
+
+	return qss.match(x, y, dx, dy)
+}
+
+// find a question set that matches the detals
+func (qss QuestionSets) match(x, y, dx, dy int) (QuestionSet, error) {
+	if len(qss) < 1 {
+		return QuestionSet{}, errors.New("No question sets to favor, empty slice")
+	}
+
+	if len(qss) == 1 {
+		return qss[0], nil
+	}
+
+	if dx == 0 && dy == 0 {
+		return qss[0], nil
+	}
+
+	var validSets []QuestionSet
+	bestPoints := 0
+
+	for _, set := range qss {
+		xS, yS := set.center()
+		points := 0
+
+		if dx < 0 && xS < x {
+			points++
+		}
+
+		if dx > 0 && xS > x {
+			points++
+		}
+
+		if dy < 0 && yS < y {
+			points++
+		}
+
+		if dy > 0 && yS > y {
+			points++
+		}
+
+		if points == bestPoints {
+			validSets = append(validSets, set)
+		}
+
+		if points > bestPoints {
+			bestPoints = points
+			validSets = []QuestionSet{set}
+		}
+	}
+
+	if l := len(validSets); l > 0 {
+		return validSets[rand.Intn(l)].Shuffle(), nil
+	}
+
+	return QuestionSet{}, errors.New("Couldn't find any set that satisfied deltas")
 }
 
 type ErrNoneValid struct {

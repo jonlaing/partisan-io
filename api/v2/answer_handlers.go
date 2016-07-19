@@ -31,15 +31,17 @@ func AnswersUpdate(c *gin.Context) {
 		return
 	}
 
-	err = user.PoliticalMap.Add(a.Map, a.Mask, a.Agree)
+	dx, dy, err = user.PoliticalMap.Add(a.Map, a.Mask, a.Agree)
 	if err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)
 		return
 	}
-
 	x, y := user.PoliticalMap.Center()
+
 	user.CenterX = x
 	user.CenterY = y
+	user.DeltaX = dx
+	user.DeltaY = dy
 
 	if err := db.Save(&user).Error; err != nil {
 		c.AbortWithError(http.StatusNotAcceptable, err)

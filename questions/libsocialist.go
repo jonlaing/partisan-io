@@ -3,7 +3,7 @@ package questions
 var LibertarianSocialistQuestions = QuestionSets{
 	QuestionSet{
 		// Libertarian Socialist
-		// Mask: AnarchistMask,
+		Mask: MLibSocialist,
 		Questions: Questions{
 			Question{
 				// Far-Left
@@ -23,7 +23,7 @@ var LibertarianSocialistQuestions = QuestionSets{
 			Question{
 				// Pro-organization
 				Prompt: "It may be necessary to negotiate with capitalists and politicians in furthering political goals.",
-				Map:    MMiddleAuthoritarian,
+				Map:    MMiddleAntiAuthoritarian,
 			},
 		},
 	},

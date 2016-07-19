@@ -29,8 +29,9 @@ type PoliticalMap [16]int
 // NOTE: In case you forget, as you have 100 times, yes, the mask is necessary! If, for instance, you disagree with something mapped to
 // MMiddleLeft, without the mask, both the Far Left AND the whole Right Wing will get points added! With the mask, only the
 // Far Left will get highlighted.
-func (p *PoliticalMap) Add(aMap []int, mask []int, agree bool) error {
+func (p *PoliticalMap) Add(aMap []int, mask []int, agree bool) (int, int, error) {
 	var sign int
+	x0, y0 := p.Center() // to calculate deltas later
 
 	if agree {
 		sign = 1
@@ -40,7 +41,7 @@ func (p *PoliticalMap) Add(aMap []int, mask []int, agree bool) error {
 
 	for k, v := range aMap {
 		if v > 16 {
-			return &ErrOutOfRange{k, v}
+			return 0, 0, &ErrOutOfRange{k, v}
 		}
 
 		// if there's no mask, or the index is within the mask, add it
@@ -51,7 +52,12 @@ func (p *PoliticalMap) Add(aMap []int, mask []int, agree bool) error {
 
 	p.normalize() // if any term is < 0, shift the whole thing up
 
-	return nil
+	// calculate deltas
+	x1, y1 := p.Center()
+	dx := x1 - x0
+	dy := y1 - y0
+
+	return dx, dy, nil
 }
 
 // if any part of the PoliticalMap is < 0, then shift everything up,
@@ -103,7 +109,7 @@ func (p *PoliticalMap) Center() (int, int) {
 	}
 
 	if t > 0 {
-		return int(math.Ceil(x * 100 / t / 3)), int(math.Ceil(y * 100 / t / 3))
+		return int(math.Ceil(x * 100 / t * 2 / 3)), int(math.Ceil(y * 100 / t * 2 / 3))
 	}
 
 	return 0, 0
@@ -153,6 +159,15 @@ func (p PoliticalMap) Value() (driver.Value, error) {
 	}
 
 	return str, nil
+}
+
+func (p PoliticalMap) ToHuman() string {
+	return fmt.Sprintf("%d, %d, %d, %d\n%d, %d, %d, %d\n%d, %d, %d, %d\n%d, %d, %d, %d",
+		p[0], p[1], p[2], p[3],
+		p[4], p[5], p[6], p[7],
+		p[8], p[9], p[10], p[11],
+		p[12], p[13], p[14], p[15],
+	)
 }
 
 // Match returns the % match between two PoliticalMaps
