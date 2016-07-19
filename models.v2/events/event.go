@@ -215,7 +215,7 @@ func (e *Event) AttachCoverPhoto(f multipart.File) error {
 
 	processor := imager.ImageProcessor{File: f}
 
-	if err := processor.Resize(1500); err != nil {
+	if err := processor.Resize(1080); err != nil {
 		return err
 	}
 

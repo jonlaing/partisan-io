@@ -37,7 +37,7 @@ func NewImage(userID, postID string, f multipart.File) (Attachment, error) {
 
 	// Save the full-size
 	var path string
-	if err = processor.Resize(1500); err != nil {
+	if err = processor.Resize(1080); err != nil {
 		return Attachment{}, err
 	}
 
