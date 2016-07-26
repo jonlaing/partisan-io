@@ -8,8 +8,9 @@ import (
 )
 
 type Match struct {
-	User  users.User `json:"user"`
-	Match float64    `json:"match"`
+	User     users.User `json:"user"`
+	Match    float64    `json:"match"`
+	Distance float64    `json:"-"`
 }
 
 type Matches []Match
@@ -21,7 +22,11 @@ func (ms Matches) Len() int {
 
 // Less satisfies sort.Interface
 func (ms Matches) Less(a, b int) bool {
-	return ms[a].Match < ms[b].Match
+	if ms[a].Distance-ms[b].Distance < 10 {
+		return ms[a].Match < ms[b].Match
+	}
+
+	return ms[a].Distance < ms[b].Distance
 }
 
 // Swap satisfies sort.Interface

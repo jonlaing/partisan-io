@@ -4,6 +4,7 @@ import (
 	"mime/multipart"
 	"os"
 	"partisan/imager"
+	"partisan/location"
 	"partisan/matcher"
 	"regexp"
 	"time"
@@ -280,4 +281,11 @@ func (u User) GetSubscriberType() string {
 
 func (u User) GetPoliticalMap() matcher.PoliticalMap {
 	return u.PoliticalMap
+}
+
+func (u User) Distance(lat, long float64) float64 {
+	p1 := location.NewPoint(u.Latitude, u.Longitude)
+	p2 := location.NewPoint(lat, long)
+
+	return location.Distance(p1, p2)
 }

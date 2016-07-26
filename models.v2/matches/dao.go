@@ -33,8 +33,9 @@ func List(user users.User, search SearchBinding, db *gorm.DB) (matches Matches, 
 		for _, u := range users {
 			match, _ := matcher.Match(user.PoliticalMap, u.PoliticalMap)
 			matches = append(matches, Match{
-				User:  u,
-				Match: matcher.ToHuman(match),
+				User:     u,
+				Match:    matcher.ToHuman(match),
+				Distance: user.Distance(u.Latitude, u.Longitude),
 			})
 		}
 	}
@@ -59,6 +60,10 @@ func inBounds(user users.User) func(db *gorm.DB) *gorm.DB {
 
 func inGeoRadius(lat, long, rad float64) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
+		if rad == 0 {
+			return db
+		}
+
 		minLat, maxLat, minLong, maxLong, err := location.Bounds(lat, long, rad)
 		if err != nil {
 			return db

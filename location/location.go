@@ -1,6 +1,20 @@
 package location
 
-import "errors"
+import (
+	"errors"
+	"math"
+)
+
+const earthRadius = float64(3959) // in miles
+
+type Point struct {
+	lat float64
+	lng float64
+}
+
+func NewPoint(lat, lng float64) *Point {
+	return &Point{lat: lat, lng: lng}
+}
 
 func Bounds(lat, long, rad float64) (minLat, maxLat, minLong, maxLong float64, err error) {
 	if rad > 90 {
@@ -36,4 +50,21 @@ func Bounds(lat, long, rad float64) (minLat, maxLat, minLong, maxLong float64, e
 	}
 
 	return
+}
+
+func Distance(p, p2 *Point) float64 {
+	dLat := (p2.lat - p.lat) * (math.Pi / 180.0)
+	dLon := (p2.lng - p.lng) * (math.Pi / 180.0)
+
+	lat1 := p.lat * (math.Pi / 180.0)
+	lat2 := p2.lat * (math.Pi / 180.0)
+
+	a1 := math.Sin(dLat/2) * math.Sin(dLat/2)
+	a2 := math.Sin(dLon/2) * math.Sin(dLon/2) * math.Cos(lat1) * math.Cos(lat2)
+
+	a := a1 + a2
+
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+
+	return earthRadius * c
 }
