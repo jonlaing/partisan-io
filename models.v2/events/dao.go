@@ -32,7 +32,7 @@ func SearchForUser(u users.User, offset int, db *gorm.DB) (es Events, err error)
 	minY := u.CenterY - 10
 	maxY := u.CenterY + 10
 
-	minLat, maxLat, minLong, maxLong, err := location.Bounds(u.Latitude, u.Longitude, 1)
+	minLat, maxLat, minLong, maxLong, err := location.Bounds(u.Latitude, u.Longitude, 10)
 	if err != nil {
 		return
 	}
@@ -41,6 +41,7 @@ func SearchForUser(u users.User, offset int, db *gorm.DB) (es Events, err error)
 		Where("centery > ? AND centery < ?", minY, maxY).
 		Where("latitude > ? AND latitude < ?", minLat, maxLat).
 		Where("longitude > ? AND longitude < ?", minLong, maxLong).
+		Where("events.end_date > ?::timestamp", time.Now()).
 		Offset(offset).Limit(25).Order("start_date ASC").
 		Find(&es).Error
 	if err != nil {
@@ -64,8 +65,8 @@ func GetByHost(host Subscriber, offset int, db *gorm.DB) (es Events, err error) 
 		Where("event_subscriptions.subscriber_type = ?", host.GetSubscriberType()).
 		Where("event_subscriptions.subscriber_id = ?", host.GetID()).
 		Where("event_subscriptions.rsvp = ?", RTHost).
-		Where("events.start_date > ?::timestamp", time.Now()).
-		Offset(offset).Limit(25).
+		Where("events.end_date > ?::timestamp", time.Now()).
+		Offset(offset).Limit(25).Order("start_date ASC").
 		Find(&es).Error
 	if err != nil {
 		return
@@ -88,8 +89,8 @@ func GetByGuest(guest Subscriber, offset int, db *gorm.DB) (es Events, err error
 		Where("event_subscriptions.subscriber_type = ?", guest.GetSubscriberType()).
 		Where("event_subscriptions.subscriber_id = ?", guest.GetID()).
 		Where("event_subscriptions.rsvp IN (?)", []RSVPType{RTHost, RTGoing, RTMaybe}).
-		Where("events.start_date > ?::timestamp", time.Now()).
-		Offset(offset).Limit(25).
+		Where("events.end_date > ?::timestamp", time.Now()).
+		Offset(offset).Limit(25).Order("start_date ASC").
 		Find(&es).Error
 	if err != nil {
 		return
@@ -112,8 +113,8 @@ func GetPastByGuest(guest Subscriber, offset int, db *gorm.DB) (es Events, err e
 		Where("event_subscriptions.subscriber_type = ?", guest.GetSubscriberType()).
 		Where("event_subscriptions.subscriber_id = ?", guest.GetID()).
 		Where("event_subscriptions.rsvp IN (?)", []RSVPType{RTGoing, RTMaybe}).
-		Where("events.start_date < ?::timestamp", time.Now()).
-		Offset(offset).Limit(25).
+		Where("events.end_date > ?::timestamp", time.Now()).
+		Offset(offset).Limit(25).Order("start_date DESC").
 		Find(&es).Error
 	if err != nil {
 		return
